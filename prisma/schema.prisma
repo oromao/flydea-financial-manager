@@ -1,13 +1,73 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  password     String
+  name         String?
+  transactions Transaction[]
+  auditLogs    AuditLog[]
+  recurrences  Recurrence[]
+  createdAt    DateTime      @default(now())
+}
+
+model Category {
+  id           String        @id @default(uuid())
+  name         String        @unique
+  type         String        // INCOME or EXPENSE
+  transactions Transaction[]
+  recurrences  Recurrence[]
+  createdAt    DateTime      @default(now())
+}
+
+model Transaction {
+  id             String    @id @default(uuid())
+  type           String    // INCOME or EXPENSE
+  description    String
+  amount         Float
+  date           DateTime
+  observations   String?
+  frequency      String    @default("NONE") // NONE, MONTHLY
+  attachmentUrl  String?   // External link
+  blobUrl        String?   // Real cloud storage link (Vercel Blob)
+  status         String    @default("CONFIRMED") // CONFIRMED, PENDING, RECURRING
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+  categoryId     String
+  category       Category  @relation(fields: [categoryId], references: [id])
+  createdAt      DateTime  @default(now())
+}
+
+model Recurrence {
+  id            String    @id @default(uuid())
+  description   String
+  amount        Float
+  frequency     String    // MONTHLY, WEEKLY
+  startDate     DateTime
+  nextDate      DateTime?
+  dayOfMonth    Int?
+  categoryId    String
+  category      Category  @relation(fields: [categoryId], references: [id])
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  createdAt     DateTime  @default(now())
+  isActive      Boolean   @default(true)
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String   // CREATE, UPDATE, DELETE, IMPORT, RECURRENCE
+  entity    String   // TRANSACTION, CATEGORY, RECURRENCE
+  entityId  String
+  details   String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 }
