@@ -22,37 +22,37 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
   if (pathname === '/login') return <>{children}</>;
 
   return (
-    <div className="min-h-screen bg-[#111318] flex flex-col md:flex-row font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-background flex flex-col md:flex-row font-sans overflow-x-hidden">
       {/* Mobile Top Header (Brand Only) */}
-      <header className="h-16 flex items-center justify-between px-6 bg-[#1A1C1E] border-b border-[#43474E] md:hidden sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#D0E4FF] flex items-center justify-center text-[#003258] shadow-sm">
-            <Wallet className="w-6 h-6" />
+      <header className="h-20 flex items-center justify-between px-8 bg-surface/80 backdrop-blur-3xl border-b border-white/5 md:hidden sticky top-0 z-50">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-on-primary shadow-xl shadow-primary/20">
+            <Wallet className="w-7 h-7" />
           </div>
-          <span className="text-lg font-bold text-[#E2E2E6] tracking-tight">FLY DEA</span>
+          <span className="text-xl font-black text-on-background tracking-tighter italic">FLY DEA</span>
         </div>
-        <div className="w-10 h-10 rounded-full bg-[#3C4858] flex items-center justify-center">
-          <UserCircle className="w-6 h-6 text-[#D7E3F7]" />
+        <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+          <UserCircle className="w-8 h-8 text-on-surface-variant/40" />
         </div>
       </header>
 
       {/* M3 Navigation Drawer (Sidebar - Desktop Only) */}
-      <aside className="w-80 bg-[#1A1C1E] border-r border-[#43474E] hidden md:flex flex-col fixed inset-y-0 z-50 p-4">
-        <div className="h-20 flex items-center px-4 mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#D0E4FF] flex items-center justify-center text-[#003258] shadow-sm">
-              <Wallet className="w-7 h-7" />
+      <aside className="w-80 bg-surface/50 backdrop-blur-3xl border-r border-white/5 hidden md:flex flex-col fixed inset-y-0 z-50 p-6">
+        <div className="h-20 flex items-center px-4 mb-10">
+          <div className="flex items-center gap-5">
+            <div className="w-14 h-14 rounded-[24px] bg-primary flex items-center justify-center text-on-primary shadow-2xl shadow-primary/20">
+              <Wallet className="w-8 h-8" />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-[#E2E2E6]">
+              <h1 className="text-2xl font-black tracking-tighter text-on-background italic">
                 FLY DEA
               </h1>
-              <p className="text-[10px] uppercase tracking-widest font-bold text-[#C3C7CF]">Dashboard M3</p>
+              <p className="text-[10px] uppercase tracking-[0.4em] font-black text-on-surface-variant/40 mt-1">Enterprise 8.0</p>
             </div>
           </div>
         </div>
         
-        <div className="flex-1 space-y-1">
+        <div className="flex-1 space-y-2">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -62,38 +62,38 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-4 px-6 py-4 rounded-full transition-all duration-200 group relative overflow-hidden",
+                  "flex items-center gap-4 px-8 py-5 rounded-[24px] transition-all duration-500 group relative overflow-hidden",
                   isActive 
-                    ? "bg-[#00497D] text-[#D1E4FF] font-bold shadow-sm" 
-                    : "text-[#C3C7CF] hover:bg-[#43474E]/30 hover:text-[#E2E2E6]"
+                    ? "bg-secondary text-white font-black shadow-2xl shadow-secondary/20 scale-[1.02]" 
+                    : "text-on-surface-variant/40 hover:bg-white/[0.03] hover:text-on-background"
                 )}
               >
-                <Icon className={cn("w-6 h-6", isActive ? "text-[#D1E4FF]" : "group-hover:text-[#D1E4FF] transition-colors")} />
-                <span className="text-sm tracking-tight">{item.name}</span>
+                <Icon className={cn("w-6 h-6", isActive ? "text-white" : "group-hover:text-primary transition-colors")} />
+                <span className="text-sm font-bold tracking-tight uppercase tracking-[0.1em]">{item.name}</span>
                 {isActive && (
-                   <div className="absolute left-0 w-1.5 h-6 bg-[#D1E4FF] rounded-r-full"></div>
+                   <div className="absolute right-0 w-1.5 h-6 bg-white rounded-l-full shadow-[0_0_15px_rgba(255,255,255,0.5)]"></div>
                 )}
               </Link>
             );
           })}
         </div>
 
-        <div className="mt-auto space-y-4 pt-4 border-t border-[#43474E]">
-          <div className="p-4 rounded-[28px] bg-[#1D2024] border border-[#43474E] flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-[#3C4858] flex items-center justify-center">
-              <UserCircle className="w-6 h-6 text-[#D7E3F7]" />
+        <div className="mt-auto space-y-6 pt-6 border-t border-white/5">
+          <div className="glass-card p-6 flex items-center gap-5 border-none rounded-[32px] bg-white/[0.03]">
+            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
+              <UserCircle className="w-7 h-7 text-on-surface-variant/40" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-[#E2E2E6] truncate">
+              <p className="text-sm font-black text-on-background truncate">
                 {session?.user?.name || "Augusto"}
               </p>
-              <p className="text-[10px] text-[#C3C7CF] truncate uppercase font-bold tracking-tighter">{session?.user?.email}</p>
+              <p className="text-[10px] text-on-surface-variant/40 truncate uppercase font-bold tracking-widest">{session?.user?.email}</p>
             </div>
           </div>
 
           <button 
             onClick={() => signOut({ callbackUrl: '/login' })}
-            className="flex items-center justify-center gap-3 px-6 py-4 w-full rounded-full text-xs font-bold text-[#F2B8B5] bg-[#8C1D18]/10 hover:bg-[#8C1D18]/20 border border-[#8C1D18]/20 transition-all active:scale-95"
+            className="flex items-center justify-center gap-3 px-8 py-5 w-full rounded-full text-[10px] font-black tracking-[0.2em] text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/10 transition-all active:scale-95 uppercase"
           >
             <LogOut className="w-4 h-4" />
             ENCERRAR SESSÃO

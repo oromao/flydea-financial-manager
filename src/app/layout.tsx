@@ -4,15 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Sidebar } from "@/components/sidebar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// System fonts are handled via globals.css
 
 export const metadata: Metadata = {
   title: "Controle FLY DEA",
@@ -25,8 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}>
-      <body className="min-h-full flex flex-col bg-[#111318] text-[#E2E2E6] selection:bg-[#D0E4FF] selection:text-[#003258]">
+    <html lang="pt-BR" className="h-full antialiased dark">
+      <body className="min-h-full flex flex-col bg-background text-on-background selection:bg-secondary/30 selection:text-secondary">
         <Providers>
           <Sidebar>{children}</Sidebar>
         </Providers>

@@ -86,32 +86,35 @@ export function Importer({ onImportSuccess }: ImporterProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant="outline" className="h-12 md:h-14 rounded-xl md:rounded-2xl border-[#43474E] bg-[#111318] text-[#D1E4FF] px-6" />}>
-        <Upload className="w-4 h-4 mr-2" /> IMPORTAR EXTRATO
+      <DialogTrigger render={<Button className="h-16 px-8 rounded-full bg-white/5 hover:bg-white/10 text-on-surface font-black uppercase tracking-widest border border-white/5 transition-all active:scale-95" />}>
+        <Upload className="w-6 h-6 mr-3 text-primary" /> IMPORTAR EXTRATO
       </DialogTrigger>
-      <DialogContent className="w-[95vw] md:max-w-xl bg-[#1A1C1E] border-none rounded-[32px] p-0 shadow-2xl">
-        <div className="bg-[#1D2024] p-8 md:p-10 border-b border-[#43474E]">
+      <DialogContent className="w-[95vw] md:max-w-xl bg-surface border-none rounded-[40px] p-0 shadow-[0_32px_80px_rgba(0,0,0,0.8)] backdrop-blur-3xl overflow-hidden ring-1 ring-white/10">
+        <div className="bg-white/5 p-8 md:p-12 border-b border-white/5">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-[#E2E2E6]">Importar via OFX/CSV</DialogTitle>
+            <DialogTitle className="text-3xl font-black text-on-background tracking-tighter uppercase italic">Importar Extrato</DialogTitle>
+            <p className="text-on-surface-variant/40 text-[10px] font-black uppercase tracking-[0.4em] mt-2">Módulo de Sincronização Bancária</p>
           </DialogHeader>
         </div>
 
         <div className="p-8 md:p-10 space-y-8">
           {!file ? (
-            <div className="border-2 border-dashed border-[#43474E] rounded-3xl p-12 text-center hover:border-[#D1E4FF] transition-colors cursor-pointer relative">
-              <input type="file" accept=".ofx,.csv" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer" />
-              <FileText className="w-12 h-12 text-[#8D9199] mx-auto mb-4" />
-              <p className="text-[#E2E2E6] font-bold">Arraste seu arquivo OFX ou CSV</p>
-              <p className="text-[#8D9199] text-xs mt-2 uppercase tracking-widest font-black">Máximo 10MB</p>
+            <div className="border-4 border-dashed border-white/5 rounded-[32px] p-16 text-center hover:border-primary/50 hover:bg-primary/5 transition-all duration-500 cursor-pointer relative group">
+              <input type="file" accept=".ofx,.csv" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
+              <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
+                <FileText className="w-10 h-10 text-primary" />
+              </div>
+              <p className="text-on-background text-lg font-black tracking-tight">Arraste seu arquivo OFX ou CSV</p>
+              <p className="text-on-surface-variant/40 text-[10px] mt-2 uppercase tracking-[0.3em] font-black italic">Máximo 10MB • Proteção SSL Ativa</p>
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="flex items-center justify-between bg-[#111318] p-4 rounded-2xl border border-[#43474E]">
-                <div className="flex items-center gap-4">
-                  <div className="p-2 rounded-lg bg-[#3C4858] text-[#D1E4FF]"><FileText className="w-5 h-5" /></div>
-                  <span className="text-[#E2E2E6] font-medium text-sm truncate max-w-[200px]">{file.name}</span>
+              <div className="flex items-center justify-between bg-white/5 p-6 rounded-3xl border border-white/10">
+                <div className="flex items-center gap-6">
+                  <div className="p-3 rounded-2xl bg-primary/20 text-primary shadow-xl"><FileText className="w-6 h-6" /></div>
+                  <span className="text-on-background font-black text-sm truncate max-w-[200px] tracking-tight">{file.name}</span>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setFile(null)} className="rounded-full text-[#8D9199]"><X className="w-4 h-4" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => setFile(null)} className="h-12 w-12 rounded-full text-on-surface-variant/40 hover:bg-rose-500/10 hover:text-rose-400 transition-all"><X className="w-5 h-5" /></Button>
               </div>
 
               {parsing ? (
@@ -136,7 +139,7 @@ export function Importer({ onImportSuccess }: ImporterProps) {
                     ))}
                     {preview.length > 10 && <p className="text-center text-[10px] text-[#8D9199] py-2">... e mais {preview.length - 10} registros</p>}
                   </div>
-                  <Button onClick={confirmImport} className="w-full h-14 rounded-full bg-[#D0E4FF] text-[#003258] font-bold">
+                  <Button onClick={confirmImport} className="m3-button-premium w-full h-16 border-none">
                     CONCLUIR IMPORTAÇÃO
                   </Button>
                 </div>

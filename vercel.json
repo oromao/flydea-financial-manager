@@ -1,12 +1,6 @@
 {
-  "version": 2,
   "framework": "nextjs",
   "buildCommand": "npx prisma generate && next build",
   "installCommand": "npm install",
-  "env": {
-    "NEXTAUTH_URL": "https://resonant-belt.vercel.app",
-    "NEXTAUTH_SECRET": "your-super-secret-flydea-token-2026",
-    "DATABASE_URL": "file:./dev.db",
-    "NODE_ENV": "production"
-  }
+  "regions": ["sao1"]
 }

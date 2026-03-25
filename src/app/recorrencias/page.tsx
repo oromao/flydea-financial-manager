@@ -107,7 +107,7 @@ export default function Recorrencias() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-8 max-w-6xl mx-auto pb-24"
+      className="space-y-8 md:space-y-12 max-w-7xl mx-auto pb-32 px-4 md:px-0"
     >
       {/* Header */}
       <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2 md:px-0">
@@ -122,7 +122,7 @@ export default function Recorrencias() {
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger render={<Button className="h-14 px-8 rounded-full bg-[#D0E4FF] text-[#003258] hover:bg-[#D1E4FF] font-black uppercase tracking-widest text-xs shadow-lg shadow-blue-500/10" />}>
+          <DialogTrigger render={<Button className="m3-button-premium h-14 px-8 border-none" />}>
             <Plus className="w-5 h-5 mr-2" /> NOVA RECORRÊNCIA
           </DialogTrigger>
           <DialogContent className="w-[95vw] md:max-w-xl bg-[#1A1311] border-none rounded-[32px] p-0 shadow-2xl overflow-hidden ring-1 ring-white/10">
@@ -177,7 +177,7 @@ export default function Recorrencias() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full h-16 rounded-full bg-[#FFB4A3] text-[#5E1708] font-black uppercase tracking-[0.3em] hover:bg-[#FFDAD3] mt-4 shadow-xl shadow-red-500/10">
+              <Button type="submit" className="m3-button-premium w-full h-16 text-xs border-none mt-4">
                 CONFIRMAR AGENDAMENTO
               </Button>
             </form>
@@ -189,51 +189,49 @@ export default function Recorrencias() {
         <div className="py-24 text-center animate-pulse text-[#8D9199] font-black uppercase tracking-[0.3em]">Sincronizando Automações...</div>
       ) : recurrences.length === 0 ? (
         <motion.div variants={itemVariants}>
-          <Card className="m3-glass border-[#534341] rounded-[32px] p-12 text-center bg-[#1A1311]/40 border-none shadow-2xl">
-            <RotateCcw className="w-16 h-16 mx-auto mb-6 text-[#534341]" />
-            <h2 className="text-xl font-bold text-[#E2E2E6]">Nenhuma recorrência ativa</h2>
-            <p className="text-[#8D9199] mt-2 max-w-sm mx-auto font-medium">Agende suas despesas fixas para que o FLY DEA as lance automaticamente todo mês para você.</p>
-          </Card>
+          <div className="glass-card rounded-[32px] p-12 text-center bg-white/5 border-none shadow-2xl">
+            <RotateCcw className="w-16 h-16 mx-auto mb-6 text-on-surface-variant/20" />
+            <h2 className="text-xl font-bold text-on-background">Nenhuma recorrência ativa</h2>
+            <p className="text-on-surface-variant/60 mt-2 max-w-sm mx-auto font-medium">Agende suas despesas fixas para que o FLY DEA as lance automaticamente todo mês para você.</p>
+          </div>
         </motion.div>
       ) : (
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2 md:px-0">
           {recurrences.map((rec) => (
-            <Card key={rec.id} className="m3-card-glass border-none rounded-[28px] overflow-hidden group hover:scale-[1.02] transition-all shadow-xl">
-              <CardContent className="p-0">
-                <div className="bg-[#313033] p-6 flex justify-between items-start">
+            <div key={rec.id} className="glass-card border-none rounded-[28px] overflow-hidden group hover:scale-[1.02] transition-all shadow-xl p-0">
+                <div className="bg-white/5 p-6 flex justify-between items-start">
                   <div>
-                    <h3 className="font-black uppercase tracking-widest text-[10px] text-[#C1C7CE] mb-1">Próximo Lançamento</h3>
-                    <div className="flex items-center gap-2 text-white font-bold">
-                      <Calendar className="w-4 h-4 text-[#FFB4A3]" />
+                    <h3 className="font-black uppercase tracking-widest text-[10px] text-on-surface-variant/40 mb-1">Próximo Lançamento</h3>
+                    <div className="flex items-center gap-2 text-on-background font-bold">
+                      <Calendar className="w-4 h-4 text-primary" />
                       {format(new Date(rec.nextDate || rec.startDate), "dd 'de' MMMM", { locale: ptBR })}
                     </div>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-[#1A1311] text-[#FFB4A3] text-[10px] font-black tracking-widest border border-[#FFB4A3]/20 uppercase">
+                  <span className="px-3 py-1 rounded-full bg-background/50 text-primary text-[10px] font-black tracking-widest border border-primary/20 uppercase">
                     {rec.frequency === 'MONTHLY' ? 'Mensal' : 'Semanal'}
                   </span>
                 </div>
                 
                 <div className="p-6 space-y-4">
                   <div>
-                    <h2 className="text-xl font-bold text-white tracking-tight leading-tight">{rec.description}</h2>
-                    <span className="text-xs font-bold text-[#8D9199] uppercase tracking-widest">{rec.category?.name}</span>
+                    <h2 className="text-xl font-bold text-on-background tracking-tight leading-tight">{rec.description}</h2>
+                    <span className="text-xs font-bold text-on-surface-variant/40 uppercase tracking-widest">{rec.category?.name}</span>
                   </div>
 
-                  <div className="text-3xl font-black text-[#FFB4A3] tracking-tighter">
+                  <div className="text-3xl font-black text-primary tracking-tighter">
                     {formatCurrency(rec.amount)}
                   </div>
 
                   <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase text-emerald-400">
+                    <div className="flex items-center gap-2 text-[10px] font-black uppercase text-secondary">
                       <CheckCircle2 className="w-3 h-3" /> ATIVO
                     </div>
-                    <Button variant="ghost" size="icon" className="rounded-full text-[#8D9199] hover:bg-rose-500/10 hover:text-rose-400">
+                    <Button variant="ghost" size="icon" className="rounded-full text-on-surface-variant/40 hover:bg-rose-500/10 hover:text-rose-400">
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+            </div>
           ))}
         </motion.div>
       )}

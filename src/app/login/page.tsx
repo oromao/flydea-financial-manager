@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Wallet, ShieldCheck, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -63,8 +64,8 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="m3-glass p-8 md:p-12 border-white/10 overflow-hidden relative group">
-          <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-[80px] group-hover:bg-primary/20 transition-all duration-700" />
+        <div className="glass-card p-8 md:p-12 border-white/10 overflow-hidden relative group rounded-[40px]">
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-[80px] group-hover:bg-primary/40 transition-all duration-700" />
           
           {error && (
             <motion.div 
@@ -105,7 +106,7 @@ export default function LoginPage() {
             <Button 
               type="submit" 
               disabled={loading} 
-              className="w-full h-16 rounded-full text-lg font-black bg-primary hover:bg-white text-on-primary hover:text-primary transition-all duration-500 flex items-center justify-center gap-3 group shadow-xl shadow-primary/10 active:scale-95"
+              className="m3-button-premium w-full h-16 text-lg border-none"
             >
               {loading ? "Autenticando..." : "ACESSAR SISTEMA"}
               {!loading && <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />}

@@ -12,62 +12,62 @@ model User {
   email        String        @unique
   password     String
   name         String?
-  transactions Transaction[]
+  createdAt    DateTime      @default(now())
   auditLogs    AuditLog[]
   recurrences  Recurrence[]
-  createdAt    DateTime      @default(now())
+  transactions Transaction[]
 }
 
 model Category {
   id           String        @id @default(uuid())
   name         String        @unique
-  type         String        // INCOME or EXPENSE
-  transactions Transaction[]
-  recurrences  Recurrence[]
+  type         String
   createdAt    DateTime      @default(now())
+  recurrences  Recurrence[]
+  transactions Transaction[]
 }
 
 model Transaction {
-  id             String    @id @default(uuid())
-  type           String    // INCOME or EXPENSE
-  description    String
-  amount         Float
-  date           DateTime
-  observations   String?
-  frequency      String    @default("NONE") // NONE, MONTHLY
-  attachmentUrl  String?   // External link
-  blobUrl        String?   // Real cloud storage link (Vercel Blob)
-  status         String    @default("CONFIRMED") // CONFIRMED, PENDING, RECURRING
-  userId         String
-  user           User      @relation(fields: [userId], references: [id])
-  categoryId     String
-  category       Category  @relation(fields: [categoryId], references: [id])
-  createdAt      DateTime  @default(now())
+  id            String   @id @default(uuid())
+  type          String
+  description   String
+  amount        Float
+  date          DateTime
+  observations  String?
+  frequency     String   @default("NONE")
+  attachmentUrl String?
+  blobUrl       String?
+  status        String   @default("CONFIRMED")
+  userId        String
+  categoryId    String
+  createdAt     DateTime @default(now())
+  category      Category @relation(fields: [categoryId], references: [id])
+  user          User     @relation(fields: [userId], references: [id])
 }
 
 model Recurrence {
-  id            String    @id @default(uuid())
-  description   String
-  amount        Float
-  frequency     String    // MONTHLY, WEEKLY
-  startDate     DateTime
-  nextDate      DateTime?
-  dayOfMonth    Int?
-  categoryId    String
-  category      Category  @relation(fields: [categoryId], references: [id])
-  userId        String
-  user          User      @relation(fields: [userId], references: [id])
-  createdAt     DateTime  @default(now())
-  isActive      Boolean   @default(true)
+  id          String    @id @default(uuid())
+  description String
+  amount      Float
+  frequency   String
+  startDate   DateTime
+  nextDate    DateTime?
+  dayOfMonth  Int?
+  categoryId  String
+  userId      String
+  createdAt   DateTime  @default(now())
+  isActive    Boolean   @default(true)
+  user        User      @relation(fields: [userId], references: [id])
+  category    Category  @relation(fields: [categoryId], references: [id])
 }
 
 model AuditLog {
   id        String   @id @default(uuid())
-  action    String   // CREATE, UPDATE, DELETE, IMPORT, RECURRENCE
-  entity    String   // TRANSACTION, CATEGORY, RECURRENCE
+  action    String
+  entity    String
   entityId  String
   details   String?
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }

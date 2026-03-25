@@ -235,7 +235,7 @@ export default function Movimentacoes() {
         <div className="flex items-center gap-4 w-full md:w-auto">
           <Button 
             onClick={exportToCSV}
-            className="flex-1 md:flex-none h-16 px-8 rounded-full bg-surface-variant/20 hover:bg-surface-variant/40 text-on-surface font-black uppercase tracking-widest border border-white/5 transition-all active:scale-95"
+            className="flex-1 md:flex-none h-16 px-8 rounded-full bg-white/5 hover:bg-white/10 text-on-surface font-black uppercase tracking-widest border border-white/5 transition-all active:scale-95"
           >
             <Download className="w-6 h-6 mr-3" /> CSV
           </Button>
@@ -244,7 +244,7 @@ export default function Movimentacoes() {
             setOpen(val);
             if (!val) resetForm();
           }}>
-            <DialogTrigger render={<Button className="flex-[2] md:flex-none h-16 px-10 rounded-full bg-primary hover:bg-white text-on-primary hover:text-primary font-black text-base md:text-lg shadow-2xl shadow-primary/20 border-none transition-all duration-500 active:scale-95" />}>
+            <DialogTrigger render={<Button className="m3-button-premium flex-[2] md:flex-none h-16 px-10 border-none" />}>
               <Plus className="w-7 h-7 mr-3" strokeWidth={4} /> NOVO LANÇAMENTO
             </DialogTrigger>
             <DialogContent className="w-[95vw] md:max-w-[550px] p-0 overflow-hidden border-none rounded-[40px] bg-surface shadow-[0_32px_80px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
@@ -356,7 +356,7 @@ export default function Movimentacoes() {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full h-20 rounded-full bg-primary text-on-primary font-black text-xl shadow-2xl shadow-primary/20 hover:scale-[1.02] transition-all active:scale-95 duration-500">
+                <Button type="submit" className="m3-button-premium w-full h-20 text-xl border-none">
                   {editingId ? "SALVAR ALTERAÇÕES" : "CONFIRMAR LANÇAMENTO"}
                 </Button>
               </form>
@@ -372,10 +372,10 @@ export default function Movimentacoes() {
         transition={{ delay: 0.2 }}
         className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 md:px-0"
       >
-        <div className="m3-glass p-8 flex items-center justify-between group hover:scale-[1.05] transition-all duration-700">
+        <div className="glass-card p-8 flex items-center justify-between group hover:scale-[1.05] transition-all duration-700 rounded-[32px]">
             <div className="relative z-10">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/60">Saldo Consolidado</p>
-                <h2 className="text-4xl font-black text-on-background tracking-tighter mt-1 drop-shadow-xl">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/40">Saldo Consolidado</p>
+                <h2 className="text-4xl font-black text-on-background tracking-tighter mt-1 drop-shadow-xl gradient-text">
                     {formatCurrency(transactions.reduce((acc, t) => t.type === 'INCOME' ? acc + t.amount : acc - t.amount, 0))}
                 </h2>
             </div>
@@ -384,19 +384,19 @@ export default function Movimentacoes() {
             </div>
         </div>
         
-        <div className="m3-card-glass p-8 flex items-center justify-between border-emerald-500/20 bg-emerald-500/[0.03] group hover:scale-[1.05] transition-all duration-700">
+        <div className="glass-card p-8 flex items-center justify-between border-secondary/20 bg-secondary/[0.02] group hover:scale-[1.05] transition-all duration-700 rounded-[32px]">
             <div className="relative z-10">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">Receitas Totais</p>
-                <h2 className="text-3xl font-black text-emerald-400 tracking-tighter mt-1">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">Receitas Totais</p>
+                <h2 className="text-3xl font-black text-secondary tracking-tighter mt-1">
                     {formatCurrency(transactions.filter(t => t.type === 'INCOME').reduce((acc, t) => acc + t.amount, 0))}
                 </h2>
             </div>
-            <div className="p-4 rounded-[24px] bg-emerald-500/10 text-emerald-400 transition-transform group-hover:-translate-y-2 duration-700">
+            <div className="p-4 rounded-[24px] bg-secondary/10 text-secondary transition-transform group-hover:-translate-y-2 duration-700">
                 <ArrowUp className="w-7 h-7" />
             </div>
         </div>
 
-        <div className="m3-card-glass p-8 flex items-center justify-between border-rose-500/20 bg-rose-500/[0.03] group hover:scale-[1.05] transition-all duration-700">
+        <div className="glass-card p-8 flex items-center justify-between border-rose-500/20 bg-rose-500/[0.02] group hover:scale-[1.05] transition-all duration-700 rounded-[32px]">
             <div className="relative z-10">
                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-400">Despesas Totais</p>
                 <h2 className="text-3xl font-black text-rose-400 tracking-tighter mt-1">
@@ -456,7 +456,7 @@ export default function Movimentacoes() {
         transition={{ delay: 0.4 }}
         className="px-4 md:px-0"
       >
-        <Card className="hidden md:block m3-card-glass overflow-hidden shadow-2xl border-none">
+        <div className="hidden md:block glass-card overflow-hidden shadow-2xl border-none rounded-[40px]">
           <Table>
             <TableHeader>
               <TableRow className="bg-white/5 border-b border-white/5">
@@ -494,8 +494,8 @@ export default function Movimentacoes() {
                       {t.attachmentUrl && !t.blobUrl && <motion.a whileHover={{ scale: 1.2 }} href={t.attachmentUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20"><LinkIcon className="w-4 h-4" /></motion.a>}
                     </div>
                   </TableCell>
-                  <TableCell className="py-8"><span className="inline-flex px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-surface-variant/30 text-on-surface-variant border border-white/5 shadow-sm">{t.category?.name}</span></TableCell>
-                  <TableCell className={cn("px-10 py-8 text-right font-black text-2xl tracking-tighter drop-shadow-sm", t.type === 'INCOME' ? 'text-emerald-400' : 'text-rose-400')}>{formatCurrency(t.amount)}</TableCell>
+                  <TableCell className="py-8"><span className="inline-flex px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-white/5 text-on-surface-variant border border-white/5 shadow-sm">{t.category?.name}</span></TableCell>
+                  <TableCell className={cn("px-10 py-8 text-right font-black text-2xl tracking-tighter drop-shadow-sm", t.type === 'INCOME' ? 'text-secondary' : 'text-rose-400')}>{formatCurrency(t.amount)}</TableCell>
                   <TableCell className="text-right pr-10">
                     <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-12 w-12 rounded-2xl bg-white/[0.03] text-on-surface-variant hover:text-primary hover:bg-primary/10 transition-all shadow-sm"><Edit2 className="w-5 h-5" /></Button>
@@ -506,7 +506,7 @@ export default function Movimentacoes() {
               ))}
             </TableBody>
           </Table>
-        </Card>
+        </div>
       </motion.div>
 
       {/* Transaction List - Mobile Cards */}
@@ -526,13 +526,12 @@ export default function Movimentacoes() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.05 }}
             >
-              <Card className="m3-card-glass border-none rounded-[32px] overflow-hidden active:scale-95 transition-all shadow-xl group">
-                <CardContent className="p-6 flex items-center justify-between relative overflow-hidden">
+              <div className="glass-card border-none rounded-[32px] overflow-hidden active:scale-95 transition-all shadow-xl group p-6 flex items-center justify-between relative">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
                   <div className="flex items-center gap-6 relative z-10">
                     <div className={cn(
                       "w-14 h-14 rounded-[20px] flex items-center justify-center shadow-lg transition-transform group-active:rotate-12",
-                      t.type === 'INCOME' ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400"
+                      t.type === 'INCOME' ? "bg-secondary/10 text-secondary" : "bg-rose-500/10 text-rose-400"
                     )}>
                       {t.type === 'INCOME' ? <ArrowUp className="w-8 h-8" strokeWidth={3} /> : <ArrowDown className="w-8 h-8" strokeWidth={3} />}
                     </div>
@@ -547,7 +546,7 @@ export default function Movimentacoes() {
                   <div className="flex flex-col items-end gap-3 relative z-10">
                     <span className={cn(
                       "text-xl font-black tracking-tighter drop-shadow-sm",
-                      t.type === 'INCOME' ? 'text-emerald-400' : 'text-rose-400'
+                      t.type === 'INCOME' ? 'text-secondary' : 'text-rose-400'
                     )}>{formatCurrency(t.amount)}</span>
                     
                     <div className="flex gap-2">
@@ -559,8 +558,7 @@ export default function Movimentacoes() {
                       </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+              </div>
             </motion.div>
           ))
         )}
