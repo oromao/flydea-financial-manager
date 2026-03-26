@@ -2,6 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
+import { checkRateLimit } from "./rate-limit";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -11,9 +12,15 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email", placeholder: "seu@email.com" },
         password: { label: "Senha", type: "password" }
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email e senha obrigatórios");
+        }
+
+        // Rate limiting by email to prevent brute force
+        const { success } = await checkRateLimit(`login:${credentials.email}`);
+        if (!success) {
+          throw new Error("Muitas tentativas. Tente novamente em 60 segundos.");
         }
 
         const user = await prisma.user.findUnique({

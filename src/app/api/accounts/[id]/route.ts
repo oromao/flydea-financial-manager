@@ -2,69 +2,57 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { TransactionSchema } from "@/lib/validations";
+import { AccountSchema } from "@/lib/validations";
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const existing = await prisma.transaction.findFirst({ where: { id, userId: session.user.id } });
+  const { id } = await params;
+  const existing = await prisma.account.findFirst({ where: { id, userId: session.user.id } });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const body = await request.json();
-  const parsed = TransactionSchema.partial().safeParse(body);
+  const parsed = AccountSchema.partial().safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
 
-  const { tagIds, ...rest } = parsed.data;
-
-  const transaction = await prisma.transaction.update({
-    where: { id },
-    data: {
-      ...rest,
-      date: rest.date ? new Date(rest.date) : undefined,
-      attachmentUrl: rest.attachmentUrl || null,
-      blobUrl: rest.blobUrl || null,
-      accountId: rest.accountId || null,
-      ...(tagIds !== undefined ? {
-        tags: {
-          deleteMany: {},
-          create: tagIds.map((tagId) => ({ tagId }))
-        }
-      } : {})
-    },
-    include: { category: true, account: true, tags: { include: { tag: true } } }
-  });
+  const account = await prisma.account.update({ where: { id }, data: parsed.data });
 
   await prisma.auditLog.create({
     data: {
       action: "UPDATE",
-      entity: "TRANSACTION",
+      entity: "ACCOUNT",
       entityId: id,
-      details: `Editada transação: ${transaction.description}`,
+      details: `Conta atualizada: ${account.name}`,
       userId: session.user.id
     }
   });
 
-  return NextResponse.json(transaction);
+  return NextResponse.json(account);
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const existing = await prisma.transaction.findFirst({ where: { id, userId: session.user.id } });
+  const { id } = await params;
+  const existing = await prisma.account.findFirst({ where: { id, userId: session.user.id } });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  await prisma.transaction.delete({ where: { id } });
+  // Unlink transactions from this account before deleting
+  await prisma.transaction.updateMany({
+    where: { accountId: id },
+    data: { accountId: null }
+  });
+
+  await prisma.account.delete({ where: { id } });
 
   await prisma.auditLog.create({
     data: {
       action: "DELETE",
-      entity: "TRANSACTION",
+      entity: "ACCOUNT",
       entityId: id,
-      details: `Removida transação: ${existing.description}`,
+      details: `Conta removida: ${existing.name}`,
       userId: session.user.id
     }
   });
