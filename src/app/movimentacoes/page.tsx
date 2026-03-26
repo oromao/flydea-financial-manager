@@ -231,11 +231,11 @@ export default function Movimentacoes() {
           </div>
         </div>
         
-        <div className="flex items-center gap-3 w-full md:w-auto">
+        <div className="flex flex-col-reverse md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto mt-6 md:mt-0">
           <Button 
             variant="outline"
             onClick={exportToExcel}
-            className="flex-1 md:flex-none h-11 px-6 font-semibold"
+            className="w-full md:w-auto h-11 px-6 font-semibold"
           >
             <FileSpreadsheet className="w-4 h-4 mr-2" /> Exportar Excel
           </Button>
@@ -244,7 +244,7 @@ export default function Movimentacoes() {
             setOpen(val);
             if (!val) resetForm();
           }}>
-            <DialogTrigger render={<Button className="apple-button-primary flex-[2] md:flex-none h-11 px-8" />}>
+            <DialogTrigger render={<Button className="apple-button-primary w-full md:w-auto h-11 px-8" />}>
               <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVO LANÇAMENTO
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-3xl bg-surface sm:shadow-2xl">
