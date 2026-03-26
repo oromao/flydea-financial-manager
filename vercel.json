@@ -1,8 +1,8 @@
 {
   "framework": "nextjs",
-  "buildCommand": "npx prisma generate && next build",
+  "buildCommand": "npx prisma generate && npx prisma db push && next build",
   "installCommand": "npm install",
-  "regions": ["sao1"],
+  "regions": ["gru1"],
   "crons": [
     {
       "path": "/api/cron/recurrence",
