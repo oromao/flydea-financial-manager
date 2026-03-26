@@ -28,12 +28,18 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/confirm-dialog";
+import { CardsGridSkeleton } from "@/components/ui/page-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function Recorrencias() {
   const [recurrences, setRecurrences] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const toast = useToast();
+  const confirm = useConfirm();
 
   // Form states
   const [description, setDescription] = useState("");
@@ -89,6 +95,19 @@ export default function Recorrencias() {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const handleDelete = async (id: string, description: string) => {
+    const ok = await confirm({
+      title: "Remover recorrência",
+      message: `Remover "${description}"? Transações já lançadas não serão afetadas.`,
+      confirmLabel: "Remover",
+      variant: "danger",
+    });
+    if (!ok) return;
+    const res = await fetch(`/api/recurrences/${id}`, { method: "DELETE" });
+    if (res.ok) { toast.success("Recorrência removida!"); fetchRecurrences(); }
+    else toast.error("Erro ao remover recorrência");
   };
 
   const resetForm = () => {
@@ -186,14 +205,16 @@ export default function Recorrencias() {
       </motion.div>
 
       {loading ? (
-        <div className="py-24 text-center animate-pulse text-[#8D9199] font-black uppercase tracking-[0.3em]">Sincronizando Automações...</div>
+        <CardsGridSkeleton count={3} />
       ) : recurrences.length === 0 ? (
         <motion.div variants={itemVariants}>
-          <div className="glass-card rounded-[32px] p-12 text-center bg-white/5 border-none shadow-2xl">
-            <RotateCcw className="w-16 h-16 mx-auto mb-6 text-on-surface-variant/20" />
-            <h2 className="text-xl font-bold text-on-background">Nenhuma recorrência ativa</h2>
-            <p className="text-on-surface-variant/60 mt-2 max-w-sm mx-auto font-medium">Agende suas despesas fixas para que o FLY DEA as lance automaticamente todo mês para você.</p>
-          </div>
+          <EmptyState
+            icon={RotateCcw}
+            title="Nenhuma recorrência ativa"
+            description="Agende suas despesas fixas para que o FLY DEA as lance automaticamente todo mês para você."
+            ctaLabel="+ NOVA RECORRÊNCIA"
+            onCta={() => setIsDialogOpen(true)}
+          />
         </motion.div>
       ) : (
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2 md:px-0">
@@ -226,7 +247,8 @@ export default function Recorrencias() {
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase text-secondary">
                       <CheckCircle2 className="w-3 h-3" /> ATIVO
                     </div>
-                    <Button variant="ghost" size="icon" className="rounded-full text-on-surface-variant/40 hover:bg-rose-500/10 hover:text-rose-400">
+                    <Button variant="ghost" size="icon" className="rounded-full text-on-surface-variant/40 hover:bg-rose-500/10 hover:text-rose-400"
+                      onClick={() => handleDelete(rec.id, rec.description)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>

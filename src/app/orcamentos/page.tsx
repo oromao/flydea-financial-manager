@@ -9,6 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/confirm-dialog";
+import { CardsGridSkeleton } from "@/components/ui/page-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const containerVariants: any = {
   hidden: { opacity: 0 },
@@ -24,18 +28,14 @@ export default function Orcamentos() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const toast = useToast();
+  const confirm = useConfirm();
 
   // Form
   const [categoryId, setCategoryId] = useState("");
   const [amount, setAmount] = useState("");
   const [period, setPeriod] = useState("MONTHLY");
   const [alertAt, setAlertAt] = useState("80");
-
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -68,21 +68,22 @@ export default function Orcamentos() {
       body: JSON.stringify(payload)
     });
     if (res.ok) {
-      showToast("Orçamento criado!", "success");
+      toast.success("Orçamento criado!");
       setIsOpen(false);
       resetForm();
       fetchData();
     } else {
       const err = await res.json();
-      showToast(err.error || "Erro ao criar orçamento", "error");
+      toast.error(err.error || "Erro ao criar orçamento");
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Remover este orçamento?")) return;
+    const ok = await confirm({ message: "Remover este orçamento?", confirmLabel: "Remover", variant: "danger" });
+    if (!ok) return;
     const res = await fetch(`/api/budgets/${id}`, { method: "DELETE" });
-    if (res.ok) { showToast("Orçamento removido!", "success"); fetchData(); }
-    else showToast("Erro ao remover", "error");
+    if (res.ok) { toast.success("Orçamento removido!"); fetchData(); }
+    else toast.error("Erro ao remover");
   };
 
   const formatCurrency = (v: number) =>
@@ -101,13 +102,6 @@ export default function Orcamentos() {
   return (
     <motion.div initial="hidden" animate="visible" variants={containerVariants}
       className="space-y-8 md:space-y-12 max-w-7xl mx-auto pb-32 px-4 md:px-0">
-
-      {toast && (
-        <div className={cn("fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl font-bold text-sm shadow-2xl",
-          toast.type === "success" ? "bg-secondary text-white" : "bg-rose-500 text-white")}>
-          {toast.message}
-        </div>
-      )}
 
       {/* Header */}
       <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -214,18 +208,16 @@ export default function Orcamentos() {
 
       {/* Budget List */}
       {loading ? (
-        <div className="py-24 text-center animate-pulse text-on-surface-variant/20 font-black uppercase tracking-[0.3em]">
-          Carregando orçamentos...
-        </div>
+        <CardsGridSkeleton count={3} />
       ) : budgets.length === 0 ? (
         <motion.div variants={itemVariants}>
-          <div className="glass-card rounded-[32px] p-12 text-center border-none shadow-2xl">
-            <Target className="w-16 h-16 mx-auto mb-6 text-on-surface-variant/20" />
-            <h2 className="text-xl font-bold text-on-background">Nenhum orçamento definido</h2>
-            <p className="text-on-surface-variant/60 mt-2 max-w-sm mx-auto">
-              Defina limites de gastos por categoria para manter suas finanças sob controle.
-            </p>
-          </div>
+          <EmptyState
+            icon={Target}
+            title="Nenhum orçamento definido"
+            description="Defina limites de gastos por categoria para manter suas finanças sob controle."
+            ctaLabel="+ NOVO ORÇAMENTO"
+            onCta={() => setIsOpen(true)}
+          />
         </motion.div>
       ) : (
         <motion.div variants={itemVariants} className="space-y-4">

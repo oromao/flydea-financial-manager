@@ -9,6 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/confirm-dialog";
+import { CardsGridSkeleton } from "@/components/ui/page-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
+import { FieldError } from "@/components/ui/field-error";
 
 const ACCOUNT_TYPES = [
   { value: "CHECKING", label: "Conta Corrente", icon: Banknote, color: "#3B82F6" },
@@ -33,18 +38,15 @@ export default function Contas() {
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const toast = useToast();
+  const confirm = useConfirm();
 
   // Form
   const [name, setName] = useState("");
   const [type, setType] = useState("CHECKING");
   const [balance, setBalance] = useState("0");
   const [color, setColor] = useState("#3B82F6");
-
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
+  const [formErrors, setFormErrors] = useState<{ name?: string; balance?: string }>({});
 
   const fetchAccounts = useCallback(async () => {
     setLoading(true);
@@ -59,23 +61,35 @@ export default function Contas() {
 
   const resetForm = () => {
     setName(""); setType("CHECKING"); setBalance("0"); setColor("#3B82F6");
-    setEditingId(null);
+    setEditingId(null); setFormErrors({});
+  };
+
+  const validate = () => {
+    const errors: { name?: string; balance?: string } = {};
+    if (!name.trim()) errors.name = "Nome da conta é obrigatório";
+    else if (name.trim().length < 2) errors.name = "Nome deve ter pelo menos 2 caracteres";
+    const bal = parseFloat(balance);
+    if (isNaN(bal)) errors.balance = "Informe um valor válido";
+    return errors;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = { name, type, balance: parseFloat(balance), color };
+    const errors = validate();
+    if (Object.keys(errors).length > 0) { setFormErrors(errors); return; }
+    setFormErrors({});
+    const payload = { name: name.trim(), type, balance: parseFloat(balance), color };
     const url = editingId ? `/api/accounts/${editingId}` : "/api/accounts";
     const method = editingId ? "PUT" : "POST";
 
     const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     if (res.ok) {
-      showToast(editingId ? "Conta atualizada!" : "Conta criada!", "success");
+      toast.success(editingId ? "Conta atualizada!" : "Conta criada!");
       setIsOpen(false);
       resetForm();
       fetchAccounts();
     } else {
-      showToast("Erro ao salvar conta", "error");
+      toast.error("Erro ao salvar conta");
     }
   };
 
@@ -89,10 +103,16 @@ export default function Contas() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Remover esta conta? As transações vinculadas serão desvinculadas.")) return;
+    const ok = await confirm({
+      title: "Remover conta",
+      message: "As transações vinculadas serão desvinculadas. Esta ação não pode ser desfeita.",
+      confirmLabel: "Remover",
+      variant: "danger",
+    });
+    if (!ok) return;
     const res = await fetch(`/api/accounts/${id}`, { method: "DELETE" });
-    if (res.ok) { showToast("Conta removida!", "success"); fetchAccounts(); }
-    else showToast("Erro ao remover conta", "error");
+    if (res.ok) { toast.success("Conta removida!"); fetchAccounts(); }
+    else toast.error("Erro ao remover conta");
   };
 
   const formatCurrency = (v: number) =>
@@ -106,14 +126,6 @@ export default function Contas() {
   return (
     <motion.div initial="hidden" animate="visible" variants={containerVariants}
       className="space-y-8 md:space-y-12 max-w-7xl mx-auto pb-32 px-4 md:px-0">
-
-      {/* Toast */}
-      {toast && (
-        <div className={cn("fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl font-bold text-sm shadow-2xl",
-          toast.type === "success" ? "bg-secondary text-white" : "bg-rose-500 text-white")}>
-          {toast.message}
-        </div>
-      )}
 
       {/* Header */}
       <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -144,9 +156,11 @@ export default function Contas() {
             <form onSubmit={handleSubmit} className="p-8 space-y-5">
               <div className="space-y-2">
                 <Label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60">Nome</Label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} required
-                  className="h-14 rounded-2xl border-white/10 bg-white/5 text-white text-lg font-bold"
+                <Input value={name} onChange={(e) => { setName(e.target.value); if (formErrors.name) setFormErrors(p => ({ ...p, name: undefined })); }}
+                  className={cn("h-14 rounded-2xl bg-white/5 text-white text-lg font-bold",
+                    formErrors.name ? "border-rose-500/50 focus:border-rose-500" : "border-white/10")}
                   placeholder="Ex: Nubank, Bradesco, Carteira..." />
+                <FieldError message={formErrors.name} />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -165,8 +179,11 @@ export default function Contas() {
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60">Saldo Inicial (R$)</Label>
-                  <Input type="number" step="0.01" value={balance} onChange={(e) => setBalance(e.target.value)}
-                    className="h-14 rounded-2xl border-white/10 bg-white/5 text-white text-lg font-bold" />
+                  <Input type="number" step="0.01" value={balance}
+                    onChange={(e) => { setBalance(e.target.value); if (formErrors.balance) setFormErrors(p => ({ ...p, balance: undefined })); }}
+                    className={cn("h-14 rounded-2xl bg-white/5 text-white text-lg font-bold",
+                      formErrors.balance ? "border-rose-500/50" : "border-white/10")} />
+                  <FieldError message={formErrors.balance} />
                 </div>
               </div>
 
@@ -209,18 +226,16 @@ export default function Contas() {
 
       {/* Accounts Grid */}
       {loading ? (
-        <div className="py-24 text-center animate-pulse text-on-surface-variant/20 font-black uppercase tracking-[0.3em]">
-          Carregando contas...
-        </div>
+        <CardsGridSkeleton count={3} />
       ) : accounts.length === 0 ? (
         <motion.div variants={itemVariants}>
-          <div className="glass-card rounded-[32px] p-12 text-center border-none shadow-2xl">
-            <Wallet className="w-16 h-16 mx-auto mb-6 text-on-surface-variant/20" />
-            <h2 className="text-xl font-bold text-on-background">Nenhuma conta cadastrada</h2>
-            <p className="text-on-surface-variant/60 mt-2 max-w-sm mx-auto">
-              Cadastre suas contas bancárias, carteiras e cartões para controlar seu patrimônio.
-            </p>
-          </div>
+          <EmptyState
+            icon={Wallet}
+            title="Nenhuma conta cadastrada"
+            description="Cadastre suas contas bancárias, carteiras e cartões para controlar seu patrimônio."
+            ctaLabel="+ NOVA CONTA"
+            onCta={() => setIsOpen(true)}
+          />
         </motion.div>
       ) : (
         <motion.div variants={itemVariants}

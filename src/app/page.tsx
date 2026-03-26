@@ -12,6 +12,13 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { motion } from "framer-motion";
+import { useCountUp } from "@/hooks/useCountUp";
+
+function AnimatedCurrency({ value, className }: { value: number; className?: string }) {
+  const animated = useCountUp(value, 900, 200);
+  const formatted = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(animated);
+  return <span className={className}>{formatted}</span>;
+}
 
 const containerVariants: any = {
   hidden: { opacity: 0 },
@@ -127,7 +134,7 @@ export default function Dashboard() {
           <CardContent className="p-0 relative z-10">
             {loading ? <Skeleton className="h-12 w-48 bg-white/5" /> : (
               <div className="text-4xl md:text-5xl font-black tracking-tighter text-white">
-                {formatCurrency(metrics.balance)}
+                <AnimatedCurrency value={metrics.balance} />
               </div>
             )}
             <div className="mt-4 flex items-center gap-3">
@@ -154,7 +161,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="p-0">
             {loading ? <Skeleton className="h-10 w-40 bg-white/5" /> : (
-              <div className="text-3xl md:text-4xl font-black text-white">{formatCurrency(metrics.income)}</div>
+              <div className="text-3xl md:text-4xl font-black text-white"><AnimatedCurrency value={metrics.income} /></div>
             )}
             <p className="mt-4 text-[10px] text-on-surface-variant/40 font-black uppercase tracking-widest">Receita Mensal Bruta</p>
             {!loading && metrics.projectedIncome > 0 && (
@@ -174,7 +181,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="p-0">
             {loading ? <Skeleton className="h-10 w-40 bg-white/5" /> : (
-              <div className="text-3xl md:text-4xl font-black text-white">{formatCurrency(metrics.expenses)}</div>
+              <div className="text-3xl md:text-4xl font-black text-white"><AnimatedCurrency value={metrics.expenses} /></div>
             )}
             <p className="mt-4 text-[10px] text-on-surface-variant/40 font-black uppercase tracking-widest">Despesas Acumuladas</p>
             {!loading && metrics.projectedExpenses > 0 && (
@@ -265,6 +272,38 @@ export default function Dashboard() {
           </Link>
         </Card>
       </motion.div>
+
+      {/* Onboarding Checklist */}
+      {!loading && metrics.income === 0 && metrics.expenses === 0 && (
+        <motion.div variants={itemVariants}>
+          <div className="glass-card rounded-[28px] p-8 border border-primary/10 bg-primary/5">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Target className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-on-background">Primeiros passos</h3>
+                <p className="text-xs text-on-surface-variant/60">Complete a configuração inicial do seu FLY DEA</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              {[
+                { label: "Crie sua primeira conta bancária", href: "/contas", done: false },
+                { label: "Registre uma movimentação", href: "/movimentacoes", done: false },
+                { label: "Defina um orçamento por categoria", href: "/orcamentos", done: false },
+                { label: "Configure uma recorrência mensal", href: "/recorrencias", done: false },
+              ].map((item) => (
+                <Link key={item.label} href={item.href}
+                  className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white/5 transition-all group">
+                  <div className="w-5 h-5 rounded-full border-2 border-primary/40 group-hover:border-primary transition-colors shrink-0" />
+                  <span className="text-sm text-on-surface-variant/80 group-hover:text-on-background transition-colors font-medium">{item.label}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-primary/40 ml-auto group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Quick Actions */}
       <motion.div variants={itemVariants} className="grid gap-6 md:grid-cols-2">
