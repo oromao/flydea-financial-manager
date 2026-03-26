@@ -1,25 +1,34 @@
 import { NextResponse, NextRequest } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { isBefore, isSameDay, addMonths, addWeeks } from "date-fns";
+import { sendRecurrenceNotification } from "@/lib/email";
 
-const prisma = new PrismaClient();
+export async function GET(request: NextRequest) {
+  // Protect cron endpoint with secret token
+  const authHeader = request.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
 
-export async function GET() {
+  if (cronSecret) {
+    if (authHeader !== `Bearer ${cronSecret}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
   const now = new Date();
   const recurrences = await prisma.recurrence.findMany({
-    where: { isActive: true }
+    where: { isActive: true },
+    include: { user: true }
   });
 
   let generatedCount = 0;
 
   for (const rec of recurrences) {
     let nextDate = rec.nextDate ? new Date(rec.nextDate) : new Date(rec.startDate);
-    
+
     while (isBefore(nextDate, now) || isSameDay(nextDate, now)) {
-      // Create transaction
       await prisma.transaction.create({
         data: {
-          type: "EXPENSE",
+          type: rec.type || "EXPENSE",
           description: `${rec.description} (Recorrente)`,
           amount: rec.amount,
           date: new Date(nextDate),
@@ -29,7 +38,6 @@ export async function GET() {
         }
       });
 
-      // Log action
       await prisma.auditLog.create({
         data: {
           action: "RECURRENCE",
@@ -40,17 +48,28 @@ export async function GET() {
         }
       });
 
-      // Advance nextDate
+      // Send email notification
+      if (rec.user?.email) {
+        await sendRecurrenceNotification({
+          to: rec.user.email,
+          userName: rec.user.name || "Usuário",
+          description: rec.description,
+          amount: rec.amount,
+          date: new Date(nextDate),
+        }).catch(() => {}); // non-blocking
+      }
+
       if (rec.frequency === "MONTHLY") {
         nextDate = addMonths(nextDate, 1);
       } else if (rec.frequency === "WEEKLY") {
         nextDate = addWeeks(nextDate, 1);
+      } else {
+        break;
       }
-      
+
       generatedCount++;
     }
 
-    // Update recurrence nextDate
     await prisma.recurrence.update({
       where: { id: rec.id },
       data: { nextDate }

@@ -2,6 +2,9 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { TransactionSchema } from "@/lib/validations";
+
+const PAGE_SIZE = 20;
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -13,30 +16,57 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search");
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
-  
-  const transactions = await prisma.transaction.findMany({
-    where: {
-      userId: session.user.id,
-      ...(type ? { type } : {}),
-      ...(category && category !== "Todos" ? { category: { name: category } } : {}),
-      ...(search ? {
-        OR: [
-          { description: { contains: search } },
-          { observations: { contains: search } }
-        ]
-      } : {}),
-      ...(startDate || endDate ? {
-        date: {
-          ...(startDate ? { gte: new Date(startDate) } : {}),
-          ...(endDate ? { lte: new Date(endDate) } : {})
-        }
-      } : {})
-    },
-    include: { category: true },
-    orderBy: { date: "desc" }
-  });
+  const accountId = searchParams.get("accountId");
+  const tagId = searchParams.get("tagId");
+  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+  const all = searchParams.get("all") === "true";
 
-  return NextResponse.json(transactions);
+  const where: any = {
+    userId: session.user.id,
+    ...(type ? { type } : {}),
+    ...(category && category !== "Todos" ? { category: { name: category } } : {}),
+    ...(accountId ? { accountId } : {}),
+    ...(tagId ? { tags: { some: { tagId } } } : {}),
+    ...(search ? {
+      OR: [
+        { description: { contains: search, mode: "insensitive" } },
+        { observations: { contains: search, mode: "insensitive" } }
+      ]
+    } : {}),
+    ...(startDate || endDate ? {
+      date: {
+        ...(startDate ? { gte: new Date(startDate) } : {}),
+        ...(endDate ? { lte: new Date(endDate) } : {})
+      }
+    } : {})
+  };
+
+  if (all) {
+    const transactions = await prisma.transaction.findMany({
+      where,
+      include: { category: true, account: true, tags: { include: { tag: true } } },
+      orderBy: { date: "desc" }
+    });
+    return NextResponse.json({ data: transactions, total: transactions.length, page: 1, totalPages: 1 });
+  }
+
+  const [total, transactions] = await Promise.all([
+    prisma.transaction.count({ where }),
+    prisma.transaction.findMany({
+      where,
+      include: { category: true, account: true, tags: { include: { tag: true } } },
+      orderBy: { date: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE
+    })
+  ]);
+
+  return NextResponse.json({
+    data: transactions,
+    total,
+    page,
+    totalPages: Math.ceil(total / PAGE_SIZE)
+  });
 }
 
 export async function POST(request: NextRequest) {
@@ -44,28 +74,36 @@ export async function POST(request: NextRequest) {
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
-  const { type, description, categoryId, amount, date, observations, frequency, attachmentUrl, blobUrl } = body;
+  const parsed = TransactionSchema.safeParse(body);
 
-  if (!type || !description || !categoryId || !amount || !date) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
   }
+
+  const { type, description, categoryId, amount, date, observations, frequency, attachmentUrl, blobUrl, accountId, tagIds } = parsed.data;
 
   const transaction = await prisma.transaction.create({
     data: {
       type,
       description,
       categoryId,
-      amount: parseFloat(amount),
+      amount,
       date: new Date(date),
       observations,
       frequency: frequency || "NONE",
-      attachmentUrl,
-      blobUrl,
-      userId: session.user.id
-    }
+      attachmentUrl: attachmentUrl || null,
+      blobUrl: blobUrl || null,
+      accountId: accountId || null,
+      userId: session.user.id,
+      ...(tagIds && tagIds.length > 0 ? {
+        tags: {
+          create: tagIds.map((tagId) => ({ tagId }))
+        }
+      } : {})
+    },
+    include: { category: true, account: true, tags: { include: { tag: true } } }
   });
 
-  // Create Audit Log
   await prisma.auditLog.create({
     data: {
       action: "CREATE",

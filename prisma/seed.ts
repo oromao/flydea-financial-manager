@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 async function main() {
   const hashedPassword = await bcrypt.hash('flydea2026', 10)
   const testPassword = await bcrypt.hash('flydea2024', 10)
-  
+
   // Seed Users
   const admin = await prisma.user.upsert({
     where: { email: 'admin@flydea.com' },
@@ -28,25 +28,31 @@ async function main() {
     },
   })
 
-  // Seed Categories
-  const categories = [
+  // Seed system categories (userId = null → available to all users)
+  const systemCategories = [
     { name: 'Vendas', type: 'INCOME' },
     { name: 'Serviços', type: 'INCOME' },
+    { name: 'Salário', type: 'INCOME' },
     { name: 'Aluguel', type: 'EXPENSE' },
     { name: 'Salários', type: 'EXPENSE' },
     { name: 'Marketing', type: 'EXPENSE' },
+    { name: 'Alimentação', type: 'EXPENSE' },
+    { name: 'Transporte', type: 'EXPENSE' },
+    { name: 'Educação', type: 'EXPENSE' },
+    { name: 'Lazer', type: 'EXPENSE' },
+    { name: 'Saúde', type: 'EXPENSE' },
     { name: 'Outros', type: 'EXPENSE' },
   ]
 
-  for (const cat of categories) {
+  for (const cat of systemCategories) {
     await prisma.category.upsert({
-      where: { name: cat.name },
+      where: { name_userId: { name: cat.name, userId: null as unknown as string } },
       update: { type: cat.type },
-      create: cat,
+      create: { name: cat.name, type: cat.type, userId: null },
     })
   }
 
-  console.log({ admin, testUser, categoryCount: categories.length })
+  console.log({ admin: admin.email, testUser: testUser.email, systemCategories: systemCategories.length })
 }
 
 main()

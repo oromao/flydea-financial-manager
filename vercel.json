@@ -2,5 +2,11 @@
   "framework": "nextjs",
   "buildCommand": "npx prisma generate && next build",
   "installCommand": "npm install",
-  "regions": ["sao1"]
+  "regions": ["sao1"],
+  "crons": [
+    {
+      "path": "/api/cron/recurrence",
+      "schedule": "0 6 * * *"
+    }
+  ]
 }

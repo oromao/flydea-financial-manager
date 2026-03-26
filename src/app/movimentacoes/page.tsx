@@ -21,6 +21,9 @@ export default function Movimentacoes() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
 
   // Search/Filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,23 +48,31 @@ export default function Movimentacoes() {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const fetchTransactions = useCallback(async () => {
+  const fetchTransactions = useCallback(async (targetPage = page) => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (searchTerm) params.append("search", searchTerm);
       if (filterCategory !== "Todos") params.append("category", filterCategory);
       if (filterType) params.append("type", filterType);
+      params.append("page", String(targetPage));
 
       const res = await fetch(`/api/transactions?${params.toString()}`);
       const data = await res.json();
-      setTransactions(Array.isArray(data) ? data : []);
+      if (data.data) {
+        setTransactions(data.data);
+        setTotalPages(data.totalPages || 1);
+        setTotal(data.total || 0);
+        setPage(data.page || 1);
+      } else {
+        setTransactions(Array.isArray(data) ? data : []);
+      }
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, filterCategory, filterType]);
+  }, [searchTerm, filterCategory, filterType, page]);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -81,11 +92,15 @@ export default function Movimentacoes() {
   }, [fetchCategories]);
 
   useEffect(() => {
+    setPage(1);
+  }, [searchTerm, filterCategory, filterType]);
+
+  useEffect(() => {
     const timer = setTimeout(() => {
-      fetchTransactions();
+      fetchTransactions(page);
     }, 300);
     return () => clearTimeout(timer);
-  }, [fetchTransactions]);
+  }, [fetchTransactions, page]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,29 +176,10 @@ export default function Movimentacoes() {
   };
 
   const exportToCSV = () => {
-    if (transactions.length === 0) return;
-    
-    const headers = ["Data", "Descrição", "Categoria", "Tipo", "Valor", "Recorrência", "Anexo"];
-    const rows = transactions.map(t => [
-      format(new Date(t.date), "dd/MM/yyyy"),
-      t.description,
-      t.category?.name || "N/A",
-      t.type === "INCOME" ? "Entrada" : "Saída",
-      t.amount.toString(),
-      t.frequency === "MONTHLY" ? "Mensal" : "Nenhuma",
-      t.blobUrl || t.attachmentUrl || ""
-    ]);
-
-    const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `fly_dea_movimentacoes_${format(new Date(), "yyyy_MM_dd")}.csv`);
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const params = new URLSearchParams();
+    if (filterCategory !== "Todos") params.append("category", filterCategory);
+    if (filterType) params.append("type", filterType);
+    window.location.href = `/api/transactions/export?${params.toString()}`;
   };
 
   const formatCurrency = (value: number) => 
@@ -563,6 +559,37 @@ export default function Movimentacoes() {
           ))
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex items-center justify-between px-4 md:px-0"
+        >
+          <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">
+            {total} registros · Página {page}/{totalPages}
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="h-10 px-5 rounded-full border border-white/10 font-black text-xs uppercase disabled:opacity-30"
+            >
+              ← Anterior
+            </Button>
+            <Button
+              variant="ghost"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              className="h-10 px-5 rounded-full border border-white/10 font-black text-xs uppercase disabled:opacity-30"
+            >
+              Próxima →
+            </Button>
+          </div>
+        </motion.div>
+      )}
 
       {/* Mobile Floating Action Button (FAB) */}
       <div className="md:hidden fixed bottom-10 right-8 z-50">
