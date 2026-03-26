@@ -154,10 +154,10 @@ export default function Orcamentos() {
             </div>
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
-                <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Categoria</Label>
+                <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Categoria</Label>
                 <Select value={categoryId} onValueChange={(v) => setCategoryId(v || "")}>
-                  <SelectTrigger className="h-11 font-medium">
-                    <SelectValue placeholder="Selecione..." />
+                  <SelectTrigger className="h-11 font-medium text-foreground">
+                    {categories.find(c => c.id === categoryId)?.name || <span className="text-muted-foreground">Selecione...</span>}
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
                     {categories.map((c) => (
@@ -169,16 +169,16 @@ export default function Orcamentos() {
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Limite (BRL)</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Limite (BRL)</Label>
                   <Input type="number" step="0.01" required value={amount} onChange={(e) => setAmount(e.target.value)}
                     className="h-11 font-bold text-lg"
                     placeholder="0,00" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Período</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Período</Label>
                   <Select value={period} onValueChange={(v) => setPeriod(v || "MONTHLY")}>
-                    <SelectTrigger className="h-11 font-medium">
-                      <SelectValue placeholder="Selecione..." />
+                    <SelectTrigger className="h-11 font-medium text-foreground">
+                      {period === "MONTHLY" ? "Mensal" : period === "YEARLY" ? "Anual" : <span className="text-muted-foreground">Selecione...</span>}
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                       <SelectItem value="MONTHLY" className="rounded-lg">Mensal</SelectItem>
@@ -190,7 +190,7 @@ export default function Orcamentos() {
 
               <div className="space-y-4">
                 <div className="flex justify-between items-center px-1">
-                  <Label className="text-xs font-semibold text-on-surface-variant/70">
+                  <Label className="text-xs font-semibold text-on-surface-variant font-bold">
                     Alerta de Proximidade
                   </Label>
                   <span className="text-xs font-bold text-secondary">{alertAt}%</span>

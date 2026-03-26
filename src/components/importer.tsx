@@ -86,8 +86,8 @@ export function Importer({ onImportSuccess }: ImporterProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button className="h-16 px-8 rounded-full bg-white/5 hover:bg-white/10 text-on-surface font-black uppercase tracking-widest border border-white/5 transition-all active:scale-95" />}>
-        <Upload className="w-6 h-6 mr-3 text-primary" /> IMPORTAR EXTRATO
+      <DialogTrigger render={<Button className="h-12 md:h-16 px-3 md:px-8 w-auto rounded-full bg-white/5 hover:bg-white/10 text-on-surface text-xs md:text-base font-black uppercase tracking-widest border border-white/5 transition-all active:scale-95 whitespace-nowrap flex items-center gap-1 md:gap-3" />}>
+        <Upload className="w-5 md:w-6 h-5 md:h-6 text-primary" /> <span className="hidden sm:inline">IMPORTAR EXTRATO</span><span className="sm:hidden">IMPORTAR</span>
       </DialogTrigger>
       <DialogContent className="w-[95vw] md:max-w-xl bg-surface border-none rounded-[40px] p-0 shadow-[0_32px_80px_rgba(0,0,0,0.8)] backdrop-blur-3xl overflow-hidden ring-1 ring-white/10">
         <div className="bg-white/5 p-8 md:p-12 border-b border-white/5">

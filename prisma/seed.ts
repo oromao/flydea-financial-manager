@@ -28,6 +28,17 @@ async function main() {
     },
   })
 
+  const luizPassword = await bcrypt.hash('luiz2026', 10)
+  const luizUser = await prisma.user.upsert({
+    where: { email: 'luiz@flydea.com' },
+    update: {},
+    create: {
+      email: 'luiz@flydea.com',
+      name: 'Luiz',
+      password: luizPassword,
+    },
+  })
+
   // Seed system categories (userId = null → available to all users)
   const systemCategories = [
     { name: 'Vendas', type: 'INCOME' },
@@ -52,7 +63,7 @@ async function main() {
     })
   }
 
-  console.log({ admin: admin.email, testUser: testUser.email, systemCategories: systemCategories.length })
+  console.log({ admin: admin.email, testUser: testUser.email, luizUser: luizUser.email, systemCategories: systemCategories.length })
 }
 
 main()

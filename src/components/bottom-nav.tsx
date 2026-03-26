@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ReceiptText, BarChart3, CreditCard, Target } from "lucide-react";
+import { LayoutDashboard, ReceiptText, BarChart3, CreditCard, Target, LogOut } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -17,6 +18,10 @@ export function BottomNav() {
   const pathname = usePathname();
 
   if (pathname === '/login') return null;
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/login' });
+  };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-surface/85 backdrop-blur-xl border-t border-outline/20 px-4 pt-2 h-[calc(4rem+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
@@ -44,6 +49,15 @@ export function BottomNav() {
             </Link>
           );
         })}
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="flex flex-col items-center justify-center gap-1 transition-all duration-200 relative py-1 rounded-lg flex-1 text-on-surface-variant hover:text-red-500 group"
+        >
+          <LogOut className="w-5 h-5 transition-transform group-hover:scale-105" />
+          <span className="text-[10px] font-medium tracking-wide opacity-80">Sair</span>
+        </button>
       </div>
     </nav>
   );

@@ -263,27 +263,27 @@ export default function Movimentacoes() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Descrição</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Descrição</Label>
                   <Input required value={description} onChange={e => setDescription(e.target.value)} className="h-11 font-medium" placeholder="Ex: Assinatura mensal Cloud" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Valor (BRL)</Label>
+                    <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Valor (BRL)</Label>
                     <Input required type="number" step="0.01" value={amount} onChange={e => setAmount(e.target.value)} className="h-11 font-bold text-lg" />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Data</Label>
+                    <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Data</Label>
                     <Input required type="date" value={date} onChange={e => setDate(e.target.value)} className="h-11 font-medium" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Categoria</Label>
+                    <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Categoria</Label>
                     <Select value={categoryId} onValueChange={v => setCategoryId(v || "")}>
-                      <SelectTrigger className="h-11 font-medium">
-                        <SelectValue placeholder="Selecione..." />
+                      <SelectTrigger className="h-11 font-medium text-foreground">
+                        {categories.find(c => c.id === categoryId)?.name || <span className="text-muted-foreground">Selecione...</span>}
                       </SelectTrigger>
                       <SelectContent className="rounded-xl">
                         {categories.map(c => (
@@ -293,10 +293,10 @@ export default function Movimentacoes() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Recorrência</Label>
+                    <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Recorrência</Label>
                     <Select value={frequency} onValueChange={v => setFrequency(v || "NONE")}>
-                      <SelectTrigger className="h-11 font-medium">
-                        <SelectValue placeholder="Selecione..." />
+                      <SelectTrigger className="h-11 font-medium text-foreground">
+                        {frequency === "MONTHLY" ? "Mensal" : frequency === "NONE" ? "Nenhuma" : <span className="text-muted-foreground">Selecione...</span>}
                       </SelectTrigger>
                       <SelectContent className="rounded-xl">
                         <SelectItem value="NONE" className="rounded-lg">Nenhuma</SelectItem>
@@ -307,7 +307,7 @@ export default function Movimentacoes() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Comprovante</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Comprovante</Label>
                   <div className="flex gap-3">
                     <div className="relative flex-1">
                       <Input 

@@ -159,7 +159,7 @@ export default function Contas() {
             </div>
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
-                <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Identificação</Label>
+                <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Identificação</Label>
                 <Input value={name} onChange={(e) => setName(e.target.value)} required
                   className="h-11 font-medium"
                   placeholder="Ex: Nubank, Carteira Principal" />
@@ -167,10 +167,10 @@ export default function Contas() {
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Tipo de Conta</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Tipo de Conta</Label>
                   <Select value={type} onValueChange={(v) => setType(v || "CHECKING")}>
-                    <SelectTrigger className="h-11 font-medium">
-                      <SelectValue />
+                    <SelectTrigger className="h-11 font-medium text-foreground">
+                      {ACCOUNT_TYPES.find(t => t.value === type)?.label || <span className="text-muted-foreground">Selecione...</span>}
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                       {ACCOUNT_TYPES.map((t) => (
@@ -180,14 +180,14 @@ export default function Contas() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Saldo Inicial (BRL)</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Saldo Inicial (BRL)</Label>
                   <Input type="number" step="0.01" value={balance} onChange={(e) => setBalance(e.target.value)}
                     className="h-11 font-bold text-lg" />
                 </div>
               </div>
 
               <div className="space-y-3">
-                <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Cor de Destaque</Label>
+                <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Cor de Destaque</Label>
                 <div className="flex gap-2.5 flex-wrap">
                   {COLORS.map((c) => (
                     <button key={c} type="button" onClick={() => setColor(c)}

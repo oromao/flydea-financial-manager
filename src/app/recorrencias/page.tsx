@@ -139,7 +139,7 @@ export default function Recorrencias() {
             
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
-                <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Descrição</Label>
+                <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Descrição</Label>
                 <Input value={description} onChange={e => setDescription(e.target.value)} 
                   className="h-11 font-medium text-lg" 
                   placeholder="Ex: Aluguel, Netflix, Salários..." />
@@ -147,16 +147,16 @@ export default function Recorrencias() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Valor Mensal (BRL)</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Valor Mensal (BRL)</Label>
                   <Input type="number" step="0.01" value={amount} onChange={e => setAmount(e.target.value)} 
                     className="h-11 font-bold text-lg" 
                     placeholder="0,00" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Frequência</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Frequência</Label>
                   <Select value={frequency} onValueChange={v => setFrequency(v || "MONTHLY")}>
-                    <SelectTrigger className="h-11 font-medium">
-                      <SelectValue placeholder="Selecione..." />
+                    <SelectTrigger className="h-11 font-medium text-foreground">
+                      {frequency === "MONTHLY" ? "Mensal" : frequency === "WEEKLY" ? "Semanal" : <span className="text-muted-foreground">Selecione...</span>}
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                       <SelectItem value="MONTHLY" className="rounded-lg">Mensal</SelectItem>
@@ -168,15 +168,15 @@ export default function Recorrencias() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Data Inicial</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Data Inicial</Label>
                   <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} 
                     className="h-11 font-medium" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Categoria</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Categoria</Label>
                   <Select value={categoryId} onValueChange={v => setCategoryId(v || "")}>
-                    <SelectTrigger className="h-11 font-medium border-t-0 border-x-0 rounded-none px-0">
-                      <SelectValue placeholder="Selecione..." />
+                    <SelectTrigger className="h-11 font-medium border-t-0 border-x-0 rounded-none px-0 text-foreground">
+                      {categories.find(c => c.id === categoryId)?.name || <span className="text-muted-foreground">Selecione...</span>}
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                       {categories.map(c => (
