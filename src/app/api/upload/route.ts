@@ -12,8 +12,10 @@ export async function POST(request: Request): Promise<NextResponse> {
   const { searchParams } = new URL(request.url);
   const filename = searchParams.get("filename") || `upload-${Date.now()}`;
 
+  const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.VERCEL_BLOB_READ_WRITE_TOKEN;
+
   // If Vercel Blob token is missing and we are in development, save locally
-  if (!process.env.BLOB_READ_WRITE_TOKEN && process.env.NODE_ENV === "development") {
+  if (!token && process.env.NODE_ENV === "development") {
     try {
       const contentType = request.headers.get("content-type") || "";
       let fileBuffer: Buffer;
@@ -62,7 +64,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     const blob = await put(filename, body, {
       access: "public",
-      token: process.env.BLOB_READ_WRITE_TOKEN
+      token
     });
 
     return NextResponse.json(blob);

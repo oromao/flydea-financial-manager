@@ -20,8 +20,9 @@ All commands:
     link, ll, login, logout, ls, org, outdated, owner, pack,
     ping, pkg, prefix, profile, prune, publish, query, rebuild,
     repo, restart, root, run, sbom, search, set, shrinkwrap,
-    star, stars, start, stop, team, test, token, undeprecate,
-    uninstall, unpublish, unstar, update, version, view, whoami
+    star, stars, start, stop, team, test, token, trust,
+    undeprecate, uninstall, unpublish, unstar, update, version,
+    view, whoami
 
 Specify configs in the ini-formatted file:
     /Users/paulo/.npmrc
@@ -30,4 +31,4 @@ or on the command line via: npm <command> --key=value
 More configuration info: npm help config
 Configuration fields: npm help 7 config
 
-npm@11.9.0 /opt/homebrew/lib/node_modules/npm
+npm@11.12.0 /Users/paulo/.npm-global/lib/node_modules/npm
