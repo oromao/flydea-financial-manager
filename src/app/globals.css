@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -7,36 +7,34 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Outfit", sans-serif;
   
-  /* Premium Vibrant Dark Palette */
-  --color-primary: #3B82F6; /* Azure Blue */
+  /* Sophisticated Neutral Palette (Apple-inspired) */
+  --color-primary: #1D1D1F; /* Apple Black */
   --color-on-primary: #FFFFFF;
-  --color-primary-container: #1E3A8A;
-  --color-on-primary-container: #DBEAFE;
+  --color-primary-container: #F5F5F7;
+  --color-on-primary-container: #1D1D1F;
   
-  --color-secondary: #10B981; /* Emerald */
+  --color-secondary: #0071E3; /* Apple Blue (Used sparingly) */
   --color-on-secondary: #FFFFFF;
-  --color-secondary-container: #064E3B;
-  --color-on-secondary-container: #D1FAE5;
+  --color-secondary-container: #E8F2FF;
+  --color-on-secondary-container: #0071E3;
   
-  --color-surface: #09090B; /* Zinc 950 */
-  --color-on-surface: #FAFAFA;
-  --color-surface-variant: #27272A;
-  --color-on-surface-variant: #A1A1AA;
+  --color-surface: #FFFFFF;
+  --color-on-surface: #1D1D1F;
+  --color-surface-variant: #F5F5F7;
+  --color-on-surface-variant: #52525B;
   
-  --color-outline: #3F3F46;
-  --color-background: #020617; /* Slate 950 */
-  --color-on-background: #F8FAFC;
+  --color-outline: #A1A1AA;
+  --color-background: #FBFBFD;
+  --color-on-background: #1D1D1F;
 
-  --radius-xl: 32px;
-  --radius-lg: 24px;
-  --radius-md: 16px;
-  --radius-sm: 12px;
+  --radius-xl: 18px;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-sm: 8px;
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
-  --animate-float: float 6s ease-in-out infinite;
 
   @keyframes accordion-down {
     from { height: 0; }
@@ -46,77 +44,65 @@
     from { height: var(--radix-accordion-content-height); }
     to { height: 0; }
   }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
 }
 
 @layer base {
   *, ::after, ::before {
-    @apply border-white/5 outline-primary/50;
+    @apply border-outline/50 outline-primary/70;
     box-sizing: border-box;
   }
   body {
-    @apply bg-background text-on-background font-sans antialiased selection:bg-primary/30 selection:text-white;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.05) 0, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0, transparent 50%);
-    background-attachment: fixed;
+    @apply bg-background text-on-background font-sans antialiased selection:bg-secondary/20 selection:text-primary;
   }
   input, select, textarea {
-    @apply text-on-surface bg-white/5 border border-white/10 rounded-2xl px-4 py-3 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all duration-300 outline-none backdrop-blur-md;
+    @apply text-on-surface bg-surface border border-outline/50 rounded-lg px-4 py-2.5 focus:border-secondary focus:ring-4 focus:ring-secondary/10 transition-all duration-200 outline-none;
   }
   input::placeholder {
-    @apply text-on-surface-variant/40;
+    @apply text-on-surface-variant/70;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight;
+    @apply font-sans font-semibold tracking-tight;
   }
 }
 
-/* Premium Glassmorphism & Effects */
-.glass-card {
-  @apply bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.6)];
-  position: relative;
-  overflow: hidden;
+/* Sophisticated Minimalist Cards & Components */
+.premium-card {
+  @apply bg-surface border border-outline/30 shadow-[0_2px_8px_rgba(0,0,0,0.04)] rounded-xl transition-shadow duration-300 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)];
 }
 
-.glass-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%);
-  pointer-events: none;
+.apple-button-primary {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full font-medium transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  @apply bg-primary text-on-primary hover:bg-primary/90;
 }
 
-.m3-button-premium {
-  @apply relative overflow-hidden bg-primary text-white font-black rounded-full px-8 py-4 transition-all duration-500 shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] hover:scale-105 active:scale-95 flex items-center justify-center gap-3 decoration-0;
+.apple-button-secondary {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full font-medium transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  @apply bg-secondary text-on-secondary hover:bg-secondary/90;
 }
 
-.m3-button-premium::after {
-  content: '';
-  @apply absolute inset-0 bg-white/10 opacity-0 transition-opacity;
+.apple-button-outline {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full font-medium transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  @apply border border-outline hover:bg-surface-variant;
 }
 
-.m3-button-premium:hover::after {
-  @apply opacity-100;
+.nav-link {
+  @apply flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-on-surface-variant hover:bg-surface-variant hover:text-on-surface;
 }
 
-.gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-400 to-secondary;
+.nav-link-active {
+  @apply flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 bg-surface-variant text-on-surface font-semibold;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar (Minimal) */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   @apply bg-transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-white/10 rounded-full hover:bg-white/20 transition-all;
+  @apply bg-outline/40 rounded-full hover:bg-outline/60 transition-all;
 }
 
 /* Responsive Utilities */

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { format } from "date-fns";
+import * as xlsx from "xlsx";
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -30,26 +31,27 @@ export async function GET(request: NextRequest) {
     orderBy: { date: "desc" }
   });
 
-  // Build CSV
-  const header = ["Data", "Tipo", "Descrição", "Categoria", "Conta", "Valor (R$)", "Status", "Observações"];
-  const rows = transactions.map((t) => [
-    format(new Date(t.date), "dd/MM/yyyy"),
-    t.type === "INCOME" ? "Receita" : "Despesa",
-    `"${t.description.replace(/"/g, '""')}"`,
-    t.category?.name || "",
-    t.account?.name || "",
-    t.type === "INCOME" ? t.amount.toFixed(2) : `-${t.amount.toFixed(2)}`,
-    t.status,
-    `"${(t.observations || "").replace(/"/g, '""')}"`
-  ]);
+  const rows = transactions.map((t) => ({
+    "Data": format(new Date(t.date), "dd/MM/yyyy"),
+    "Tipo": t.type === "INCOME" ? "Receita" : "Despesa",
+    "Descrição": t.description,
+    "Categoria": t.category?.name || "",
+    "Conta": t.account?.name || "",
+    "Valor (R$)": t.type === "INCOME" ? t.amount : -t.amount,
+    "Status": t.status,
+    "Observações": t.observations || ""
+  }));
 
-  const csv = [header, ...rows].map((r) => r.join(";")).join("\n");
-  const bom = "\uFEFF"; // UTF-8 BOM for Excel compatibility
+  const worksheet = xlsx.utils.json_to_sheet(rows);
+  const workbook = xlsx.utils.book_new();
+  xlsx.utils.book_append_sheet(workbook, worksheet, "Transações");
 
-  return new NextResponse(bom + csv, {
+  const buf = xlsx.write(workbook, { type: "buffer", bookType: "xlsx" });
+
+  return new NextResponse(buf, {
     headers: {
-      "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="flydea-transacoes-${format(new Date(), "yyyy-MM-dd")}.csv"`
+      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "Content-Disposition": `attachment; filename="flydea-transacoes-${format(new Date(), "yyyy-MM-dd")}.xlsx"`
     }
   });
 }

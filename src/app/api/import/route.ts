@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
   }
 
   // Get default category "Outros"
-  const defaultCategory = await prisma.category.findUnique({
-    where: { name: "Outros" }
+  const defaultCategory = await prisma.category.findFirst({
+    where: { name: "Outros", userId: null }
   });
 
   const results = await prisma.$transaction(

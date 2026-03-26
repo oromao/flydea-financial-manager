@@ -31,39 +31,39 @@ export default function AuditLogs() {
   return (
     <div className="space-y-8 max-w-6xl">
       <div className="flex items-center gap-4">
-        <div className="p-3 rounded-2xl bg-[#BBC7DB] text-[#253140]">
+        <div className="p-3 rounded-2xl bg-secondary/10 text-secondary">
           <ShieldCheck className="w-8 h-8" />
         </div>
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-[#E2E2E6]">Logs de Auditoria</h1>
-          <p className="text-[#C3C7CF] font-medium mt-1">Histórico de transparência v5.0 Enterprise</p>
+          <h1 className="text-4xl font-bold tracking-tight text-on-background">Logs de Auditoria</h1>
+          <p className="text-on-surface-variant font-medium mt-1">Histórico de transparência v5.0 Enterprise</p>
         </div>
       </div>
 
-      <Card className="bg-[#1A1C1E] rounded-[32px] border-[#43474E] overflow-hidden shadow-sm">
+      <Card className="premium-card bg-surface rounded-[32px] border-outline-variant overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
-            <TableRow className="bg-[#1D2024] border-b border-[#43474E]">
-              <TableHead className="px-10 py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-[#C3C7CF]">Quando</TableHead>
-              <TableHead className="py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-[#C3C7CF]">Responsável</TableHead>
-              <TableHead className="py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-[#C3C7CF]">Ação</TableHead>
-              <TableHead className="py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-[#C3C7CF]">Entidade</TableHead>
-              <TableHead className="px-10 py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-[#C3C7CF]">Detalhes</TableHead>
+            <TableRow className="bg-surface-variant/30 border-b border-outline-variant">
+              <TableHead className="px-10 py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-on-surface-variant">Quando</TableHead>
+              <TableHead className="py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-on-surface-variant">Responsável</TableHead>
+              <TableHead className="py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-on-surface-variant">Ação</TableHead>
+              <TableHead className="py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-on-surface-variant">Entidade</TableHead>
+              <TableHead className="px-10 py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-on-surface-variant">Detalhes</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow><TableCell colSpan={5} className="text-center py-24 animate-pulse uppercase text-xs font-bold tracking-widest text-[#8D9199]">Carregando logs...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={5} className="text-center py-24 animate-pulse uppercase text-xs font-bold tracking-widest text-on-surface-variant/60">Carregando logs...</TableCell></TableRow>
             ) : logs.length === 0 ? (
-              <TableRow><TableCell colSpan={5} className="text-center py-24 text-[#8D9199]">Nenhum log encontrado</TableCell></TableRow>
+              <TableRow><TableCell colSpan={5} className="text-center py-24 text-on-surface-variant/60">Nenhum log encontrado</TableCell></TableRow>
             ) : logs.map((log) => (
-              <TableRow key={log.id} className="border-b border-[#43474E]/30 text-[#E2E2E6]">
+              <TableRow key={log.id} className="border-b border-outline-variant/30 text-on-surface hover:bg-surface-variant/10 transition-colors">
                 <TableCell className="px-10 py-6">
                   <span className="font-bold text-sm">{format(new Date(log.createdAt), "dd/MM/yyyy HH:mm")}</span>
                 </TableCell>
                 <TableCell className="py-6">
                   <div className="flex items-center gap-2">
-                    <User className="w-3.5 h-3.5 text-[#8D9199]" />
+                    <User className="w-3.5 h-3.5 text-on-surface-variant" />
                     <span className="font-bold text-sm">{log.user.name}</span>
                   </div>
                 </TableCell>
@@ -73,10 +73,10 @@ export default function AuditLogs() {
                   </span>
                 </TableCell>
                 <TableCell className="py-6">
-                  <span className="text-xs font-medium text-[#C3C7CF]">{log.entity}</span>
+                  <span className="text-xs font-medium text-on-surface-variant/80">{log.entity}</span>
                 </TableCell>
                 <TableCell className="px-10 py-6">
-                  <span className="text-sm italic text-[#8D9199]">{log.details}</span>
+                  <span className="text-sm italic text-on-surface-variant/60">{log.details}</span>
                 </TableCell>
               </TableRow>
             ))}

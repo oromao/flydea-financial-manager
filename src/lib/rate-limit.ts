@@ -3,7 +3,7 @@
  * Falls back to a no-op in development or when env vars are missing.
  */
 
-let ratelimit: any = null;
+let ratelimit: { limit: (id: string) => Promise<{ success: boolean; remaining: number }> } | null = null;
 
 async function getRateLimiter() {
   if (ratelimit) return ratelimit;

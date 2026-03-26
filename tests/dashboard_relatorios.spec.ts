@@ -12,12 +12,12 @@ test.describe('Dashboard e Relatórios', () => {
     await page.goto('/');
     await expect(page.locator('text=Entradas')).toBeVisible();
     await expect(page.locator('text=Saídas')).toBeVisible();
-    await expect(page.locator('text=Saldo Atual')).toBeVisible();
+    await expect(page.locator('text=Saldo Consolidado')).toBeVisible();
   });
 
   test('Relatórios deve exibir categorias e progresso', async ({ page }) => {
     await page.goto('/relatorios');
-    await expect(page.locator('h1')).toContainText('Relatórios');
+    await expect(page.getByRole('heading', { level: 1, name: /Relatórios/i })).toBeVisible();
     // Check if categories seeded are visible
     await expect(page.locator('text=Marketing').or(page.locator('text=Outros'))).toBeVisible();
   });

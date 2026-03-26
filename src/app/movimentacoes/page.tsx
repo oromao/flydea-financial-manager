@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { format } from "date-fns";
-import { Plus, Trash2, Search, ArrowUp, ArrowDown, Filter, LayoutList, Download, Edit2, RotateCcw, X, Paperclip, ExternalLink, MoreVertical, Wallet } from "lucide-react";
+import { Plus, Trash2, Search, ArrowUp, ArrowDown, Filter, LayoutList, FileSpreadsheet, Edit2, RotateCcw, X, Paperclip, ExternalLink, MoreVertical, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -132,7 +132,10 @@ export default function Movimentacoes() {
         fetchTransactions();
       } else {
         const errorData = await res.json();
-        showToast(errorData.error || "Erro ao salvar o lançamento", "error");
+        const msg = typeof errorData.error === 'object' 
+          ? JSON.stringify(errorData.error) 
+          : (errorData.error || "Erro ao salvar o lançamento");
+        showToast(msg, "error");
       }
     } catch(e) {
       console.error(e);
@@ -175,7 +178,7 @@ export default function Movimentacoes() {
     setBlobUrl("");
   };
 
-  const exportToCSV = () => {
+  const exportToExcel = () => {
     const params = new URLSearchParams();
     if (filterCategory !== "Todos") params.append("category", filterCategory);
     if (filterType) params.append("type", filterType);
@@ -186,126 +189,126 @@ export default function Movimentacoes() {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   return (
-    <div className="space-y-8 md:space-y-12 max-w-7xl mx-auto relative pb-32">
+    <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto relative pb-32">
       {/* Custom Toast Notification */}
       <AnimatePresence>
         {toast && (
           <motion.div 
-            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
             className={cn(
-              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-8 py-4 rounded-full shadow-2xl flex items-center gap-4 border backdrop-blur-xl transition-all duration-500",
+              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-lg flex items-center gap-3 border bg-surface/90 backdrop-blur-md transition-all duration-300",
               toast.type === "success" 
-                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-emerald-500/10" 
-                : "bg-rose-500/10 border-rose-500/30 text-rose-400 shadow-rose-500/10"
+                ? "border-emerald-200 text-emerald-700" 
+                : "border-red-200 text-red-700"
             )}
           >
-            {toast.type === "success" ? <CheckCircle2 className="w-6 h-6" /> : <AlertCircle className="w-6 h-6" />}
-            <span className="font-black uppercase tracking-widest text-xs">{toast.message}</span>
+            {toast.type === "success" ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+            <span className="font-semibold text-xs tracking-tight">{toast.message}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Header - Responsive */}
       <motion.div 
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
         className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 px-4 md:px-0"
       >
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-5">
           <motion.div 
-            whileHover={{ scale: 1.1, rotate: -5 }}
-            className="p-4 rounded-3xl bg-secondary text-on-secondary shadow-2xl shadow-secondary/20"
+            whileHover={{ scale: 1.02 }}
+            className="p-3.5 rounded-2xl bg-secondary text-on-secondary shadow-sm"
           >
-            <LayoutList className="w-8 h-8 md:w-10 md:h-10" />
+            <LayoutList className="w-7 h-7 md:w-8 md:h-8" />
           </motion.div>
           <div>
-            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-on-background">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-background">
               Fluxo de Caixa
             </h1>
-            <p className="text-on-surface-variant/60 font-bold text-sm md:text-lg uppercase tracking-[0.2em] mt-1">Gestão FLY DEA <span className="text-primary">•</span> Premium Mobility</p>
+            <p className="text-on-surface-variant font-medium text-sm mt-1">Gestão inteligente e precisa de ativos</p>
           </div>
         </div>
         
-        <div className="flex items-center gap-4 w-full md:w-auto">
+        <div className="flex items-center gap-3 w-full md:w-auto">
           <Button 
-            onClick={exportToCSV}
-            className="flex-1 md:flex-none h-16 px-8 rounded-full bg-white/5 hover:bg-white/10 text-on-surface font-black uppercase tracking-widest border border-white/5 transition-all active:scale-95"
+            variant="outline"
+            onClick={exportToExcel}
+            className="flex-1 md:flex-none h-11 px-6 font-semibold"
           >
-            <Download className="w-6 h-6 mr-3" /> CSV
+            <FileSpreadsheet className="w-4 h-4 mr-2" /> Exportar Excel
           </Button>
 
           <Dialog open={open} onOpenChange={(val) => {
             setOpen(val);
             if (!val) resetForm();
           }}>
-            <DialogTrigger render={<Button className="m3-button-premium flex-[2] md:flex-none h-16 px-10 border-none" />}>
-              <Plus className="w-7 h-7 mr-3" strokeWidth={4} /> NOVO LANÇAMENTO
+            <DialogTrigger render={<Button className="apple-button-primary flex-[2] md:flex-none h-11 px-8" />}>
+              <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVO LANÇAMENTO
             </DialogTrigger>
-            <DialogContent className="w-[95vw] md:max-w-[550px] p-0 overflow-hidden border-none rounded-[40px] bg-surface shadow-[0_32px_80px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
-              <div className="bg-surface-variant/10 p-8 md:p-12 border-b border-white/5 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl" />
+            <DialogContent className="max-w-[500px] p-0 overflow-hidden border-none rounded-3xl bg-surface shadow-2xl">
+              <div className="p-8 border-b border-outline/10 bg-surface">
                 <DialogHeader>
-                  <DialogTitle className="text-2xl md:text-4xl font-black text-on-background tracking-tighter">
+                  <DialogTitle className="text-2xl font-bold tracking-tight text-on-background">
                     {editingId ? "Editar Registro" : "Novo Lançamento"}
                   </DialogTitle>
-                  <p className="text-on-surface-variant/40 text-xs font-bold uppercase tracking-widest mt-2 italic">Infraestrutura Corporativa FLY DEA</p>
+                  <p className="text-on-surface-variant text-sm font-medium mt-1">Insira os detalhes da movimentação</p>
                 </DialogHeader>
               </div>
-              <form onSubmit={handleSubmit} className="p-8 md:p-12 space-y-8 md:space-y-10 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                <div className="grid grid-cols-2 gap-4 p-1.5 bg-background rounded-full border border-white/5">
-                  <Button type="button" variant="ghost" className={cn("h-14 rounded-full text-xs font-black uppercase tracking-widest transition-all", type === "INCOME" ? "bg-primary text-on-primary shadow-xl" : "text-on-surface-variant/40")} onClick={() => setType("INCOME")}><ArrowUp className="w-4 h-4 mr-2" /> Receita</Button>
-                  <Button type="button" variant="ghost" className={cn("h-14 rounded-full text-xs font-black uppercase tracking-widest transition-all", type === "EXPENSE" ? "bg-primary text-on-primary shadow-xl" : "text-on-surface-variant/40")} onClick={() => setType("EXPENSE")}><ArrowDown className="w-4 h-4 mr-2" /> Despesa</Button>
+              <form onSubmit={handleSubmit} className="p-8 space-y-6">
+                <div className="flex gap-2 p-1 bg-surface-variant rounded-full border border-outline/20">
+                  <Button type="button" variant="ghost" className={cn("flex-1 h-9 rounded-full text-xs font-bold transition-all", type === "INCOME" ? "bg-surface text-secondary shadow-sm" : "text-on-surface-variant")} onClick={() => setType("INCOME")}><ArrowUp className="w-3.5 h-3.5 mr-2" /> Receita</Button>
+                  <Button type="button" variant="ghost" className={cn("flex-1 h-9 rounded-full text-xs font-bold transition-all", type === "EXPENSE" ? "bg-surface text-red-600 shadow-sm" : "text-on-surface-variant")} onClick={() => setType("EXPENSE")}><ArrowDown className="w-3.5 h-3.5 mr-2" /> Despesa</Button>
                 </div>
                 
-                <div className="space-y-4">
-                  <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/40 ml-3">Descrição Detalhada</Label>
-                  <Input required value={description} onChange={e => setDescription(e.target.value)} className="h-16 rounded-[24px] border-white/5 bg-white/[0.03] text-on-surface placeholder:text-on-surface-variant/20 px-8 text-lg font-bold focus:bg-white/[0.06] transition-all" placeholder="Ex: Pagamento Consultoria..." />
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Descrição</Label>
+                  <Input required value={description} onChange={e => setDescription(e.target.value)} className="h-11 font-medium" placeholder="Ex: Assinatura mensal Cloud" />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/40 ml-3">Valor (BRL)</Label>
-                    <Input required type="number" step="0.01" value={amount} onChange={e => setAmount(e.target.value)} className="h-16 rounded-[24px] border-white/5 bg-white/[0.03] text-on-surface px-8 text-lg font-black focus:bg-white/[0.06] transition-all" />
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Valor (BRL)</Label>
+                    <Input required type="number" step="0.01" value={amount} onChange={e => setAmount(e.target.value)} className="h-11 font-bold text-lg" />
                   </div>
-                  <div className="space-y-4">
-                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/40 ml-3">Data Operação</Label>
-                    <Input required type="date" value={date} onChange={e => setDate(e.target.value)} className="h-16 rounded-[24px] border-white/5 bg-white/[0.03] text-on-surface px-8 text-lg font-bold focus:bg-white/[0.06] transition-all" />
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Data</Label>
+                    <Input required type="date" value={date} onChange={e => setDate(e.target.value)} className="h-11 font-medium" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/40 ml-3">Categoria M3</Label>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Categoria</Label>
                     <Select value={categoryId} onValueChange={v => setCategoryId(v || "")}>
-                      <SelectTrigger className="h-16 rounded-[24px] border-white/5 bg-white/[0.03] text-on-surface px-8 text-lg font-bold">
-                        <SelectValue />
+                      <SelectTrigger className="h-11 font-medium">
+                        <SelectValue placeholder="Selecione..." />
                       </SelectTrigger>
-                      <SelectContent className="bg-surface border-white/10 text-on-surface rounded-[24px] p-2">
+                      <SelectContent className="rounded-xl">
                         {categories.map(c => (
-                          <SelectItem key={c.id} value={c.id} className="rounded-xl py-3 px-4 focus:bg-primary/20">{c.name}</SelectItem>
+                          <SelectItem key={c.id} value={c.id} className="rounded-lg">{c.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-4">
-                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/40 ml-3">Recorrência</Label>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Recorrência</Label>
                     <Select value={frequency} onValueChange={v => setFrequency(v || "NONE")}>
-                      <SelectTrigger className="h-16 rounded-[24px] border-white/5 bg-white/[0.03] text-on-surface px-8 text-lg font-bold">
-                        <SelectValue />
+                      <SelectTrigger className="h-11 font-medium">
+                        <SelectValue placeholder="Selecione..." />
                       </SelectTrigger>
-                      <SelectContent className="bg-surface border-white/10 text-on-surface rounded-[24px] p-2">
-                        <SelectItem value="NONE" className="rounded-xl py-3 px-4">Nenhuma</SelectItem>
-                        <SelectItem value="MONTHLY" className="rounded-xl py-3 px-4">Mensal Automática</SelectItem>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="NONE" className="rounded-lg">Nenhuma</SelectItem>
+                        <SelectItem value="MONTHLY" className="rounded-lg">Mensal</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/40 ml-3">Documento / Comprovante</Label>
-                  <div className="flex flex-col md:flex-row gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Comprovante</Label>
+                  <div className="flex gap-3">
                     <div className="relative flex-1">
                       <Input 
                         disabled={uploading}
@@ -316,10 +319,16 @@ export default function Movimentacoes() {
                             setUploading(true);
                             try {
                               const f = e.target.files[0];
-                              const newBlob = await upload(f.name, f, {
-                                access: 'public',
-                                handleUploadUrl: '/api/upload',
+                              const formData = new FormData();
+                              formData.append("file", f);
+                              
+                              const res = await fetch(`/api/upload?filename=${encodeURIComponent(f.name)}`, {
+                                method: 'POST',
+                                body: formData,
                               });
+                              
+                              if (!res.ok) throw new Error("Upload failed");
+                              const newBlob = await res.json();
                               setBlobUrl(newBlob.url);
                               setAttachmentUrl(""); 
                             } catch (error) {
@@ -331,29 +340,29 @@ export default function Movimentacoes() {
                         }}
                       />
                       <div className={cn(
-                        "h-16 rounded-[24px] border-2 border-dashed flex items-center justify-center gap-3 transition-all font-black text-xs uppercase tracking-widest",
-                        blobUrl ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400" : "border-white/5 bg-white/[0.02] text-on-surface-variant/20"
+                        "h-11 rounded-lg border-2 border-dashed flex items-center justify-center gap-2.5 transition-all font-bold text-[10px] uppercase tracking-wider",
+                        blobUrl ? "border-emerald-500/50 bg-emerald-50 text-emerald-600" : "border-outline/30 bg-surface-variant/30 text-on-surface-variant/70"
                       )}>
-                        {uploading ? "Sincronizando..." : blobUrl ? <><Cloud className="w-5 h-5" /> PRONTO</> : <><FileUp className="w-5 h-5" /> UPLOAD</>}
+                        {uploading ? "Sincronizando..." : blobUrl ? <><CheckCircle2 className="w-4 h-4" /> SUBMETIDO</> : <><FileUp className="w-4 h-4" /> ANEXAR</>}
                       </div>
                     </div>
-                    <div className="flex-[2] relative">
-                      <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/20" />
+                    <div className="flex-[1.5] relative">
+                      <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/60" />
                       <Input 
-                        placeholder="Link Externo..." 
+                        placeholder="Link..." 
                         value={attachmentUrl} 
                         onChange={e => {
                           setAttachmentUrl(e.target.value);
                           setBlobUrl(""); 
                         }}
-                        className="h-16 pl-14 rounded-[24px] border-white/5 bg-white/[0.03] text-on-surface placeholder:text-on-surface-variant/20 font-bold" 
+                        className="h-11 pl-10 font-medium" 
                       />
                     </div>
                   </div>
                 </div>
 
-                <Button type="submit" className="m3-button-premium w-full h-20 text-xl border-none">
-                  {editingId ? "SALVAR ALTERAÇÕES" : "CONFIRMAR LANÇAMENTO"}
+                <Button type="submit" className="apple-button-primary w-full h-12 text-base mt-2">
+                  {editingId ? "Salvar Alterações" : "Confirmar Lançamento"}
                 </Button>
               </form>
             </DialogContent>
@@ -361,76 +370,81 @@ export default function Movimentacoes() {
         </div>
       </motion.div>
 
-      {/* Stats Overview with Motion */}
+      {/* Stats Overview */}
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 md:px-0"
+        transition={{ delay: 0.1 }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 px-4 md:px-0"
       >
-        <div className="glass-card p-8 flex items-center justify-between group hover:scale-[1.05] transition-all duration-700 rounded-[32px]">
-            <div className="relative z-10">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/40">Saldo Consolidado</p>
-                <h2 className="text-4xl font-black text-on-background tracking-tighter mt-1 drop-shadow-xl gradient-text">
-                    {formatCurrency(transactions.reduce((acc, t) => t.type === 'INCOME' ? acc + t.amount : acc - t.amount, 0))}
-                </h2>
+        <Card className="premium-card p-6 flex flex-col justify-between">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Saldo Atual</p>
+              <h2 className="text-3xl font-bold text-on-background tracking-tight mt-1">
+                  {formatCurrency(transactions.reduce((acc, t) => t.type === 'INCOME' ? acc + t.amount : acc - t.amount, 0))}
+              </h2>
             </div>
-            <div className="p-4 rounded-[24px] bg-primary/10 text-primary shadow-2xl transition-transform group-hover:rotate-12 duration-700">
-                <Wallet className="w-8 h-8" />
+            <div className="mt-6 flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+                  <Wallet className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] font-semibold text-on-surface-variant">Ajustado em tempo real</span>
             </div>
-        </div>
+        </Card>
         
-        <div className="glass-card p-8 flex items-center justify-between border-secondary/20 bg-secondary/[0.02] group hover:scale-[1.05] transition-all duration-700 rounded-[32px]">
-            <div className="relative z-10">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">Receitas Totais</p>
-                <h2 className="text-3xl font-black text-secondary tracking-tighter mt-1">
+        <Card className="premium-card p-6 flex flex-col justify-between border-emerald-100 bg-emerald-50/20">
+            <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Entradas</p>
+                <h2 className="text-2xl font-bold text-emerald-700 tracking-tight mt-1">
                     {formatCurrency(transactions.filter(t => t.type === 'INCOME').reduce((acc, t) => acc + t.amount, 0))}
                 </h2>
             </div>
-            <div className="p-4 rounded-[24px] bg-secondary/10 text-secondary transition-transform group-hover:-translate-y-2 duration-700">
-                <ArrowUp className="w-7 h-7" />
+            <div className="mt-6 flex items-center gap-2 text-emerald-600">
+                <ArrowUp className="w-4 h-4" />
+                <span className="text-[10px] font-semibold">Fluxos positivos</span>
             </div>
-        </div>
+        </Card>
 
-        <div className="glass-card p-8 flex items-center justify-between border-rose-500/20 bg-rose-500/[0.02] group hover:scale-[1.05] transition-all duration-700 rounded-[32px]">
-            <div className="relative z-10">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-400">Despesas Totais</p>
-                <h2 className="text-3xl font-black text-rose-400 tracking-tighter mt-1">
+        <Card className="premium-card p-6 flex flex-col justify-between border-red-100 bg-red-50/20">
+            <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-red-700">Saídas</p>
+                <h2 className="text-2xl font-bold text-red-700 tracking-tight mt-1">
                     {formatCurrency(transactions.filter(t => t.type === 'EXPENSE').reduce((acc, t) => acc + t.amount, 0))}
                 </h2>
               </div>
-              <div className="p-4 rounded-[24px] bg-rose-500/10 text-rose-400 transition-transform group-hover:translate-y-2 duration-700">
-                  <ArrowDown className="w-7 h-7" />
+              <div className="mt-6 flex items-center gap-2 text-red-600">
+                  <ArrowDown className="w-4 h-4" />
+                  <span className="text-[10px] font-semibold">Fluxos negativos</span>
               </div>
-          </div>
+          </Card>
       </motion.div>
 
-      {/* Filters & Search - Optimized for Touch */}
+      {/* Filters & Search */}
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.3 }}
-        className="flex flex-col md:flex-row items-stretch md:items-center gap-6 m3-card-glass p-6 md:p-8 mx-4 md:mx-0 shadow-2xl"
+        transition={{ delay: 0.2 }}
+        className="flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-surface p-6 rounded-3xl border border-outline/10 shadow-sm mx-4 md:mx-0"
       >
-        <div className="relative flex-1 group">
-          <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-on-surface-variant/20 group-focus-within:text-primary transition-colors" />
+        <div className="relative flex-1">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/60" />
           <Input 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Pesquisar transações..." 
-            className="pl-16 h-16 bg-background/50 border-white/5 rounded-[24px] text-base font-bold placeholder:text-on-surface-variant/20 focus:bg-background transition-all" 
+            placeholder="Pesquisar..." 
+            className="pl-12 h-11 bg-surface-variant/40 border-outline/10 rounded-2xl placeholder:opacity-70 font-medium focus:bg-surface focus:border-outline/40 transition-all text-on-surface" 
           />
         </div>
         
         <div className="flex gap-4">
           <Select value={filterCategory} onValueChange={(v) => setFilterCategory(v || "Todos")}>
-            <SelectTrigger className="flex-1 md:w-64 h-16 rounded-[24px] border-white/5 bg-background/50 font-bold px-6">
-              <div className="flex items-center gap-3"><Filter className="w-5 h-5 text-primary" /><SelectValue /></div>
+            <SelectTrigger className="md:w-56 h-11 rounded-2xl bg-surface-variant/30 border-transparent font-semibold">
+              <div className="flex items-center gap-2"><Filter className="w-4 h-4 text-secondary" /><SelectValue /></div>
             </SelectTrigger>
-            <SelectContent className="bg-surface border-white/10 text-on-surface rounded-[24px] p-2">
-              <SelectItem value="Todos" className="rounded-xl py-3 px-4">Todas Categorias</SelectItem>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="Todos" className="rounded-lg">Todas Categorias</SelectItem>
               {categories.map(c => (
-                <SelectItem key={c.id} value={c.name} className="rounded-xl py-3 px-4">{c.name}</SelectItem>
+                <SelectItem key={c.id} value={c.name} className="rounded-lg">{c.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -438,123 +452,125 @@ export default function Movimentacoes() {
           <Importer onImportSuccess={fetchTransactions} />
         </div>
 
-        <div className="flex bg-background/50 rounded-[24px] border border-white/5 p-1.5 overflow-x-auto no-scrollbar">
-          <Button variant="ghost" className={cn("h-13 px-8 rounded-[20px] text-xs font-black uppercase tracking-widest transition-all", !filterType ? "bg-primary text-on-primary shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterType(null)}>Tudo</Button>
-          <Button variant="ghost" className={cn("h-13 px-8 rounded-[20px] text-xs font-black uppercase tracking-widest transition-all", filterType === "INCOME" ? "bg-emerald-500/20 text-emerald-400" : "text-on-surface-variant/40")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
-          <Button variant="ghost" className={cn("h-13 px-8 rounded-[20px] text-xs font-black uppercase tracking-widest transition-all", filterType === "EXPENSE" ? "bg-rose-500/20 text-rose-400" : "text-on-surface-variant/40")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
+        <div className="flex bg-surface-variant/30 rounded-2xl p-1 border border-outline/5 overflow-x-auto no-scrollbar">
+          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all", !filterType ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterType(null)}>Todos</Button>
+          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all", filterType === "INCOME" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
+          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all", filterType === "EXPENSE" ? "bg-red-100 text-red-700" : "text-on-surface-variant")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
         </div>
       </motion.div>
       
       {/* Transaction List - Desktop Table */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
+        transition={{ delay: 0.3 }}
         className="px-4 md:px-0"
       >
-        <div className="hidden md:block glass-card overflow-hidden shadow-2xl border-none rounded-[40px]">
+        <Card className="premium-card overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow className="bg-white/5 border-b border-white/5">
-                <TableHead className="px-10 py-8 font-black uppercase text-[10px] tracking-[0.4em] text-on-surface-variant/40">Data Operação</TableHead>
-                <TableHead className="py-8 font-black uppercase text-[10px] tracking-[0.4em] text-on-surface-variant/40">Descrição de Fluxo</TableHead>
-                <TableHead className="py-8 font-black uppercase text-[10px] tracking-[0.4em] text-on-surface-variant/40">Categoria M3</TableHead>
-                <TableHead className="px-10 py-8 font-black uppercase text-[10px] tracking-[0.4em] text-on-surface-variant/40 text-right">Valor Líquido</TableHead>
-                <TableHead className="w-[180px]"></TableHead>
+              <TableRow className="bg-surface-variant/10 hover:bg-surface-variant/10 border-b border-outline/10">
+                <TableHead className="px-8 py-6 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/80">Data</TableHead>
+                <TableHead className="py-6 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/80">Descrição</TableHead>
+                <TableHead className="py-6 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/80 text-center">Categoria</TableHead>
+                <TableHead className="px-8 py-6 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/80 text-right">Valor</TableHead>
+                <TableHead className="w-32"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow><TableCell colSpan={5} className="text-center py-32 animate-pulse uppercase text-xs font-black tracking-[0.5em] text-on-surface-variant/20">Sincronizando Dados Corporativos...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={5} className="text-center py-24 text-xs font-semibold text-on-surface-variant/40 italic">Processando dados...</TableCell></TableRow>
               ) : transactions.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-32">
-                    <div className="flex flex-col items-center gap-6 opacity-20">
-                      <LayoutList className="w-16 h-16 text-on-surface-variant" />
-                      <p className="font-black uppercase tracking-[0.3em] text-sm">Base de dados vazia</p>
+                  <TableCell colSpan={5} className="text-center py-24">
+                    <div className="flex flex-col items-center gap-4 opacity-30">
+                      <LayoutList className="w-12 h-12 text-on-surface-variant" />
+                      <p className="font-semibold text-sm">Nenhuma transação encontrada</p>
                     </div>
                   </TableCell>
                 </TableRow>
               ) : transactions.map((t) => (
-                <TableRow key={t.id} className="group hover:bg-white/[0.05] border-b border-white/5 text-on-surface transition-all duration-300">
-                  <TableCell className="px-10 py-8">
+                <TableRow key={t.id} className="group border-b border-outline/5 hover:bg-surface-variant/20 transition-all duration-200">
+                  <TableCell className="px-8 py-6">
                     <div className="flex flex-col">
-                      <span className="font-black text-lg tracking-tighter text-on-background">{format(new Date(t.date), "dd/MM/yyyy")}</span>
-                      {t.frequency === "MONTHLY" && <span className="flex items-center gap-1.5 text-[9px] font-black text-primary uppercase mt-1.5 tracking-widest"><RotateCcw className="w-3 h-3" /> Recorrência Mensal</span>}
+                      <span className="font-bold text-base text-on-background tracking-tight">{format(new Date(t.date), "dd/MM/yyyy")}</span>
+                      {t.frequency === "MONTHLY" && <span className="flex items-center gap-1 text-[9px] font-bold text-secondary uppercase mt-1 tracking-wider"><RotateCcw className="w-2.5 h-2.5" /> Mensal</span>}
                     </div>
                   </TableCell>
-                  <TableCell className="py-8 font-black tracking-tight text-base">
+                  <TableCell className="py-6 font-semibold text-on-background">
                     <div className="flex items-center gap-4">
                       {t.description}
-                      {t.blobUrl && <motion.a whileHover={{ scale: 1.2 }} href={t.blobUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><Cloud className="w-4 h-4" /></motion.a>}
-                      {t.attachmentUrl && !t.blobUrl && <motion.a whileHover={{ scale: 1.2 }} href={t.attachmentUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20"><LinkIcon className="w-4 h-4" /></motion.a>}
+                      {t.blobUrl && <motion.a whileHover={{ scale: 1.1 }} href={t.blobUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100"><Cloud className="w-3.5 h-3.5" /></motion.a>}
+                      {t.attachmentUrl && !t.blobUrl && <motion.a whileHover={{ scale: 1.1 }} href={t.attachmentUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg bg-surface-variant text-secondary border border-outline/10"><LinkIcon className="w-3.5 h-3.5" /></motion.a>}
                     </div>
                   </TableCell>
-                  <TableCell className="py-8"><span className="inline-flex px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-white/5 text-on-surface-variant border border-white/5 shadow-sm">{t.category?.name}</span></TableCell>
-                  <TableCell className={cn("px-10 py-8 text-right font-black text-2xl tracking-tighter drop-shadow-sm", t.type === 'INCOME' ? 'text-secondary' : 'text-rose-400')}>{formatCurrency(t.amount)}</TableCell>
-                  <TableCell className="text-right pr-10">
-                    <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-12 w-12 rounded-2xl bg-white/[0.03] text-on-surface-variant hover:text-primary hover:bg-primary/10 transition-all shadow-sm"><Edit2 className="w-5 h-5" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-12 w-12 rounded-2xl bg-white/[0.03] text-on-surface-variant hover:text-rose-400 hover:bg-rose-400/10 transition-all shadow-sm"><Trash2 className="w-5 h-5" /></Button>
+                  <TableCell className="py-6 text-center">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-variant/60 text-on-surface-variant border border-outline/20">{t.category?.name}</span>
+                  </TableCell>
+                  <TableCell className={cn("px-8 py-6 text-right font-bold text-xl tracking-tight", t.type === 'INCOME' ? 'text-emerald-600' : 'text-on-background')}>
+                    {t.type === 'EXPENSE' && "- "}{formatCurrency(t.amount)}
+                  </TableCell>
+                  <TableCell className="pr-8">
+                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-9 w-9 rounded-xl hover:bg-surface-variant text-on-surface-variant hover:text-secondary"><Edit2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-9 w-9 rounded-xl hover:bg-red-50 text-on-surface-variant hover:text-red-600"><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </div>
+        </Card>
       </motion.div>
 
       {/* Transaction List - Mobile Cards */}
-      <div className="md:hidden space-y-6 px-4">
+      <div className="md:hidden space-y-4 px-4">
         {loading ? (
-          <div className="py-20 text-center text-on-surface-variant/20 font-black uppercase text-xs tracking-widest animate-pulse">Sincronizando Nuvem...</div>
+          <div className="py-20 text-center text-on-surface-variant/30 font-semibold text-xs italic">Sincronizando...</div>
         ) : transactions.length === 0 ? (
-          <div className="py-20 flex flex-col items-center gap-6 text-on-surface-variant/20">
-            <LayoutList className="w-16 h-16" />
-            <p className="text-sm font-black uppercase tracking-[0.2em]">Sem lançamentos</p>
+          <div className="py-20 flex flex-col items-center gap-4 text-on-surface-variant/30">
+            <LayoutList className="w-12 h-12" />
+            <p className="text-sm font-semibold">Sem resultados</p>
           </div>
         ) : (
           transactions.map((t, idx) => (
             <motion.div
               key={t.id}
-              initial={{ opacity: 0, x: -30 }}
+              initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.05 }}
             >
-              <div className="glass-card border-none rounded-[32px] overflow-hidden active:scale-95 transition-all shadow-xl group p-6 flex items-center justify-between relative">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-                  <div className="flex items-center gap-6 relative z-10">
+              <Card className="premium-card p-4 group active:scale-[0.98] transition-all relative">
+                  <div className="flex items-center gap-4">
                     <div className={cn(
-                      "w-14 h-14 rounded-[20px] flex items-center justify-center shadow-lg transition-transform group-active:rotate-12",
-                      t.type === 'INCOME' ? "bg-secondary/10 text-secondary" : "bg-rose-500/10 text-rose-400"
+                      "w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm",
+                      t.type === 'INCOME' ? "bg-emerald-50 text-emerald-600" : "bg-surface-variant/50 text-on-surface-variant/60"
                     )}>
-                      {t.type === 'INCOME' ? <ArrowUp className="w-8 h-8" strokeWidth={3} /> : <ArrowDown className="w-8 h-8" strokeWidth={3} />}
+                      {t.type === 'INCOME' ? <ArrowUp className="w-6 h-6" strokeWidth={2.5} /> : <ArrowDown className="w-6 h-6" strokeWidth={2.5} />}
                     </div>
-                    <div>
-                      <h3 className="text-base font-black text-on-background tracking-tight">{t.description}</h3>
-                      <div className="flex items-center gap-3 mt-2">
-                        <span className="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-widest">{format(new Date(t.date), "dd MMM")}</span>
-                        <span className="text-[9px] px-3 py-1 rounded-full bg-white/5 border border-white/5 text-on-surface-variant font-black uppercase tracking-[0.1em]">{t.category?.name}</span>
+                    <div className="flex-1">
+                      <h3 className="text-base font-bold text-on-background leading-tight">{t.description}</h3>
+                      <div className="flex items-center gap-3 mt-1.5">
+                        <span className="text-[10px] font-bold text-on-surface-variant/70 uppercase tracking-tighter">{format(new Date(t.date), "dd MMM, yyyy")}</span>
+                        <span className="text-[9px] px-2.5 py-0.5 rounded-full bg-surface-variant/60 text-on-surface-variant font-bold uppercase">{t.category?.name}</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className={cn(
+                        "text-lg font-bold tracking-tight",
+                        t.type === 'INCOME' ? 'text-emerald-600' : 'text-on-background'
+                      )}>{t.type === 'EXPENSE' && "- "}{formatCurrency(t.amount)}</span>
+                      <div className="flex justify-end gap-1.5 mt-2">
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-8 w-8 rounded-lg bg-surface-variant/30 text-on-surface-variant">
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 rounded-lg bg-surface-variant/30 text-on-surface-variant">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-3 relative z-10">
-                    <span className={cn(
-                      "text-xl font-black tracking-tighter drop-shadow-sm",
-                      t.type === 'INCOME' ? 'text-secondary' : 'text-rose-400'
-                    )}>{formatCurrency(t.amount)}</span>
-                    
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-10 w-10 rounded-xl bg-white/5 text-on-surface-variant">
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-10 w-10 rounded-xl bg-white/5 text-on-surface-variant">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-              </div>
+              </Card>
             </motion.div>
           ))
         )}
@@ -567,47 +583,43 @@ export default function Movimentacoes() {
           animate={{ opacity: 1 }}
           className="flex items-center justify-between px-4 md:px-0"
         >
-          <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">
-            {total} registros · Página {page}/{totalPages}
+          <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/80">
+            {total} registros · Página {page} de {totalPages}
           </p>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Button
-              variant="ghost"
+              variant="outline"
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="h-10 px-5 rounded-full border border-white/10 font-black text-xs uppercase disabled:opacity-30"
+              className="h-10 px-5 rounded-xl font-bold text-[10px] uppercase tracking-widest"
             >
-              ← Anterior
+              Anterior
             </Button>
             <Button
-              variant="ghost"
+              variant="outline"
               disabled={page >= totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              className="h-10 px-5 rounded-full border border-white/10 font-black text-xs uppercase disabled:opacity-30"
+              className="h-10 px-5 rounded-xl font-bold text-[10px] uppercase tracking-widest"
             >
-              Próxima →
+              Próxima
             </Button>
           </div>
         </motion.div>
       )}
 
       {/* Mobile Floating Action Button (FAB) */}
-      <div className="md:hidden fixed bottom-10 right-8 z-50">
+      <div className="md:hidden fixed bottom-24 right-6 z-50">
         <motion.button 
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => { resetForm(); setOpen(true); }}
-          className="h-20 w-20 rounded-[28px] bg-primary text-on-primary shadow-[0_20px_40px_rgba(0,0,0,0.4)] flex items-center justify-center border-none"
+          className="h-14 w-14 rounded-2xl bg-secondary text-on-secondary shadow-lg flex items-center justify-center border-none"
         >
-          <Plus className="w-10 h-10" strokeWidth={4} />
+          <Plus className="w-7 h-7" strokeWidth={3} />
         </motion.button>
       </div>
 
       <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 20px; border: 2px solid transparent; background-clip: content-box; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.1); border: 2px solid transparent; background-clip: content-box; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>

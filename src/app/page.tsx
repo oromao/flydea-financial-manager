@@ -55,27 +55,27 @@ export default function Dashboard() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-8 md:space-y-12 max-w-7xl mx-auto pb-20 px-4 md:px-0"
+      className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 px-4 md:px-0"
     >
       {/* Header */}
-      <motion.nav variants={itemVariants} className="flex justify-between items-center py-6 border-b border-white/5">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-            <LayoutDashboard className="text-white w-6 h-6" />
+      <motion.nav variants={itemVariants} className="flex justify-between items-center py-4 border-b border-outline/10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+            <LayoutDashboard className="text-on-primary w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-black gradient-text">Flydea</h1>
-            <p className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest">Financial Manager v8.0</p>
+            <h1 className="text-xl font-bold tracking-tight text-on-background uppercase italic">Flydea</h1>
+            <p className="text-[10px] font-bold text-on-surface-variant/80 uppercase tracking-[0.2em]">v8.0 Premium</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {metrics.budgetAlerts?.length > 0 && (
-            <Link href="/orcamentos" className="p-3 rounded-full hover:bg-white/5 transition-all relative">
-              <Bell className="w-5 h-5 text-amber-400" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-amber-400 rounded-full border-2 border-background" />
+            <Link href="/orcamentos" className="p-2.5 rounded-full hover:bg-surface-variant transition-all relative">
+              <Bell className="w-5 h-5 text-amber-500" />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-amber-500 rounded-full border-2 border-background" />
             </Link>
           )}
-          <div className="w-10 h-10 rounded-full bg-surface-variant/20 border border-white/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center">
             <UserIcon className="w-5 h-5 text-on-surface-variant" />
           </div>
         </div>
@@ -83,16 +83,16 @@ export default function Dashboard() {
 
       <motion.header variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
-          <h2 className="text-4xl md:text-6xl font-black tracking-tight text-on-background">
-            Olá, <span className="text-primary italic">Seja bem-vindo</span>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-on-background">
+            Olá, <span className="text-secondary">Seja bem-vindo</span>
           </h2>
-          <p className="text-on-surface-variant/60 font-medium text-lg mt-2 italic">
+          <p className="text-on-surface-variant font-medium text-base mt-2">
             Aqui está o resumo da sua saúde financeira hoje.
           </p>
         </div>
-        <div className="flex items-center gap-3 bg-white/5 backdrop-blur-xl px-6 py-4 rounded-3xl border border-white/10 shadow-2xl">
-          <CalendarDays className="w-5 h-5 text-primary" />
-          <span className="text-sm font-black text-on-background uppercase tracking-widest">
+        <div className="flex items-center gap-3 px-5 py-3 rounded-full bg-surface border border-outline/30 shadow-sm">
+          <CalendarDays className="w-4 h-4 text-secondary" />
+          <span className="text-xs font-semibold text-on-background uppercase tracking-wider">
             {new Date().toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
           </span>
         </div>
@@ -102,12 +102,12 @@ export default function Dashboard() {
       {!loading && metrics.budgetAlerts?.length > 0 && (
         <motion.div variants={itemVariants}>
           <Link href="/orcamentos"
-            className="flex items-center gap-4 p-5 rounded-[24px] bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition-all group">
-            <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
-            <p className="text-sm font-black text-amber-300">
+            className="flex items-center gap-4 p-4 rounded-xl bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-all group">
+            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
+            <p className="text-sm font-semibold text-amber-900">
               {metrics.budgetAlerts.length} orçamento(s) atingiram o limite de alerta este mês.
             </p>
-            <ArrowRight className="w-4 h-4 text-amber-400 ml-auto group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-amber-600 ml-auto group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
       )}
@@ -115,73 +115,57 @@ export default function Dashboard() {
       {/* Stats Cards */}
       <motion.div
         variants={itemVariants}
-        className="flex md:grid gap-6 md:gap-8 overflow-x-auto md:overflow-visible pb-4 md:pb-0 no-scrollbar snap-x snap-mandatory grid-cols-1 md:grid-cols-3"
+        className="grid gap-6 md:gap-8 grid-cols-1 md:grid-cols-3"
       >
-        <Card className="glass-card min-w-[300px] md:min-w-0 snap-center p-8 min-h-[220px] flex flex-col justify-center relative group hover:scale-[1.02] transition-all duration-500">
-          <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-            <Wallet className="w-32 h-32" />
+        <Card className="premium-card p-8 flex flex-col justify-center relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-8 opacity-5">
+            <Wallet className="w-24 h-24" />
           </div>
-          <CardHeader className="p-0 mb-4">
-            <h2 className="text-on-surface-variant/40 text-[10px] font-black uppercase tracking-[0.3em]">Saldo Consolidado</h2>
+          <CardHeader className="p-0 mb-3">
+            <h2 className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">Saldo Consolidado</h2>
           </CardHeader>
           <CardContent className="p-0 relative z-10">
-            {loading ? <Skeleton className="h-12 w-48 bg-white/5" /> : (
-              <div className="text-4xl md:text-5xl font-black tracking-tighter text-white">
+            {loading ? <Skeleton className="h-10 w-40" /> : (
+              <div className="text-4xl md:text-5xl font-bold tracking-tight text-on-background leading-tight">
                 {formatCurrency(metrics.balance)}
               </div>
             )}
-            <div className="mt-4 flex items-center gap-3">
-              <div className={cn("w-2 h-2 rounded-full", metrics.balance >= 0 ? "bg-secondary animate-pulse" : "bg-rose-500")} />
-              <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">
+            <div className="mt-4 flex items-center gap-2.5">
+              <div className={cn("w-2 h-2 rounded-full", metrics.balance >= 0 ? "bg-emerald-500" : "bg-red-500")} />
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">
                 {metrics.balance >= 0 ? "Operação Estável" : "Risco Imediato"}
               </span>
             </div>
-            {!loading && metrics.savingsRate > 0 && (
-              <div className="mt-3 flex items-center gap-2">
-                <TrendingUp className="w-3.5 h-3.5 text-secondary" />
-                <span className="text-[10px] font-black text-secondary">{metrics.savingsRate.toFixed(1)}% de poupança</span>
-              </div>
-            )}
           </CardContent>
         </Card>
 
-        <Card className="glass-card min-w-[300px] md:min-w-0 snap-center p-8 min-h-[220px] flex flex-col justify-center group hover:scale-[1.02] transition-all duration-500">
-          <CardHeader className="p-0 mb-4 flex flex-row items-center justify-between">
-            <h2 className="text-on-surface-variant/40 text-[10px] font-black uppercase tracking-[0.3em]">Entradas</h2>
-            <div className="p-2 rounded-xl bg-secondary/10 text-secondary border border-secondary/20">
+        <Card className="premium-card p-8 flex flex-col justify-center">
+          <CardHeader className="p-0 mb-3 flex flex-row items-center justify-between">
+            <h2 className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">Entradas</h2>
+            <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600">
               <ArrowUpRight className="w-5 h-5" />
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            {loading ? <Skeleton className="h-10 w-40 bg-white/5" /> : (
-              <div className="text-3xl md:text-4xl font-black text-white">{formatCurrency(metrics.income)}</div>
+            {loading ? <Skeleton className="h-8 w-32" /> : (
+              <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.income)}</div>
             )}
-            <p className="mt-4 text-[10px] text-on-surface-variant/40 font-black uppercase tracking-widest">Receita Mensal Bruta</p>
-            {!loading && metrics.projectedIncome > 0 && (
-              <p className="mt-2 text-[10px] text-secondary font-bold">
-                + {formatCurrency(metrics.projectedIncome)} previsto/mês (recorrências)
-              </p>
-            )}
+            <p className="mt-4 text-[10px] text-on-surface-variant font-semibold uppercase tracking-wider">Receita Mensal Bruta</p>
           </CardContent>
         </Card>
 
-        <Card className="glass-card min-w-[300px] md:min-w-0 snap-center p-8 min-h-[220px] flex flex-col justify-center group hover:scale-[1.02] transition-all duration-500">
-          <CardHeader className="p-0 mb-4 flex flex-row items-center justify-between">
-            <h2 className="text-on-surface-variant/40 text-[10px] font-black uppercase tracking-[0.3em]">Saídas</h2>
-            <div className="p-2 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20">
+        <Card className="premium-card p-8 flex flex-col justify-center">
+          <CardHeader className="p-0 mb-3 flex flex-row items-center justify-between">
+            <h2 className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">Saídas</h2>
+            <div className="p-2 rounded-lg bg-red-50 text-red-600">
               <ArrowDownRight className="w-5 h-5" />
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            {loading ? <Skeleton className="h-10 w-40 bg-white/5" /> : (
-              <div className="text-3xl md:text-4xl font-black text-white">{formatCurrency(metrics.expenses)}</div>
+            {loading ? <Skeleton className="h-8 w-32" /> : (
+              <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.expenses)}</div>
             )}
-            <p className="mt-4 text-[10px] text-on-surface-variant/40 font-black uppercase tracking-widest">Despesas Acumuladas</p>
-            {!loading && metrics.projectedExpenses > 0 && (
-              <p className="mt-2 text-[10px] text-rose-400 font-bold">
-                {formatCurrency(metrics.projectedExpenses)} em recorrências/mês
-              </p>
-            )}
+            <p className="mt-4 text-[10px] text-on-surface-variant font-semibold uppercase tracking-wider">Despesas Acumuladas</p>
           </CardContent>
         </Card>
       </motion.div>
@@ -189,37 +173,37 @@ export default function Dashboard() {
       {/* Chart + Right Panel */}
       <motion.div variants={itemVariants} className="grid gap-8 lg:grid-cols-3">
         {/* Area Chart */}
-        <Card className="glass-card border-none overflow-hidden lg:col-span-2 h-[400px]">
+        <Card className="premium-card lg:col-span-2 min-h-[400px]">
           <CardHeader className="p-8 pb-4">
-            <CardTitle className="text-xl font-black text-white flex items-center gap-4">
-              <BarChart3 className="w-6 h-6 text-primary" />
+            <CardTitle className="text-lg font-bold text-on-background flex items-center gap-3">
+              <BarChart3 className="w-5 h-5 text-secondary" />
               Fluxo Mensal
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 md:p-8 h-[300px]">
-            {loading ? <Skeleton className="h-full w-full bg-white/5 rounded-3xl" /> : (
+            {loading ? <Skeleton className="h-full w-full rounded-2xl" /> : (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={metrics.chartData}>
                   <defs>
                     <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
                       <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3} />
+                      <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.15} />
                       <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="day" stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false}
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                  <XAxis dataKey="day" stroke="#52525b" fontSize={10} tickLine={false} axisLine={false} dy={10} />
+                  <YAxis stroke="#52525b" fontSize={10} tickLine={false} axisLine={false}
                     tickFormatter={(v) => `R$${v}`} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "rgba(9,9,11,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "16px", backdropFilter: "blur(20px)", boxShadow: "0 20px 50px rgba(0,0,0,0.5)" }}
-                    itemStyle={{ color: "#fff", fontSize: "12px", fontWeight: "bold" }}
+                    contentStyle={{ backgroundColor: "#FFFFFF", border: "1px solid rgba(0,0,0,0.1)", borderRadius: "12px", boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}
+                    itemStyle={{ fontSize: "12px", fontWeight: "600" }}
                   />
-                  <Area type="monotone" dataKey="income" stroke="#10b981" fillOpacity={1} fill="url(#colorIncome)" strokeWidth={3} />
-                  <Area type="monotone" dataKey="expenses" stroke="#f43f5e" fillOpacity={1} fill="url(#colorExpenses)" strokeWidth={3} />
+                  <Area type="monotone" dataKey="income" stroke="#10b981" fillOpacity={1} fill="url(#colorIncome)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="expenses" stroke="#f43f5e" fillOpacity={1} fill="url(#colorExpenses)" strokeWidth={2} />
                 </AreaChart>
               </ResponsiveContainer>
             )}
@@ -227,70 +211,75 @@ export default function Dashboard() {
         </Card>
 
         {/* Top Categories */}
-        <Card className="glass-card border-none p-8 h-[400px] flex flex-col">
+        <Card className="premium-card p-8 min-h-[400px] flex flex-col">
           <div className="flex items-center gap-3 mb-6">
-            <Target className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-black text-white">Top Gastos</h3>
+            <Target className="w-5 h-5 text-secondary" />
+            <h3 className="text-base font-bold text-on-background">Top Gastos</h3>
           </div>
           {loading ? (
-            <div className="space-y-3 flex-1">
-              {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-10 w-full bg-white/5 rounded-xl" />)}
-            </div>
-          ) : metrics.topCategories?.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center text-on-surface-variant/20 text-sm font-bold">
-              Sem dados este mês
+            <div className="space-y-4 flex-1">
+              {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-8 w-full rounded-lg" />)}
             </div>
           ) : (
-            <div className="space-y-3 flex-1 overflow-y-auto">
+            <div className="space-y-4 flex-1 overflow-y-auto pr-2 no-scrollbar">
               {metrics.topCategories?.map((cat: any, i: number) => {
                 const pct = metrics.expenses > 0 ? (cat.amount / metrics.expenses) * 100 : 0;
-                const colors = ["#f43f5e", "#f59e0b", "#3b82f6", "#10b981", "#8b5cf6"];
                 return (
-                  <div key={cat.name} className="space-y-1.5">
+                  <div key={cat.name} className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-on-background">{cat.name}</span>
-                      <span className="text-xs font-black text-on-surface-variant/60">{formatCurrency(cat.amount)}</span>
+                      <span className="text-xs font-semibold text-on-background">{cat.name}</span>
+                      <span className="text-[10px] font-bold text-on-surface-variant/80">{formatCurrency(cat.amount)}</span>
                     </div>
-                    <div className="h-2 bg-white/5 rounded-full">
-                      <div className="h-full rounded-full transition-all duration-700"
-                        style={{ width: `${pct}%`, backgroundColor: colors[i % colors.length] }} />
+                    <div className="h-1.5 bg-surface-variant rounded-full">
+                      <div className="h-full rounded-full transition-all duration-700 bg-secondary"
+                        style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 );
               })}
             </div>
           )}
-          <Link href="/relatorios" className="text-secondary font-black text-[10px] uppercase tracking-[0.2em] hover:opacity-70 transition-opacity mt-4 flex items-center gap-1">
-            Ver relatório completo <ArrowRight className="w-3 h-3" />
+          <Link href="/relatorios" className="text-secondary font-bold text-xs hover:underline mt-6 flex items-center gap-1.5">
+            Ver relatório completo <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </Card>
       </motion.div>
 
       {/* Quick Actions */}
       <motion.div variants={itemVariants} className="grid gap-6 md:grid-cols-2">
-        <Card className="glass-card flex-1 p-8 flex flex-col justify-between border-none">
+        <Card className="premium-card p-8 flex flex-col justify-between">
           <div>
-            <CardTitle className="flex items-center gap-4 text-xl font-black text-white underline decoration-primary/30 underline-offset-8">
-              <History className="w-6 h-6 text-primary" />
+            <CardTitle className="flex items-center gap-3 text-lg font-bold text-on-background">
+              <History className="w-5 h-5 text-secondary" />
               Histórico
             </CardTitle>
-            <p className="mt-6 text-on-surface-variant/60 font-medium">
+            <p className="mt-4 text-on-surface-variant font-medium text-sm">
               Verifique suas últimas transações e mantenha o controle em dia.
             </p>
           </div>
-          <Link href="/movimentacoes" className="text-secondary font-black text-sm uppercase tracking-[0.2em] hover:opacity-70 transition-opacity mt-6 block">
+          <Link href="/movimentacoes" className="text-secondary font-bold text-sm hover:underline mt-6 block">
             → Visualizar Atividade
           </Link>
         </Card>
 
-        <Link href="/movimentacoes" className="m3-button-premium h-32 group">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-2xl tracking-tighter">LANÇAR MOVIMENTAÇÃO</span>
-            <span className="text-[10px] opacity-50 tracking-[0.4em] font-medium">REGISTRO INSTANTÂNEO</span>
+        <Card className="premium-card p-8 flex flex-col justify-between border-secondary/20 bg-secondary/5">
+          <div>
+            <CardTitle className="flex items-center gap-3 text-lg font-bold text-on-background">
+              <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+                <ArrowUpRight className="w-5 h-5" />
+              </div>
+              Lançar Movimentação
+            </CardTitle>
+            <p className="mt-4 text-on-surface-variant font-medium text-sm">
+              Registre receitas e despesas instantaneamente no seu painel.
+            </p>
           </div>
-          <ArrowUpRight className="w-8 h-8 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform duration-500" />
-        </Link>
+          <div className="mt-6 flex justify-end">
+            <Link href="/movimentacoes" className="apple-button-primary flex items-center justify-center h-10 px-6 rounded-full text-xs font-bold shadow-md group">
+              Acessar Painel <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </Card>
       </motion.div>
     </motion.div>
   );

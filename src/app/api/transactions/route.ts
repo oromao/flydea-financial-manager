@@ -77,7 +77,11 @@ export async function POST(request: NextRequest) {
   const parsed = TransactionSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
+    const flattened = parsed.error.flatten().fieldErrors;
+    const errorMsg = Object.entries(flattened)
+      .map(([field, msgs]) => `${field}: ${msgs?.join(", ")}`)
+      .join(" | ");
+    return NextResponse.json({ error: errorMsg }, { status: 400 });
   }
 
   const { type, description, categoryId, amount, date, observations, frequency, attachmentUrl, blobUrl, accountId, tagIds } = parsed.data;

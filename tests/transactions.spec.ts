@@ -14,15 +14,15 @@ test.describe('Movimentações Financeiras', () => {
     await page.goto('/movimentacoes');
     
     // Click "NOVO LANÇAMENTO"
-    await page.click('button:has-text("NOVO LANÇAMENTO")');
+    await page.getByRole('button', { name: /NOVO LANÇAMENTO/i }).click();
     
     // Fill the form
-    await page.fill('label:has-text("Descrição") + input', 'Teste E2E Despesa');
+    await page.fill('label:has-text("Descrição Detalhada") + input', 'Teste E2E Despesa');
     await page.fill('label:has-text("Valor") + input', '150.50');
     
     // Select Category "Outros" (default)
     
-    await page.click('button:has-text("CONFIRMAR")');
+    await page.click('button:has-text("CONFIRMAR LANÇAMENTO")');
     
     // Verify it appeared in the list (table or cards)
     await expect(page.locator('text=Teste E2E Despesa')).toBeVisible();

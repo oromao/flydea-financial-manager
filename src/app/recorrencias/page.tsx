@@ -103,82 +103,92 @@ export default function Recorrencias() {
   };
 
   return (
-    <motion.div 
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      className="space-y-8 md:space-y-12 max-w-7xl mx-auto pb-32 px-4 md:px-0"
-    >
+    <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-32 px-4 md:px-0">
       {/* Header */}
-      <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2 md:px-0">
-        <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-[#D0E4FF] text-[#003258]">
-            <RotateCcw className="w-8 h-8" />
-          </div>
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col md:flex-row md:items-center justify-between gap-8"
+      >
+        <div className="flex items-center gap-5">
+          <motion.div 
+            whileHover={{ scale: 1.02 }}
+            className="p-3.5 rounded-2xl bg-secondary text-on-secondary shadow-sm"
+          >
+            <RotateCcw className="w-7 h-7 md:w-8 md:h-8" />
+          </motion.div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-[#E2E2E6]">Recorrências</h1>
-            <p className="text-[#C1C7CE] font-medium mt-1">Automação de contas fixas e assinaturas</p>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-background">Recorrências</h1>
+            <p className="text-on-surface-variant font-medium text-sm mt-1">Automação de contas fixas e assinaturas</p>
           </div>
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger render={<Button className="m3-button-premium h-14 px-8 border-none" />}>
-            <Plus className="w-5 h-5 mr-2" /> NOVA RECORRÊNCIA
+          <DialogTrigger render={<Button className="apple-button-primary h-11 px-8" />}>
+            <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA RECORRÊNCIA
           </DialogTrigger>
-          <DialogContent className="w-[95vw] md:max-w-xl bg-[#1A1311] border-none rounded-[32px] p-0 shadow-2xl overflow-hidden ring-1 ring-white/10">
-            <div className="bg-[#2D1612] p-8 md:p-10 border-b border-white/5">
+          <DialogContent className="max-w-[600px] p-0 overflow-hidden border-none rounded-3xl bg-surface shadow-2xl">
+            <div className="p-8 border-b border-outline/10 bg-surface">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-black text-[#FFB4A3] uppercase tracking-[0.2em]">Agendar Automação</DialogTitle>
+                <DialogTitle className="text-2xl font-bold tracking-tight text-on-background">
+                  Agendar Automação
+                </DialogTitle>
+                <p className="text-on-surface-variant text-sm font-medium mt-1">Configure lançamentos automáticos inteligentes</p>
               </DialogHeader>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-6">
+            <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
-                <Label className="text-[10px] font-bold uppercase tracking-widest text-[#C1C7CE] ml-2">Descrição</Label>
-                <Input value={description} onChange={e => setDescription(e.target.value)} className="h-14 rounded-2xl border-[#534341] bg-[#1A1311] text-[#E2E2E6] text-lg font-bold" placeholder="Ex: Aluguel, Netflix, Salários..." />
+                <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Descrição</Label>
+                <Input value={description} onChange={e => setDescription(e.target.value)} 
+                  className="h-11 font-medium text-lg" 
+                  placeholder="Ex: Aluguel, Netflix, Salários..." />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-[#C1C7CE] ml-2">Valor Mensal</Label>
-                  <Input type="number" step="0.01" value={amount} onChange={e => setAmount(e.target.value)} className="h-14 rounded-2xl border-[#534341] bg-[#1A1311] text-[#E2E2E6] text-lg font-bold" placeholder="0,00" />
+                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Valor Mensal (BRL)</Label>
+                  <Input type="number" step="0.01" value={amount} onChange={e => setAmount(e.target.value)} 
+                    className="h-11 font-bold text-lg" 
+                    placeholder="0,00" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-[#C1C7CE] ml-2">Frequência</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Frequência</Label>
                   <Select value={frequency} onValueChange={v => setFrequency(v || "MONTHLY")}>
-                    <SelectTrigger className="h-14 rounded-2xl border-[#534341] bg-[#1A1311]">
-                      <SelectValue />
+                    <SelectTrigger className="h-11 font-medium">
+                      <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#1A1311] border-[#534341]">
-                      <SelectItem value="MONTHLY">Mensal</SelectItem>
-                      <SelectItem value="WEEKLY">Semanal</SelectItem>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="MONTHLY" className="rounded-lg">Mensal</SelectItem>
+                      <SelectItem value="WEEKLY" className="rounded-lg">Semanal</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-[#C1C7CE] ml-2">Data Inicial</Label>
-                  <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="h-14 rounded-2xl border-[#534341] bg-[#1A1311] text-[#E2E2E6]" />
+                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Data Inicial</Label>
+                  <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} 
+                    className="h-11 font-medium" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-[#C1C7CE] ml-2">Categoria</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Categoria</Label>
                   <Select value={categoryId} onValueChange={v => setCategoryId(v || "")}>
-                    <SelectTrigger className="h-14 rounded-2xl border-[#534341] bg-[#1A1311]">
-                      <SelectValue />
+                    <SelectTrigger className="h-11 font-medium border-t-0 border-x-0 rounded-none px-0">
+                      <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#1A1311] border-[#534341]">
+                    <SelectContent className="rounded-xl">
                       {categories.map(c => (
-                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                        <SelectItem key={c.id} value={c.id} className="rounded-lg">{c.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
-              <Button type="submit" className="m3-button-premium w-full h-16 text-xs border-none mt-4">
-                CONFIRMAR AGENDAMENTO
+              <Button type="submit" className="apple-button-primary w-full h-12 text-base mt-2">
+                Confirmar Agendamento
               </Button>
             </form>
           </DialogContent>
@@ -186,55 +196,70 @@ export default function Recorrencias() {
       </motion.div>
 
       {loading ? (
-        <div className="py-24 text-center animate-pulse text-[#8D9199] font-black uppercase tracking-[0.3em]">Sincronizando Automações...</div>
+        <div className="py-24 text-center text-on-surface-variant/30 font-semibold text-xs italic">
+          Sincronizando automações...
+        </div>
       ) : recurrences.length === 0 ? (
-        <motion.div variants={itemVariants}>
-          <div className="glass-card rounded-[32px] p-12 text-center bg-white/5 border-none shadow-2xl">
-            <RotateCcw className="w-16 h-16 mx-auto mb-6 text-on-surface-variant/20" />
-            <h2 className="text-xl font-bold text-on-background">Nenhuma recorrência ativa</h2>
-            <p className="text-on-surface-variant/60 mt-2 max-w-sm mx-auto font-medium">Agende suas despesas fixas para que o FLY DEA as lance automaticamente todo mês para você.</p>
-          </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col items-center justify-center py-24 gap-6 opacity-30"
+        >
+            <RotateCcw className="w-16 h-16 text-on-surface-variant" />
+            <div className="text-center">
+              <h2 className="text-xl font-bold text-on-background">Nenhuma recorrência ativa</h2>
+              <p className="font-medium text-sm mt-1">Agende suas despesas fixas para maior praticidade</p>
+            </div>
         </motion.div>
       ) : (
-        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2 md:px-0">
-          {recurrences.map((rec) => (
-            <div key={rec.id} className="glass-card border-none rounded-[28px] overflow-hidden group hover:scale-[1.02] transition-all shadow-xl p-0">
-                <div className="bg-white/5 p-6 flex justify-between items-start">
-                  <div>
-                    <h3 className="font-black uppercase tracking-widest text-[10px] text-on-surface-variant/40 mb-1">Próximo Lançamento</h3>
-                    <div className="flex items-center gap-2 text-on-background font-bold">
-                      <Calendar className="w-4 h-4 text-primary" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {recurrences.map((rec, idx) => (
+            <motion.div 
+              key={rec.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: idx * 0.05 + 0.1 }}
+            >
+              <Card className="premium-card overflow-hidden group hover:shadow-xl transition-all duration-300 p-0 border-none bg-surface">
+                <div className="bg-surface-variant/30 p-6 flex justify-between items-start border-b border-outline/5">
+                  <div className="space-y-1">
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/50">Próximo Lançamento</h3>
+                    <div className="flex items-center gap-2 text-on-background font-bold text-sm">
+                      <Calendar className="w-4 h-4 text-secondary/70" />
                       {format(new Date(rec.nextDate || rec.startDate), "dd 'de' MMMM", { locale: ptBR })}
                     </div>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-background/50 text-primary text-[10px] font-black tracking-widest border border-primary/20 uppercase">
+                  <span className="px-2.5 py-1 rounded-lg bg-surface text-secondary text-[9px] font-bold uppercase tracking-wider border border-outline/10 shadow-sm">
                     {rec.frequency === 'MONTHLY' ? 'Mensal' : 'Semanal'}
                   </span>
                 </div>
                 
-                <div className="p-6 space-y-4">
+                <div className="p-7 space-y-6">
                   <div>
-                    <h2 className="text-xl font-bold text-on-background tracking-tight leading-tight">{rec.description}</h2>
-                    <span className="text-xs font-bold text-on-surface-variant/40 uppercase tracking-widest">{rec.category?.name}</span>
+                    <h2 className="text-xl font-bold text-on-background tracking-tight leading-tight group-hover:text-secondary transition-colors">{rec.description}</h2>
+                    <span className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest mt-1 block">{rec.category?.name}</span>
                   </div>
 
-                  <div className="text-3xl font-black text-primary tracking-tighter">
+                  <div className="text-3xl font-bold text-on-background tracking-tight">
                     {formatCurrency(rec.amount)}
                   </div>
 
-                  <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase text-secondary">
-                      <CheckCircle2 className="w-3 h-3" /> ATIVO
+                  <div className="pt-5 border-t border-outline/5 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-secondary">
+                      <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
+                      Status: Ativo
                     </div>
-                    <Button variant="ghost" size="icon" className="rounded-full text-on-surface-variant/40 hover:bg-rose-500/10 hover:text-rose-400">
-                      <Trash2 className="w-4 h-4" />
+                    <Button variant="ghost" size="icon" 
+                      className="w-10 h-10 rounded-xl opacity-0 group-hover:opacity-100 hover:bg-red-50 text-on-surface-variant hover:text-red-500 transition-all">
+                      <Trash2 className="w-4.5 h-4.5" />
                     </Button>
                   </div>
                 </div>
-            </div>
+              </Card>
+            </motion.div>
           ))}
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }

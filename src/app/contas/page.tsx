@@ -7,7 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const ACCOUNT_TYPES = [
@@ -104,181 +105,211 @@ export default function Contas() {
     ACCOUNT_TYPES.find((t) => t.value === typeVal) || ACCOUNT_TYPES[0];
 
   return (
-    <motion.div initial="hidden" animate="visible" variants={containerVariants}
-      className="space-y-8 md:space-y-12 max-w-7xl mx-auto pb-32 px-4 md:px-0">
-
+    <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-32 px-4 md:px-0 relative">
       {/* Toast */}
-      {toast && (
-        <div className={cn("fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl font-bold text-sm shadow-2xl",
-          toast.type === "success" ? "bg-secondary text-white" : "bg-rose-500 text-white")}>
-          {toast.message}
-        </div>
-      )}
+      <AnimatePresence>
+        {toast && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className={cn(
+              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-lg flex items-center gap-3 border bg-surface/90 backdrop-blur-md transition-all duration-300",
+              toast.type === "success" 
+                ? "border-emerald-200 text-emerald-700" 
+                : "border-red-200 text-red-700"
+            )}
+          >
+            <span className="font-semibold text-xs tracking-tight">{toast.message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Header */}
-      <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-primary text-white shadow-xl shadow-primary/20">
-            <Wallet className="w-8 h-8" />
-          </div>
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col md:flex-row md:items-center justify-between gap-8"
+      >
+        <div className="flex items-center gap-5">
+          <motion.div 
+            whileHover={{ scale: 1.02 }}
+            className="p-3.5 rounded-2xl bg-secondary text-on-secondary shadow-sm"
+          >
+            <Wallet className="w-7 h-7 md:w-8 md:h-8" />
+          </motion.div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-on-background">Contas</h1>
-            <p className="text-[10px] text-on-surface-variant/40 mt-1 font-bold uppercase tracking-[0.2em]">
-              Carteiras & Contas Bancárias
-            </p>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-background">Contas</h1>
+            <p className="text-on-surface-variant font-medium text-sm mt-1">Gestão de saldo e patrimônio</p>
           </div>
         </div>
 
         <Dialog open={isOpen} onOpenChange={(v) => { setIsOpen(v); if (!v) resetForm(); }}>
-          <DialogTrigger render={<Button className="m3-button-premium h-14 px-8 border-none" />}>
-            <Plus className="w-5 h-5 mr-2" /> NOVA CONTA
+          <DialogTrigger render={<Button className="apple-button-primary h-11 px-8" />}>
+            <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA CONTA
           </DialogTrigger>
-          <DialogContent className="w-[95vw] md:max-w-lg bg-[#09090B] border border-white/10 rounded-[32px] p-0 overflow-hidden shadow-2xl">
-            <div className="bg-white/5 p-8 border-b border-white/5">
+          <DialogContent className="max-w-[500px] p-0 overflow-hidden border-none rounded-3xl bg-surface shadow-2xl">
+            <div className="p-8 border-b border-outline/10 bg-surface">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-black text-white uppercase tracking-[0.2em]">
+                <DialogTitle className="text-2xl font-bold tracking-tight text-on-background">
                   {editingId ? "Editar Conta" : "Nova Conta"}
                 </DialogTitle>
+                <p className="text-on-surface-variant text-sm font-medium mt-1">Defina as configurações da sua carteira</p>
               </DialogHeader>
             </div>
-            <form onSubmit={handleSubmit} className="p-8 space-y-5">
+            <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
-                <Label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60">Nome</Label>
+                <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Identificação</Label>
                 <Input value={name} onChange={(e) => setName(e.target.value)} required
-                  className="h-14 rounded-2xl border-white/10 bg-white/5 text-white text-lg font-bold"
-                  placeholder="Ex: Nubank, Bradesco, Carteira..." />
+                  className="h-11 font-medium"
+                  placeholder="Ex: Nubank, Carteira Principal" />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60">Tipo</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Tipo de Conta</Label>
                   <Select value={type} onValueChange={(v) => setType(v || "CHECKING")}>
-                    <SelectTrigger className="h-14 rounded-2xl border-white/10 bg-white/5">
+                    <SelectTrigger className="h-11 font-medium">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#09090B] border-white/10">
+                    <SelectContent className="rounded-xl">
                       {ACCOUNT_TYPES.map((t) => (
-                        <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                        <SelectItem key={t.value} value={t.value} className="rounded-lg">{t.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60">Saldo Inicial (R$)</Label>
+                  <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Saldo Inicial (BRL)</Label>
                   <Input type="number" step="0.01" value={balance} onChange={(e) => setBalance(e.target.value)}
-                    className="h-14 rounded-2xl border-white/10 bg-white/5 text-white text-lg font-bold" />
+                    className="h-11 font-bold text-lg" />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60">Cor</Label>
-                <div className="flex gap-2 flex-wrap">
+              <div className="space-y-3">
+                <Label className="text-xs font-semibold text-on-surface-variant/70 ml-1">Cor de Destaque</Label>
+                <div className="flex gap-2.5 flex-wrap">
                   {COLORS.map((c) => (
                     <button key={c} type="button" onClick={() => setColor(c)}
-                      className={cn("w-8 h-8 rounded-full border-2 transition-all",
-                        color === c ? "border-white scale-125" : "border-transparent")}
+                      className={cn("w-7 h-7 rounded-full border-2 transition-all hover:scale-110",
+                        color === c ? "border-on-background ring-4 ring-on-background/5" : "border-outline/10")}
                       style={{ backgroundColor: c }} />
                   ))}
                 </div>
               </div>
 
-              <Button type="submit" className="m3-button-premium w-full h-14 border-none mt-2">
-                {editingId ? "SALVAR ALTERAÇÕES" : "CRIAR CONTA"}
+              <Button type="submit" className="apple-button-primary w-full h-12 text-base mt-2">
+                {editingId ? "Salvar Alterações" : "Criar Conta"}
               </Button>
             </form>
           </DialogContent>
         </Dialog>
       </motion.div>
 
-      {/* Total Balance */}
-      <motion.div variants={itemVariants}
-        className="glass-card p-8 rounded-[32px] flex items-center justify-between">
-        <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/40">Patrimônio Total</p>
-          <p className={cn("text-4xl font-black mt-2 tracking-tighter",
-            totalBalance >= 0 ? "text-secondary" : "text-rose-400")}>
-            {formatCurrency(totalBalance)}
-          </p>
-        </div>
-        <div className={cn("p-4 rounded-2xl", totalBalance >= 0 ? "bg-secondary/10" : "bg-rose-500/10")}>
-          {totalBalance >= 0
-            ? <TrendingUp className="w-8 h-8 text-secondary" />
-            : <TrendingDown className="w-8 h-8 text-rose-400" />}
-        </div>
+      {/* Patrimônio Líquido */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.1 }}
+      >
+        <Card className="premium-card p-8 flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Patrimônio Consolidado</p>
+            <h2 className={cn("text-4xl md:text-5xl font-bold tracking-tight",
+              totalBalance >= 0 ? "text-on-background" : "text-red-600")}>
+              {formatCurrency(totalBalance)}
+            </h2>
+          </div>
+          <div className={cn("p-4 rounded-2xl shadow-sm", totalBalance >= 0 ? "bg-secondary text-on-secondary" : "bg-red-100 text-red-600")}>
+            {totalBalance >= 0
+              ? <TrendingUp className="w-8 h-8 md:w-10 md:h-10" />
+              : <TrendingDown className="w-8 h-8 md:w-10 md:h-10" />}
+          </div>
+        </Card>
       </motion.div>
 
       {/* Accounts Grid */}
       {loading ? (
-        <div className="py-24 text-center animate-pulse text-on-surface-variant/20 font-black uppercase tracking-[0.3em]">
-          Carregando contas...
+        <div className="py-24 text-center text-on-surface-variant/30 font-semibold text-xs italic">
+          Sincronizando ativos...
         </div>
       ) : accounts.length === 0 ? (
-        <motion.div variants={itemVariants}>
-          <div className="glass-card rounded-[32px] p-12 text-center border-none shadow-2xl">
-            <Wallet className="w-16 h-16 mx-auto mb-6 text-on-surface-variant/20" />
-            <h2 className="text-xl font-bold text-on-background">Nenhuma conta cadastrada</h2>
-            <p className="text-on-surface-variant/60 mt-2 max-w-sm mx-auto">
-              Cadastre suas contas bancárias, carteiras e cartões para controlar seu patrimônio.
-            </p>
-          </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col items-center justify-center py-24 gap-6 opacity-30"
+        >
+            <Wallet className="w-16 h-16 text-on-surface-variant" />
+            <div className="text-center">
+              <h2 className="text-xl font-bold text-on-background">Nenhuma conta cadastrada</h2>
+              <p className="font-medium text-sm mt-1">Organize seu patrimônio criando sua primeira conta</p>
+            </div>
         </motion.div>
       ) : (
-        <motion.div variants={itemVariants}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {accounts.map((account) => {
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {accounts.map((account, idx) => {
             const cfg = getTypeConfig(account.type);
             const Icon = cfg.icon;
             const currentBalance = account.currentBalance ?? account.balance;
 
             return (
-              <div key={account.id}
-                className="glass-card border-none rounded-[28px] overflow-hidden group hover:scale-[1.02] transition-all shadow-xl">
-                <div className="h-2" style={{ backgroundColor: account.color || cfg.color }} />
-                <div className="p-6 space-y-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-xl" style={{ backgroundColor: `${account.color || cfg.color}20` }}>
-                        <Icon className="w-5 h-5" style={{ color: account.color || cfg.color }} />
+              <motion.div 
+                key={account.id}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 + 0.2 }}
+              >
+                <Card className="premium-card p-0 overflow-hidden group hover:scale-[1.01] transition-all">
+                  <div className="h-1.5 w-full" style={{ backgroundColor: account.color || cfg.color }} />
+                  <div className="p-7 space-y-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 rounded-2xl bg-surface-variant/50 border border-outline/5">
+                          <Icon className="w-6 h-6" style={{ color: account.color || cfg.color }} />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-lg text-on-background tracking-tight">{account.name}</h3>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/50">
+                            {cfg.label}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-black text-on-background text-lg leading-tight">{account.name}</h3>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
-                          {cfg.label}
-                        </span>
+                      <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-all">
+                        <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full hover:bg-surface-variant"
+                          onClick={() => handleEdit(account)}>
+                          <Edit2 className="w-4 h-4 text-on-surface-variant" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full hover:bg-red-50"
+                          onClick={() => handleDelete(account.id)}>
+                          <Trash2 className="w-4 h-4 text-on-surface-variant hover:text-red-600" />
+                        </Button>
                       </div>
                     </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full"
-                        onClick={() => handleEdit(account)}>
-                        <Edit2 className="w-3.5 h-3.5 text-on-surface-variant/60" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full hover:bg-rose-500/10"
-                        onClick={() => handleDelete(account.id)}>
-                        <Trash2 className="w-3.5 h-3.5 text-rose-400" />
-                      </Button>
+
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/40">Saldo em conta</p>
+                      <p className={cn("text-3xl font-bold tracking-tight mt-1",
+                        currentBalance >= 0 ? "text-on-background" : "text-red-600")}>
+                        {formatCurrency(currentBalance)}
+                      </p>
+                    </div>
+
+                    <div className="pt-5 border-t border-outline/5 flex items-center justify-between text-on-surface-variant/50">
+                      <span className="text-[10px] font-bold uppercase tracking-widest">
+                        {account._count?.transactions || 0} transações vinculadas
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[9px] font-bold uppercase">Status Ativo</span>
+                        <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: account.color || cfg.color }} />
+                      </div>
                     </div>
                   </div>
-
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">Saldo Atual</p>
-                    <p className={cn("text-3xl font-black tracking-tighter mt-1",
-                      currentBalance >= 0 ? "text-white" : "text-rose-400")}>
-                      {formatCurrency(currentBalance)}
-                    </p>
-                  </div>
-
-                  <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">
-                      {account._count?.transactions || 0} transações
-                    </span>
-                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: account.color || cfg.color }} />
-                  </div>
-                </div>
-              </div>
+                </Card>
+              </motion.div>
             );
           })}
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }

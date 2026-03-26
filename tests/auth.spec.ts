@@ -18,6 +18,6 @@ test.describe('Autenticação', () => {
     
     // Should redirect to dashboard
     await expect(page).toHaveURL('/');
-    await expect(page.locator('h1')).toContainText('Dashboard');
+    await expect(page.locator('h1')).toContainText('Flydea');
   });
 });
