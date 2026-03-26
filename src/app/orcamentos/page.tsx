@@ -143,7 +143,7 @@ export default function Orcamentos() {
           <DialogTrigger render={<Button className="apple-button-primary h-11 px-8" />}>
             <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVO ORÇAMENTO
           </DialogTrigger>
-          <DialogContent className="max-w-[500px] p-0 overflow-hidden border-none rounded-3xl bg-surface shadow-2xl">
+          <DialogContent className="sm:max-w-[500px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-3xl bg-surface sm:shadow-2xl">
             <div className="p-8 border-b border-outline/10 bg-surface">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-bold tracking-tight text-on-background">
