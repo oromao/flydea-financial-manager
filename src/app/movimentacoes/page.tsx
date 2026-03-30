@@ -509,9 +509,9 @@ export default function Movimentacoes() {
                     {t.type === 'EXPENSE' && "- "}{formatCurrency(t.amount)}
                   </TableCell>
                   <TableCell className="pr-4">
-                    <div className="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-all">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-8 w-8 rounded-lg hover:bg-surface-variant text-on-surface-variant hover:text-secondary"><Edit2 className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 rounded-lg hover:bg-red-50 text-on-surface-variant hover:text-red-600"><Trash2 className="w-4 h-4" /></Button>
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-8 w-8 rounded-lg hover:bg-surface-variant text-secondary hover:text-secondary/90 transition-colors"><Edit2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 rounded-lg hover:bg-red-100 text-red-600 hover:text-red-700 font-semibold transition-colors"><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -559,10 +559,10 @@ export default function Movimentacoes() {
                         t.type === 'INCOME' ? 'text-emerald-600' : 'text-on-background'
                       )}>{t.type === 'EXPENSE' && "- "}{formatCurrency(t.amount)}</span>
                       <div className="flex justify-end gap-1.5 mt-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-8 w-8 rounded-lg bg-surface-variant/30 text-on-surface-variant">
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-8 w-8 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/15 transition-colors">
                           <Edit2 className="w-3.5 h-3.5" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 rounded-lg bg-surface-variant/30 text-on-surface-variant">
+                        <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 rounded-lg bg-red-100/60 text-red-600 hover:bg-red-100 transition-colors">
                           <Trash2 className="w-3.5 h-3.5" />
                         </Button>
                       </div>

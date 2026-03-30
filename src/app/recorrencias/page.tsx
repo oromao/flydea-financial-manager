@@ -249,8 +249,8 @@ export default function Recorrencias() {
                       <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
                       Status: Ativo
                     </div>
-                    <Button variant="ghost" size="icon" 
-                      className="w-10 h-10 rounded-xl opacity-0 group-hover:opacity-100 hover:bg-red-50 text-on-surface-variant hover:text-red-500 transition-all">
+                    <Button variant="ghost" size="icon"
+                      className="w-10 h-10 rounded-lg bg-red-100/60 hover:bg-red-100 text-red-600 hover:text-red-700 transition-colors">
                       <Trash2 className="w-4.5 h-4.5" />
                     </Button>
                   </div>

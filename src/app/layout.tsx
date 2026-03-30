@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Sidebar } from "@/components/sidebar";
-import { InstallPrompt } from "@/components/install-prompt";
 
 export const metadata: Metadata = {
   title: "Flydea Financial",
@@ -32,7 +31,6 @@ export default function RootLayout({
     <html lang="pt-BR" className="h-full antialiased dark">
       <body className="min-h-full flex flex-col bg-background text-on-background selection:bg-secondary/30 selection:text-secondary">
         <Providers>
-          <InstallPrompt />
           <Sidebar>{children}</Sidebar>
         </Providers>
       </body>

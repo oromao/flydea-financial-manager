@@ -296,7 +296,7 @@ export default function Orcamentos() {
                         <p className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-tighter">de {formatCurrency(budget.amount)} total</p>
                       </div>
                       <Button variant="ghost" size="icon"
-                        className="w-10 h-10 rounded-xl opacity-0 group-hover:opacity-100 hover:bg-red-50 text-on-surface-variant hover:text-red-500 transition-all"
+                        className="w-10 h-10 rounded-lg bg-red-100/60 hover:bg-red-100 text-red-600 hover:text-red-700 transition-colors"
                         onClick={() => handleDelete(budget.id)}>
                         <Trash2 className="w-4.5 h-4.5" />
                       </Button>

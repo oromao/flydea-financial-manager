@@ -271,14 +271,14 @@ export default function Contas() {
                           </span>
                         </div>
                       </div>
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md hover:bg-surface-variant"
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md bg-secondary/10 hover:bg-secondary/15 text-secondary transition-colors"
                           onClick={() => handleEdit(account)}>
-                          <Edit2 className="w-3.5 h-3.5 text-on-surface-variant" />
+                          <Edit2 className="w-3.5 h-3.5" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md hover:bg-red-50/40"
+                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md bg-red-100/60 hover:bg-red-100 text-red-600 transition-colors"
                           onClick={() => handleDelete(account.id)}>
-                          <Trash2 className="w-3.5 h-3.5 text-on-surface-variant hover:text-red-600" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </Button>
                       </div>
                     </div>
