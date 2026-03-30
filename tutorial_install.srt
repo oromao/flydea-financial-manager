@@ -1,0 +1,78 @@
+1
+00:00:00,500 --> 00:00:03,500
+Olá! Neste tutorial, vou mostrar
+como instalar o Flydea no seu iPhone.
+
+2
+00:00:04,000 --> 00:00:07,500
+O Flydea funciona como um aplicativo
+nativo, direto na sua tela inicial.
+
+3
+00:00:08,000 --> 00:00:10,500
+Primeiro, abra o Safari
+no seu iPhone.
+
+4
+00:00:11,000 --> 00:00:16,000
+Na barra de endereço, digite:
+flydea-financial-manager.vercel.app
+
+5
+00:00:16,500 --> 00:00:19,000
+Aguarde o site carregar
+completamente.
+
+6
+00:00:19,500 --> 00:00:24,500
+Agora, toque no ícone de compartilhar.
+É o quadrado com a seta para cima,
+na parte inferior da tela.
+
+7
+00:00:25,000 --> 00:00:29,500
+No menu que aparece, role para baixo
+até encontrar a opção
+"Adicionar à Tela de Início".
+
+8
+00:00:30,000 --> 00:00:33,000
+Toque em
+"Adicionar à Tela de Início".
+
+9
+00:00:33,500 --> 00:00:37,500
+Você pode personalizar o nome do app.
+Recomendo manter como "Flydea".
+
+10
+00:00:38,000 --> 00:00:41,000
+Toque em "Adicionar",
+no canto superior direito.
+
+11
+00:00:41,500 --> 00:00:45,000
+Pronto! O ícone do Flydea apareceu
+na sua tela inicial.
+
+12
+00:00:45,500 --> 00:00:48,500
+Agora toque no ícone
+para abrir o aplicativo.
+
+13
+00:00:49,000 --> 00:00:54,000
+Note que o app abre em tela cheia,
+sem barra do Safari.
+Funciona como um app nativo!
+
+14
+00:00:54,500 --> 00:00:58,000
+Faça login com seu email
+e senha cadastrados.
+
+15
+00:00:58,500 --> 00:01:03,000
+Parabéns! Seu Flydea está instalado
+e pronto para uso.
+

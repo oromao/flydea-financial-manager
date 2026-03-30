@@ -1,0 +1,29 @@
+Olá! Neste tutorial, vou mostrar como instalar o Flydea no seu iPhone.
+
+O Flydea funciona como um aplicativo nativo, direto na sua tela inicial.
+
+Primeiro, abra o Safari no seu iPhone.
+
+Na barra de endereço, digite: flydea financiar manager ponto vercel ponto app.
+
+Aguarde o site carregar completamente.
+
+Agora, toque no ícone de compartilhar. É o quadrado com a seta para cima, na parte inferior da tela.
+
+No menu que aparece, role para baixo até encontrar a opção Adicionar à Tela de Início.
+
+Toque em Adicionar à Tela de Início.
+
+Você pode personalizar o nome do app. Recomendo manter como Flydea.
+
+Toque em Adicionar, no canto superior direito.
+
+Pronto! O ícone do Flydea apareceu na sua tela inicial.
+
+Agora toque no ícone para abrir o aplicativo.
+
+Note que o app abre em tela cheia, sem barra do Safari. Funciona como um app nativo!
+
+Faça login com seu email e senha cadastrados.
+
+Parabéns! Seu Flydea está instalado e pronto para uso.

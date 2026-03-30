@@ -1,0 +1,33 @@
+Bem-vindo. Neste tutorial mobile, vamos percorrer todas as funções principais do sistema.
+
+Primeiro fazemos o login.
+
+Login concluído. Estamos no Dashboard.
+
+Aqui você visualiza saldo consolidado, entradas e saídas.
+
+Na tela de Movimentações, você acompanha e registra lançamentos.
+
+Este botão exporta suas movimentações para Excel.
+
+Agora vamos criar um novo lançamento.
+
+Lançamento criado com sucesso.
+
+Aqui em Contas, você pode conectar ou cadastrar suas contas.
+
+Conta criada. Esse é o fluxo para conectar ou cadastrar uma conta no sistema.
+
+Agora vamos criar uma recorrência para automatizar lançamentos periódicos.
+
+Recorrência criada com sucesso.
+
+Em Relatórios, você analisa os indicadores e exporta dados.
+
+Aqui você gera o relatório em formato Excel ou CSV.
+
+Nos logs você acompanha o histórico de ações do sistema.
+
+Para sair do sistema, localize o botão Sair no menu lateral e toque nele.
+
+Logout concluído. Você voltou à tela de login.

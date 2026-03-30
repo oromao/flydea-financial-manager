@@ -105,48 +105,45 @@ export default function Contas() {
     ACCOUNT_TYPES.find((t) => t.value === typeVal) || ACCOUNT_TYPES[0];
 
   return (
-    <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-32 px-4 md:px-0 relative">
+    <div className="space-y-6 md:space-y-8 max-w-7xl mx-auto pb-20 px-4 md:px-0 relative">
       {/* Toast */}
       <AnimatePresence>
         {toast && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             className={cn(
-              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-lg flex items-center gap-3 border bg-surface/90 backdrop-blur-md transition-all duration-300",
-              toast.type === "success" 
-                ? "border-emerald-200 text-emerald-700" 
+              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-5 py-2 rounded-lg shadow-lg flex items-center gap-2 border bg-surface/90 backdrop-blur-md transition-all duration-300",
+              toast.type === "success"
+                ? "border-emerald-200 text-emerald-700"
                 : "border-red-200 text-red-700"
             )}
           >
-            <span className="font-semibold text-xs tracking-tight">{toast.message}</span>
+            <span className="font-semibold text-xs">{toast.message}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Header */}
-      <motion.div 
+      {/* Header - Compact */}
+      <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row md:items-center justify-between gap-8"
+        className="flex flex-col md:flex-row md:items-center justify-between gap-4"
       >
-        <div className="flex items-center gap-5">
-          <motion.div 
-            whileHover={{ scale: 1.02 }}
-            className="p-3.5 rounded-2xl bg-secondary text-on-secondary shadow-sm"
-          >
-            <Wallet className="w-7 h-7 md:w-8 md:h-8" />
-          </motion.div>
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-lg bg-secondary text-on-secondary">
+            <Wallet className="w-5 h-5" />
+          </div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-background">Contas</h1>
-            <p className="text-on-surface-variant font-medium text-sm mt-1">Gestão de saldo e patrimônio</p>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-on-background">Contas</h1>
+            <p className="text-on-surface-variant font-medium text-xs mt-0.5">Patrimônio financeiro</p>
           </div>
         </div>
 
         <Dialog open={isOpen} onOpenChange={(v) => { setIsOpen(v); if (!v) resetForm(); }}>
-          <DialogTrigger render={<Button className="apple-button-primary h-11 px-8" />}>
-            <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA CONTA
+          <DialogTrigger render={<Button className="apple-button-primary h-10 px-5 text-sm rounded-lg" />}>
+            <Plus className="w-4 h-4 mr-2" strokeWidth={2.5} /> NOVO
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-3xl bg-surface sm:shadow-2xl">
             <div className="p-8 border-b border-outline/10 bg-surface">
@@ -206,24 +203,24 @@ export default function Contas() {
         </Dialog>
       </motion.div>
 
-      {/* Patrimônio Líquido */}
-      <motion.div 
+      {/* Patrimônio Líquido - Compact */}
+      <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="premium-card p-8 flex items-center justify-between">
+        <Card className="premium-card p-6 flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Patrimônio Consolidado</p>
-            <h2 className={cn("text-4xl md:text-5xl font-bold tracking-tight",
+            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-70">Patrimônio Total</p>
+            <h2 className={cn("text-3xl md:text-4xl font-bold tracking-tight",
               totalBalance >= 0 ? "text-on-background" : "text-red-600")}>
               {formatCurrency(totalBalance)}
             </h2>
           </div>
-          <div className={cn("p-4 rounded-2xl shadow-sm", totalBalance >= 0 ? "bg-secondary text-on-secondary" : "bg-red-100 text-red-600")}>
+          <div className={cn("p-3 rounded-lg", totalBalance >= 0 ? "bg-secondary/10 text-secondary" : "bg-red-100/50 text-red-600")}>
             {totalBalance >= 0
-              ? <TrendingUp className="w-8 h-8 md:w-10 md:h-10" />
-              : <TrendingDown className="w-8 h-8 md:w-10 md:h-10" />}
+              ? <TrendingUp className="w-6 h-6" />
+              : <TrendingDown className="w-6 h-6" />}
           </div>
         </Card>
       </motion.div>
@@ -246,61 +243,59 @@ export default function Contas() {
             </div>
         </motion.div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {accounts.map((account, idx) => {
             const cfg = getTypeConfig(account.type);
             const Icon = cfg.icon;
             const currentBalance = account.currentBalance ?? account.balance;
 
             return (
-              <motion.div 
+              <motion.div
                 key={account.id}
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 + 0.2 }}
               >
-                <Card className="premium-card p-0 overflow-hidden group hover:scale-[1.01] transition-all">
-                  <div className="h-1.5 w-full" style={{ backgroundColor: account.color || cfg.color }} />
-                  <div className="p-7 space-y-6">
+                <Card className="premium-card p-0 overflow-hidden group hover:shadow-md transition-all">
+                  <div className="h-1 w-full" style={{ backgroundColor: account.color || cfg.color }} />
+                  <div className="p-5 space-y-4">
                     <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 rounded-2xl bg-surface-variant/50 border border-outline/5">
-                          <Icon className="w-6 h-6" style={{ color: account.color || cfg.color }} />
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-surface-variant/40">
+                          <Icon className="w-5 h-5" style={{ color: account.color || cfg.color }} />
                         </div>
                         <div>
-                          <h3 className="font-bold text-lg text-on-background tracking-tight">{account.name}</h3>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/50">
+                          <h3 className="font-semibold text-base text-on-background">{account.name}</h3>
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant/60">
                             {cfg.label}
                           </span>
                         </div>
                       </div>
-                      <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-all">
-                        <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full hover:bg-surface-variant"
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md hover:bg-surface-variant"
                           onClick={() => handleEdit(account)}>
-                          <Edit2 className="w-4 h-4 text-on-surface-variant" />
+                          <Edit2 className="w-3.5 h-3.5 text-on-surface-variant" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full hover:bg-red-50"
+                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md hover:bg-red-50/40"
                           onClick={() => handleDelete(account.id)}>
-                          <Trash2 className="w-4 h-4 text-on-surface-variant hover:text-red-600" />
+                          <Trash2 className="w-3.5 h-3.5 text-on-surface-variant hover:text-red-600" />
                         </Button>
                       </div>
                     </div>
 
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/40">Saldo em conta</p>
-                      <p className={cn("text-3xl font-bold tracking-tight mt-1",
+                    <div className="pt-2">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant/50 mb-1">Saldo</p>
+                      <p className={cn("text-2xl font-bold tracking-tight",
                         currentBalance >= 0 ? "text-on-background" : "text-red-600")}>
                         {formatCurrency(currentBalance)}
                       </p>
                     </div>
 
-                    <div className="pt-5 border-t border-outline/5 flex items-center justify-between text-on-surface-variant/50">
-                      <span className="text-[10px] font-bold uppercase tracking-widest">
-                        {account._count?.transactions || 0} transações vinculadas
-                      </span>
+                    <div className="pt-3 border-t border-outline/10 flex items-center justify-between text-on-surface-variant/50 text-[9px]">
+                      <span className="font-bold uppercase">{account._count?.transactions || 0} tx</span>
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[9px] font-bold uppercase">Status Ativo</span>
-                        <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: account.color || cfg.color }} />
+                        <span className="font-bold">Ativo</span>
+                        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: account.color || cfg.color }} />
                       </div>
                     </div>
                   </div>

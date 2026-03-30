@@ -1,0 +1,84 @@
+1
+00:00:00,100 --> 00:00:01,150
+Bem-vindo.
+
+2
+00:00:01,100 --> 00:00:06,494
+Neste tutorial mobile, vamos percorrer todas as funções principais do sistema.
+
+3
+00:00:06,494 --> 00:00:08,355
+Primeiro fazemos o login.
+
+4
+00:00:08,355 --> 00:00:09,850
+Login concluído.
+
+5
+00:00:09,850 --> 00:00:11,657
+Estamos no Dashboard.
+
+6
+00:00:11,657 --> 00:00:16,127
+Aqui você visualiza saldo consolidado, entradas e saídas.
+
+7
+00:00:16,127 --> 00:00:20,652
+Na tela de Movimentações, você acompanha e registra lançamentos.
+
+8
+00:00:20,652 --> 00:00:24,144
+Este botão exporta suas movimentações para Excel.
+
+9
+00:00:24,144 --> 00:00:26,766
+Agora vamos criar um novo lançamento.
+
+10
+00:00:26,766 --> 00:00:29,076
+Lançamento criado com sucesso.
+
+11
+00:00:29,076 --> 00:00:33,355
+Aqui em Contas, você pode conectar ou cadastrar suas contas.
+
+12
+00:00:33,355 --> 00:00:34,538
+Conta criada.
+
+13
+00:00:34,538 --> 00:00:38,614
+Esse é o fluxo para conectar ou cadastrar uma conta no sistema.
+
+14
+00:00:38,614 --> 00:00:43,478
+Agora vamos criar uma recorrência para automatizar lançamentos periódicos.
+
+15
+00:00:43,478 --> 00:00:45,815
+Recorrência criada com sucesso.
+
+16
+00:00:45,815 --> 00:00:50,095
+Em Relatórios, você analisa os indicadores e exporta dados.
+
+17
+00:00:50,095 --> 00:00:54,361
+Aqui você gera o relatório em formato Excel ou CSV.
+
+18
+00:00:54,361 --> 00:00:58,288
+Nos logs você acompanha o histórico de ações do sistema.
+
+19
+00:00:58,288 --> 00:01:03,682
+Para sair do sistema, localize o botão Sair no menu lateral e toque nele.
+
+20
+00:01:03,682 --> 00:01:05,353
+Logout concluído.
+
+21
+00:01:05,353 --> 00:01:08,043
+Você voltou à tela de login.
+

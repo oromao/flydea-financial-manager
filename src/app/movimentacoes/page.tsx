@@ -210,42 +210,42 @@ export default function Movimentacoes() {
         )}
       </AnimatePresence>
 
-      {/* Header - Responsive */}
-      <motion.div 
+      {/* Header - Compact */}
+      <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 px-4 md:px-0"
+        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-4 md:px-0"
       >
-        <div className="flex items-center gap-5">
-          <motion.div 
+        <div className="flex items-center gap-3">
+          <motion.div
             whileHover={{ scale: 1.02 }}
-            className="p-3.5 rounded-2xl bg-secondary text-on-secondary shadow-sm"
+            className="p-2.5 rounded-lg bg-secondary text-on-secondary"
           >
-            <LayoutList className="w-7 h-7 md:w-8 md:h-8" />
+            <LayoutList className="w-5 h-5" />
           </motion.div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-background">
-              Fluxo de Caixa
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-on-background">
+              Movimentações
             </h1>
-            <p className="text-on-surface-variant font-medium text-sm mt-1">Gestão inteligente e precisa de ativos</p>
+            <p className="text-on-surface-variant font-medium text-xs mt-0.5">Controle seu fluxo de caixa</p>
           </div>
         </div>
-        
-        <div className="flex flex-col-reverse md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto mt-6 md:mt-0">
-          <Button 
+
+        <div className="flex flex-col-reverse md:flex-row items-stretch md:items-center gap-2 w-full md:w-auto mt-3 md:mt-0">
+          <Button
             variant="outline"
             onClick={exportToExcel}
-            className="w-full md:w-auto h-11 px-6 font-semibold"
+            className="w-full md:w-auto h-10 px-4 font-semibold text-sm rounded-lg"
           >
-            <FileSpreadsheet className="w-4 h-4 mr-2" /> Exportar Excel
+            <FileSpreadsheet className="w-4 h-4 mr-2" /> Exportar
           </Button>
 
           <Dialog open={open} onOpenChange={(val) => {
             setOpen(val);
             if (!val) resetForm();
           }}>
-            <DialogTrigger render={<Button className="apple-button-primary w-full md:w-auto h-11 px-8" />}>
-              <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVO LANÇAMENTO
+            <DialogTrigger render={<Button className="apple-button-primary w-full md:w-auto h-10 px-5 text-sm rounded-lg" />}>
+              <Plus className="w-4 h-4 mr-2" strokeWidth={2.5} /> NOVO
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-3xl bg-surface sm:shadow-2xl">
               <div className="p-8 border-b border-outline/10 bg-surface">
@@ -370,61 +370,59 @@ export default function Movimentacoes() {
         </div>
       </motion.div>
 
-      {/* Stats Overview */}
-      <motion.div 
+      {/* Stats Overview - Compact */}
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 px-4 md:px-0"
+        className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 md:px-0"
       >
-        <Card className="premium-card p-6 flex flex-col justify-between">
+        <Card className="premium-card p-5 flex flex-col justify-between">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Saldo Atual</p>
-              <h2 className="text-3xl font-bold text-on-background tracking-tight mt-1">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Saldo</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-on-background tracking-tight">
                   {formatCurrency(transactions.reduce((acc, t) => t.type === 'INCOME' ? acc + t.amount : acc - t.amount, 0))}
               </h2>
             </div>
-            <div className="mt-6 flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
-                  <Wallet className="w-5 h-5" />
-              </div>
-              <span className="text-[10px] font-semibold text-on-surface-variant">Ajustado em tempo real</span>
-            </div>
-        </Card>
-        
-        <Card className="premium-card p-6 flex flex-col justify-between border-emerald-100 bg-emerald-50/20">
-            <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Entradas</p>
-                <h2 className="text-2xl font-bold text-emerald-700 tracking-tight mt-1">
-                    {formatCurrency(transactions.filter(t => t.type === 'INCOME').reduce((acc, t) => acc + t.amount, 0))}
-                </h2>
-            </div>
-            <div className="mt-6 flex items-center gap-2 text-emerald-600">
-                <ArrowUp className="w-4 h-4" />
-                <span className="text-[10px] font-semibold">Fluxos positivos</span>
+            <div className="mt-3 flex items-center gap-2">
+              <Wallet className="w-4 h-4 text-secondary" />
+              <span className="text-[10px] font-semibold text-on-surface-variant">Consolidado</span>
             </div>
         </Card>
 
-        <Card className="premium-card p-6 flex flex-col justify-between border-red-100 bg-red-50/20">
+        <Card className="premium-card p-5 flex flex-col justify-between border-emerald-100 bg-emerald-50/20">
             <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-red-700">Saídas</p>
-                <h2 className="text-2xl font-bold text-red-700 tracking-tight mt-1">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Entradas</p>
+                <h2 className="text-2xl font-bold text-emerald-700 tracking-tight">
+                    {formatCurrency(transactions.filter(t => t.type === 'INCOME').reduce((acc, t) => acc + t.amount, 0))}
+                </h2>
+            </div>
+            <div className="mt-3 flex items-center gap-2 text-emerald-600">
+                <ArrowUp className="w-4 h-4" />
+                <span className="text-[10px] font-semibold">Receitas</span>
+            </div>
+        </Card>
+
+        <Card className="premium-card p-5 flex flex-col justify-between border-red-100 bg-red-50/20">
+            <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-red-700 mb-1">Saídas</p>
+                <h2 className="text-2xl font-bold text-red-700 tracking-tight">
                     {formatCurrency(transactions.filter(t => t.type === 'EXPENSE').reduce((acc, t) => acc + t.amount, 0))}
                 </h2>
               </div>
-              <div className="mt-6 flex items-center gap-2 text-red-600">
+              <div className="mt-3 flex items-center gap-2 text-red-600">
                   <ArrowDown className="w-4 h-4" />
-                  <span className="text-[10px] font-semibold">Fluxos negativos</span>
+                  <span className="text-[10px] font-semibold">Despesas</span>
               </div>
           </Card>
       </motion.div>
 
-      {/* Filters & Search */}
-      <motion.div 
+      {/* Filters & Search - Compact */}
+      <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-surface p-6 rounded-3xl border border-outline/10 shadow-sm mx-4 md:mx-0"
+        className="flex flex-col md:flex-row items-stretch md:items-center gap-3 bg-surface p-4 rounded-xl border border-outline/10 mx-4 md:mx-0"
       >
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/60" />
@@ -470,11 +468,11 @@ export default function Movimentacoes() {
           <Table>
             <TableHeader>
               <TableRow className="bg-surface-variant/10 hover:bg-surface-variant/10 border-b border-outline/10">
-                <TableHead className="px-8 py-6 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/80">Data</TableHead>
-                <TableHead className="py-6 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/80">Descrição</TableHead>
-                <TableHead className="py-6 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/80 text-center">Categoria</TableHead>
-                <TableHead className="px-8 py-6 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/80 text-right">Valor</TableHead>
-                <TableHead className="w-32"></TableHead>
+                <TableHead className="px-6 py-4 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/70">Data</TableHead>
+                <TableHead className="py-4 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/70">Descrição</TableHead>
+                <TableHead className="py-4 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/70 text-center">Categoria</TableHead>
+                <TableHead className="px-6 py-4 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/70 text-right">Valor</TableHead>
+                <TableHead className="w-28"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -490,30 +488,30 @@ export default function Movimentacoes() {
                   </TableCell>
                 </TableRow>
               ) : transactions.map((t) => (
-                <TableRow key={t.id} className="group border-b border-outline/5 hover:bg-surface-variant/20 transition-all duration-200">
-                  <TableCell className="px-8 py-6">
+                <TableRow key={t.id} className="group border-b border-outline/5 hover:bg-surface-variant/15 transition-all duration-200">
+                  <TableCell className="px-6 py-4">
                     <div className="flex flex-col">
-                      <span className="font-bold text-base text-on-background tracking-tight">{format(new Date(t.date), "dd/MM/yyyy")}</span>
-                      {t.frequency === "MONTHLY" && <span className="flex items-center gap-1 text-[9px] font-bold text-secondary uppercase mt-1 tracking-wider"><RotateCcw className="w-2.5 h-2.5" /> Mensal</span>}
+                      <span className="font-semibold text-sm text-on-background tracking-tight">{format(new Date(t.date), "dd/MM/yy")}</span>
+                      {t.frequency === "MONTHLY" && <span className="flex items-center gap-1 text-[8px] font-bold text-secondary uppercase mt-0.5 tracking-wider"><RotateCcw className="w-2.5 h-2.5" /> Mensal</span>}
                     </div>
                   </TableCell>
-                  <TableCell className="py-6 font-semibold text-on-background">
-                    <div className="flex items-center gap-4">
+                  <TableCell className="py-4 font-medium text-on-background text-sm">
+                    <div className="flex items-center gap-3">
                       {t.description}
-                      {t.blobUrl && <motion.a whileHover={{ scale: 1.1 }} href={t.blobUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100"><Cloud className="w-3.5 h-3.5" /></motion.a>}
-                      {t.attachmentUrl && !t.blobUrl && <motion.a whileHover={{ scale: 1.1 }} href={t.attachmentUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg bg-surface-variant text-secondary border border-outline/10"><LinkIcon className="w-3.5 h-3.5" /></motion.a>}
+                      {t.blobUrl && <motion.a whileHover={{ scale: 1.1 }} href={t.blobUrl} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100"><Cloud className="w-3 h-3" /></motion.a>}
+                      {t.attachmentUrl && !t.blobUrl && <motion.a whileHover={{ scale: 1.1 }} href={t.attachmentUrl} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-surface-variant text-secondary border border-outline/10"><LinkIcon className="w-3 h-3" /></motion.a>}
                     </div>
                   </TableCell>
-                  <TableCell className="py-6 text-center">
-                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-variant/60 text-on-surface-variant border border-outline/20">{t.category?.name}</span>
+                  <TableCell className="py-4 text-center">
+                    <span className="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider bg-surface-variant/50 text-on-surface-variant border border-outline/20">{t.category?.name}</span>
                   </TableCell>
-                  <TableCell className={cn("px-8 py-6 text-right font-bold text-xl tracking-tight", t.type === 'INCOME' ? 'text-emerald-600' : 'text-on-background')}>
+                  <TableCell className={cn("px-6 py-4 text-right font-bold text-sm tracking-tight", t.type === 'INCOME' ? 'text-emerald-600' : 'text-on-background')}>
                     {t.type === 'EXPENSE' && "- "}{formatCurrency(t.amount)}
                   </TableCell>
-                  <TableCell className="pr-8">
-                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-9 w-9 rounded-xl hover:bg-surface-variant text-on-surface-variant hover:text-secondary"><Edit2 className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-9 w-9 rounded-xl hover:bg-red-50 text-on-surface-variant hover:text-red-600"><Trash2 className="w-4 h-4" /></Button>
+                  <TableCell className="pr-4">
+                    <div className="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-all">
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-8 w-8 rounded-lg hover:bg-surface-variant text-on-surface-variant hover:text-secondary"><Edit2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 rounded-lg hover:bg-red-50 text-on-surface-variant hover:text-red-600"><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>

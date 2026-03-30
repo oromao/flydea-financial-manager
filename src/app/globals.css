@@ -7,29 +7,29 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  
-  /* Sophisticated Neutral Palette (Apple-inspired) */
-  --color-primary: #1D1D1F; /* Apple Black */
+
+  /* Premium Fintech Palette (Institucional + Contraste) */
+  --color-primary: #1D1D1F; /* Charcoal preto */
   --color-on-primary: #FFFFFF;
   --color-primary-container: #F5F5F7;
   --color-on-primary-container: #1D1D1F;
-  
-  --color-secondary: #0071E3; /* Apple Blue (Used sparingly) */
+
+  --color-secondary: #0071E3; /* Azul institucional */
   --color-on-secondary: #FFFFFF;
   --color-secondary-container: #E8F2FF;
   --color-on-secondary-container: #0071E3;
-  
+
   --color-surface: #FFFFFF;
   --color-on-surface: #1D1D1F;
-  --color-surface-variant: #F5F5F7;
-  --color-on-surface-variant: #52525B;
-  
-  --color-outline: #A1A1AA;
+  --color-surface-variant: #F9F9FB;
+  --color-on-surface-variant: #6F7278;
+
+  --color-outline: #D0D0D5;
   --color-background: #FBFBFD;
   --color-on-background: #1D1D1F;
 
-  --radius-xl: 18px;
-  --radius-lg: 14px;
+  --radius-xl: 16px;
+  --radius-lg: 12px;
   --radius-md: 10px;
   --radius-sm: 8px;
 
@@ -65,32 +65,32 @@
   }
 }
 
-/* Sophisticated Minimalist Cards & Components */
+/* Premium Fintech Cards & Components */
 .premium-card {
-  @apply bg-surface border border-outline/30 shadow-[0_2px_8px_rgba(0,0,0,0.04)] rounded-xl transition-shadow duration-300 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)];
+  @apply bg-surface border border-outline/25 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-outline/35;
 }
 
 .apple-button-primary {
-  @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full font-medium transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
-  @apply bg-primary text-on-primary hover:bg-primary/90;
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  @apply bg-secondary text-on-secondary hover:bg-secondary/90 hover:shadow-sm;
 }
 
 .apple-button-secondary {
-  @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full font-medium transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
-  @apply bg-secondary text-on-secondary hover:bg-secondary/90;
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  @apply bg-secondary/10 text-secondary hover:bg-secondary/15;
 }
 
 .apple-button-outline {
-  @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full font-medium transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
-  @apply border border-outline hover:bg-surface-variant;
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  @apply border border-outline/30 text-on-surface hover:bg-surface-variant/50 hover:border-outline/50;
 }
 
 .nav-link {
-  @apply flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-on-surface-variant hover:bg-surface-variant hover:text-on-surface;
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 text-on-surface-variant hover:bg-surface-variant hover:text-on-surface text-sm;
 }
 
 .nav-link-active {
-  @apply flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 bg-surface-variant text-on-surface font-semibold;
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 bg-secondary/10 text-secondary font-semibold text-sm;
 }
 
 /* Custom Scrollbar (Minimal) */

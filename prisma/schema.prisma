@@ -9,18 +9,20 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
-  password     String
-  name         String?
-  createdAt    DateTime      @default(now())
-  accounts     Account[]
-  auditLogs    AuditLog[]
-  budgets      Budget[]
-  categories   Category[]
-  recurrences  Recurrence[]
-  tags         Tag[]
-  transactions Transaction[]
+  id                    String                   @id @default(uuid())
+  email                 String                   @unique
+  password              String
+  name                  String?
+  createdAt             DateTime                 @default(now())
+  accounts              Account[]
+  auditLogs             AuditLog[]
+  budgets               Budget[]
+  categories            Category[]
+  recurrences           Recurrence[]
+  tags                  Tag[]
+  transactions          Transaction[]
+  notifications         Notification[]
+  notificationPreference NotificationPreference?
 }
 
 model Category {
@@ -129,4 +131,35 @@ model AuditLog {
   userId    String
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  message       String
+  type          String
+  relatedId     String?
+  relatedType   String?
+  metadata      Json?
+  read          Boolean  @default(false)
+  readAt        DateTime?
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime?
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model NotificationPreference {
+  id               String  @id @default(cuid())
+  userId           String  @unique
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailEnabled     Boolean @default(true)
+  inAppEnabled     Boolean @default(true)
+  transactionsOn   Boolean @default(true)
+  budgetAlertsOn   Boolean @default(true)
+  importsOn        Boolean @default(true)
+  remindersOn      Boolean @default(true)
 }

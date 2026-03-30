@@ -32,6 +32,8 @@ export default function LoginPage() {
       setError(res.error);
       setLoading(false);
     } else {
+      // Reset loading state before redirecting
+      setLoading(false);
       router.push("/");
     }
   };
