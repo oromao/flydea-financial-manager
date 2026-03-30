@@ -12,10 +12,16 @@ export async function GET(request: NextRequest) {
   const startDate = startOfMonth(now);
   const endDate = endOfMonth(now);
 
-  const [transactions, recurrences, budgets] = await Promise.all([
+  const [transactions, allTransactions, recurrences, budgets] = await Promise.all([
+    // Current month — for income/expenses/chart
     prisma.transaction.findMany({
       where: { userId: session.user.id, date: { gte: startDate, lte: endDate } },
       include: { category: true }
+    }),
+    // All time — for balance
+    prisma.transaction.findMany({
+      where: { userId: session.user.id },
+      select: { type: true, amount: true }
     }),
     prisma.recurrence.findMany({
       where: { userId: session.user.id, isActive: true },
@@ -27,7 +33,11 @@ export async function GET(request: NextRequest) {
     })
   ]);
 
-  let balance = 0;
+  // Balance = all-time sum (income - expenses across all history)
+  const balance = allTransactions.reduce((sum, t) => {
+    return t.type === "INCOME" ? sum + t.amount : sum - t.amount;
+  }, 0);
+
   let income = 0;
   let expenses = 0;
   const chartDataMap: Record<number, { day: number; income: number; expenses: number }> = {};
@@ -40,11 +50,9 @@ export async function GET(request: NextRequest) {
   transactions.forEach((t) => {
     const day = new Date(t.date).getDate();
     if (t.type === "INCOME") {
-      balance += t.amount;
       income += t.amount;
       chartDataMap[day].income += t.amount;
     } else {
-      balance -= t.amount;
       expenses += t.amount;
       chartDataMap[day].expenses += t.amount;
       const catName = t.category?.name || "Outros";
