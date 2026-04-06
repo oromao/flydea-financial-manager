@@ -6,8 +6,12 @@ export const TransactionSchema = z.object({
   categoryId: z.string().uuid("Categoria inválida"),
   amount: z.coerce.number().positive("Valor deve ser positivo"),
   date: z.string().refine((d) => !isNaN(Date.parse(d)), "Data inválida"),
+  dueDate: z.string().refine((d) => !isNaN(Date.parse(d)), "Data inválida").optional().or(z.literal("")),
+  paidAt: z.string().refine((d) => !isNaN(Date.parse(d)), "Data inválida").optional().or(z.literal("")),
+  amountPaid: z.coerce.number().min(0).optional(),
   observations: z.string().max(1000).optional(),
   frequency: z.enum(["NONE", "MONTHLY", "WEEKLY"]).default("NONE"),
+  paymentStatus: z.enum(["PAID", "PENDING"]).default("PAID"),
   attachmentUrl: z.string().url().optional().or(z.literal("")),
   blobUrl: z.string().url().optional().or(z.literal("")),
   accountId: z.string().uuid().optional().or(z.literal("")),
@@ -21,6 +25,7 @@ export const RecurrenceSchema = z.object({
   frequency: z.enum(["MONTHLY", "WEEKLY"]),
   startDate: z.string().refine((d) => !isNaN(Date.parse(d)), "Data inválida"),
   categoryId: z.string().uuid("Categoria inválida"),
+  isActive: z.boolean().optional(),
 });
 
 export const AccountSchema = z.object({
@@ -47,9 +52,31 @@ export const CategorySchema = z.object({
   type: z.enum(["INCOME", "EXPENSE"]),
 });
 
+export const InvoiceInstallmentSchema = z.object({
+  installmentNumber: z.number().int().positive(),
+  amount: z.coerce.number().positive("Valor deve ser positivo"),
+  dueDate: z.string().refine((d) => !isNaN(Date.parse(d)), "Data inválida"),
+  status: z.enum(["PENDING", "RECEIVED", "OVERDUE"]).default("PENDING"),
+});
+
+export const InvoiceSchema = z.object({
+  invoiceNumber: z.string().min(1, "Número da nota obrigatório"),
+  clientName: z.string().min(1, "Nome do cliente obrigatório"),
+  clientEmail: z.string().email("Email inválido").optional(),
+  description: z.string().optional(),
+  totalAmount: z.coerce.number().positive("Valor total deve ser positivo"),
+  emissionDate: z.string().refine((d) => !isNaN(Date.parse(d)), "Data inválida"),
+  dueDate: z.string().refine((d) => !isNaN(Date.parse(d)), "Data inválida").optional(),
+  observations: z.string().max(1000).optional(),
+  paymentMethod: z.string().optional(),
+  installments: z.array(InvoiceInstallmentSchema).min(1, "Mínimo 1 parcela"),
+});
+
 export type TransactionInput = z.infer<typeof TransactionSchema>;
 export type RecurrenceInput = z.infer<typeof RecurrenceSchema>;
 export type AccountInput = z.infer<typeof AccountSchema>;
 export type BudgetInput = z.infer<typeof BudgetSchema>;
 export type TagInput = z.infer<typeof TagSchema>;
 export type CategoryInput = z.infer<typeof CategorySchema>;
+export type InvoiceInput = z.infer<typeof InvoiceSchema>;
+export type InvoiceInstallmentInput = z.infer<typeof InvoiceInstallmentSchema>;

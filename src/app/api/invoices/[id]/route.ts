@@ -1,0 +1,104 @@
+import { NextResponse, NextRequest } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const invoice = await prisma.invoice.findUnique({
+    where: { id: params.id },
+    include: { installments: true }
+  });
+
+  if (!invoice || invoice.userId !== session.user.id) {
+    return NextResponse.json({ error: "Invoice não encontrada" }, { status: 404 });
+  }
+
+  return NextResponse.json(invoice);
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const body = await request.json();
+  const { installmentId, status, paidAmount } = body;
+
+  if (!installmentId || !status) {
+    return NextResponse.json(
+      { error: "installmentId e status são obrigatórios" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: params.id },
+      include: { installments: true }
+    });
+
+    if (!invoice || invoice.userId !== session.user.id) {
+      return NextResponse.json({ error: "Invoice não encontrada" }, { status: 404 });
+    }
+
+    const originalInstallment = await prisma.invoiceInstallment.findUnique({
+      where: { id: installmentId }
+    });
+
+    if (!originalInstallment) {
+      return NextResponse.json({ error: "Installment não encontrada" }, { status: 404 });
+    }
+
+    const installment = await prisma.invoiceInstallment.update({
+      where: { id: installmentId },
+      data: {
+        status,
+        paidAt: status === "RECEIVED" ? new Date() : null,
+        paidAmount: paidAmount || (status === "RECEIVED" ? originalInstallment.amount : null)
+      }
+    });
+
+    // Verificar se todas as parcelas foram recebidas
+    const allInstallments = await prisma.invoiceInstallment.findMany({
+      where: { invoiceId: params.id }
+    });
+
+    const allReceived = allInstallments.every(inst => inst.status === "RECEIVED");
+
+    if (allReceived) {
+      await prisma.invoice.update({
+        where: { id: params.id },
+        data: { status: "FULLY_PAID" }
+      });
+    }
+
+    await prisma.auditLog.create({
+      data: {
+        action: "UPDATE",
+        entity: "INVOICE_INSTALLMENT",
+        entityId: installmentId,
+        details: `Parcela atualizada: ${status}`,
+        userId: session.user.id
+      }
+    });
+
+    return NextResponse.json({ success: true, installment });
+  } catch (error) {
+    console.error("Update error:", error);
+    return NextResponse.json({ error: "Erro ao atualizar" }, { status: 500 });
+  }
+}
+
+// Buscar installment específico para atualizar
+async function getInstallmentFromRequest(body: any) {
+  // Placeholder para busca na request
+  return null;
+}
