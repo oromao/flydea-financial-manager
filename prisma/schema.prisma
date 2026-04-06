@@ -28,6 +28,7 @@ model User {
   approvalsRequested    ApprovalRequest[]       @relation("ApprovalsRequested")
   approvalsReviewed     ApprovalRequest[]       @relation("ApprovalsReviewed")
   invoices              Invoice[]
+  revenues              Revenue[]
   cashflowWeekly        CashflowWeekly[]
 }
 
@@ -41,6 +42,7 @@ model Category {
   user         User?         @relation(fields: [userId], references: [id])
   recurrences  Recurrence[]
   transactions Transaction[]
+  revenues     Revenue[]
 
   @@unique([name, userId])
 }
@@ -233,6 +235,44 @@ model InvoiceInstallment {
   @@unique([invoiceId, installmentNumber])
   @@index([invoiceId, dueDate])
   @@index([status])
+}
+
+/// === REVENUE MANAGEMENT (Receitas com Parcelamento) ===
+model Revenue {
+  id              String               @id @default(uuid())
+  userId          String
+  user            User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  description     String
+  totalAmount     Float
+  emissionDate    DateTime
+  type            String               @default("PARCELADO")  // AVISTA | PARCELADO
+  status          String               @default("EMITTED")     // EMITTED | PARTIAL | RECEIVED | CANCELLED
+  categoryId      String?
+  category        Category?            @relation(fields: [categoryId], references: [id])
+  observations    String?
+  installments    RevenueInstallment[]
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@index([userId, emissionDate])
+  @@index([userId, status])
+}
+
+model RevenueInstallment {
+  id          String    @id @default(uuid())
+  revenueId   String
+  revenue     Revenue   @relation(fields: [revenueId], references: [id], onDelete: Cascade)
+  installmentNumber Int
+  amount      Float
+  dueDate     DateTime
+  status      String    @default("PENDING")  // PENDING | RECEIVED
+  receivedAt  DateTime?
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  @@unique([revenueId, installmentNumber])
+  @@index([revenueId, dueDate])
+  @@index([status, dueDate])
 }
 
 model CashflowWeekly {

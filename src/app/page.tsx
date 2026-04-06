@@ -12,6 +12,8 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { motion } from "framer-motion";
+import { WeeklyCashflowForecast } from "@/components/weekly-cashflow-forecast";
+import { SpendDecisionIndicator } from "@/components/spend-decision-indicator";
 
 const containerVariants: any = {
   hidden: { opacity: 0 },
@@ -99,6 +101,16 @@ export default function Dashboard() {
           </Link>
         </motion.div>
       )}
+
+      {/* Spend Decision Indicator */}
+      <motion.div variants={itemVariants}>
+        <SpendDecisionIndicator />
+      </motion.div>
+
+      {/* Weekly Cashflow Forecast */}
+      <motion.div variants={itemVariants}>
+        <WeeklyCashflowForecast />
+      </motion.div>
 
       {/* Stats Cards - Compact Dense */}
       <motion.div
