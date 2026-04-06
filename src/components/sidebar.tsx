@@ -38,8 +38,8 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
           <span className="text-lg font-bold text-on-background tracking-tighter uppercase italic">FLY DEA</span>
         </div>
         <div className="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden relative">
-          {session?.user?.image || session?.user?.avatarUrl ? (
-            <img src={(session.user.image || session.user.avatarUrl) as string} alt="Foto do perfil" className="h-full w-full object-cover" />
+          {session?.user?.image ? (
+            <img src={(session.user.image) as string} alt="Foto do perfil" className="h-full w-full object-cover" />
           ) : (
             <UserCircle className="w-7 h-7 text-on-surface-variant" />
           )}
@@ -88,8 +88,8 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
         <div className="mt-auto space-y-3 pt-4 border-t border-outline/20">
           <div className="p-3 flex items-center gap-2.5 rounded-lg bg-surface-variant/50 border border-outline/20">
             <div className="w-8 h-8 rounded-full overflow-hidden bg-surface-variant shrink-0 relative">
-              {session?.user?.image || session?.user?.avatarUrl ? (
-                <img src={(session.user.image || session.user.avatarUrl) as string} alt="Foto do perfil" className="h-full w-full object-cover" />
+              {session?.user?.image ? (
+                <img src={(session.user.image) as string} alt="Foto do perfil" className="h-full w-full object-cover" />
               ) : (
                 <UserCircle className="w-8 h-8 text-on-surface-variant" />
               )}
