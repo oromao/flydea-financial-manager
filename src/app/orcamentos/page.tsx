@@ -167,7 +167,7 @@ export default function Orcamentos() {
                 </Select>
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Limite (BRL)</Label>
                   <Input type="number" step="0.01" required value={amount} onChange={(e) => setAmount(e.target.value)}
@@ -218,16 +218,16 @@ export default function Orcamentos() {
         transition={{ delay: 0.1 }}
         className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8"
       >
-        <Card className="premium-card p-6 flex flex-col justify-between">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Total Orçado</p>
+        <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between">
+          <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Total Orçado</p>
           <p className="text-3xl font-bold text-on-background tracking-tight mt-1">{formatCurrency(totalBudget)}</p>
         </Card>
-        <Card className="premium-card p-6 flex flex-col justify-between">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Total Consumido</p>
+        <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between">
+          <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Total Consumido</p>
           <p className="text-3xl font-bold text-red-600 tracking-tight mt-1">{formatCurrency(totalSpent)}</p>
         </Card>
-        <Card className={cn("premium-card p-6 flex flex-col justify-between transition-colors", alertCount > 0 ? "border-amber-100 bg-amber-50/20" : "")}>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Alertas Críticos</p>
+        <Card className={cn("premium-card p-4 sm:p-6 flex flex-col justify-between transition-colors", alertCount > 0 ? "border-amber-100 bg-amber-50/20" : "")}>
+          <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Alertas Críticos</p>
           <div className="flex items-center gap-3 mt-1">
             {alertCount > 0 ? <AlertTriangle className="w-6 h-6 text-amber-500" /> : <CheckCircle2 className="w-6 h-6 text-secondary" />}
             <p className={cn("text-3xl font-bold tracking-tight", alertCount > 0 ? "text-amber-600" : "text-secondary")}>
@@ -286,14 +286,14 @@ export default function Orcamentos() {
                         {isOver && <span className="px-2.5 py-0.5 rounded-full bg-red-100 text-red-600 text-[9px] font-bold uppercase tracking-wider">Limite Excedido</span>}
                         {isAlert && !isOver && <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-600 text-[9px] font-bold uppercase tracking-wider">Atenção</span>}
                       </div>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+                      <span className="text-xs sm:text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
                         Fluxo {budget.period === "MONTHLY" ? "Mensal" : "Anual"} de Gastos
                       </span>
                     </div>
                     <div className="flex items-center gap-6 self-end md:self-auto">
                       <div className="text-right">
                         <p className="font-bold text-on-background text-2xl tracking-tight">{formatCurrency(budget.spent || 0)}</p>
-                        <p className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-tighter">de {formatCurrency(budget.amount)} total</p>
+                        <p className="text-xs sm:text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-tighter">de {formatCurrency(budget.amount)} total</p>
                       </div>
                       <Button variant="ghost" size="icon"
                         className="w-10 h-10 rounded-lg bg-red-100/60 hover:bg-red-100 text-red-600 hover:text-red-700 transition-colors"
@@ -312,11 +312,11 @@ export default function Orcamentos() {
                         className={cn("h-full rounded-full", barColorClass)} 
                       />
                     </div>
-                    <div className="flex justify-between items-center font-bold">
-                      <span className={cn("text-[10px] uppercase tracking-wider", isOver ? "text-red-600" : isAlert ? "text-amber-600" : "text-secondary")}>
+                    <div className="flex justify-between items-center font-bold gap-2">
+                      <span className={cn("text-xs sm:text-[10px] uppercase tracking-wider", isOver ? "text-red-600" : isAlert ? "text-amber-600" : "text-secondary")}>
                         {(budget.percentage || 0).toFixed(1)}% utilizado do total
                       </span>
-                      <span className="text-[10px] text-on-surface-variant/40 uppercase tracking-widest">
+                      <span className="text-xs sm:text-[10px] text-on-surface-variant/40 uppercase tracking-widest">
                         Alerta configurado para {budget.alertAt}%
                       </span>
                     </div>

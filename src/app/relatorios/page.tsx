@@ -121,7 +121,7 @@ export default function Relatorios() {
           </motion.div>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-background">Relatórios</h1>
-            <p className="text-on-surface-variant font-medium text-sm mt-1 uppercase tracking-widest text-[10px]">Estatísticas & Insights</p>
+            <p className="text-on-surface-variant font-medium text-xs sm:text-[10px] mt-1 uppercase tracking-widest">Estatísticas & Insights</p>
           </div>
         </div>
 
@@ -129,7 +129,7 @@ export default function Relatorios() {
         <div className="flex items-center gap-4 bg-surface-variant/30 p-1.5 rounded-2xl border border-outline/5">
           <div className="flex items-center gap-2 pl-3">
             <Calendar className="w-4 h-4 text-on-surface-variant/70" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/80 hidden md:block">Período:</span>
+            <span className="text-xs sm:text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/80 hidden md:block">Período:</span>
           </div>
           <Select value={period} onValueChange={(v) => setPeriod(v || "0")}>
             <SelectTrigger className="w-44 h-9 rounded-xl border-none bg-surface/80 font-bold text-xs ring-1 ring-outline/20">
@@ -151,7 +151,7 @@ export default function Relatorios() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
+        className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 lg:gap-8"
       >
         {[
           { label: "Receitas", value: totalIncome, color: "text-secondary" },
@@ -159,8 +159,8 @@ export default function Relatorios() {
           { label: "Resultado", value: netBalance, color: netBalance >= 0 ? "text-secondary" : "text-red-600" },
           { label: "Poupança", value: null, color: savingsRate >= 20 ? "text-secondary" : "text-amber-600", label2: `${savingsRate.toFixed(1)}%` },
         ].map((card, i) => (
-          <Card key={i} className="premium-card p-6 flex flex-col justify-between">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/80">{card.label}</p>
+          <Card key={i} className="premium-card p-4 sm:p-6 flex flex-col justify-between">
+            <p className="text-xs sm:text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/80">{card.label}</p>
             <p className={cn("text-2xl md:text-3xl font-bold mt-1 tracking-tight", card.color)}>
               {card.value !== null ? formatCurrency(card.value) : card.label2}
             </p>
@@ -176,14 +176,14 @@ export default function Relatorios() {
         className="grid gap-8 grid-cols-1 lg:grid-cols-2"
       >
         {/* Pie Chart - Expenses by Category */}
-        <Card className="premium-card p-8">
+        <Card className="premium-card p-4 sm:p-8">
           <div className="flex items-center gap-4 mb-10">
             <div className="p-2.5 rounded-xl bg-surface-variant text-on-surface-variant border border-outline/5">
               <PieChart className="w-5 h-5 opacity-70" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-on-background tracking-tight">Gastos por Categoria</h2>
-              <p className="text-[10px] font-bold text-on-surface-variant/70 uppercase tracking-widest mt-0.5 capitalize">{periodLabel}</p>
+              <h2 className="text-lg sm:text-xl font-bold text-on-background tracking-tight">Gastos por Categoria</h2>
+              <p className="text-xs sm:text-[10px] font-bold text-on-surface-variant/70 uppercase tracking-widest mt-0.5 capitalize">{periodLabel}</p>
             </div>
           </div>
 
@@ -215,14 +215,14 @@ export default function Relatorios() {
         </Card>
 
         {/* Bar Chart - Income vs Expense by Category */}
-        <Card className="premium-card p-8">
+        <Card className="premium-card p-4 sm:p-8">
           <div className="flex items-center gap-4 mb-10">
             <div className="p-2.5 rounded-xl bg-surface-variant text-on-surface-variant border border-outline/5">
               <BarChart3 className="w-5 h-5 opacity-70" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-on-background tracking-tight">Receita vs Despesa</h2>
-              <p className="text-[10px] font-bold text-on-surface-variant/70 uppercase tracking-widest mt-0.5">Visão Comparativa</p>
+              <h2 className="text-lg sm:text-xl font-bold text-on-background tracking-tight">Receita vs Despesa</h2>
+              <p className="text-xs sm:text-[10px] font-bold text-on-surface-variant/70 uppercase tracking-widest mt-0.5">Visão Comparativa</p>
             </div>
           </div>
           {loading ? (
@@ -255,15 +255,15 @@ export default function Relatorios() {
         className="grid gap-8 grid-cols-1 lg:grid-cols-2"
       >
         {/* Expense breakdown list */}
-        <Card className="premium-card p-8">
+        <Card className="premium-card p-4 sm:p-8">
           <div className="flex items-center gap-4 pb-6 border-b border-outline/5 mb-8">
             <div className="p-2.5 rounded-xl bg-surface-variant text-on-surface-variant border border-outline/5">
               <Filter className="w-5 h-5 opacity-70" />
             </div>
-            <h2 className="text-xl font-bold text-on-background tracking-tight uppercase tracking-wider text-sm">Distribuição Detalhada</h2>
+            <h2 className="text-base sm:text-xl font-bold text-on-background tracking-tight uppercase tracking-wider">Distribuição Detalhada</h2>
           </div>
           {loading ? (
-            <div className="py-20 text-center font-bold text-on-surface-variant/20 text-[10px] tracking-[0.3em] italic uppercase">Consultando banco de dados...</div>
+            <div className="py-20 text-center font-bold text-on-surface-variant/20 text-xs sm:text-[10px] tracking-[0.3em] italic uppercase">Consultando banco de dados...</div>
           ) : (
             <div className="space-y-4">
               {Object.entries(expensesByCategory).length === 0 ? (

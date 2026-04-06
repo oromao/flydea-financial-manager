@@ -158,11 +158,11 @@ export default function Recorrencias() {
                   placeholder="Ex: Aluguel, Netflix, Salários..." />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Valor Mensal (BRL)</Label>
-                  <Input type="number" step="0.01" value={amount} onChange={e => setAmount(e.target.value)} 
-                    className="h-11 font-bold text-lg" 
+                  <Input type="number" step="0.01" value={amount} onChange={e => setAmount(e.target.value)}
+                    className="h-11 font-bold text-lg"
                     placeholder="0,00" />
                 </div>
                 <div className="space-y-2">
@@ -179,10 +179,10 @@ export default function Recorrencias() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Data Inicial</Label>
-                  <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} 
+                  <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
                     className="h-11 font-medium" />
                 </div>
                 <div className="space-y-2">
@@ -234,20 +234,20 @@ export default function Recorrencias() {
               transition={{ delay: idx * 0.05 + 0.1 }}
             >
               <Card className="premium-card overflow-hidden group hover:shadow-xl transition-colors duration-300 p-0 border-none bg-surface">
-                <div className="bg-surface-variant/30 p-6 flex justify-between items-start border-b border-outline/5">
-                  <div className="space-y-1">
-                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/50">Próximo Lançamento</h3>
+                <div className="bg-surface-variant/30 p-4 sm:p-6 flex justify-between items-start border-b border-outline/5 gap-3">
+                  <div className="space-y-1 flex-1 min-w-0">
+                    <h3 className="text-xs sm:text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/50">Próximo Lançamento</h3>
                     <div className="flex items-center gap-2 text-on-background font-bold text-sm">
-                      <Calendar className="w-4 h-4 text-secondary/70" />
-                      {format(new Date(rec.nextDate || rec.startDate), "dd 'de' MMMM", { locale: ptBR })}
+                      <Calendar className="w-4 h-4 text-secondary/70 shrink-0" />
+                      <span className="truncate">{format(new Date(rec.nextDate || rec.startDate), "dd 'de' MMMM", { locale: ptBR })}</span>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <span className="px-2.5 py-1 rounded-lg bg-surface text-secondary text-[9px] font-bold uppercase tracking-wider border border-outline/10 shadow-sm">
+                  <div className="flex flex-col items-end gap-2 shrink-0">
+                    <span className="px-2.5 py-1 rounded-lg bg-surface text-secondary text-[10px] sm:text-xs font-bold uppercase tracking-wider border border-outline/10 shadow-sm whitespace-nowrap">
                       {rec.frequency === 'MONTHLY' ? 'Mensal' : 'Semanal'}
                     </span>
                     <span className={cn(
-                      "px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border shadow-sm",
+                      "px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-wider border shadow-sm whitespace-nowrap",
                       rec.isActive ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-slate-50 text-slate-600 border-slate-200"
                     )}>
                       {rec.isActive ? "Ativa" : "Pausada"}
@@ -255,18 +255,18 @@ export default function Recorrencias() {
                   </div>
                 </div>
                 
-                <div className="p-7 space-y-6">
+                <div className="p-4 sm:p-7 space-y-6">
                   <div>
-                    <h2 className="text-xl font-bold text-on-background tracking-tight leading-tight group-hover:text-secondary transition-colors">{rec.description}</h2>
-                    <span className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest mt-1 block">{rec.category?.name}</span>
+                    <h2 className="text-lg sm:text-xl font-bold text-on-background tracking-tight leading-tight group-hover:text-secondary transition-colors">{rec.description}</h2>
+                    <span className="text-xs sm:text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest mt-1 block">{rec.category?.name}</span>
                   </div>
 
-                  <div className="text-3xl font-bold text-on-background tracking-tight">
+                  <div className="text-2xl sm:text-3xl font-bold text-on-background tracking-tight">
                     {formatCurrency(rec.amount)}
                   </div>
 
-                  <div className="pt-5 border-t border-outline/5 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-secondary">
+                  <div className="pt-5 border-t border-outline/5 flex items-center justify-between gap-3 flex-wrap">
+                    <div className="flex items-center gap-2 text-xs sm:text-[10px] font-bold uppercase tracking-widest text-secondary">
                       <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
                       {rec.isActive ? "Status: Ativa" : "Status: Pausada"}
                     </div>

@@ -118,11 +118,11 @@ export default function AuditLogs() {
         <Table>
           <TableHeader>
             <TableRow className="bg-surface-variant/30 border-b border-outline-variant">
-              <TableHead className="px-10 py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-on-surface-variant">Quando</TableHead>
-              <TableHead className="py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-on-surface-variant">Responsável</TableHead>
-              <TableHead className="py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-on-surface-variant">Ação</TableHead>
-              <TableHead className="py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-on-surface-variant">Entidade</TableHead>
-              <TableHead className="px-10 py-6 font-bold uppercase text-[11px] tracking-[0.2em] text-on-surface-variant">Detalhes</TableHead>
+              <TableHead className="px-4 sm:px-10 py-4 sm:py-6 font-bold uppercase text-xs sm:text-[11px] tracking-[0.2em] text-on-surface-variant">Quando</TableHead>
+              <TableHead className="px-2 sm:px-4 py-4 sm:py-6 font-bold uppercase text-xs sm:text-[11px] tracking-[0.2em] text-on-surface-variant">Responsável</TableHead>
+              <TableHead className="px-2 sm:px-4 py-4 sm:py-6 font-bold uppercase text-xs sm:text-[11px] tracking-[0.2em] text-on-surface-variant">Ação</TableHead>
+              <TableHead className="px-2 sm:px-4 py-4 sm:py-6 font-bold uppercase text-xs sm:text-[11px] tracking-[0.2em] text-on-surface-variant">Entidade</TableHead>
+              <TableHead className="px-4 sm:px-10 py-4 sm:py-6 font-bold uppercase text-xs sm:text-[11px] tracking-[0.2em] text-on-surface-variant">Detalhes</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -132,25 +132,25 @@ export default function AuditLogs() {
               <TableRow><TableCell colSpan={5} className="text-center py-24 text-on-surface-variant/60">Nenhum log encontrado</TableCell></TableRow>
             ) : filteredLogs.map((log) => (
               <TableRow key={log.id} className="border-b border-outline-variant/30 text-on-surface hover:bg-surface-variant/10 transition-colors">
-                <TableCell className="px-10 py-6">
-                  <span className="font-bold text-sm">{format(new Date(log.createdAt), "dd/MM/yyyy HH:mm")}</span>
+                <TableCell className="px-4 sm:px-10 py-4 sm:py-6">
+                  <span className="font-bold text-[10px] sm:text-sm">{format(new Date(log.createdAt), "dd/MM/yyyy HH:mm")}</span>
                 </TableCell>
-                <TableCell className="py-6">
-                  <div className="flex items-center gap-2">
-                    <User className="w-3.5 h-3.5 text-on-surface-variant" />
-                    <span className="font-bold text-sm">{log.user?.name || log.userId}</span>
+                <TableCell className="px-2 sm:px-4 py-4 sm:py-6">
+                  <div className="flex items-center gap-2 flex-col sm:flex-row">
+                    <User className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-on-surface-variant shrink-0" />
+                    <span className="font-bold text-[10px] sm:text-sm truncate">{log.user?.name || log.userId}</span>
                   </div>
                 </TableCell>
-                <TableCell className="py-6">
-                  <span className={cn("px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest", getActionColor(log.action))}>
+                <TableCell className="px-2 sm:px-4 py-4 sm:py-6">
+                  <span className={cn("px-2 sm:px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest whitespace-nowrap", getActionColor(log.action))}>
                     {log.action}
                   </span>
                 </TableCell>
-                <TableCell className="py-6">
-                  <span className="text-xs font-medium text-on-surface-variant/80">{log.entity}</span>
+                <TableCell className="px-2 sm:px-4 py-4 sm:py-6">
+                  <span className="text-[10px] sm:text-xs font-medium text-on-surface-variant/80 truncate">{log.entity}</span>
                 </TableCell>
-                <TableCell className="px-10 py-6">
-                  <span className="text-sm italic text-on-surface-variant/60">{log.details}</span>
+                <TableCell className="px-4 sm:px-10 py-4 sm:py-6">
+                  <span className="text-[10px] sm:text-sm italic text-on-surface-variant/60 line-clamp-2">{log.details}</span>
                 </TableCell>
               </TableRow>
             ))}

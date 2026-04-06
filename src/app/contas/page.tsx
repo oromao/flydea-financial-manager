@@ -209,9 +209,9 @@ export default function Contas() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="premium-card p-6 flex items-center justify-between">
+        <Card className="premium-card p-4 sm:p-6 flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-70">Patrimônio Total</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant opacity-70">Patrimônio Total</p>
             <h2 className={cn("text-3xl md:text-4xl font-bold tracking-tight",
               totalBalance >= 0 ? "text-on-background" : "text-red-600")}>
               {formatCurrency(totalBalance)}
@@ -258,7 +258,7 @@ export default function Contas() {
               >
                 <Card className="premium-card p-0 overflow-hidden group hover:shadow-md transition-colors">
                   <div className="h-1 w-full" style={{ backgroundColor: account.color || cfg.color }} />
-                  <div className="p-5 space-y-4">
+                  <div className="p-4 sm:p-5 space-y-4">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
                         <div className="p-2 rounded-lg bg-surface-variant/40">
@@ -266,7 +266,7 @@ export default function Contas() {
                         </div>
                         <div>
                           <h3 className="font-semibold text-base text-on-background">{account.name}</h3>
-                          <span className="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant/60">
+                          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-on-surface-variant/60">
                             {cfg.label}
                           </span>
                         </div>
@@ -284,14 +284,14 @@ export default function Contas() {
                     </div>
 
                     <div className="pt-2">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant/50 mb-1">Saldo</p>
+                      <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-on-surface-variant/50 mb-1">Saldo</p>
                       <p className={cn("text-2xl font-bold tracking-tight",
                         currentBalance >= 0 ? "text-on-background" : "text-red-600")}>
                         {formatCurrency(currentBalance)}
                       </p>
                     </div>
 
-                    <div className="pt-3 border-t border-outline/10 flex items-center justify-between text-on-surface-variant/50 text-[9px]">
+                    <div className="pt-3 border-t border-outline/10 flex items-center justify-between text-on-surface-variant/50 text-[10px] sm:text-xs">
                       <span className="font-bold uppercase">{account._count?.transactions || 0} tx</span>
                       <div className="flex items-center gap-1.5">
                         <span className="font-bold">Ativo</span>
