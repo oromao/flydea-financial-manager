@@ -103,9 +103,9 @@ export default function Dashboard() {
       {/* Stats Cards - Compact Dense */}
       <motion.div
         variants={itemVariants}
-        className="grid gap-5 grid-cols-1 md:grid-cols-4"
+        className="grid gap-3 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
       >
-        <Card className="premium-card p-6 flex flex-col justify-between relative overflow-hidden group">
+        <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-6 opacity-3">
             <Wallet className="w-20 h-20" />
           </div>
@@ -119,7 +119,7 @@ export default function Dashboard() {
           </div>
           <div className="mt-3 flex items-center gap-2">
             <div className={cn("w-2 h-2 rounded-full", metrics.balance >= 0 ? "bg-emerald-500" : "bg-red-500")} />
-            <span className="text-[10px] font-semibold text-on-surface-variant">
+            <span className="text-xs sm:text-[10px] font-semibold text-on-surface-variant">
               {metrics.balance >= 0 ? "Saudável" : "Atenção"}
             </span>
           </div>
@@ -135,7 +135,7 @@ export default function Dashboard() {
               <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.income)}</div>
             )}
           </div>
-          <p className="text-[10px] text-on-surface-variant font-medium mt-3">Mês atual</p>
+          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Mês atual</p>
         </Card>
 
         <Card className="premium-card p-6 flex flex-col justify-between">
@@ -148,7 +148,7 @@ export default function Dashboard() {
               <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.expenses)}</div>
             )}
           </div>
-          <p className="text-[10px] text-on-surface-variant font-medium mt-3">Acumulado</p>
+          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Acumulado</p>
         </Card>
 
         <Card className="premium-card p-6 flex flex-col justify-between border-amber-100 bg-amber-50/20">
@@ -161,12 +161,12 @@ export default function Dashboard() {
               <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.pendingExpenses || 0)}</div>
             )}
           </div>
-          <p className="text-[10px] text-on-surface-variant font-medium mt-3">Despesas ainda abertas</p>
+          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Despesas ainda abertas</p>
         </Card>
       </motion.div>
 
       {/* Chart + Right Panel - Optimized Density */}
-      <motion.div variants={itemVariants} className="grid gap-6 lg:grid-cols-3">
+      <motion.div variants={itemVariants} className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-3">
         {/* Area Chart */}
         <Card className="premium-card lg:col-span-2 overflow-hidden">
           <CardHeader className="p-6 pb-3">

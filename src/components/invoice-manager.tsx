@@ -116,14 +116,14 @@ export function InvoiceManager() {
       {showForm && (
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-6 rounded-lg border border-gray-200"
+          className="bg-white p-4 sm:p-6 rounded-lg border border-gray-200"
         >
-          <h3 className="font-bold text-lg mb-4">Criar Nota de Receita</h3>
+          <h3 className="text-lg sm:text-xl font-bold mb-4">Criar Nota de Receita</h3>
 
           {/* Dados da Nota */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
                 Número da Nota*
               </label>
               <input
@@ -138,7 +138,7 @@ export function InvoiceManager() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
                 Nome do Cliente*
               </label>
               <input
@@ -153,7 +153,7 @@ export function InvoiceManager() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
                 Email do Cliente
               </label>
               <input
@@ -167,7 +167,7 @@ export function InvoiceManager() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
                 Valor Total*
               </label>
               <input
@@ -185,7 +185,7 @@ export function InvoiceManager() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
                 Data Emissão*
               </label>
               <input
@@ -200,7 +200,7 @@ export function InvoiceManager() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
                 Número de Parcelas*
               </label>
               <select
@@ -219,12 +219,12 @@ export function InvoiceManager() {
 
           {/* Parcelas */}
           <div className="mb-6">
-            <h4 className="font-semibold text-gray-900 mb-4">Parcelas</h4>
-            <div className="space-y-3">
+            <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Parcelas</h4>
+            <div className="space-y-2 sm:space-y-3">
               {formData.installments.map((inst, idx) => (
                 <div
                   key={idx}
-                  className="grid grid-cols-3 gap-3 p-3 bg-gray-50 rounded-md"
+                  className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-md"
                 >
                   <div>
                     <label className="text-xs text-gray-600 block mb-1">
@@ -274,7 +274,7 @@ export function InvoiceManager() {
 
           {/* Observações */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="text-sm sm:text-base font-medium text-gray-700 mb-1 block">
               Observações
             </label>
             <textarea
@@ -282,20 +282,20 @@ export function InvoiceManager() {
               onChange={(e) =>
                 setFormData({ ...formData, observations: e.target.value })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm sm:text-base"
               rows={3}
             />
           </div>
 
           {/* Buttons */}
-          <div className="flex gap-3">
-            <Button type="submit" className="flex-1">
+          <div className="flex gap-2 sm:gap-3">
+            <Button type="submit" className="flex-1 text-sm sm:text-base h-10 sm:h-11">
               <Check size={18} className="mr-2" /> Salvar Nota
             </Button>
             <Button
               type="button"
               variant="outline"
-              className="flex-1"
+              className="flex-1 text-sm sm:text-base h-10 sm:h-11"
               onClick={() => setShowForm(false)}
             >
               Cancelar

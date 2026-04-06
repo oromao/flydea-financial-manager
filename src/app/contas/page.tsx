@@ -188,7 +188,7 @@ export default function Contas() {
                 <div className="flex gap-2.5 flex-wrap">
                   {COLORS.map((c) => (
                     <button key={c} type="button" onClick={() => setColor(c)}
-                      className={cn("w-7 h-7 rounded-full border-2 transition-colors hover:scale-110",
+                      className={cn("w-10 h-10 sm:w-8 sm:h-8 rounded-full border-2 transition-colors hover:scale-110",
                         color === c ? "border-on-background ring-4 ring-on-background/5" : "border-outline/10")}
                       style={{ backgroundColor: c }} />
                   ))}
@@ -272,11 +272,11 @@ export default function Contas() {
                         </div>
                       </div>
                       <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md bg-secondary/10 hover:bg-secondary/15 text-secondary transition-colors"
+                        <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-8 sm:w-8 rounded-md bg-secondary/10 hover:bg-secondary/15 text-secondary transition-colors"
                           onClick={() => handleEdit(account)}>
                           <Edit2 className="w-3.5 h-3.5" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md bg-red-100/60 hover:bg-red-100 text-red-600 transition-colors"
+                        <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-8 sm:w-8 rounded-md bg-red-100/60 hover:bg-red-100 text-red-600 transition-colors"
                           onClick={() => handleDelete(account.id)}>
                           <Trash2 className="w-3.5 h-3.5" />
                         </Button>

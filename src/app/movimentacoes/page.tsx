@@ -546,11 +546,11 @@ export default function Movimentacoes() {
           <Table>
             <TableHeader>
               <TableRow className="bg-surface-variant/10 hover:bg-surface-variant/10 border-b border-outline/10">
-                <TableHead className="px-6 py-4 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/70">Data</TableHead>
-                <TableHead className="py-4 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/70">Descrição</TableHead>
-                <TableHead className="py-4 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/70 text-center">Categoria</TableHead>
-                <TableHead className="px-6 py-4 font-bold uppercase text-[10px] tracking-widest text-on-surface-variant/70 text-right">Valor</TableHead>
-                <TableHead className="w-28"></TableHead>
+                <TableHead className="px-3 sm:px-6 py-3 sm:py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant/70">Data</TableHead>
+                <TableHead className="py-3 sm:py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant/70">Descrição</TableHead>
+                <TableHead className="py-3 sm:py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant/70 text-center">Categoria</TableHead>
+                <TableHead className="px-3 sm:px-6 py-3 sm:py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant/70 text-right">Valor</TableHead>
+                <TableHead className="w-20 sm:w-28"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -605,7 +605,7 @@ export default function Movimentacoes() {
                           size="icon"
                           onClick={() => updatePaymentStatus(t.id, t.paymentStatus === "PENDING" ? "PAID" : "PENDING")}
                           className={cn(
-                            "h-8 w-8 rounded-lg transition-colors",
+                            "h-10 w-10 sm:h-8 sm:w-8 rounded-lg transition-colors",
                             t.paymentStatus === "PENDING"
                               ? "hover:bg-emerald-100 text-emerald-600 hover:text-emerald-700"
                               : "hover:bg-amber-100 text-amber-600 hover:text-amber-700"
@@ -615,8 +615,8 @@ export default function Movimentacoes() {
                           {t.paymentStatus === "PENDING" ? <CheckCircle2 className="w-4 h-4" /> : <Clock3 className="w-4 h-4" />}
                         </Button>
                       )}
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-8 w-8 rounded-lg hover:bg-surface-variant text-secondary hover:text-secondary/90 transition-colors"><Edit2 className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 rounded-lg hover:bg-red-100 text-red-600 hover:text-red-700 font-semibold transition-colors"><Trash2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-10 w-10 sm:h-8 sm:w-8 rounded-lg hover:bg-surface-variant text-secondary hover:text-secondary/90 transition-colors"><Edit2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-10 w-10 sm:h-8 sm:w-8 rounded-lg hover:bg-red-100 text-red-600 hover:text-red-700 font-semibold transition-colors"><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>

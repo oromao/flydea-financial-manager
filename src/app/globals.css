@@ -51,17 +51,56 @@
     @apply border-outline/50 outline-primary/70;
     box-sizing: border-box;
   }
+
+  html {
+    /* Safe area support for notched devices */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
   body {
     @apply bg-background text-on-background font-sans antialiased selection:bg-secondary/20 selection:text-primary;
+    /* Mobile-first font sizing */
+    font-size: 14px;
   }
+
+  @media (min-width: 768px) {
+    body {
+      font-size: 15px;
+    }
+  }
+
   input, select, textarea {
-    @apply text-on-surface bg-surface border border-outline/50 rounded-lg px-4 py-2.5 focus:border-secondary focus:ring-4 focus:ring-secondary/10 transition-colors duration-200 outline-none;
+    @apply text-on-surface bg-surface border border-outline/50 rounded-lg px-3 sm:px-4 py-2.5 focus:border-secondary focus:ring-4 focus:ring-secondary/10 transition-colors duration-200 outline-none;
+    /* Ensure minimum touch target height on mobile */
+    min-height: 44px;
+    font-size: 14px;
   }
+
+  @media (min-width: 768px) {
+    input, select, textarea {
+      font-size: 15px;
+    }
+  }
+
   input::placeholder {
     @apply text-on-surface-variant/70;
   }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-sans font-semibold tracking-tight;
+
+  h1 {
+    @apply font-sans font-semibold tracking-tight text-2xl sm:text-3xl md:text-4xl;
+  }
+
+  h2 {
+    @apply font-sans font-semibold tracking-tight text-xl sm:text-2xl md:text-3xl;
+  }
+
+  h3 {
+    @apply font-sans font-semibold tracking-tight text-lg sm:text-xl md:text-2xl;
+  }
+
+  h4, h5, h6 {
+    @apply font-sans font-semibold tracking-tight text-base sm:text-lg;
   }
 }
 

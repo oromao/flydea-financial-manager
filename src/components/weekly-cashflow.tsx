@@ -68,23 +68,23 @@ export function WeeklyCashflow() {
     <div className="space-y-6">
       {/* Decisão de gastos */}
       <div
-        className={`p-4 rounded-lg border-2 ${
+        className={`p-3 sm:p-4 rounded-lg border-2 ${
           spendDecision.canSpend
             ? "border-green-500 bg-green-50"
             : "border-red-500 bg-red-50"
         }`}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {spendDecision.canSpend ? (
-            <CheckCircle className="text-green-600" size={24} />
+            <CheckCircle className="text-green-600 shrink-0" size={24} />
           ) : (
-            <AlertCircle className="text-red-600" size={24} />
+            <AlertCircle className="text-red-600 shrink-0" size={24} />
           )}
-          <div>
-            <p className="font-semibold text-gray-900">
+          <div className="min-w-0">
+            <p className="text-sm sm:text-base font-semibold text-gray-900">
               Semana {spendDecision.weekNumber}
             </p>
-            <p className={spendDecision.canSpend ? "text-green-700" : "text-red-700"}>
+            <p className={`text-xs sm:text-sm ${spendDecision.canSpend ? "text-green-700" : "text-red-700"}`}>
               {spendDecision.reason}
             </p>
           </div>
@@ -92,47 +92,49 @@ export function WeeklyCashflow() {
       </div>
 
       {/* Cards de semanas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {cashflow.weeks.map((week) => (
           <div
             key={week.week.weekNumber}
-            className={`p-4 rounded-lg border-2 ${
+            className={`p-3 sm:p-4 rounded-lg border-2 ${
               week.balance >= 0
                 ? "border-green-200 bg-green-50"
                 : "border-red-200 bg-red-50"
             }`}
           >
-            <h3 className="font-semibold text-gray-900 mb-3">
+            <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">
               {week.week.display}
             </h3>
 
-            <div className="space-y-2 text-sm">
+            <div className="space-y-2 text-xs sm:text-sm">
               {/* Receitas */}
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">
-                  <TrendingUp className="inline mr-1" size={16} />
-                  Receitas
+              <div className="flex items-center justify-between gap-1">
+                <span className="text-gray-600 flex items-center gap-1 shrink-0">
+                  <TrendingUp size={16} />
+                  <span className="hidden sm:inline">Receitas</span>
+                  <span className="sm:hidden">Rec.</span>
                 </span>
-                <span className="text-green-700 font-semibold">
+                <span className="text-green-700 font-semibold text-right">
                   +R$ {(week.receivedIncome + week.projectedIncome).toFixed(2)}
                 </span>
               </div>
-              <div className="text-xs text-gray-500 ml-6">
+              <div className="text-[11px] sm:text-xs text-gray-500 ml-5">
                 Recebido: R$ {week.receivedIncome.toFixed(2)}
               </div>
-              <div className="text-xs text-gray-500 ml-6">
+              <div className="text-[11px] sm:text-xs text-gray-500 ml-5">
                 Previsto: R$ {week.projectedIncome.toFixed(2)}
               </div>
 
               <hr className="my-2 border-gray-300" />
 
               {/* Despesas */}
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">
-                  <TrendingDown className="inline mr-1" size={16} />
-                  Despesas
+              <div className="flex items-center justify-between gap-1">
+                <span className="text-gray-600 flex items-center gap-1 shrink-0">
+                  <TrendingDown size={16} />
+                  <span className="hidden sm:inline">Despesas</span>
+                  <span className="sm:hidden">Desp.</span>
                 </span>
-                <span className="text-red-700 font-semibold">
+                <span className="text-red-700 font-semibold text-right">
                   -R$ {week.totalExpenses.toFixed(2)}
                 </span>
               </div>
@@ -140,14 +142,14 @@ export function WeeklyCashflow() {
               <hr className="my-2 border-gray-300" />
 
               {/* Saldo */}
-              <div className="flex items-center justify-between font-bold text-base">
+              <div className="flex items-center justify-between font-bold text-sm sm:text-base">
                 <span>Saldo</span>
                 <span
-                  className={
+                  className={`text-right ${
                     week.balance >= 0
                       ? "text-green-700"
                       : "text-red-700"
-                  }
+                  }`}
                 >
                   R$ {week.balance.toFixed(2)}
                 </span>
@@ -156,7 +158,7 @@ export function WeeklyCashflow() {
               {/* Status */}
               <div className="mt-3 pt-2 border-t border-gray-300">
                 <span
-                  className={`text-xs font-semibold px-2 py-1 rounded ${
+                  className={`text-[11px] sm:text-xs font-semibold px-2 py-1 rounded inline-block ${
                     week.canSpend
                       ? "bg-green-200 text-green-800"
                       : "bg-red-200 text-red-800"
@@ -171,27 +173,27 @@ export function WeeklyCashflow() {
       </div>
 
       {/* Resumo mensal */}
-      <div className="bg-gray-100 p-4 rounded-lg">
-        <h3 className="font-semibold text-gray-900 mb-4">
+      <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-4">
           Resumo - {cashflow.month}
         </h3>
-        <div className="grid grid-cols-3 gap-4 text-center">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-center">
           <div>
-            <p className="text-xs text-gray-600 mb-1">Total Receitas</p>
-            <p className="font-bold text-green-700">
+            <p className="text-[11px] sm:text-xs text-gray-600 mb-1">Total Receitas</p>
+            <p className="text-sm sm:text-base font-bold text-green-700">
               R$ {cashflow.totalMonthIncome.toFixed(2)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-gray-600 mb-1">Total Despesas</p>
-            <p className="font-bold text-red-700">
+            <p className="text-[11px] sm:text-xs text-gray-600 mb-1">Total Despesas</p>
+            <p className="text-sm sm:text-base font-bold text-red-700">
               R$ {cashflow.totalMonthExpenses.toFixed(2)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-gray-600 mb-1">Saldo do Mês</p>
+            <p className="text-[11px] sm:text-xs text-gray-600 mb-1">Saldo do Mês</p>
             <p
-              className={`font-bold ${
+              className={`text-sm sm:text-base font-bold ${
                 cashflow.monthBalance >= 0 ? "text-green-700" : "text-red-700"
               }`}
             >
