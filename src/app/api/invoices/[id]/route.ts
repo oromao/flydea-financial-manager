@@ -5,13 +5,15 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { id } = await params;
+
   const invoice = await prisma.invoice.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { installments: true }
   });
 
@@ -24,11 +26,12 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { id } = await params;
   const body = await request.json();
   const { installmentId, status, paidAmount } = body;
 
@@ -41,7 +44,7 @@ export async function PUT(
 
   try {
     const invoice = await prisma.invoice.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { installments: true }
     });
 
@@ -68,14 +71,14 @@ export async function PUT(
 
     // Verificar se todas as parcelas foram recebidas
     const allInstallments = await prisma.invoiceInstallment.findMany({
-      where: { invoiceId: params.id }
+      where: { invoiceId: id }
     });
 
     const allReceived = allInstallments.every(inst => inst.status === "RECEIVED");
 
     if (allReceived) {
       await prisma.invoice.update({
-        where: { id: params.id },
+        where: { id },
         data: { status: "FULLY_PAID" }
       });
     }
@@ -95,10 +98,4 @@ export async function PUT(
     console.error("Update error:", error);
     return NextResponse.json({ error: "Erro ao atualizar" }, { status: 500 });
   }
-}
-
-// Buscar installment específico para atualizar
-async function getInstallmentFromRequest(body: any) {
-  // Placeholder para busca na request
-  return null;
 }
