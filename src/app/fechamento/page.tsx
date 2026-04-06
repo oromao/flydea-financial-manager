@@ -48,7 +48,7 @@ export default function Fechamento() {
   const periodLabel = format(subMonths(new Date(), parseInt(period, 10)), "MMMM yyyy", { locale: ptBR });
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-24">
+    <div className="space-y-8 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-lg bg-secondary text-on-secondary">
@@ -81,23 +81,23 @@ export default function Fechamento() {
         </div>
       </motion.header>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="premium-card p-5"><p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Receitas</p><p className="text-2xl font-bold mt-2 text-emerald-600">{formatCurrency(summary.income)}</p></Card>
-        <Card className="premium-card p-5"><p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Despesas</p><p className="text-2xl font-bold mt-2 text-red-600">{formatCurrency(summary.expenses)}</p></Card>
-        <Card className="premium-card p-5"><p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Saldo</p><p className="text-2xl font-bold mt-2">{formatCurrency(summary.balance)}</p></Card>
-        <Card className="premium-card p-5"><p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Pendências</p><p className="text-2xl font-bold mt-2 text-amber-600">{formatCurrency(summary.pending)}</p></Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+        <Card className="premium-card p-4 sm:p-5"><p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Receitas</p><p className="text-2xl font-bold mt-2 text-emerald-600">{formatCurrency(summary.income)}</p></Card>
+        <Card className="premium-card p-4 sm:p-5"><p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Despesas</p><p className="text-2xl font-bold mt-2 text-red-600">{formatCurrency(summary.expenses)}</p></Card>
+        <Card className="premium-card p-4 sm:p-5"><p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Saldo</p><p className="text-2xl font-bold mt-2">{formatCurrency(summary.balance)}</p></Card>
+        <Card className="premium-card p-4 sm:p-5"><p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Pendências</p><p className="text-2xl font-bold mt-2 text-amber-600">{formatCurrency(summary.pending)}</p></Card>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="premium-card p-6 border-emerald-100 bg-emerald-50/20">
+        <Card className="premium-card p-4 sm:p-6 border-emerald-100 bg-emerald-50/20">
           <div className="flex items-center gap-2 mb-3"><CheckCircle2 className="w-4 h-4 text-emerald-600" /><h2 className="font-bold">Pagas</h2></div>
           <div className="text-3xl font-bold text-emerald-700">{formatCurrency(summary.paid)}</div>
         </Card>
-        <Card className="premium-card p-6 border-amber-100 bg-amber-50/20">
+        <Card className="premium-card p-4 sm:p-6 border-amber-100 bg-amber-50/20">
           <div className="flex items-center gap-2 mb-3"><AlertTriangle className="w-4 h-4 text-amber-600" /><h2 className="font-bold">Atrasadas</h2></div>
           <div className="text-3xl font-bold text-amber-700">{formatCurrency(summary.overdue)}</div>
         </Card>
-        <Card className="premium-card p-6">
+        <Card className="premium-card p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-3"><Wallet className="w-4 h-4 text-secondary" /><h2 className="font-bold">Estado</h2></div>
           <div className="text-lg font-semibold text-on-background">{summary.balance >= 0 ? "Fechamento positivo" : "Fechamento negativo"}</div>
           <div className="text-sm text-on-surface-variant mt-2">Receitas menos despesas do período selecionado.</div>

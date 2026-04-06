@@ -79,7 +79,7 @@ export default function ContasAPagar() {
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-20 md:pb-0">
+    <div className="space-y-8 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <div>
           <div className="flex items-center gap-3">
@@ -109,13 +109,13 @@ export default function ContasAPagar() {
         </div>
       </motion.header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="premium-card p-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        <Card className="premium-card p-4 sm:p-5">
           <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Total pendente</p>
           <p className="text-3xl font-bold mt-2">{formatCurrency(total)}</p>
           <p className="text-xs text-on-surface-variant mt-1">Parcialmente pago: {formatCurrency(paidPartial)}</p>
         </Card>
-        <Card className="premium-card p-5 border-red-100 bg-red-50/20">
+        <Card className="premium-card p-4 sm:p-5 border-red-100 bg-red-50/20">
           <p className="text-[10px] uppercase tracking-widest font-bold text-red-700">Atrasadas</p>
           <p className="text-3xl font-bold mt-2 text-red-700">{formatCurrency(overdueTotal)}</p>
         </Card>
