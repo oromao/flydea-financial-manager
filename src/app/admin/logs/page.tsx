@@ -1,15 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSession } from "next-auth/react";
 import { format } from "date-fns";
-import { History, User, Activity, Clock, ShieldCheck } from "lucide-react";
+import { Search, User, ShieldCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
 export default function AuditLogs() {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [action, setAction] = useState("ALL");
+  const [entity, setEntity] = useState("ALL");
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     fetch("/api/logs")
@@ -17,6 +24,36 @@ export default function AuditLogs() {
       .then(data => setLogs(data))
       .finally(() => setLoading(false));
   }, []);
+
+  const filteredLogs = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    return logs.filter((log) => {
+      const matchesQuery =
+        !term ||
+        [log.user?.name, log.action, log.entity, log.details]
+          .filter(Boolean)
+          .some((value) => String(value).toLowerCase().includes(term));
+      const matchesAction = action === "ALL" || log.action === action;
+      const matchesEntity = entity === "ALL" || log.entity === entity;
+      return matchesQuery && matchesAction && matchesEntity;
+    });
+  }, [logs, query, action, entity]);
+
+  const uniqueEntities = useMemo(
+    () => Array.from(new Set(logs.map((log) => log.entity).filter(Boolean))).sort(),
+    [logs],
+  );
+
+  if (status === "authenticated" && session?.user?.role !== "ADMIN") {
+    return (
+      <div className="max-w-3xl mx-auto py-20">
+        <Card className="premium-card p-8">
+          <h1 className="text-2xl font-bold text-on-background">Acesso restrito</h1>
+          <p className="text-on-surface-variant mt-2">Esta área é reservada para usuários administradores.</p>
+        </Card>
+      </div>
+    );
+  }
 
   const getActionColor = (action: string) => {
     switch(action) {
@@ -40,6 +77,43 @@ export default function AuditLogs() {
         </div>
       </div>
 
+      <Card className="premium-card bg-surface rounded-[32px] border-outline-variant shadow-sm">
+        <CardContent className="p-5 grid gap-4 md:grid-cols-[1.6fr_0.8fr_0.8fr]">
+          <label className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar por usuário, ação, entidade ou detalhe"
+              className="pl-9"
+            />
+          </label>
+          <Select value={action} onValueChange={(value) => setAction(value ?? "ALL")}>
+            <SelectTrigger>
+              <SelectValue placeholder="Ação" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">Todas as ações</SelectItem>
+              <SelectItem value="CREATE">CREATE</SelectItem>
+              <SelectItem value="UPDATE">UPDATE</SelectItem>
+              <SelectItem value="DELETE">DELETE</SelectItem>
+              <SelectItem value="IMPORT">IMPORT</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={entity} onValueChange={(value) => setEntity(value ?? "ALL")}>
+            <SelectTrigger>
+              <SelectValue placeholder="Entidade" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">Todas as entidades</SelectItem>
+              {uniqueEntities.map((item) => (
+                <SelectItem key={item} value={item}>{item}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+
       <Card className="premium-card bg-surface rounded-[32px] border-outline-variant overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
@@ -54,9 +128,9 @@ export default function AuditLogs() {
           <TableBody>
             {loading ? (
               <TableRow><TableCell colSpan={5} className="text-center py-24 animate-pulse uppercase text-xs font-bold tracking-widest text-on-surface-variant/60">Carregando logs...</TableCell></TableRow>
-            ) : logs.length === 0 ? (
+            ) : filteredLogs.length === 0 ? (
               <TableRow><TableCell colSpan={5} className="text-center py-24 text-on-surface-variant/60">Nenhum log encontrado</TableCell></TableRow>
-            ) : logs.map((log) => (
+            ) : filteredLogs.map((log) => (
               <TableRow key={log.id} className="border-b border-outline-variant/30 text-on-surface hover:bg-surface-variant/10 transition-colors">
                 <TableCell className="px-10 py-6">
                   <span className="font-bold text-sm">{format(new Date(log.createdAt), "dd/MM/yyyy HH:mm")}</span>
@@ -64,7 +138,7 @@ export default function AuditLogs() {
                 <TableCell className="py-6">
                   <div className="flex items-center gap-2">
                     <User className="w-3.5 h-3.5 text-on-surface-variant" />
-                    <span className="font-bold text-sm">{log.user.name}</span>
+                    <span className="font-bold text-sm">{log.user?.name || log.userId}</span>
                   </div>
                 </TableCell>
                 <TableCell className="py-6">

@@ -17,6 +17,6 @@ test.describe('Autenticação', () => {
     await page.click('button[type="submit"]');
 
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.getByText(/V8\.0 PREMIUM/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Visão Geral/i })).toBeVisible();
   });
 });

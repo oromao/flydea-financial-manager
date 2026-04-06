@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Tutorial Mobile', () => {
+  test.setTimeout(300000);
+
   test('Tutorial completo e guiado de uso no mobile', async ({ page }) => {
     const showCaption = async (text: string, waitMs = 2600) => {
       await page.evaluate((message) => {
@@ -65,18 +67,18 @@ test.describe('Tutorial Mobile', () => {
     await expect(page).toHaveURL(/\/$/);
     await showCaption('Login concluído. Estamos no Dashboard.');
 
-    await expect(page.getByText(/SALDO CONSOLIDADO/i)).toBeVisible();
-    await showCaption('Aqui você visualiza saldo consolidado, entradas e saídas.');
+    await expect(page.getByText(/Saldo/i).first()).toBeVisible();
+    await showCaption('Aqui você visualiza saldo, entradas, saídas e pendências.');
 
     await page.goto('/movimentacoes');
     await expect(page.getByText(/Fluxo de Caixa/i)).toBeVisible();
     await showCaption('Na tela de Movimentações, você acompanha e registra lançamentos.');
 
-    await emphasize(page.getByRole('button', { name: /Exportar Excel/i }));
+    await emphasize(page.getByRole('button', { name: /Exportar/i }));
     const exportMov = page.waitForResponse((res) =>
       res.url().includes('/api/transactions/export') && res.request().method() === 'GET'
     );
-    await page.getByRole('button', { name: /Exportar Excel/i }).click();
+    await page.getByRole('button', { name: /Exportar/i }).click();
     await exportMov;
     await showCaption('Este botão exporta suas movimentações para Excel.');
 
@@ -145,6 +147,10 @@ test.describe('Tutorial Mobile', () => {
     await page.goto('/admin/logs');
     await expect(page.getByRole('heading', { level: 1, name: /Logs de Auditoria/i })).toBeVisible();
     await showCaption('Nos logs você acompanha o histórico de ações do sistema.');
+
+    await page.goto('/mais');
+    await expect(page.getByRole('heading', { level: 1, name: /Mais/i })).toBeVisible();
+    await showCaption('A navegação secundária reúne áreas menos usadas para manter o mobile limpo.');
 
     await showCaption('Para sair do sistema, localize o botão Sair no menu lateral e toque nele.', 3000);
     await emphasize(page.getByRole('button', { name: /Sair/i }).first());

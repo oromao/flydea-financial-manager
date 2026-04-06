@@ -14,8 +14,6 @@ export function useCountUp(target: number, duration = 800, delay = 0): number {
     const from = prevTarget.current;
     prevTarget.current = target;
 
-    let timeout: ReturnType<typeof setTimeout>;
-
     const start = (startTime: number) => {
       startRef.current = startTime;
       const tick = (now: number) => {
@@ -31,7 +29,7 @@ export function useCountUp(target: number, duration = 800, delay = 0): number {
       rafRef.current = requestAnimationFrame(tick);
     };
 
-    timeout = setTimeout(() => {
+    const timeout = setTimeout(() => {
       start(performance.now());
     }, delay);
 

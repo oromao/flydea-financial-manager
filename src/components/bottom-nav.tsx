@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ReceiptText, BarChart3, CreditCard, Target, LogOut } from "lucide-react";
+import { LayoutDashboard, ReceiptText, CreditCard, LogOut, BadgeDollarSign, MoreHorizontal } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
@@ -10,8 +10,8 @@ const navItems = [
   { name: "Início", href: "/", icon: LayoutDashboard },
   { name: "Fluxo", href: "/movimentacoes", icon: ReceiptText },
   { name: "Contas", href: "/contas", icon: CreditCard },
-  { name: "Metas", href: "/orcamentos", icon: Target },
-  { name: "Relatórios", href: "/relatorios", icon: BarChart3 },
+  { name: "Pendências", href: "/contas-a-pagar", icon: BadgeDollarSign },
+  { name: "Mais", href: "/mais", icon: MoreHorizontal },
 ];
 
 export function BottomNav() {
@@ -35,7 +35,7 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 transition-all duration-200 relative py-1 rounded-lg flex-1",
+                "flex flex-col items-center justify-center gap-1 transition-colors duration-200 relative py-1 rounded-lg flex-1 min-w-0",
                 isActive ? "text-primary font-semibold" : "text-on-surface-variant hover:text-on-surface"
               )}
             >
@@ -43,7 +43,7 @@ export function BottomNav() {
                 <div className="absolute inset-0 bg-surface-variant/50 rounded-lg -z-10 animate-in fade-in zoom-in-95 duration-200"></div>
               )}
               <Icon className={cn("w-5 h-5 transition-transform", isActive && "scale-105")} />
-              <span className={cn("text-[10px] font-medium tracking-wide", isActive ? "opacity-100" : "opacity-80")}>
+              <span className={cn("text-[10px] font-medium tracking-wide truncate max-w-full", isActive ? "opacity-100" : "opacity-80")}>
                 {item.name}
               </span>
             </Link>
@@ -53,7 +53,7 @@ export function BottomNav() {
         {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="flex flex-col items-center justify-center gap-1 transition-all duration-200 relative py-1 rounded-lg flex-1 text-on-surface-variant hover:text-red-500 group"
+          className="flex flex-col items-center justify-center gap-1 transition-colors duration-200 relative py-1 rounded-lg flex-1 text-on-surface-variant hover:text-red-500 group"
         >
           <LogOut className="w-5 h-5 transition-transform group-hover:scale-105" />
           <span className="text-[10px] font-medium tracking-wide opacity-80">Sair</span>

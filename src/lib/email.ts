@@ -105,3 +105,45 @@ export async function sendBudgetAlert({
     `,
   });
 }
+
+export async function sendDueSoonAlert({
+  to,
+  userName,
+  description,
+  amount,
+  dueDate,
+}: {
+  to: string;
+  userName: string;
+  description: string;
+  amount: number;
+  dueDate: Date;
+}) {
+  const resend = await getResend();
+  if (!resend) return;
+
+  const formatted = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(amount);
+  const dateStr = dueDate.toLocaleDateString("pt-BR");
+
+  await resend.emails.send({
+    from: FROM,
+    to,
+    subject: `FLY DEA — Vencimento próximo: ${description}`,
+    html: `
+      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;background:#09090B;color:#fff;padding:32px;border-radius:16px">
+        <h1 style="font-size:24px;font-weight:900;margin-bottom:8px">FLY DEA</h1>
+        <p style="color:#888;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:32px">Vencimento Próximo</p>
+        <p>Olá, <strong>${userName}</strong>!</p>
+        <p>Você tem uma pendência vencendo em breve.</p>
+        <div style="background:#1a1a1d;border-radius:12px;padding:24px;margin:24px 0">
+          <p style="margin:0;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.15em">Descrição</p>
+          <p style="margin:4px 0 16px;font-size:18px;font-weight:700">${description}</p>
+          <p style="margin:0;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.15em">Valor</p>
+          <p style="margin:4px 0 16px;font-size:24px;font-weight:900;color:#f59e0b">${formatted}</p>
+          <p style="margin:0;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.15em">Vencimento</p>
+          <p style="margin:4px 0 0;font-size:16px;font-weight:700">${dateStr}</p>
+        </div>
+      </div>
+    `,
+  });
+}

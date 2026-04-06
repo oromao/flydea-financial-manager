@@ -14,12 +14,14 @@ export async function GET(request: NextRequest) {
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
   const category = searchParams.get("category");
+  const paymentStatus = searchParams.get("paymentStatus");
 
   const transactions = await prisma.transaction.findMany({
     where: {
       userId: session.user.id,
       ...(type ? { type } : {}),
       ...(category && category !== "Todos" ? { category: { name: category } } : {}),
+      ...(paymentStatus && paymentStatus !== "ALL" ? { paymentStatus } : {}),
       ...(startDate || endDate ? {
         date: {
           ...(startDate ? { gte: new Date(startDate) } : {}),
@@ -39,6 +41,11 @@ export async function GET(request: NextRequest) {
     "Conta": t.account?.name || "",
     "Valor (R$)": t.type === "INCOME" ? t.amount : -t.amount,
     "Status": t.status,
+    "Pagamento": t.paymentStatus,
+    "Vencimento": t.dueDate ? format(new Date(t.dueDate), "dd/MM/yyyy") : "",
+    "Pago em": t.paidAt ? format(new Date(t.paidAt), "dd/MM/yyyy") : "",
+    "Pago parcial (R$)": t.amountPaid || 0,
+    "Restante (R$)": t.type === "EXPENSE" ? Math.max(0, t.amount - (t.amountPaid || 0)) : 0,
     "Observações": t.observations || ""
   }));
 

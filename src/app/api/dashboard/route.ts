@@ -38,6 +38,15 @@ export async function GET(request: NextRequest) {
     return t.type === "INCOME" ? sum + t.amount : sum - t.amount;
   }, 0);
 
+  const pendingExpenses = await prisma.transaction.aggregate({
+    where: {
+      userId: session.user.id,
+      type: "EXPENSE",
+      paymentStatus: "PENDING",
+    },
+    _sum: { amount: true }
+  });
+
   let income = 0;
   let expenses = 0;
   const chartDataMap: Record<number, { day: number; income: number; expenses: number }> = {};
@@ -109,6 +118,7 @@ export async function GET(request: NextRequest) {
     balance,
     income,
     expenses,
+    pendingExpenses: pendingExpenses._sum.amount || 0,
     chartData,
     topCategories,
     projectedExpenses,

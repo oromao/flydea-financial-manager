@@ -11,7 +11,7 @@ test.describe('Dashboard e Relatórios', () => {
 
   test('Dashboard deve exibir cards de resumo', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText(/SALDO CONSOLIDADO/i)).toBeVisible();
+    await expect(page.getByText(/Saldo/i).first()).toBeVisible();
     await expect(page.getByText(/ENTRADAS/i)).toBeVisible();
     await expect(page.getByText(/SAÍDAS/i)).toBeVisible();
   });

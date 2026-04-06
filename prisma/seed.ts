@@ -15,6 +15,7 @@ async function main() {
       email: 'admin@flydea.com',
       name: 'Administrador FLY DEA',
       password: hashedPassword,
+      role: 'ADMIN',
     },
   })
 
@@ -25,6 +26,7 @@ async function main() {
       email: 'augusto@flydea.com',
       name: 'Augusto Flydea',
       password: testPassword,
+      role: 'MEMBER',
     },
   })
 
@@ -36,6 +38,7 @@ async function main() {
       email: 'luiz@flydea.com',
       name: 'Luiz',
       password: luizPassword,
+      role: 'MEMBER',
     },
   })
 

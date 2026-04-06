@@ -108,7 +108,7 @@ export default function Orcamentos() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             className={cn(
-              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-lg flex items-center gap-3 border bg-surface/90 backdrop-blur-md transition-all duration-300",
+              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-lg flex items-center gap-3 border bg-surface/90 backdrop-blur-md transition-colors duration-300",
               toast.type === "success" 
                 ? "border-emerald-200 text-emerald-700" 
                 : "border-red-200 text-red-700"
@@ -226,7 +226,7 @@ export default function Orcamentos() {
           <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Total Consumido</p>
           <p className="text-3xl font-bold text-red-600 tracking-tight mt-1">{formatCurrency(totalSpent)}</p>
         </Card>
-        <Card className={cn("premium-card p-6 flex flex-col justify-between transition-all", alertCount > 0 ? "border-amber-100 bg-amber-50/20" : "")}>
+        <Card className={cn("premium-card p-6 flex flex-col justify-between transition-colors", alertCount > 0 ? "border-amber-100 bg-amber-50/20" : "")}>
           <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Alertas Críticos</p>
           <div className="flex items-center gap-3 mt-1">
             {alertCount > 0 ? <AlertTriangle className="w-6 h-6 text-amber-500" /> : <CheckCircle2 className="w-6 h-6 text-secondary" />}
@@ -275,7 +275,7 @@ export default function Orcamentos() {
                 transition={{ delay: idx * 0.05 + 0.2 }}
               >
                 <Card className={cn(
-                  "premium-card p-7 group transition-all",
+                  "premium-card p-7 group transition-colors",
                   isOver && "border-red-100 bg-red-50/10",
                   isAlert && !isOver && "border-amber-100 bg-amber-50/10"
                 )}>

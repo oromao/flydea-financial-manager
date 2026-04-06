@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search");
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
+  const paymentStatus = searchParams.get("paymentStatus");
   const accountId = searchParams.get("accountId");
   const tagId = searchParams.get("tagId");
   const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
@@ -27,6 +28,7 @@ export async function GET(request: NextRequest) {
     ...(category && category !== "Todos" ? { category: { name: category } } : {}),
     ...(accountId ? { accountId } : {}),
     ...(tagId ? { tags: { some: { tagId } } } : {}),
+    ...(paymentStatus && paymentStatus !== "ALL" ? { paymentStatus } : {}),
     ...(search ? {
       OR: [
         { description: { contains: search, mode: "insensitive" } },
@@ -84,7 +86,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: errorMsg }, { status: 400 });
   }
 
-  const { type, description, categoryId, amount, date, observations, frequency, attachmentUrl, blobUrl, accountId, tagIds } = parsed.data;
+  const { type, description, categoryId, amount, date, dueDate, paidAt, amountPaid, observations, frequency, paymentStatus, attachmentUrl, blobUrl, accountId, tagIds } = parsed.data;
 
   const transaction = await prisma.transaction.create({
     data: {
@@ -93,8 +95,12 @@ export async function POST(request: NextRequest) {
       categoryId,
       amount,
       date: new Date(date),
+      dueDate: dueDate ? new Date(dueDate) : null,
+      paidAt: paidAt ? new Date(paidAt) : null,
+      amountPaid: amountPaid || 0,
       observations,
       frequency: frequency || "NONE",
+      paymentStatus: paymentStatus || (type === "EXPENSE" ? "PAID" : "PAID"),
       attachmentUrl: attachmentUrl || null,
       blobUrl: blobUrl || null,
       accountId: accountId || null,

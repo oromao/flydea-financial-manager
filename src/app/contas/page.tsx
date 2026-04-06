@@ -114,7 +114,7 @@ export default function Contas() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             className={cn(
-              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-5 py-2 rounded-lg shadow-lg flex items-center gap-2 border bg-surface/90 backdrop-blur-md transition-all duration-300",
+              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-5 py-2 rounded-lg shadow-lg flex items-center gap-2 border bg-surface/90 backdrop-blur-md transition-colors duration-300",
               toast.type === "success"
                 ? "border-emerald-200 text-emerald-700"
                 : "border-red-200 text-red-700"
@@ -188,7 +188,7 @@ export default function Contas() {
                 <div className="flex gap-2.5 flex-wrap">
                   {COLORS.map((c) => (
                     <button key={c} type="button" onClick={() => setColor(c)}
-                      className={cn("w-7 h-7 rounded-full border-2 transition-all hover:scale-110",
+                      className={cn("w-7 h-7 rounded-full border-2 transition-colors hover:scale-110",
                         color === c ? "border-on-background ring-4 ring-on-background/5" : "border-outline/10")}
                       style={{ backgroundColor: c }} />
                   ))}
@@ -256,7 +256,7 @@ export default function Contas() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 + 0.2 }}
               >
-                <Card className="premium-card p-0 overflow-hidden group hover:shadow-md transition-all">
+                <Card className="premium-card p-0 overflow-hidden group hover:shadow-md transition-colors">
                   <div className="h-1 w-full" style={{ backgroundColor: account.color || cfg.color }} />
                   <div className="p-5 space-y-4">
                     <div className="flex items-start justify-between">

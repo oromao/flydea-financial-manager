@@ -14,8 +14,9 @@ const APP_URL = 'https://flydea-financial-manager.vercel.app';
 // iPhone 17 Pro Max
 const W = 430;
 const H = 932;
+const AUDIO = 'tutorial_narracao_neural.mp3';
 const FPS = 15;
-const TOTAL_SEC = 72;
+const TOTAL_SEC = 52;
 
 if (!existsSync(OUT)) mkdirSync(OUT, { recursive: true });
 const FRAMES = join(OUT, 'frames');
@@ -431,13 +432,13 @@ async function main() {
   await page.goto(APP_URL, { waitUntil: 'networkidle', timeout: 40000 });
   await addIosChrome(page);
   await addSafariBar(page, APP_URL);
-  await hold(3, 'site carregado');
+  await hold(2.5, 'site carregado');
 
   // scroll suave para mostrar conteúdo
   await page.evaluate(() => window.scrollBy({ top: 180, behavior: 'smooth' }));
-  await hold(1.5, 'scroll down');
+  await hold(1, 'scroll down');
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
-  await hold(1.5, 'scroll up');
+  await hold(1, 'scroll up');
 
   /* ─── Passo 2: ênfase no botão Compartilhar ─────────────── */
   console.log('── Passo 2: Ênfase no botão Compartilhar');
@@ -446,35 +447,33 @@ async function main() {
   const shareY = H - 76;
 
   await arrowBadge(page, shareX, shareY, 'Toque em Compartilhar', 'up');
-  await hold(2.5, 'badge: compartilhar');
+  await hold(2, 'badge: compartilhar');
 
   await clearUI(page);
   await tapEffect(page, shareX, shareY, 'Compartilhar');
-  await hold(1.2, 'tap compartilhar');
+  await hold(1, 'tap compartilhar');
 
   /* ─── Passo 3: Share Sheet ─────────────────────────────── */
   console.log('── Passo 3: Share Sheet');
   await removeSafariBar(page);
   await showShareSheet(page);
-  await hold(2, 'share sheet aberta');
+  await hold(1.5, 'share sheet aberta');
 
-  // highlight "Adicionar à Tela de Início"
-  // 4th item in action list — approx y=75%
   const addItemX = Math.round(W / 2);
   const addItemY = Math.round(H * 0.805);
   await arrowBadge(page, addItemX, addItemY, 'Adicionar à Tela de Início', 'up');
-  await hold(2.5, 'badge: adicionar');
+  await hold(2, 'badge: adicionar');
   await clearUI(page);
 
   await tapEffect(page, addItemX, addItemY, 'Toque aqui!');
-  await hold(1, 'tap adicionar à tela');
+  await hold(0.8, 'tap adicionar à tela');
 
   /* ─── Passo 4: Tela de confirmação ─────────────────────── */
   console.log('── Passo 4: Confirmação');
   await hideShareSheet(page);
   await showAddToHome(page);
   await addIosChrome(page);
-  await hold(2.5, 'tela confirmação');
+  await hold(2, 'tela confirmação');
 
   // highlight "Adicionar" button top-right — badge centered so it's fully visible
   const btnAdicionarX = Math.round(W * 0.75); // ~322px, well within screen
@@ -495,7 +494,7 @@ async function main() {
     if (el) el.remove();
   });
   await showHomeScreen(page);
-  await hold(4, 'home screen - ícone Flydea');
+  await hold(3, 'home screen - ícone Flydea');
 
   // tap no ícone do Flydea (posição no grid)
   const flydeaX = Math.round(W * 0.545);
@@ -531,7 +530,7 @@ async function main() {
     document.head.appendChild(style);
     document.body.appendChild(badge);
   });
-  await hold(3.5, 'app standalone badge');
+  await hold(2.5, 'app standalone badge');
 
   /* ─── Passo 7: Tela final ─────────────────────────────── */
   console.log('── Passo 7: Tela final');
@@ -575,7 +574,7 @@ async function main() {
     `;
     document.body.appendChild(overlay);
   });
-  await hold(5, 'tela final');
+  await hold(4, 'tela final');
 
   await browser.close();
   console.log(`\n✅ ${frameIdx} frames gerados\n`);
@@ -585,7 +584,7 @@ async function main() {
   const outMp4 = join(CWD, 'tutorial_iphone17_final.mp4');
   execSync(
     `ffmpeg -y -framerate ${FPS} -i "${FRAMES}/f%05d.png" \
-     -i "${join(CWD,'tutorial_install_narracao.mp3')}" \
+     -i "${join(CWD, AUDIO)}" \
      -c:v libx264 -pix_fmt yuv420p -r 30 \
      -c:a aac -b:a 128k -shortest \
      "${outMp4}"`,

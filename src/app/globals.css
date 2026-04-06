@@ -55,7 +55,7 @@
     @apply bg-background text-on-background font-sans antialiased selection:bg-secondary/20 selection:text-primary;
   }
   input, select, textarea {
-    @apply text-on-surface bg-surface border border-outline/50 rounded-lg px-4 py-2.5 focus:border-secondary focus:ring-4 focus:ring-secondary/10 transition-all duration-200 outline-none;
+    @apply text-on-surface bg-surface border border-outline/50 rounded-lg px-4 py-2.5 focus:border-secondary focus:ring-4 focus:ring-secondary/10 transition-colors duration-200 outline-none;
   }
   input::placeholder {
     @apply text-on-surface-variant/70;
@@ -67,30 +67,30 @@
 
 /* Premium Fintech Cards & Components */
 .premium-card {
-  @apply bg-surface border border-outline/25 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-outline/35;
+  @apply bg-surface border border-outline/25 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg transition-colors duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-outline/35;
 }
 
 .apple-button-primary {
-  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-colors duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
   @apply bg-secondary text-on-secondary hover:bg-secondary/90 hover:shadow-sm;
 }
 
 .apple-button-secondary {
-  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-colors duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
   @apply bg-secondary/10 text-secondary hover:bg-secondary/15;
 }
 
 .apple-button-outline {
-  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-colors duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
   @apply border border-outline/30 text-on-surface hover:bg-surface-variant/50 hover:border-outline/50;
 }
 
 .nav-link {
-  @apply flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 text-on-surface-variant hover:bg-surface-variant hover:text-on-surface text-sm;
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-150 text-on-surface-variant hover:bg-surface-variant hover:text-on-surface text-sm;
 }
 
 .nav-link-active {
-  @apply flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 bg-secondary/10 text-secondary font-semibold text-sm;
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-150 bg-secondary/10 text-secondary font-semibold text-sm;
 }
 
 /* Custom Scrollbar (Minimal) */
@@ -102,7 +102,7 @@
   @apply bg-transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-outline/40 rounded-full hover:bg-outline/60 transition-all;
+  @apply bg-outline/40 rounded-full hover:bg-outline/60 transition-colors;
 }
 
 /* Responsive Utilities */

@@ -70,12 +70,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string) => void }) {
   const duration = toast.duration ?? (toast.type === "undo" ? 5000 : 3500);
   const [progress, setProgress] = useState(100);
-  const startRef = useRef<number>(Date.now());
+  const startRef = useRef<number>(0);
   const rafRef = useRef<number>(0);
 
   useEffect(() => {
+    startRef.current = performance.now();
     const tick = () => {
-      const elapsed = Date.now() - startRef.current;
+      const elapsed = performance.now() - startRef.current;
       const remaining = Math.max(0, 100 - (elapsed / duration) * 100);
       setProgress(remaining);
       if (remaining > 0) rafRef.current = requestAnimationFrame(tick);

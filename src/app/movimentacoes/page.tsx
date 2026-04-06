@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 import { Importer } from "@/components/importer";
 import { upload } from "@vercel/blob/client";
-import { FileUp, Cloud, Link as LinkIcon, AlertCircle, CheckCircle2 } from "lucide-react";
+import { FileUp, Cloud, Link as LinkIcon, AlertCircle, CheckCircle2, Clock3 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Movimentacoes() {
@@ -29,6 +29,7 @@ export default function Movimentacoes() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("Todos");
   const [filterType, setFilterType] = useState<string | null>(null);
+  const [filterPaymentStatus, setFilterPaymentStatus] = useState("ALL");
 
   // Form states
   const [type, setType] = useState<string>("EXPENSE");
@@ -37,6 +38,9 @@ export default function Movimentacoes() {
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [frequency, setFrequency] = useState("NONE");
+  const [paymentStatus, setPaymentStatus] = useState("PAID");
+  const [dueDate, setDueDate] = useState("");
+  const [paidAt, setPaidAt] = useState("");
   const [attachmentUrl, setAttachmentUrl] = useState("");
   const [blobUrl, setBlobUrl] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -55,6 +59,7 @@ export default function Movimentacoes() {
       if (searchTerm) params.append("search", searchTerm);
       if (filterCategory !== "Todos") params.append("category", filterCategory);
       if (filterType) params.append("type", filterType);
+      if (filterPaymentStatus !== "ALL") params.append("paymentStatus", filterPaymentStatus);
       params.append("page", String(targetPage));
 
       const res = await fetch(`/api/transactions?${params.toString()}`);
@@ -72,7 +77,7 @@ export default function Movimentacoes() {
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, filterCategory, filterType, page]);
+  }, [searchTerm, filterCategory, filterType, filterPaymentStatus, page]);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -111,6 +116,9 @@ export default function Movimentacoes() {
       amount: parseFloat(amount),
       date,
       frequency,
+      paymentStatus,
+      dueDate,
+      paidAt,
       attachmentUrl,
       blobUrl
     };
@@ -153,6 +161,27 @@ export default function Movimentacoes() {
     }
   };
 
+  const updatePaymentStatus = async (id: string, nextStatus: "PAID" | "PENDING") => {
+    try {
+      const transaction = transactions.find((t) => t.id === id);
+      if (!transaction) return;
+      const res = await fetch(`/api/transactions/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentStatus: nextStatus }),
+      });
+      if (res.ok) {
+        showToast(nextStatus === "PAID" ? "Marcado como pago" : "Marcado como pendente", "success");
+        fetchTransactions();
+      } else {
+        showToast("Não foi possível atualizar o status", "error");
+      }
+    } catch (e) {
+      console.error(e);
+      showToast("Falha ao atualizar o status", "error");
+    }
+  };
+
   const handleEdit = (t: any) => {
     setEditingId(t.id);
     setType(t.type);
@@ -161,6 +190,9 @@ export default function Movimentacoes() {
     setAmount(t.amount.toString());
     setDate(t.date.split("T")[0]);
     setFrequency(t.frequency || "NONE");
+    setPaymentStatus(t.paymentStatus || "PAID");
+    setDueDate(t.dueDate ? t.dueDate.split("T")[0] : "");
+    setPaidAt(t.paidAt ? t.paidAt.split("T")[0] : "");
     setAttachmentUrl(t.attachmentUrl || "");
     setBlobUrl(t.blobUrl || "");
     setOpen(true);
@@ -174,6 +206,9 @@ export default function Movimentacoes() {
     setAmount("");
     setDate(new Date().toISOString().split("T")[0]);
     setFrequency("NONE");
+    setPaymentStatus("PAID");
+    setDueDate("");
+    setPaidAt("");
     setAttachmentUrl("");
     setBlobUrl("");
   };
@@ -182,6 +217,7 @@ export default function Movimentacoes() {
     const params = new URLSearchParams();
     if (filterCategory !== "Todos") params.append("category", filterCategory);
     if (filterType) params.append("type", filterType);
+    if (filterPaymentStatus !== "ALL") params.append("paymentStatus", filterPaymentStatus);
     window.location.href = `/api/transactions/export?${params.toString()}`;
   };
 
@@ -198,7 +234,7 @@ export default function Movimentacoes() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             className={cn(
-              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-lg flex items-center gap-3 border bg-surface/90 backdrop-blur-md transition-all duration-300",
+              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-lg flex items-center gap-3 border bg-surface/90 backdrop-blur-md transition-colors duration-300",
               toast.type === "success" 
                 ? "border-emerald-200 text-emerald-700" 
                 : "border-red-200 text-red-700"
@@ -258,8 +294,8 @@ export default function Movimentacoes() {
               </div>
               <form onSubmit={handleSubmit} className="p-8 space-y-6">
                 <div className="flex gap-2 p-1 bg-surface-variant rounded-full border border-outline/20">
-                  <Button type="button" variant="ghost" className={cn("flex-1 h-9 rounded-full text-xs font-bold transition-all", type === "INCOME" ? "bg-surface text-secondary shadow-sm" : "text-on-surface-variant")} onClick={() => setType("INCOME")}><ArrowUp className="w-3.5 h-3.5 mr-2" /> Receita</Button>
-                  <Button type="button" variant="ghost" className={cn("flex-1 h-9 rounded-full text-xs font-bold transition-all", type === "EXPENSE" ? "bg-surface text-red-600 shadow-sm" : "text-on-surface-variant")} onClick={() => setType("EXPENSE")}><ArrowDown className="w-3.5 h-3.5 mr-2" /> Despesa</Button>
+                  <Button type="button" variant="ghost" className={cn("flex-1 h-9 rounded-full text-xs font-bold transition-colors", type === "INCOME" ? "bg-surface text-secondary shadow-sm" : "text-on-surface-variant")} onClick={() => setType("INCOME")}><ArrowUp className="w-3.5 h-3.5 mr-2" /> Receita</Button>
+                  <Button type="button" variant="ghost" className={cn("flex-1 h-9 rounded-full text-xs font-bold transition-colors", type === "EXPENSE" ? "bg-surface text-red-600 shadow-sm" : "text-on-surface-variant")} onClick={() => setType("EXPENSE")}><ArrowDown className="w-3.5 h-3.5 mr-2" /> Despesa</Button>
                 </div>
                 
                 <div className="space-y-2">
@@ -307,6 +343,30 @@ export default function Movimentacoes() {
                 </div>
 
                 <div className="space-y-2">
+                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Status de Pagamento</Label>
+                  <Select value={paymentStatus} onValueChange={(v) => setPaymentStatus(v || "PAID")}>
+                    <SelectTrigger className="h-11 font-medium text-foreground">
+                      {paymentStatus === "PAID" ? "Pago" : paymentStatus === "PENDING" ? "Pendente" : <span className="text-muted-foreground">Selecione...</span>}
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="PAID" className="rounded-lg">Pago</SelectItem>
+                      <SelectItem value="PENDING" className="rounded-lg">Pendente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Vencimento</Label>
+                    <Input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="h-11 font-medium" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Pago em</Label>
+                    <Input type="date" value={paidAt} onChange={e => setPaidAt(e.target.value)} className="h-11 font-medium" />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
                   <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Comprovante</Label>
                   <div className="flex gap-3">
                     <div className="relative flex-1">
@@ -340,7 +400,7 @@ export default function Movimentacoes() {
                         }}
                       />
                       <div className={cn(
-                        "h-11 rounded-lg border-2 border-dashed flex items-center justify-center gap-2.5 transition-all font-bold text-[10px] uppercase tracking-wider",
+                        "h-11 rounded-lg border-2 border-dashed flex items-center justify-center gap-2.5 transition-colors font-bold text-[10px] uppercase tracking-wider",
                         blobUrl ? "border-emerald-500/50 bg-emerald-50 text-emerald-600" : "border-outline/30 bg-surface-variant/30 text-on-surface-variant/70"
                       )}>
                         {uploading ? "Sincronizando..." : blobUrl ? <><CheckCircle2 className="w-4 h-4" /> SUBMETIDO</> : <><FileUp className="w-4 h-4" /> ANEXAR</>}
@@ -375,7 +435,7 @@ export default function Movimentacoes() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 md:px-0"
+        className="grid grid-cols-1 md:grid-cols-4 gap-4 px-4 md:px-0"
       >
         <Card className="premium-card p-5 flex flex-col justify-between">
             <div>
@@ -415,6 +475,18 @@ export default function Movimentacoes() {
                   <span className="text-[10px] font-semibold">Despesas</span>
               </div>
           </Card>
+        <Card className="premium-card p-5 flex flex-col justify-between border-amber-100 bg-amber-50/20">
+            <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-amber-700 mb-1">Pendentes</p>
+                <h2 className="text-2xl font-bold text-amber-700 tracking-tight">
+                    {formatCurrency(transactions.filter(t => t.type === 'EXPENSE' && t.paymentStatus === 'PENDING').reduce((acc, t) => acc + t.amount, 0))}
+                </h2>
+            </div>
+            <div className="mt-3 flex items-center gap-2 text-amber-700">
+                <AlertCircle className="w-4 h-4" />
+                <span className="text-[10px] font-semibold">Ainda não pagos</span>
+            </div>
+        </Card>
       </motion.div>
 
       {/* Filters & Search - Compact */}
@@ -430,7 +502,7 @@ export default function Movimentacoes() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Pesquisar..." 
-            className="pl-12 h-11 bg-surface-variant/40 border-outline/10 rounded-2xl placeholder:opacity-70 font-medium focus:bg-surface focus:border-outline/40 transition-all text-on-surface" 
+            className="pl-12 h-11 bg-surface-variant/40 border-outline/10 rounded-2xl placeholder:opacity-70 font-medium focus:bg-surface focus:border-outline/40 transition-colors text-on-surface" 
           />
         </div>
         
@@ -451,9 +523,15 @@ export default function Movimentacoes() {
         </div>
 
         <div className="flex bg-surface-variant/30 rounded-2xl p-1 border border-outline/5 overflow-x-auto no-scrollbar">
-          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all", !filterType ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterType(null)}>Todos</Button>
-          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all", filterType === "INCOME" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
-          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all", filterType === "EXPENSE" ? "bg-red-100 text-red-700" : "text-on-surface-variant")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
+          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors", !filterType ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterType(null)}>Todos</Button>
+          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors", filterType === "INCOME" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
+          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors", filterType === "EXPENSE" ? "bg-red-100 text-red-700" : "text-on-surface-variant")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
+        </div>
+
+        <div className="flex bg-surface-variant/30 rounded-2xl p-1 border border-outline/5 overflow-x-auto no-scrollbar">
+          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "ALL" ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("ALL")}>Todos</Button>
+          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "PAID" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PAID")}>Pagos</Button>
+          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "PENDING" ? "bg-amber-100 text-amber-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PENDING")}>Pendentes</Button>
         </div>
       </motion.div>
       
@@ -488,7 +566,7 @@ export default function Movimentacoes() {
                   </TableCell>
                 </TableRow>
               ) : transactions.map((t) => (
-                <TableRow key={t.id} className="group border-b border-outline/5 hover:bg-surface-variant/15 transition-all duration-200">
+                <TableRow key={t.id} className="group border-b border-outline/5 hover:bg-surface-variant/15 transition-colors duration-200">
                   <TableCell className="px-6 py-4">
                     <div className="flex flex-col">
                       <span className="font-semibold text-sm text-on-background tracking-tight">{format(new Date(t.date), "dd/MM/yy")}</span>
@@ -501,6 +579,17 @@ export default function Movimentacoes() {
                       {t.blobUrl && <motion.a whileHover={{ scale: 1.1 }} href={t.blobUrl} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100"><Cloud className="w-3 h-3" /></motion.a>}
                       {t.attachmentUrl && !t.blobUrl && <motion.a whileHover={{ scale: 1.1 }} href={t.attachmentUrl} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-surface-variant text-secondary border border-outline/10"><LinkIcon className="w-3 h-3" /></motion.a>}
                     </div>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {t.frequency === "MONTHLY" && <span className="flex items-center gap-1 text-[8px] font-bold text-secondary uppercase tracking-wider"><RotateCcw className="w-2.5 h-2.5" /> Mensal</span>}
+                      {t.dueDate && <span className="px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-wider bg-surface-variant/50 text-on-surface-variant border border-outline/20">Vence {format(new Date(t.dueDate), "dd/MM")}</span>}
+                      {t.paidAt && <span className="px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200">Pago {format(new Date(t.paidAt), "dd/MM")}</span>}
+                      <span className={cn(
+                        "px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-wider",
+                        t.paymentStatus === "PENDING" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"
+                      )}>
+                        {t.paymentStatus === "PENDING" ? "Pendente" : "Pago"}
+                      </span>
+                    </div>
                   </TableCell>
                   <TableCell className="py-4 text-center">
                     <span className="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider bg-surface-variant/50 text-on-surface-variant border border-outline/20">{t.category?.name}</span>
@@ -510,6 +599,22 @@ export default function Movimentacoes() {
                   </TableCell>
                   <TableCell className="pr-4">
                     <div className="flex items-center justify-end gap-1.5">
+                      {t.type === "EXPENSE" && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => updatePaymentStatus(t.id, t.paymentStatus === "PENDING" ? "PAID" : "PENDING")}
+                          className={cn(
+                            "h-8 w-8 rounded-lg transition-colors",
+                            t.paymentStatus === "PENDING"
+                              ? "hover:bg-emerald-100 text-emerald-600 hover:text-emerald-700"
+                              : "hover:bg-amber-100 text-amber-600 hover:text-amber-700"
+                          )}
+                          title={t.paymentStatus === "PENDING" ? "Marcar como pago" : "Marcar como pendente"}
+                        >
+                          {t.paymentStatus === "PENDING" ? <CheckCircle2 className="w-4 h-4" /> : <Clock3 className="w-4 h-4" />}
+                        </Button>
+                      )}
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-8 w-8 rounded-lg hover:bg-surface-variant text-secondary hover:text-secondary/90 transition-colors"><Edit2 className="w-4 h-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 rounded-lg hover:bg-red-100 text-red-600 hover:text-red-700 font-semibold transition-colors"><Trash2 className="w-4 h-4" /></Button>
                     </div>
@@ -538,7 +643,7 @@ export default function Movimentacoes() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.05 }}
             >
-              <Card className="premium-card p-4 group active:scale-[0.98] transition-all relative">
+              <Card className="premium-card p-4 group active:scale-[0.98] transition-colors relative">
                   <div className="flex items-center gap-4">
                     <div className={cn(
                       "w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm",
@@ -552,6 +657,10 @@ export default function Movimentacoes() {
                         <span className="text-[10px] font-bold text-on-surface-variant/70 uppercase tracking-tighter">{format(new Date(t.date), "dd MMM, yyyy")}</span>
                         <span className="text-[9px] px-2.5 py-0.5 rounded-full bg-surface-variant/60 text-on-surface-variant font-bold uppercase">{t.category?.name}</span>
                       </div>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {t.dueDate && <span className="px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-wider bg-surface-variant/50 text-on-surface-variant border border-outline/20">Vence {format(new Date(t.dueDate), "dd/MM")}</span>}
+                        {t.paidAt && <span className="px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200">Pago {format(new Date(t.paidAt), "dd/MM")}</span>}
+                      </div>
                     </div>
                     <div className="text-right">
                       <span className={cn(
@@ -559,6 +668,22 @@ export default function Movimentacoes() {
                         t.type === 'INCOME' ? 'text-emerald-600' : 'text-on-background'
                       )}>{t.type === 'EXPENSE' && "- "}{formatCurrency(t.amount)}</span>
                       <div className="flex justify-end gap-1.5 mt-2">
+                        {t.type === "EXPENSE" && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => updatePaymentStatus(t.id, t.paymentStatus === "PENDING" ? "PAID" : "PENDING")}
+                            className={cn(
+                              "h-8 w-8 rounded-lg transition-colors",
+                              t.paymentStatus === "PENDING"
+                                ? "bg-emerald-100/70 text-emerald-700 hover:bg-emerald-100"
+                                : "bg-amber-100/70 text-amber-700 hover:bg-amber-100"
+                            )}
+                            title={t.paymentStatus === "PENDING" ? "Marcar como pago" : "Marcar como pendente"}
+                          >
+                            {t.paymentStatus === "PENDING" ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Clock3 className="w-3.5 h-3.5" />}
+                          </Button>
+                        )}
                         <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-8 w-8 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/15 transition-colors">
                           <Edit2 className="w-3.5 h-3.5" />
                         </Button>
@@ -566,6 +691,19 @@ export default function Movimentacoes() {
                           <Trash2 className="w-3.5 h-3.5" />
                         </Button>
                       </div>
+                    </div>
+                    <div className="flex items-center gap-2 mt-3">
+                      <span className={cn(
+                        "px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-wider",
+                        t.paymentStatus === "PENDING" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"
+                      )}>
+                        {t.paymentStatus === "PENDING" ? "Pendente" : "Pago"}
+                      </span>
+                      {t.frequency === "MONTHLY" && (
+                        <span className="flex items-center gap-1 text-[8px] font-bold text-secondary uppercase tracking-wider">
+                          <RotateCcw className="w-2.5 h-2.5" /> Mensal
+                        </span>
+                      )}
                     </div>
                   </div>
               </Card>

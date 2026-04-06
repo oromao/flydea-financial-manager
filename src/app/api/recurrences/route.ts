@@ -63,7 +63,9 @@ export async function POST(request: NextRequest) {
         date: start,
         categoryId,
         userId: session.user.id,
-        status: "RECURRING"
+        status: "RECURRING",
+        recurrenceId: recurrence.id,
+        recurrenceDate: start
       }
     });
 

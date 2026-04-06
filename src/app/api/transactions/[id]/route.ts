@@ -17,12 +17,30 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
 
   const { tagIds, ...rest } = parsed.data;
+  const nextAmountPaid = typeof rest.amountPaid === "number" ? rest.amountPaid : undefined;
+  const nextPaymentStatus = rest.paymentStatus;
+  const nextPaidAt = rest.paidAt;
+  const nextDueDate = rest.dueDate;
+  const amount = rest.amount;
+  const currentAmountPaid = existing.amountPaid || 0;
+  const resolvedAmountPaid =
+    nextAmountPaid !== undefined
+      ? nextAmountPaid
+      : nextPaymentStatus === "PAID" && amount !== undefined
+        ? amount
+        : nextPaymentStatus === "PENDING"
+          ? currentAmountPaid
+          : undefined;
 
   const transaction = await prisma.transaction.update({
     where: { id },
     data: {
       ...rest,
       date: rest.date ? new Date(rest.date) : undefined,
+      dueDate: rest.dueDate ? new Date(rest.dueDate) : rest.dueDate === "" ? null : undefined,
+      paidAt: rest.paidAt ? new Date(rest.paidAt) : rest.paidAt === "" ? null : undefined,
+      paymentStatus: rest.paymentStatus || undefined,
+      amountPaid: resolvedAmountPaid,
       attachmentUrl: rest.attachmentUrl || null,
       blobUrl: rest.blobUrl || null,
       accountId: rest.accountId || null,
@@ -56,6 +74,31 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
   const existing = await prisma.transaction.findFirst({ where: { id, userId: session.user.id } });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  if (session.user.role !== "ADMIN") {
+    const approval = await prisma.approvalRequest.create({
+      data: {
+        action: "DELETE",
+        entity: "TRANSACTION",
+        entityId: id,
+        payload: { description: existing.description, amount: existing.amount },
+        requestedById: session.user.id,
+        reason: "Exclusão solicitada por usuário não administrador"
+      }
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        action: "CREATE",
+        entity: "APPROVAL_REQUEST",
+        entityId: approval.id,
+        details: `Solicitação de exclusão de transação: ${existing.description}`,
+        userId: session.user.id
+      }
+    });
+
+    return NextResponse.json({ approvalRequested: true, approvalId: approval.id });
+  }
 
   await prisma.transaction.delete({ where: { id } });
 

@@ -55,6 +55,19 @@ export default function Recorrencias() {
     }
   }, []);
 
+  const toggleRecurrence = async (id: string, isActive: boolean) => {
+    try {
+      const res = await fetch(`/api/recurrences/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive }),
+      });
+      if (res.ok) fetchRecurrences();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const fetchCategories = useCallback(async () => {
     try {
       const res = await fetch("/api/categories");
@@ -220,7 +233,7 @@ export default function Recorrencias() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: idx * 0.05 + 0.1 }}
             >
-              <Card className="premium-card overflow-hidden group hover:shadow-xl transition-all duration-300 p-0 border-none bg-surface">
+              <Card className="premium-card overflow-hidden group hover:shadow-xl transition-colors duration-300 p-0 border-none bg-surface">
                 <div className="bg-surface-variant/30 p-6 flex justify-between items-start border-b border-outline/5">
                   <div className="space-y-1">
                     <h3 className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/50">Próximo Lançamento</h3>
@@ -229,9 +242,17 @@ export default function Recorrencias() {
                       {format(new Date(rec.nextDate || rec.startDate), "dd 'de' MMMM", { locale: ptBR })}
                     </div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-lg bg-surface text-secondary text-[9px] font-bold uppercase tracking-wider border border-outline/10 shadow-sm">
-                    {rec.frequency === 'MONTHLY' ? 'Mensal' : 'Semanal'}
-                  </span>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className="px-2.5 py-1 rounded-lg bg-surface text-secondary text-[9px] font-bold uppercase tracking-wider border border-outline/10 shadow-sm">
+                      {rec.frequency === 'MONTHLY' ? 'Mensal' : 'Semanal'}
+                    </span>
+                    <span className={cn(
+                      "px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border shadow-sm",
+                      rec.isActive ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-slate-50 text-slate-600 border-slate-200"
+                    )}>
+                      {rec.isActive ? "Ativa" : "Pausada"}
+                    </span>
+                  </div>
                 </div>
                 
                 <div className="p-7 space-y-6">
@@ -247,12 +268,28 @@ export default function Recorrencias() {
                   <div className="pt-5 border-t border-outline/5 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-secondary">
                       <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-                      Status: Ativo
+                      {rec.isActive ? "Status: Ativa" : "Status: Pausada"}
                     </div>
-                    <Button variant="ghost" size="icon"
-                      className="w-10 h-10 rounded-lg bg-red-100/60 hover:bg-red-100 text-red-600 hover:text-red-700 transition-colors">
-                      <Trash2 className="w-4.5 h-4.5" />
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => toggleRecurrence(rec.id, !rec.isActive)}
+                        className={cn(
+                          "w-10 h-10 rounded-lg transition-colors",
+                          rec.isActive
+                            ? "bg-amber-100/60 hover:bg-amber-100 text-amber-700 hover:text-amber-800"
+                            : "bg-emerald-100/60 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800"
+                        )}
+                        title={rec.isActive ? "Pausar recorrência" : "Reativar recorrência"}
+                      >
+                        {rec.isActive ? <AlertCircle className="w-4.5 h-4.5" /> : <CheckCircle2 className="w-4.5 h-4.5" />}
+                      </Button>
+                      <Button variant="ghost" size="icon"
+                        className="w-10 h-10 rounded-lg bg-red-100/60 hover:bg-red-100 text-red-600 hover:text-red-700 transition-colors">
+                        <Trash2 className="w-4.5 h-4.5" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </Card>

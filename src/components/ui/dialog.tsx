@@ -53,7 +53,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed z-50 grid w-full bg-popover text-sm text-popover-foreground outline-none shadow-2xl transition-all duration-200 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed z-50 grid w-full bg-popover text-sm text-popover-foreground outline-none shadow-2xl transition-colors duration-200 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           // Mobile: Full screen
           "bottom-0 left-0 h-[100dvh] rounded-none p-5 pt-12 overflow-y-auto",
           // Desktop: Centered floating modal

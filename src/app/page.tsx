@@ -25,7 +25,7 @@ const itemVariants: any = {
 export default function Dashboard() {
   const [metrics, setMetrics] = useState<any>({
     balance: 0, income: 0, expenses: 0, chartData: [],
-    topCategories: [], projectedExpenses: 0, projectedIncome: 0,
+    topCategories: [], projectedExpenses: 0, projectedIncome: 0, pendingExpenses: 0,
     nextMonths: [], budgetAlerts: [], savingsRate: 0
   });
   const [loading, setLoading] = useState(true);
@@ -69,11 +69,14 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center gap-3">
           {metrics.budgetAlerts?.length > 0 && (
-            <Link href="/orcamentos" className="p-2.5 rounded-lg hover:bg-surface-variant transition-all relative">
+            <Link href="/orcamentos" className="p-2.5 rounded-lg hover:bg-surface-variant transition-colors relative">
               <Bell className="w-5 h-5 text-amber-500" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-amber-500 rounded-full border border-background" />
             </Link>
           )}
+          <Link href="/alertas" className="p-2.5 rounded-lg hover:bg-surface-variant transition-colors relative">
+            <Bell className="w-5 h-5 text-secondary" />
+          </Link>
           <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-surface-variant/60 border border-outline/20">
             <CalendarDays className="w-4 h-4 text-secondary" />
             <span className="text-xs font-semibold text-on-background uppercase">
@@ -87,7 +90,7 @@ export default function Dashboard() {
       {!loading && metrics.budgetAlerts?.length > 0 && (
         <motion.div variants={itemVariants}>
           <Link href="/orcamentos"
-            className="flex items-center gap-4 p-4 rounded-xl bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-all group">
+            className="flex items-center gap-4 p-4 rounded-xl bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors group">
             <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
             <p className="text-sm font-semibold text-amber-900">
               {metrics.budgetAlerts.length} orçamento(s) atingiram o limite de alerta este mês.
@@ -100,7 +103,7 @@ export default function Dashboard() {
       {/* Stats Cards - Compact Dense */}
       <motion.div
         variants={itemVariants}
-        className="grid gap-5 grid-cols-1 md:grid-cols-3"
+        className="grid gap-5 grid-cols-1 md:grid-cols-4"
       >
         <Card className="premium-card p-6 flex flex-col justify-between relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-6 opacity-3">
@@ -146,6 +149,19 @@ export default function Dashboard() {
             )}
           </div>
           <p className="text-[10px] text-on-surface-variant font-medium mt-3">Acumulado</p>
+        </Card>
+
+        <Card className="premium-card p-6 flex flex-col justify-between border-amber-100 bg-amber-50/20">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70">Pendentes</p>
+              <ReceiptText className="w-4 h-4 text-amber-600" />
+            </div>
+            {loading ? <Skeleton className="h-9 w-32 mb-3" /> : (
+              <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.pendingExpenses || 0)}</div>
+            )}
+          </div>
+          <p className="text-[10px] text-on-surface-variant font-medium mt-3">Despesas ainda abertas</p>
         </Card>
       </motion.div>
 
@@ -210,7 +226,7 @@ export default function Dashboard() {
                       <span className="text-[10px] font-semibold text-on-surface-variant whitespace-nowrap ml-2">{formatCurrency(cat.amount)}</span>
                     </div>
                     <div className="h-1.5 bg-surface-variant rounded-full overflow-hidden">
-                      <div className="h-full transition-all duration-500 bg-secondary"
+                      <div className="h-full transition-colors duration-500 bg-secondary"
                         style={{ width: `${pct}%` }} />
                     </div>
                   </div>

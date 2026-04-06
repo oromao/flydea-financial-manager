@@ -8,7 +8,10 @@ export function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [hasDeclined, setHasDeclined] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
+  const [isIOS] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+  });
 
   useEffect(() => {
     if (typeof window === "undefined" || hasDeclined) return;
@@ -18,10 +21,7 @@ export function InstallPrompt() {
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
     const isStandalone = window.matchMedia("(display-mode: standalone)").matches || (window.navigator as any).standalone;
     
-    setIsIOS(isIosDevice);
-
     if (isStandalone) {
-      setShowPrompt(false);
       return;
     }
 

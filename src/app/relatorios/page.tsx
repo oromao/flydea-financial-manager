@@ -278,7 +278,7 @@ export default function Relatorios() {
                     const pct = totalExpenses > 0 ? (Number(amount) / totalExpenses) * 100 : 0;
                     return (
                       <div key={category}
-                        className="flex items-center justify-between p-4 rounded-2xl bg-surface group hover:bg-surface-variant/10 transition-all border border-outline/5">
+                        className="flex items-center justify-between p-4 rounded-2xl bg-surface group hover:bg-surface-variant/10 transition-colors border border-outline/5">
                         <div className="flex items-center gap-4 flex-1">
                           <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
                           <div className="flex-1">
@@ -316,7 +316,7 @@ export default function Relatorios() {
                 { label: "Despesas Variáveis", value: budgetBreakdown.VARIABLE, color: "text-secondary", icon: TrendingUp },
                 { label: "Taxa de Poupança", value: null, label2: `${savingsRate.toFixed(1)}%`, color: savingsRate >= 20 ? "text-secondary" : "text-amber-500", icon: Target }
               ].map((item, i) => (
-                <div key={i} className="flex justify-between items-center p-5 rounded-2xl bg-surface border border-outline/5 group hover:border-secondary/20 transition-all">
+                <div key={i} className="flex justify-between items-center p-5 rounded-2xl bg-surface border border-outline/5 group hover:border-secondary/20 transition-colors">
                   <div className="flex items-center gap-3">
                     <item.icon className="w-4 h-4 text-on-surface-variant/60" strokeWidth={2.5} />
                     <span className="text-on-surface-variant/80 font-bold uppercase text-[10px] tracking-widest">{item.label}</span>
@@ -343,7 +343,7 @@ export default function Relatorios() {
                   Dados estruturados
                 </p>
               </div>
-              <div className="w-10 h-10 bg-secondary/10 text-secondary rounded-xl flex items-center justify-center group-hover:bg-secondary group-hover:text-on-secondary transition-all">
+              <div className="w-10 h-10 bg-secondary/10 text-secondary rounded-xl flex items-center justify-center group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
                 <Download className="w-5 h-5" />
               </div>
             </motion.button>
@@ -358,7 +358,7 @@ export default function Relatorios() {
                 <h4 className="text-sm font-bold tracking-tight uppercase">Documento PDF</h4>
                 <p className="text-[10px] font-medium text-on-surface-variant/80">Versão impressa</p>
               </div>
-              <div className="w-10 h-10 bg-surface-variant text-on-surface-variant rounded-xl flex items-center justify-center group-hover:bg-on-surface group-hover:text-surface transition-all">
+              <div className="w-10 h-10 bg-surface-variant text-on-surface-variant rounded-xl flex items-center justify-center group-hover:bg-on-surface group-hover:text-surface transition-colors">
                 <LayoutPanelLeft className="w-5 h-5" />
               </div>
             </motion.button>
