@@ -69,7 +69,7 @@ export default function Alertas() {
   const readCount = notifications.filter((n) => n.read).length;
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto pb-24">
+    <div className="space-y-8 max-w-5xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-lg bg-secondary text-on-secondary">
@@ -100,7 +100,7 @@ export default function Alertas() {
         </div>
       </motion.header>
 
-      <Card className="premium-card p-6">
+      <Card className="premium-card p-4 sm:p-6">
         {loading ? (
           <div className="py-10 text-center text-on-surface-variant/40">Carregando...</div>
         ) : filteredNotifications.length === 0 ? (

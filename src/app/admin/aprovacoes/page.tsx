@@ -36,7 +36,7 @@ export default function AprovacoesPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-6xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
       <div>
         <h1 className="text-3xl font-bold text-on-background">Aprovações</h1>
         <p className="text-on-surface-variant">Fila de ações críticas pendentes.</p>
@@ -44,7 +44,7 @@ export default function AprovacoesPage() {
       <div className="space-y-3">
         {items.map((item) => (
           <Card key={item.id} className="premium-card">
-            <CardContent className="p-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <CardContent className="p-4 sm:p-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-semibold">{item.entity}</span>
