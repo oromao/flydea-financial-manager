@@ -225,7 +225,7 @@ export default function Movimentacoes() {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   return (
-    <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto relative pb-32">
+    <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto relative pb-20 md:pb-0">
       {/* Custom Toast Notification */}
       <AnimatePresence>
         {toast && (
@@ -303,7 +303,7 @@ export default function Movimentacoes() {
                   <Input required value={description} onChange={e => setDescription(e.target.value)} className="h-11 font-medium" placeholder="Ex: Assinatura mensal Cloud" />
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
                   <div className="space-y-2">
                     <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Valor (BRL)</Label>
                     <Input required type="number" step="0.01" value={amount} onChange={e => setAmount(e.target.value)} className="h-11 font-bold text-lg" />
@@ -314,7 +314,7 @@ export default function Movimentacoes() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
                   <div className="space-y-2">
                     <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Categoria</Label>
                     <Select value={categoryId} onValueChange={v => setCategoryId(v || "")}>
@@ -355,7 +355,7 @@ export default function Movimentacoes() {
                   </Select>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
                   <div className="space-y-2">
                     <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Vencimento</Label>
                     <Input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="h-11 font-medium" />
@@ -400,7 +400,7 @@ export default function Movimentacoes() {
                         }}
                       />
                       <div className={cn(
-                        "h-11 rounded-lg border-2 border-dashed flex items-center justify-center gap-2.5 transition-colors font-bold text-[10px] uppercase tracking-wider",
+                        "h-11 rounded-lg border-2 border-dashed flex items-center justify-center gap-2.5 transition-colors font-bold text-xs uppercase tracking-wider",
                         blobUrl ? "border-emerald-500/50 bg-emerald-50 text-emerald-600" : "border-outline/30 bg-surface-variant/30 text-on-surface-variant/70"
                       )}>
                         {uploading ? "Sincronizando..." : blobUrl ? <><CheckCircle2 className="w-4 h-4" /> SUBMETIDO</> : <><FileUp className="w-4 h-4" /> ANEXAR</>}
@@ -437,9 +437,9 @@ export default function Movimentacoes() {
         transition={{ delay: 0.1 }}
         className="grid grid-cols-1 md:grid-cols-4 gap-4 px-4 md:px-0"
       >
-        <Card className="premium-card p-5 flex flex-col justify-between">
+        <Card className="premium-card p-4 sm:p-5 flex flex-col justify-between">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Saldo</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Saldo</p>
               <h2 className="text-2xl md:text-3xl font-bold text-on-background tracking-tight">
                   {formatCurrency(transactions.reduce((acc, t) => t.type === 'INCOME' ? acc + t.amount : acc - t.amount, 0))}
               </h2>
@@ -452,39 +452,39 @@ export default function Movimentacoes() {
 
         <Card className="premium-card p-5 flex flex-col justify-between border-emerald-100 bg-emerald-50/20">
             <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Entradas</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1">Entradas</p>
                 <h2 className="text-2xl font-bold text-emerald-700 tracking-tight">
                     {formatCurrency(transactions.filter(t => t.type === 'INCOME').reduce((acc, t) => acc + t.amount, 0))}
                 </h2>
             </div>
             <div className="mt-3 flex items-center gap-2 text-emerald-600">
                 <ArrowUp className="w-4 h-4" />
-                <span className="text-[10px] font-semibold">Receitas</span>
+                <span className="text-xs font-semibold">Receitas</span>
             </div>
         </Card>
 
         <Card className="premium-card p-5 flex flex-col justify-between border-red-100 bg-red-50/20">
             <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-red-700 mb-1">Saídas</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-red-700 mb-1">Saídas</p>
                 <h2 className="text-2xl font-bold text-red-700 tracking-tight">
                     {formatCurrency(transactions.filter(t => t.type === 'EXPENSE').reduce((acc, t) => acc + t.amount, 0))}
                 </h2>
               </div>
               <div className="mt-3 flex items-center gap-2 text-red-600">
                   <ArrowDown className="w-4 h-4" />
-                  <span className="text-[10px] font-semibold">Despesas</span>
+                  <span className="text-xs font-semibold">Despesas</span>
               </div>
           </Card>
         <Card className="premium-card p-5 flex flex-col justify-between border-amber-100 bg-amber-50/20">
             <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-amber-700 mb-1">Pendentes</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-1">Pendentes</p>
                 <h2 className="text-2xl font-bold text-amber-700 tracking-tight">
                     {formatCurrency(transactions.filter(t => t.type === 'EXPENSE' && t.paymentStatus === 'PENDING').reduce((acc, t) => acc + t.amount, 0))}
                 </h2>
             </div>
             <div className="mt-3 flex items-center gap-2 text-amber-700">
                 <AlertCircle className="w-4 h-4" />
-                <span className="text-[10px] font-semibold">Ainda não pagos</span>
+                <span className="text-xs font-semibold">Ainda não pagos</span>
             </div>
         </Card>
       </motion.div>
@@ -523,15 +523,15 @@ export default function Movimentacoes() {
         </div>
 
         <div className="flex bg-surface-variant/30 rounded-2xl p-1 border border-outline/5 overflow-x-auto no-scrollbar">
-          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors", !filterType ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterType(null)}>Todos</Button>
-          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors", filterType === "INCOME" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
-          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors", filterType === "EXPENSE" ? "bg-red-100 text-red-700" : "text-on-surface-variant")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
+          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", !filterType ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterType(null)}>Todos</Button>
+          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterType === "INCOME" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
+          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterType === "EXPENSE" ? "bg-red-100 text-red-700" : "text-on-surface-variant")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
         </div>
 
         <div className="flex bg-surface-variant/30 rounded-2xl p-1 border border-outline/5 overflow-x-auto no-scrollbar">
-          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "ALL" ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("ALL")}>Todos</Button>
-          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "PAID" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PAID")}>Pagos</Button>
-          <Button variant="ghost" className={cn("h-9 px-6 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "PENDING" ? "bg-amber-100 text-amber-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PENDING")}>Pendentes</Button>
+          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "ALL" ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("ALL")}>Todos</Button>
+          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "PAID" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PAID")}>Pagos</Button>
+          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "PENDING" ? "bg-amber-100 text-amber-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PENDING")}>Pendentes</Button>
         </div>
       </motion.div>
       

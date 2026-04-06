@@ -17,9 +17,9 @@ const shortcuts = [
 
 export default function MaisPage() {
   return (
-    <div className="space-y-8 max-w-6xl mx-auto pb-24">
+    <div className="space-y-8 max-w-6xl mx-auto pb-20 md:pb-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
-        <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-on-surface-variant">Navegação secundária</p>
+        <p className="text-xs sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] font-bold text-on-surface-variant/80">Navegação secundária</p>
         <h1 className="text-3xl font-bold tracking-tight text-on-background">Mais</h1>
         <p className="text-on-surface-variant text-sm max-w-2xl">Concentra as áreas menos usadas para manter a navegação principal limpa no mobile.</p>
       </motion.header>

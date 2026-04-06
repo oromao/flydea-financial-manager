@@ -100,7 +100,7 @@ export default function Orcamentos() {
   };
 
   return (
-    <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-32 px-4 md:px-0 relative">
+    <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0 relative">
       <AnimatePresence>
         {toast && (
           <motion.div 

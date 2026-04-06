@@ -79,7 +79,7 @@ export default function ContasAPagar() {
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-24">
+    <div className="space-y-8 max-w-7xl mx-auto pb-20 md:pb-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <div>
           <div className="flex items-center gap-3">

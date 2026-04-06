@@ -56,9 +56,9 @@ export default function PerfilPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto pb-24 space-y-8">
+    <div className="max-w-4xl mx-auto pb-20 md:pb-0 space-y-8">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
-        <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-on-surface-variant">Perfil</p>
+        <p className="text-xs sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] font-bold text-on-surface-variant/80">Perfil</p>
         <h1 className="text-3xl font-bold tracking-tight text-on-background">Seu perfil</h1>
         <p className="text-on-surface-variant text-sm max-w-2xl">Atualize seu nome e escolha uma foto para aparecer no sistema.</p>
       </motion.header>
@@ -66,7 +66,7 @@ export default function PerfilPage() {
       <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
         <Card className="premium-card p-6 space-y-4">
           <div className="flex items-center gap-4">
-            <div className="w-24 h-24 rounded-3xl overflow-hidden bg-surface-variant border border-outline/20 flex items-center justify-center relative">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl overflow-hidden bg-surface-variant border border-outline/20 flex items-center justify-center relative shrink-0">
               {avatarUrl ? (
                 <img src={avatarUrl} alt="Foto do perfil" className="h-full w-full object-cover" />
               ) : (

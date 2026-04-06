@@ -50,7 +50,7 @@ export function FilterChips({ chips, active, onToggle, onClear, className }: Fil
         <button
           type="button"
           onClick={onClear}
-          className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/40 hover:text-on-surface-variant transition-colors px-2 py-1 rounded-lg hover:bg-white/5"
+          className="text-xs font-bold uppercase tracking-wider text-on-surface-variant/60 hover:text-on-surface-variant transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5"
         >
           Limpar filtros
         </button>

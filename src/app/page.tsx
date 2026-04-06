@@ -110,7 +110,7 @@ export default function Dashboard() {
             <Wallet className="w-20 h-20" />
           </div>
           <div>
-            <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70 mb-2">Saldo</p>
+            <p className="text-on-surface-variant text-xs font-bold uppercase tracking-widest opacity-90 mb-2">Saldo</p>
             {loading ? <Skeleton className="h-9 w-40 mb-3" /> : (
               <div className="text-3xl md:text-4xl font-bold tracking-tight text-on-background leading-tight">
                 {formatCurrency(metrics.balance)}
