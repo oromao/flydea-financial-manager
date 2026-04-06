@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Send, Check } from "lucide-react";
-import Button from "./ui/button";
+import { Plus, Check } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface Installment {
   installmentNumber: number;
