@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { RecurrenceSchema } from "@/lib/validations";
-import { addMonths, isBefore, format } from "date-fns";
+import { addMonths, addWeeks, isBefore, format } from "date-fns";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
   const start = new Date(startDate);
   const today = new Date();
   if (isBefore(start, today) || format(start, "yyyy-MM-dd") === format(today, "yyyy-MM-dd")) {
+    const nextDate = frequency === "WEEKLY" ? addWeeks(start, 1) : addMonths(start, 1);
     await prisma.transaction.create({
       data: {
         type: type || "EXPENSE",
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     await prisma.recurrence.update({
       where: { id: recurrence.id },
-      data: { nextDate: addMonths(start, 1) }
+      data: { nextDate }
     });
   }
 

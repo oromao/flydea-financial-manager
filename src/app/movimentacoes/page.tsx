@@ -25,6 +25,9 @@ export default function Movimentacoes() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
 
+  // Stats computed from ALL transactions (not paginated)
+  const [stats, setStats] = useState({ balance: 0, income: 0, expenses: 0, pending: 0 });
+
   // Search/Filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("Todos");
@@ -79,6 +82,21 @@ export default function Movimentacoes() {
     }
   }, [searchTerm, filterCategory, filterType, filterPaymentStatus, page]);
 
+  const fetchStats = useCallback(async () => {
+    try {
+      const res = await fetch("/api/transactions?all=true");
+      const data = await res.json();
+      const allTx = Array.isArray(data.data) ? data.data : [];
+      const balance = allTx.reduce((acc: number, t: any) => t.type === "INCOME" ? acc + t.amount : acc - t.amount, 0);
+      const income = allTx.filter((t: any) => t.type === "INCOME").reduce((acc: number, t: any) => acc + t.amount, 0);
+      const expenses = allTx.filter((t: any) => t.type === "EXPENSE").reduce((acc: number, t: any) => acc + t.amount, 0);
+      const pending = allTx.filter((t: any) => t.type === "EXPENSE" && t.paymentStatus === "PENDING").reduce((acc: number, t: any) => acc + t.amount, 0);
+      setStats({ balance, income, expenses, pending });
+    } catch (e) {
+      console.error("Failed to fetch stats:", e);
+    }
+  }, []);
+
   const fetchCategories = useCallback(async () => {
     try {
       const res = await fetch("/api/categories");
@@ -94,7 +112,8 @@ export default function Movimentacoes() {
 
   useEffect(() => {
     fetchCategories();
-  }, [fetchCategories]);
+    fetchStats();
+  }, [fetchCategories, fetchStats]);
 
   useEffect(() => {
     setPage(1);
@@ -138,6 +157,7 @@ export default function Movimentacoes() {
         setOpen(false);
         resetForm();
         fetchTransactions();
+        fetchStats();
       } else {
         const errorData = await res.json();
         const msg = typeof errorData.error === 'object' 
@@ -156,6 +176,7 @@ export default function Movimentacoes() {
     try {
       await fetch(`/api/transactions/${id}`, { method: "DELETE" });
       fetchTransactions();
+      fetchStats();
     } catch(e) {
       console.error(e);
     }
@@ -173,6 +194,7 @@ export default function Movimentacoes() {
       if (res.ok) {
         showToast(nextStatus === "PAID" ? "Marcado como pago" : "Marcado como pendente", "success");
         fetchTransactions();
+        fetchStats();
       } else {
         showToast("Não foi possível atualizar o status", "error");
       }
@@ -441,7 +463,7 @@ export default function Movimentacoes() {
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Saldo</p>
               <h2 className="text-2xl md:text-3xl font-bold text-on-background tracking-tight">
-                  {formatCurrency(transactions.reduce((acc, t) => t.type === 'INCOME' ? acc + t.amount : acc - t.amount, 0))}
+                  {formatCurrency(stats.balance)}
               </h2>
             </div>
             <div className="mt-3 flex items-center gap-2">
@@ -454,7 +476,7 @@ export default function Movimentacoes() {
             <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1">Entradas</p>
                 <h2 className="text-2xl font-bold text-emerald-700 tracking-tight">
-                    {formatCurrency(transactions.filter(t => t.type === 'INCOME').reduce((acc, t) => acc + t.amount, 0))}
+                    {formatCurrency(stats.income)}
                 </h2>
             </div>
             <div className="mt-3 flex items-center gap-2 text-emerald-600">
@@ -467,7 +489,7 @@ export default function Movimentacoes() {
             <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-red-700 mb-1">Saídas</p>
                 <h2 className="text-2xl font-bold text-red-700 tracking-tight">
-                    {formatCurrency(transactions.filter(t => t.type === 'EXPENSE').reduce((acc, t) => acc + t.amount, 0))}
+                    {formatCurrency(stats.expenses)}
                 </h2>
               </div>
               <div className="mt-3 flex items-center gap-2 text-red-600">
@@ -479,12 +501,12 @@ export default function Movimentacoes() {
             <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-1">Pendentes</p>
                 <h2 className="text-2xl font-bold text-amber-700 tracking-tight">
-                    {formatCurrency(transactions.filter(t => t.type === 'EXPENSE' && t.paymentStatus === 'PENDING').reduce((acc, t) => acc + t.amount, 0))}
+                    {formatCurrency(stats.pending)}
                 </h2>
             </div>
             <div className="mt-3 flex items-center gap-2 text-amber-700">
                 <AlertCircle className="w-4 h-4" />
-                <span className="text-xs font-semibold">Ainda não pagos</span>
+                <span className="text-xs font-semibold">Despesas não pagas</span>
             </div>
         </Card>
       </motion.div>

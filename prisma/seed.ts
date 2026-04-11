@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 
 async function main() {
   const hashedPassword = await bcrypt.hash('flydea2026', 10)
-  const testPassword = await bcrypt.hash('flydea2024', 10)
+  const e2ePassword = await bcrypt.hash('password123', 10) // Must match Playwright tests
 
   // Seed Users
   const admin = await prisma.user.upsert({
@@ -25,7 +25,7 @@ async function main() {
     create: {
       email: 'augusto@flydea.com',
       name: 'Augusto Flydea',
-      password: testPassword,
+      password: e2ePassword,
       role: 'MEMBER',
     },
   })

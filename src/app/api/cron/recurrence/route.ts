@@ -1,8 +1,18 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { isBefore, isSameDay, addMonths, addWeeks, addDays } from "date-fns";
+import { isBefore, isSameDay, addMonths, addWeeks, addDays, startOfDay, format } from "date-fns";
 import { sendRecurrenceNotification, sendDueSoonAlert } from "@/lib/email";
 
+/**
+ * Recurrence Cron Job — generates recurring transactions.
+ *
+ * Idempotency strategy:
+ * - Checks for existing transaction by (userId, recurrenceId, recurrenceDate)
+ * - recurrenceDate is stored as a Date but we compare using YYYY-MM-DD string
+ *   to avoid false negatives from time component differences
+ *
+ * Safe to run multiple times — will not create duplicates.
+ */
 export async function GET(request: NextRequest) {
   // Protect cron endpoint with secret token
   const authHeader = request.headers.get("authorization");
@@ -14,7 +24,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const now = new Date();
+  const now = startOfDay(new Date());
   const dueSoonLimit = addDays(now, 7);
   const recurrences = await prisma.recurrence.findMany({
     where: { isActive: true },
@@ -36,29 +46,33 @@ export async function GET(request: NextRequest) {
   for (const rec of recurrences) {
     let nextDate = rec.nextDate ? new Date(rec.nextDate) : new Date(rec.startDate);
 
-      while (isBefore(nextDate, now) || isSameDay(nextDate, now)) {
+    while (isBefore(nextDate, now) || isSameDay(nextDate, now)) {
+      // Compare using date string to avoid time-component false negatives
+      const nextDateStr = format(nextDate, "yyyy-MM-dd");
       const existing = await prisma.transaction.findFirst({
         where: {
           userId: rec.userId,
           recurrenceId: rec.id,
-          recurrenceDate: new Date(nextDate),
         }
       });
 
-      if (!existing) {
+      // If a transaction exists for this recurrence on the same date, skip
+      const alreadyExists = existing && format(existing.recurrenceDate!, "yyyy-MM-dd") === nextDateStr;
+
+      if (!alreadyExists) {
         await prisma.transaction.create({
           data: {
             type: rec.type || "EXPENSE",
             description: `${rec.description} (Recorrente)`,
             amount: rec.amount,
-            date: new Date(nextDate),
+            date: nextDate,
             categoryId: rec.categoryId,
             userId: rec.userId,
             status: "RECURRING",
             recurrenceId: rec.id,
-            recurrenceDate: new Date(nextDate),
+            recurrenceDate: nextDate,
             paymentStatus: "PENDING",
-            dueDate: new Date(nextDate),
+            dueDate: nextDate,
           }
         });
 
@@ -79,7 +93,7 @@ export async function GET(request: NextRequest) {
             userName: rec.user.name || "Usuário",
             description: rec.description,
             amount: rec.amount,
-            date: new Date(nextDate),
+            date: nextDate,
           }).catch(() => {}); // non-blocking
         }
 

@@ -4,48 +4,52 @@ import { useEffect, useState } from "react";
 import { AlertCircle, TrendingUp, TrendingDown, CheckCircle } from "lucide-react";
 
 interface WeeklyForecast {
-  week: {
-    weekNumber: number;
-    weekStart: string;
-    weekEnd: string;
-    display: string;
-  };
+  week: number;
+  weekStart: string;
+  weekEnd: string;
+  totalIncome: number;
   projectedIncome: number;
-  receivedIncome: number;
   totalExpenses: number;
   balance: number;
   canSpend: boolean;
 }
 
-interface CashflowData {
-  cashflow: {
-    month: string;
-    weeks: WeeklyForecast[];
-    totalMonthIncome: number;
-    totalMonthExpenses: number;
-    monthBalance: number;
-  };
-  spendDecision: {
-    canSpend: boolean;
-    availableAmount: number;
-    reason: string;
-    weekNumber: number;
-  };
+interface Metrics {
+  totalIncome: number;
+  totalExpenses: number;
+  totalProjectedIncome: number;
+  monthBalance: number;
+  faturado: number;
+  aReceber: number;
+}
+
+interface CashflowResponse {
+  data: WeeklyForecast[];
+  metrics: Metrics;
+  referenceDate: string;
 }
 
 export function WeeklyCashflow() {
-  const [data, setData] = useState<CashflowData | null>(null);
+  const [data, setData] = useState<CashflowResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchCashflow() {
       try {
+        setLoading(true);
+        setError(null);
         const res = await fetch("/api/cashflow/weekly");
-        if (!res.ok) throw new Error("Falha ao buscar fluxo");
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || `HTTP ${res.status}`);
+        }
         const json = await res.json();
         setData(json);
-      } catch (error) {
-        console.error("Error fetching cashflow:", error);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Erro desconhecido";
+        setError(message);
+        console.error("Error fetching cashflow:", err);
       } finally {
         setLoading(false);
       }
@@ -55,149 +59,176 @@ export function WeeklyCashflow() {
   }, []);
 
   if (loading) {
-    return <div className="text-center py-8">Carregando fluxo semanal...</div>;
+    return (
+      <div className="text-center py-12">
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-secondary mb-3" />
+        <p className="text-on-surface-variant text-sm">Carregando fluxo semanal...</p>
+      </div>
+    );
   }
 
-  if (!data) {
-    return <div className="text-center py-8 text-red-600">Erro ao carregar dados</div>;
+  if (error || !data) {
+    return (
+      <div className="text-center py-12">
+        <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-3" />
+        <p className="text-red-600 font-semibold">Erro ao carregar dados</p>
+        <p className="text-on-surface-variant text-sm mt-1">{error || "Tente novamente mais tarde."}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 px-4 py-2 bg-secondary text-white rounded-lg text-sm font-semibold hover:opacity-90"
+        >
+          Tentar novamente
+        </button>
+      </div>
+    );
   }
 
-  const { cashflow, spendDecision } = data;
+  const { data: weeks, metrics } = data;
+
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+
+  const now = new Date();
+  const monthLabel = now.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
 
   return (
     <div className="space-y-6">
-      {/* Decisão de gastos */}
-      <div
-        className={`p-3 sm:p-4 rounded-lg border-2 ${
-          spendDecision.canSpend
-            ? "border-green-500 bg-green-50"
-            : "border-red-500 bg-red-50"
-        }`}
-      >
-        <div className="flex items-center gap-2 sm:gap-3">
-          {spendDecision.canSpend ? (
-            <CheckCircle className="text-green-600 shrink-0" size={24} />
-          ) : (
-            <AlertCircle className="text-red-600 shrink-0" size={24} />
-          )}
-          <div className="min-w-0">
-            <p className="text-sm sm:text-base font-semibold text-gray-900">
-              Semana {spendDecision.weekNumber}
-            </p>
-            <p className={`text-xs sm:text-sm ${spendDecision.canSpend ? "text-green-700" : "text-red-700"}`}>
-              {spendDecision.reason}
-            </p>
-          </div>
+      {/* Summary cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div className="p-4 rounded-lg border border-emerald-200 bg-emerald-50/40">
+          <p className="text-xs font-bold uppercase text-on-surface-variant/70">Faturado</p>
+          <p className="text-2xl font-bold text-emerald-700 mt-1">{formatCurrency(metrics.faturado)}</p>
+          <p className="text-[10px] text-on-surface-variant/50 mt-1">Recebido + A receber</p>
+        </div>
+        <div className="p-4 rounded-lg border border-amber-200 bg-amber-50/40">
+          <p className="text-xs font-bold uppercase text-on-surface-variant/70">A Receber</p>
+          <p className="text-2xl font-bold text-amber-700 mt-1">{formatCurrency(metrics.aReceber)}</p>
+          <p className="text-[10px] text-on-surface-variant/50 mt-1">Parcelas pendentes</p>
+        </div>
+        <div
+          className={`p-4 rounded-lg border ${
+            metrics.monthBalance >= 0
+              ? "border-emerald-200 bg-emerald-50/40"
+              : "border-red-200 bg-red-50/40"
+          }`}
+        >
+          <p className="text-xs font-bold uppercase text-on-surface-variant/70">Saldo do Mês</p>
+          <p className={`text-2xl font-bold mt-1 ${metrics.monthBalance >= 0 ? "text-emerald-700" : "text-red-700"}`}>
+            {formatCurrency(metrics.monthBalance)}
+          </p>
+          <p className="text-[10px] text-on-surface-variant/50 mt-1">Receitas - Despesas</p>
         </div>
       </div>
 
-      {/* Cards de semanas */}
+      {/* Weekly cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {cashflow.weeks.map((week) => (
+        {weeks.map((week) => (
           <div
-            key={week.week.weekNumber}
-            className={`p-3 sm:p-4 rounded-lg border-2 ${
+            key={week.week}
+            className={`p-4 rounded-lg border-2 ${
               week.balance >= 0
-                ? "border-green-200 bg-green-50"
-                : "border-red-200 bg-red-50"
+                ? "border-green-200 bg-green-50/40"
+                : "border-red-200 bg-red-50/40"
             }`}
           >
-            <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">
-              {week.week.display}
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">
+              Semana {week.week}
             </h3>
+            <p className="text-[10px] text-gray-500 mb-3">
+              {new Date(week.weekStart).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
+              {" - "}
+              {new Date(week.weekEnd).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
+            </p>
 
             <div className="space-y-2 text-xs sm:text-sm">
-              {/* Receitas */}
+              {/* Entradas */}
               <div className="flex items-center justify-between gap-1">
                 <span className="text-gray-600 flex items-center gap-1 shrink-0">
                   <TrendingUp size={16} />
-                  <span className="hidden sm:inline">Receitas</span>
-                  <span className="sm:hidden">Rec.</span>
+                  Entradas
                 </span>
                 <span className="text-green-700 font-semibold text-right">
-                  +R$ {(week.receivedIncome + week.projectedIncome).toFixed(2)}
+                  +{formatCurrency(week.totalIncome)}
                 </span>
               </div>
-              <div className="text-[11px] sm:text-xs text-gray-500 ml-5">
-                Recebido: R$ {week.receivedIncome.toFixed(2)}
-              </div>
-              <div className="text-[11px] sm:text-xs text-gray-500 ml-5">
-                Previsto: R$ {week.projectedIncome.toFixed(2)}
-              </div>
+              {week.totalIncome > 0 && (
+                <div className="text-[10px] text-gray-500 ml-5">
+                  Recebido: {formatCurrency(week.totalIncome - week.projectedIncome)}
+                  {week.projectedIncome > 0 && ` | Previsto: ${formatCurrency(week.projectedIncome)}`}
+                </div>
+              )}
 
               <hr className="my-2 border-gray-300" />
 
-              {/* Despesas */}
+              {/* Saídas */}
               <div className="flex items-center justify-between gap-1">
                 <span className="text-gray-600 flex items-center gap-1 shrink-0">
                   <TrendingDown size={16} />
-                  <span className="hidden sm:inline">Despesas</span>
-                  <span className="sm:hidden">Desp.</span>
+                  Saídas
                 </span>
                 <span className="text-red-700 font-semibold text-right">
-                  -R$ {week.totalExpenses.toFixed(2)}
+                  -{formatCurrency(week.totalExpenses)}
                 </span>
               </div>
 
               <hr className="my-2 border-gray-300" />
 
               {/* Saldo */}
-              <div className="flex items-center justify-between font-bold text-sm sm:text-base">
+              <div className="flex items-center justify-between font-bold text-sm">
                 <span>Saldo</span>
-                <span
-                  className={`text-right ${
-                    week.balance >= 0
-                      ? "text-green-700"
-                      : "text-red-700"
-                  }`}
-                >
-                  R$ {week.balance.toFixed(2)}
+                <span className={week.balance >= 0 ? "text-green-700" : "text-red-700"}>
+                  {formatCurrency(week.balance)}
                 </span>
               </div>
 
               {/* Status */}
               <div className="mt-3 pt-2 border-t border-gray-300">
-                <span
-                  className={`text-[11px] sm:text-xs font-semibold px-2 py-1 rounded inline-block ${
-                    week.canSpend
-                      ? "bg-green-200 text-green-800"
-                      : "bg-red-200 text-red-800"
-                  }`}
-                >
-                  {week.canSpend ? "Pode Gastar" : "Atenção"}
-                </span>
+                {week.canSpend ? (
+                  <span className="text-[10px] font-semibold px-2 py-1 rounded bg-green-200 text-green-800 inline-block">
+                    <CheckCircle size={12} className="inline mr-1 -mt-0.5" />
+                    Pode Gastar
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-semibold px-2 py-1 rounded bg-red-200 text-red-800 inline-block">
+                    <AlertCircle size={12} className="inline mr-1 -mt-0.5" />
+                    Atenção
+                  </span>
+                )}
               </div>
+
+              {/* Projection hint */}
+              {week.projectedIncome > 0 && (
+                <p className="text-[9px] text-amber-600 font-semibold px-2 py-1 bg-amber-50/50 rounded">
+                  💡 {formatCurrency(week.projectedIncome)} a receber
+                </p>
+              )}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Resumo mensal */}
-      <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-4">
-          Resumo - {cashflow.month}
+      {/* Monthly summary */}
+      <div className="bg-gray-100 p-4 rounded-lg">
+        <h3 className="text-sm font-semibold text-gray-900 mb-4">
+          Resumo — {monthLabel}
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-center">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
           <div>
-            <p className="text-[11px] sm:text-xs text-gray-600 mb-1">Total Receitas</p>
-            <p className="text-sm sm:text-base font-bold text-green-700">
-              R$ {cashflow.totalMonthIncome.toFixed(2)}
+            <p className="text-[10px] text-gray-600 mb-1">Total Receitas</p>
+            <p className="text-lg font-bold text-green-700">
+              {formatCurrency(metrics.totalIncome)}
             </p>
           </div>
           <div>
-            <p className="text-[11px] sm:text-xs text-gray-600 mb-1">Total Despesas</p>
-            <p className="text-sm sm:text-base font-bold text-red-700">
-              R$ {cashflow.totalMonthExpenses.toFixed(2)}
+            <p className="text-[10px] text-gray-600 mb-1">Total Despesas</p>
+            <p className="text-lg font-bold text-red-700">
+              {formatCurrency(metrics.totalExpenses)}
             </p>
           </div>
           <div>
-            <p className="text-[11px] sm:text-xs text-gray-600 mb-1">Saldo do Mês</p>
-            <p
-              className={`text-sm sm:text-base font-bold ${
-                cashflow.monthBalance >= 0 ? "text-green-700" : "text-red-700"
-              }`}
-            >
-              R$ {cashflow.monthBalance.toFixed(2)}
+            <p className="text-[10px] text-gray-600 mb-1">Saldo do Mês</p>
+            <p className={`text-lg font-bold ${metrics.monthBalance >= 0 ? "text-green-700" : "text-red-700"}`}>
+              {formatCurrency(metrics.monthBalance)}
             </p>
           </div>
         </div>

@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { InvoiceSchema } from "@/lib/validations";
-import { calculateWeeklyCashflow, saveCashflowForecast } from "@/lib/cashflow";
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -82,16 +81,8 @@ export async function POST(request: NextRequest) {
       include: { installments: true }
     });
 
-    // Recalcular fluxo semanal e salvar no cache
-    const monthYear = new Date(emissionDate).toLocaleDateString("pt-BR", {
-      month: "2-digit",
-      year: "numeric"
-    });
-    const cashflow = await calculateWeeklyCashflow(session.user.id, new Date(emissionDate));
-
-    for (const week of cashflow.weeks) {
-      await saveCashflowForecast(session.user.id, monthYear, week);
-    }
+    // Note: Cashflow forecast is now computed on-the-fly by the financial engine.
+    // No cache invalidation needed when invoices are created.
 
     await prisma.auditLog.create({
       data: {

@@ -122,7 +122,7 @@ export default function Dashboard() {
             <Wallet className="w-20 h-20" />
           </div>
           <div>
-            <p className="text-on-surface-variant text-xs font-bold uppercase tracking-widest opacity-90 mb-2">Saldo</p>
+            <p className="text-on-surface-variant text-xs font-bold uppercase tracking-widest opacity-90 mb-2">Saldo Geral</p>
             {loading ? <Skeleton className="h-9 w-40 mb-3" /> : (
               <div className="text-3xl md:text-4xl font-bold tracking-tight text-on-background leading-tight">
                 {formatCurrency(metrics.balance)}
@@ -132,7 +132,7 @@ export default function Dashboard() {
           <div className="mt-3 flex items-center gap-2">
             <div className={cn("w-2 h-2 rounded-full", metrics.balance >= 0 ? "bg-emerald-500" : "bg-red-500")} />
             <span className="text-xs sm:text-[10px] font-semibold text-on-surface-variant">
-              {metrics.balance >= 0 ? "Saudável" : "Atenção"}
+              {metrics.balance >= 0 ? "Saudável" : "Atenção"} · Acumulado de todos os meses
             </span>
           </div>
         </Card>
@@ -147,7 +147,7 @@ export default function Dashboard() {
               <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.income)}</div>
             )}
           </div>
-          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Mês atual</p>
+          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Mês atual · Previsto</p>
         </Card>
 
         <Card className="premium-card p-6 flex flex-col justify-between">
@@ -160,20 +160,20 @@ export default function Dashboard() {
               <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.expenses)}</div>
             )}
           </div>
-          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Acumulado</p>
+          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Mês atual · Previsto</p>
         </Card>
 
         <Card className="premium-card p-6 flex flex-col justify-between border-amber-100 bg-amber-50/20">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70">Pendentes</p>
+              <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70">Desp. Pendentes</p>
               <ReceiptText className="w-4 h-4 text-amber-600" />
             </div>
             {loading ? <Skeleton className="h-9 w-32 mb-3" /> : (
               <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.pendingExpenses || 0)}</div>
             )}
           </div>
-          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Despesas ainda abertas</p>
+          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Despesas ainda não pagas</p>
         </Card>
       </motion.div>
 

@@ -2,90 +2,83 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { addMonths, startOfMonth, endOfMonth } from "date-fns";
+import { startOfMonth, endOfMonth, addMonths } from "date-fns";
+import { computeMonthlySummary } from "@/lib/financial-engine";
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.id)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const now = new Date();
   const startDate = startOfMonth(now);
   const endDate = endOfMonth(now);
 
-  const [transactions, allTransactions, recurrences, budgets] = await Promise.all([
-    // Current month — for income/expenses/chart
-    prisma.transaction.findMany({
-      where: { userId: session.user.id, date: { gte: startDate, lte: endDate } },
-      include: { category: true }
-    }),
-    // All time — for balance
-    prisma.transaction.findMany({
-      where: { userId: session.user.id },
-      select: { type: true, amount: true }
-    }),
-    prisma.recurrence.findMany({
-      where: { userId: session.user.id, isActive: true },
-      include: { category: true }
-    }),
-    prisma.budget.findMany({
-      where: { userId: session.user.id },
-      include: { category: true }
-    })
-  ]);
+  // Fetch current month transactions + all-time for balance
+  const [monthTransactions, allTransactions, recurrences, budgets] =
+    await Promise.all([
+      prisma.transaction.findMany({
+        where: {
+          userId: session.user.id,
+          date: { gte: startDate, lte: endDate },
+        },
+        include: { category: true },
+      }),
+      prisma.transaction.findMany({
+        where: { userId: session.user.id },
+        select: {
+          id: true,
+          type: true,
+          description: true,
+          amount: true,
+          date: true,
+          dueDate: true,
+          paidAt: true,
+          amountPaid: true,
+          paymentStatus: true,
+          categoryId: true,
+          recurrenceId: true,
+          accountId: true,
+          createdAt: true,
+        },
+      }),
+      prisma.recurrence.findMany({
+        where: { userId: session.user.id, isActive: true },
+        include: { category: true },
+      }),
+      prisma.budget.findMany({
+        where: { userId: session.user.id },
+        include: { category: true },
+      }),
+    ]);
 
-  // Balance = all-time sum (income - expenses across all history)
-  const balance = allTransactions.reduce((sum, t) => {
-    return t.type === "INCOME" ? sum + t.amount : sum - t.amount;
-  }, 0);
+  // Map month transactions for financial engine
+  const mappedMonthTx = monthTransactions.map((t) => ({
+    id: t.id,
+    type: t.type as "INCOME" | "EXPENSE",
+    description: t.description,
+    amount: t.amount,
+    date: t.date,
+    dueDate: t.dueDate,
+    paidAt: t.paidAt,
+    amountPaid: t.amountPaid,
+    paymentStatus: t.paymentStatus as "PAID" | "PENDING",
+    categoryId: t.categoryId,
+    categoryName: t.category?.name,
+    recurrenceId: t.recurrenceId,
+    accountId: t.accountId,
+    createdAt: t.createdAt,
+  }));
 
-  const pendingExpenses = await prisma.transaction.aggregate({
-    where: {
-      userId: session.user.id,
-      type: "EXPENSE",
-      paymentStatus: "PENDING",
-    },
-    _sum: { amount: true }
-  });
+  // Compute using centralized engine
+  const summary = computeMonthlySummary(
+    mappedMonthTx,
+    startDate,
+    endDate,
+    allTransactions
+  );
 
-  let income = 0;
-  let expenses = 0;
-  const chartDataMap: Record<number, { day: number; income: number; expenses: number }> = {};
-  const categoryExpenses: Record<string, number> = {};
-
-  for (let d = 1; d <= endDate.getDate(); d++) {
-    chartDataMap[d] = { day: d, income: 0, expenses: 0 };
-  }
-
-  transactions.forEach((t) => {
-    const day = new Date(t.date).getDate();
-    if (t.type === "INCOME") {
-      income += t.amount;
-      chartDataMap[day].income += t.amount;
-    } else {
-      expenses += t.amount;
-      chartDataMap[day].expenses += t.amount;
-      const catName = t.category?.name || "Outros";
-      categoryExpenses[catName] = (categoryExpenses[catName] || 0) + t.amount;
-    }
-  });
-
-  const chartData = Object.values(chartDataMap).sort((a, b) => a.day - b.day);
-
-  // Top 5 expense categories
-  const topCategories = Object.entries(categoryExpenses)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 5)
-    .map(([name, amount]) => ({ name, amount }));
-
-  // Upcoming recurrences (next 3 months projection)
-  const projectedExpenses = recurrences
-    .filter((r) => r.type === "EXPENSE" || !r.type)
-    .reduce((sum, r) => sum + r.amount, 0);
-  const projectedIncome = recurrences
-    .filter((r) => r.type === "INCOME")
-    .reduce((sum, r) => sum + r.amount, 0);
-
-  // Budget alerts: budgets exceeding alertAt threshold
+  // Budget alerts
   const budgetAlerts = await Promise.all(
     budgets.map(async (budget) => {
       const spent = await prisma.transaction.aggregate({
@@ -93,38 +86,65 @@ export async function GET(request: NextRequest) {
           userId: session.user.id,
           categoryId: budget.categoryId,
           type: "EXPENSE",
-          date: { gte: startDate, lte: endDate }
+          date: { gte: startDate, lte: endDate },
         },
-        _sum: { amount: true }
+        _sum: { amount: true },
       });
       const spentAmount = spent._sum.amount || 0;
       const percentage = (spentAmount / budget.amount) * 100;
-      return { ...budget, spent: spentAmount, percentage, isAlert: percentage >= budget.alertAt };
+      return {
+        ...budget,
+        spent: spentAmount,
+        percentage,
+        isAlert: percentage >= budget.alertAt,
+      };
     })
   );
 
   const activeAlerts = budgetAlerts.filter((b) => b.isAlert);
 
-  // Next 3 months recurrence projection
+  // Chart data
+  const chartData = Object.entries(summary.transactionsByDay)
+    .map(([day, data]) => ({ day: Number(day), ...data }))
+    .sort((a, b) => a.day - b.day);
+
+  // Next 3 months projection
+  const projectedExpenses = recurrences
+    .filter((r) => r.type === "EXPENSE" || !r.type)
+    .reduce((sum, r) => sum + r.amount, 0);
+  const projectedIncome = recurrences
+    .filter((r) => r.type === "INCOME")
+    .reduce((sum, r) => sum + r.amount, 0);
+
   const nextMonths = [1, 2, 3].map((offset) => {
     const d = addMonths(now, offset);
     return {
-      month: d.toLocaleDateString("pt-BR", { month: "short", year: "numeric" }),
-      projected: projectedIncome - projectedExpenses
+      month: d.toLocaleDateString("pt-BR", {
+        month: "short",
+        year: "numeric",
+      }),
+      projected: projectedIncome - projectedExpenses,
     };
   });
 
   return NextResponse.json({
-    balance,
-    income,
-    expenses,
-    pendingExpenses: pendingExpenses._sum.amount || 0,
+    // All-time balance
+    balance: summary.allTimeBalance,
+    // Current month
+    income: summary.monthIncome,
+    expenses: summary.monthExpenses,
+    pendingExpenses: summary.pendingExpenses,
+    pendingReceivables: summary.pendingReceivables,
+    totalPending: summary.totalPending,
     chartData,
-    topCategories,
+    topCategories: summary.topCategories,
     projectedExpenses,
     projectedIncome,
     nextMonths,
     budgetAlerts: activeAlerts,
-    savingsRate: income > 0 ? ((income - expenses) / income) * 100 : 0
+    savingsRate:
+      summary.monthIncome > 0
+        ? ((summary.monthIncome - summary.monthExpenses) / summary.monthIncome) * 100
+        : 0,
   });
 }

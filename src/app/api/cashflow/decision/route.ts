@@ -2,10 +2,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
-  calculateWeeklyCashflow,
-  canSpendThisWeek,
-} from "@/lib/cashflow-calculator";
-import { getDate } from "date-fns";
+  computeWeeklyForecast,
+  computeSpendDecision,
+} from "@/lib/financial-engine";
 
 export async function GET(request: Request) {
   try {
@@ -29,60 +28,59 @@ export async function GET(request: Request) {
     }
 
     const referenceDate = new Date();
-    const dayOfMonth = getDate(referenceDate);
 
-    let currentWeek = 1;
-    if (dayOfMonth <= 7) currentWeek = 1;
-    else if (dayOfMonth <= 14) currentWeek = 2;
-    else if (dayOfMonth <= 21) currentWeek = 3;
-    else currentWeek = 4;
-
+    // Fetch revenue installments and expenses
     const revenueInstallments = await prisma.revenueInstallment.findMany({
-      where: {
-        revenue: {
-          userId: user.id,
-        },
-      },
-      include: {
-        revenue: true,
-      },
+      where: { revenue: { userId: user.id } },
     });
 
     const expenses = await prisma.transaction.findMany({
-      where: {
-        userId: user.id,
-        type: "EXPENSE",
-      },
+      where: { userId: user.id, type: "EXPENSE" },
     });
 
     const mappedInstallments = revenueInstallments.map((inst) => ({
       id: inst.id,
+      revenueId: inst.revenueId,
+      installmentNumber: inst.installmentNumber,
       amount: inst.amount,
       dueDate: inst.dueDate,
       status: inst.status as "PENDING" | "RECEIVED",
+      receivedAt: inst.receivedAt,
     }));
 
-    const mappedExpenses = expenses.map((exp) => ({
-      id: exp.id,
-      amount: exp.amount,
-      dueDate: exp.dueDate || new Date(),
-      paymentStatus: exp.paymentStatus,
+    const mappedExpenses = expenses.map((t) => ({
+      id: t.id,
+      type: t.type as "EXPENSE",
+      description: t.description,
+      amount: t.amount,
+      date: t.date,
+      dueDate: t.dueDate || null,
+      paidAt: t.paidAt || null,
+      amountPaid: t.amountPaid,
+      paymentStatus: t.paymentStatus as "PAID" | "PENDING",
+      categoryId: t.categoryId,
+      recurrenceId: t.recurrenceId,
+      accountId: t.accountId,
+      createdAt: t.createdAt,
     }));
 
-    const weeklyCashflow = calculateWeeklyCashflow(
+    const weeklyForecast = computeWeeklyForecast(
       referenceDate,
       mappedInstallments,
       mappedExpenses
     );
 
-    const decision = canSpendThisWeek(currentWeek, weeklyCashflow);
+    const decision = computeSpendDecision(weeklyForecast, referenceDate);
 
     return new Response(
       JSON.stringify({
-        currentWeek,
-        dayOfMonth,
-        decision,
-        weeklyCashflow,
+        currentWeek: decision.currentWeek,
+        decision: {
+          status: decision.status,
+          motivo: decision.motivo,
+          saldoAtual: decision.saldoAtual,
+          saldoProximaSemana: decision.saldoProximaSemana,
+        },
       }),
       {
         status: 200,

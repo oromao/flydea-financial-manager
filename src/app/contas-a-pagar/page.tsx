@@ -109,11 +109,16 @@ export default function ContasAPagar() {
         </div>
       </motion.header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
         <Card className="premium-card p-4 sm:p-5">
           <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Total pendente</p>
           <p className="text-3xl font-bold mt-2">{formatCurrency(total)}</p>
-          <p className="text-xs text-on-surface-variant mt-1">Parcialmente pago: {formatCurrency(paidPartial)}</p>
+          <p className="text-xs text-on-surface-variant mt-1">Inclui despesas e receitas pendentes</p>
+        </Card>
+        <Card className="premium-card p-4 sm:p-5 border-amber-100 bg-amber-50/20">
+          <p className="text-[10px] uppercase tracking-widest font-bold text-amber-700">Despesas pendentes</p>
+          <p className="text-3xl font-bold mt-2 text-amber-700">{formatCurrency(transactions.filter(t => t.type === "EXPENSE").reduce((sum, t) => sum + t.amount, 0))}</p>
+          <p className="text-xs text-on-surface-variant mt-1">Somente despesas</p>
         </Card>
         <Card className="premium-card p-4 sm:p-5 border-red-100 bg-red-50/20">
           <p className="text-[10px] uppercase tracking-widest font-bold text-red-700">Atrasadas</p>

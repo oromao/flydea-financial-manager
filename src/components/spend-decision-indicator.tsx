@@ -18,16 +18,22 @@ interface DecisionResponse {
 export function SpendDecisionIndicator() {
   const [data, setData] = useState<DecisionResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchDecision() {
       try {
         setLoading(true);
+        setError(null);
         const res = await fetch("/api/cashflow/decision");
-        if (!res.ok) throw new Error("Failed to fetch decision");
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || `HTTP ${res.status}`);
+        }
         const result = await res.json();
         setData(result);
       } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
         console.error("Error fetching spend decision:", err);
       } finally {
         setLoading(false);
@@ -37,8 +43,23 @@ export function SpendDecisionIndicator() {
     fetchDecision();
   }, []);
 
-  if (loading || !data) {
-    return null;
+  if (loading || error || !data) {
+    if (loading) return null;
+    return (
+      <Card className="premium-card p-4 sm:p-5 border-amber-100 bg-amber-50/20">
+        <div className="flex items-center gap-3">
+          <AlertCircle className="w-6 h-6 text-amber-500 shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-amber-700">
+              Não foi possível calcular a decisão de gastos
+            </p>
+            <p className="text-xs text-on-surface-variant/70 mt-0.5">
+              {error || "Tente novamente mais tarde."}
+            </p>
+          </div>
+        </div>
+      </Card>
+    );
   }
 
   const { status, motivo, saldoAtual } = data.decision;
@@ -90,7 +111,7 @@ export function SpendDecisionIndicator() {
           <div className="space-y-1">
             <p className={cn("text-sm font-semibold", cfg.text)}>{motivo}</p>
             <p className="text-xs text-on-surface-variant/70">
-              Semana {semana}: {formatCurrency(saldoAtual)} de saldo
+              Semana {semana}: {formatCurrency(saldoAtual)} de saldo disponível
             </p>
           </div>
 
