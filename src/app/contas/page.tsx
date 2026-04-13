@@ -2,14 +2,17 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Plus, Trash2, Wallet, CreditCard, PiggyBank, Banknote, Edit2, TrendingUp, TrendingDown } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/confirm-dialog";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const ACCOUNT_TYPES = [
   { value: "CHECKING", label: "Conta Corrente", icon: Banknote, color: "#3B82F6" },
@@ -30,22 +33,18 @@ const itemVariants: any = {
 };
 
 export default function Contas() {
+  const toast = useToast();
+  const confirm = useConfirm();
   const [accounts, setAccounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   // Form
   const [name, setName] = useState("");
   const [type, setType] = useState("CHECKING");
   const [balance, setBalance] = useState("0");
   const [color, setColor] = useState("#3B82F6");
-
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
 
   const fetchAccounts = useCallback(async () => {
     setLoading(true);
@@ -71,12 +70,12 @@ export default function Contas() {
 
     const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     if (res.ok) {
-      showToast(editingId ? "Conta atualizada!" : "Conta criada!", "success");
+      toast.success(editingId ? "Conta atualizada!" : "Conta criada!");
       setIsOpen(false);
       resetForm();
       fetchAccounts();
     } else {
-      showToast("Erro ao salvar conta", "error");
+      toast.error("Erro ao salvar conta");
     }
   };
 
@@ -90,10 +89,11 @@ export default function Contas() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Remover esta conta? As transações vinculadas serão desvinculadas.")) return;
+    const ok = await confirm({ title: "Excluir conta", message: "Tem certeza que deseja remover esta conta? As transações vinculadas serão desvinculadas.", confirmLabel: "Excluir", variant: "danger" });
+    if (!ok) return;
     const res = await fetch(`/api/accounts/${id}`, { method: "DELETE" });
-    if (res.ok) { showToast("Conta removida!", "success"); fetchAccounts(); }
-    else showToast("Erro ao remover conta", "error");
+    if (res.ok) { toast.success("Conta removida!"); fetchAccounts(); }
+    else toast.error("Erro ao remover conta");
   };
 
   const formatCurrency = (v: number) =>
@@ -106,25 +106,6 @@ export default function Contas() {
 
   return (
     <div className="space-y-6 md:space-y-8 max-w-7xl mx-auto pb-20 px-4 md:px-0 relative">
-      {/* Toast */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className={cn(
-              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-5 py-2 rounded-lg shadow-lg flex items-center gap-2 border bg-surface/90 backdrop-blur-md transition-colors duration-300",
-              toast.type === "success"
-                ? "border-emerald-200 text-emerald-700"
-                : "border-red-200 text-red-700"
-            )}
-          >
-            <span className="font-semibold text-xs">{toast.message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Header - Compact */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -188,6 +169,7 @@ export default function Contas() {
                 <div className="flex gap-2.5 flex-wrap">
                   {COLORS.map((c) => (
                     <button key={c} type="button" onClick={() => setColor(c)}
+                      aria-label={`Selecionar cor ${c}`}
                       className={cn("w-10 h-10 sm:w-8 sm:h-8 rounded-full border-2 transition-colors hover:scale-110",
                         color === c ? "border-on-background ring-4 ring-on-background/5" : "border-outline/10")}
                       style={{ backgroundColor: c }} />
@@ -231,17 +213,13 @@ export default function Contas() {
           Sincronizando ativos...
         </div>
       ) : accounts.length === 0 ? (
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-24 gap-6 opacity-30"
-        >
-            <Wallet className="w-16 h-16 text-on-surface-variant" />
-            <div className="text-center">
-              <h2 className="text-xl font-bold text-on-background">Nenhuma conta cadastrada</h2>
-              <p className="font-medium text-sm mt-1">Organize seu patrimônio criando sua primeira conta</p>
-            </div>
-        </motion.div>
+        <EmptyState
+          icon={Wallet}
+          title="Nenhuma conta cadastrada"
+          description="Organize seu patrimônio criando sua primeira conta"
+          ctaLabel="Nova Conta"
+          onCta={() => setIsOpen(true)}
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {accounts.map((account, idx) => {
@@ -272,12 +250,14 @@ export default function Contas() {
                         </div>
                       </div>
                       <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-8 sm:w-8 rounded-md bg-secondary/10 hover:bg-secondary/15 text-secondary transition-colors"
-                          onClick={() => handleEdit(account)}>
+                        <Button variant="ghost" size="icon" className="h-11 w-11 rounded-md bg-secondary/10 hover:bg-secondary/15 text-secondary transition-colors"
+                          onClick={() => handleEdit(account)}
+                          aria-label="Editar conta">
                           <Edit2 className="w-3.5 h-3.5" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-8 sm:w-8 rounded-md bg-red-100/60 hover:bg-red-100 text-red-600 transition-colors"
-                          onClick={() => handleDelete(account.id)}>
+                        <Button variant="ghost" size="icon" className="h-11 w-11 rounded-md bg-red-100/60 hover:bg-red-100 text-red-600 transition-colors"
+                          onClick={() => handleDelete(account.id)}
+                          aria-label="Excluir conta">
                           <Trash2 className="w-3.5 h-3.5" />
                         </Button>
                       </div>

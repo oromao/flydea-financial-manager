@@ -7,7 +7,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { motion, AnimatePresence } from "framer-motion";
+import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/confirm-dialog";
+import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -25,18 +27,14 @@ export default function Orcamentos() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const toast = useToast();
+  const confirm = useConfirm();
 
   // Form
   const [categoryId, setCategoryId] = useState("");
   const [amount, setAmount] = useState("");
   const [period, setPeriod] = useState("MONTHLY");
   const [alertAt, setAlertAt] = useState("80");
-
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -69,21 +67,21 @@ export default function Orcamentos() {
       body: JSON.stringify(payload)
     });
     if (res.ok) {
-      showToast("Orçamento criado!", "success");
+      toast.success("Orçamento criado!");
       setIsOpen(false);
       resetForm();
       fetchData();
     } else {
       const err = await res.json();
-      showToast(err.error || "Erro ao criar orçamento", "error");
+      toast.error(err.error || "Erro ao criar orçamento");
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Remover este orçamento?")) return;
+    if (!await confirm({ title: "Excluir orçamento", message: "Tem certeza que deseja remover este orçamento?", confirmLabel: "Excluir", variant: "danger" })) return;
     const res = await fetch(`/api/budgets/${id}`, { method: "DELETE" });
-    if (res.ok) { showToast("Orçamento removido!", "success"); fetchData(); }
-    else showToast("Erro ao remover", "error");
+    if (res.ok) { toast.success("Orçamento removido!"); fetchData(); }
+    else toast.error("Erro ao remover");
   };
 
   const formatCurrency = (v: number) =>
@@ -101,25 +99,6 @@ export default function Orcamentos() {
 
   return (
     <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0 relative">
-      <AnimatePresence>
-        {toast && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className={cn(
-              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-lg flex items-center gap-3 border bg-surface/90 backdrop-blur-md transition-colors duration-300",
-              toast.type === "success" 
-                ? "border-emerald-200 text-emerald-700" 
-                : "border-red-200 text-red-700"
-            )}
-          >
-            {toast.type === "success" ? <CheckCircle2 className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
-            <span className="font-semibold text-xs tracking-tight">{toast.message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Header */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}

@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Camera, User as UserIcon, Trash2, Save, ShieldCheck } from "lucide-react";
+import { Camera, User as UserIcon, Trash2, Save, ShieldCheck, RefreshCw, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
 
 export default function PerfilPage() {
   const [saving, setSaving] = useState(false);
@@ -13,6 +14,7 @@ export default function PerfilPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const toast = useToast();
 
   useEffect(() => {
     const load = async () => {
@@ -28,12 +30,18 @@ export default function PerfilPage() {
   const save = async () => {
     setSaving(true);
     try {
-      await fetch("/api/profile", {
+      const res = await fetch("/api/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, avatarUrl }),
       });
-      window.location.reload();
+      if (res.ok) {
+        toast.success("Perfil salvo com sucesso!");
+      } else {
+        toast.error("Erro ao salvar perfil. Tente novamente.");
+      }
+    } catch (e) {
+      toast.error("Falha na comunicação com o servidor.");
     } finally {
       setSaving(false);
     }
@@ -48,8 +56,11 @@ export default function PerfilPage() {
         method: "POST",
         body: formData,
       });
+      if (!res.ok) throw new Error("Upload failed");
       const data = await res.json();
       if (data.url) setAvatarUrl(data.url);
+    } catch (e) {
+      toast.error("Erro ao enviar foto. Tente novamente.");
     } finally {
       setUploading(false);
     }
@@ -124,11 +135,15 @@ export default function PerfilPage() {
 
           <div className="flex flex-wrap gap-2">
             <Button onClick={save} className="rounded-xl" disabled={saving}>
-              <Save className="w-4 h-4 mr-2" />
+              {saving ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4 mr-2" />
+              )}
               {saving ? "Salvando…" : "Salvar perfil"}
             </Button>
             <Button variant="outline" className="rounded-xl" onClick={() => window.location.reload()}>
-              <Trash2 className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4 mr-2" />
               Recarregar
             </Button>
           </div>

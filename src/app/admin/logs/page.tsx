@@ -3,12 +3,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { format } from "date-fns";
-import { Search, User, ShieldCheck } from "lucide-react";
+import { Search, User, ShieldCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
+
+const LOGS_PER_PAGE = 25;
 
 export default function AuditLogs() {
   const [logs, setLogs] = useState<any[]>([]);
@@ -16,6 +20,7 @@ export default function AuditLogs() {
   const [query, setQuery] = useState("");
   const [action, setAction] = useState("ALL");
   const [entity, setEntity] = useState("ALL");
+  const [page, setPage] = useState(1);
   const { data: session, status } = useSession();
 
   useEffect(() => {
@@ -38,6 +43,15 @@ export default function AuditLogs() {
       return matchesQuery && matchesAction && matchesEntity;
     });
   }, [logs, query, action, entity]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => { setPage(1); }, [query, action, entity]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredLogs.length / LOGS_PER_PAGE));
+  const paginatedLogs = useMemo(() => {
+    const start = (page - 1) * LOGS_PER_PAGE;
+    return filteredLogs.slice(start, start + LOGS_PER_PAGE);
+  }, [filteredLogs, page]);
 
   const uniqueEntities = useMemo(
     () => Array.from(new Set(logs.map((log) => log.entity).filter(Boolean))).sort(),
@@ -115,48 +129,81 @@ export default function AuditLogs() {
       </Card>
 
       <Card className="premium-card bg-surface rounded-[32px] border-outline-variant overflow-hidden shadow-sm">
+        {filteredLogs.length === 0 && !loading ? (
+          <div className="p-8">
+            <EmptyState icon={ShieldCheck} title="Nenhum log encontrado" description="Ajuste os filtros para ver os registros de auditoria." />
+          </div>
+        ) : (
         <Table>
           <TableHeader>
             <TableRow className="bg-surface-variant/30 border-b border-outline-variant">
-              <TableHead className="px-4 sm:px-10 py-4 sm:py-6 font-bold uppercase text-xs sm:text-[11px] tracking-[0.2em] text-on-surface-variant">Quando</TableHead>
-              <TableHead className="px-2 sm:px-4 py-4 sm:py-6 font-bold uppercase text-xs sm:text-[11px] tracking-[0.2em] text-on-surface-variant">Responsável</TableHead>
-              <TableHead className="px-2 sm:px-4 py-4 sm:py-6 font-bold uppercase text-xs sm:text-[11px] tracking-[0.2em] text-on-surface-variant">Ação</TableHead>
-              <TableHead className="px-2 sm:px-4 py-4 sm:py-6 font-bold uppercase text-xs sm:text-[11px] tracking-[0.2em] text-on-surface-variant">Entidade</TableHead>
-              <TableHead className="px-4 sm:px-10 py-4 sm:py-6 font-bold uppercase text-xs sm:text-[11px] tracking-[0.2em] text-on-surface-variant">Detalhes</TableHead>
+              <TableHead className="px-4 lg:px-6 py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant">Quando</TableHead>
+              <TableHead className="px-2 lg:px-4 py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant">Responsável</TableHead>
+              <TableHead className="px-2 lg:px-4 py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant">Ação</TableHead>
+              <TableHead className="px-2 lg:px-4 py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant">Entidade</TableHead>
+              <TableHead className="px-4 lg:px-6 py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant">Detalhes</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow><TableCell colSpan={5} className="text-center py-24 animate-pulse uppercase text-xs font-bold tracking-widest text-on-surface-variant/60">Carregando logs...</TableCell></TableRow>
-            ) : filteredLogs.length === 0 ? (
-              <TableRow><TableCell colSpan={5} className="text-center py-24 text-on-surface-variant/60">Nenhum log encontrado</TableCell></TableRow>
-            ) : filteredLogs.map((log) => (
+            ) : paginatedLogs.map((log) => (
               <TableRow key={log.id} className="border-b border-outline-variant/30 text-on-surface hover:bg-surface-variant/10 transition-colors">
-                <TableCell className="px-4 sm:px-10 py-4 sm:py-6">
+                <TableCell className="px-4 lg:px-6 py-4">
                   <span className="font-bold text-[10px] sm:text-sm">{format(new Date(log.createdAt), "dd/MM/yyyy HH:mm")}</span>
                 </TableCell>
-                <TableCell className="px-2 sm:px-4 py-4 sm:py-6">
+                <TableCell className="px-2 lg:px-4 py-4">
                   <div className="flex items-center gap-2 flex-col sm:flex-row">
                     <User className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-on-surface-variant shrink-0" />
                     <span className="font-bold text-[10px] sm:text-sm truncate">{log.user?.name || log.userId}</span>
                   </div>
                 </TableCell>
-                <TableCell className="px-2 sm:px-4 py-4 sm:py-6">
-                  <span className={cn("px-2 sm:px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest whitespace-nowrap", getActionColor(log.action))}>
+                <TableCell className="px-2 lg:px-4 py-4">
+                  <span className={cn("px-2 lg:px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest whitespace-nowrap", getActionColor(log.action))}>
                     {log.action}
                   </span>
                 </TableCell>
-                <TableCell className="px-2 sm:px-4 py-4 sm:py-6">
+                <TableCell className="px-2 lg:px-4 py-4">
                   <span className="text-[10px] sm:text-xs font-medium text-on-surface-variant/80 truncate">{log.entity}</span>
                 </TableCell>
-                <TableCell className="px-4 sm:px-10 py-4 sm:py-6">
+                <TableCell className="px-4 lg:px-6 py-4">
                   <span className="text-[10px] sm:text-sm italic text-on-surface-variant/60 line-clamp-2">{log.details}</span>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        )}
       </Card>
+
+      {/* Pagination */}
+      {filteredLogs.length > LOGS_PER_PAGE && (
+        <div className="flex items-center justify-between px-4 md:px-0">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/80">
+            {filteredLogs.length} registros · Página {page} de {totalPages}
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="h-10 px-4 rounded-lg text-xs font-bold"
+              aria-label="Página anterior"
+            >
+              <ChevronLeft className="w-4 h-4 mr-1" /> Anterior
+            </Button>
+            <Button
+              variant="outline"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              className="h-10 px-4 rounded-lg text-xs font-bold"
+              aria-label="Próxima página"
+            >
+              Próxima <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

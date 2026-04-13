@@ -6,13 +6,13 @@ import { Card } from "@/components/ui/card";
 import { Bell, CalendarRange, ChartColumn, ShieldAlert, Target, ArrowRight, Camera, ShieldCheck } from "lucide-react";
 
 const shortcuts = [
-  { title: "Fechamento", desc: "Resumo mensal com exportação CSV e PDF.", href: "/fechamento", icon: CalendarRange },
-  { title: "Alertas", desc: "Central de notificações in-app e ações em lote.", href: "/alertas", icon: Bell },
-  { title: "Relatórios", desc: "Visão analítica do que está acontecendo.", href: "/relatorios", icon: ChartColumn },
-  { title: "Orçamentos", desc: "Metas e acompanhamento por categoria.", href: "/orcamentos", icon: Target },
-  { title: "Logs", desc: "Auditoria operacional para administradores.", href: "/admin/logs", icon: ShieldAlert },
-  { title: "Aprovações", desc: "Fila de ações críticas aguardando decisão.", href: "/admin/aprovacoes", icon: ShieldCheck },
-  { title: "Perfil", desc: "Atualize sua foto e dados do usuário logado.", href: "/perfil", icon: Camera },
+  { title: "Fechamento", desc: "Resumo mensal com exportação CSV e PDF.", href: "/fechamento", icon: CalendarRange, color: "bg-secondary/10 text-secondary" },
+  { title: "Alertas", desc: "Central de notificações in-app e ações em lote.", href: "/alertas", icon: Bell, color: "bg-amber-50 text-amber-600" },
+  { title: "Relatórios", desc: "Visão analítica do que está acontecendo.", href: "/relatorios", icon: ChartColumn, color: "bg-emerald-50 text-emerald-600" },
+  { title: "Orçamentos", desc: "Metas e acompanhamento por categoria.", href: "/orcamentos", icon: Target, color: "bg-violet-50 text-violet-600" },
+  { title: "Logs", desc: "Auditoria operacional para administradores.", href: "/admin/logs", icon: ShieldAlert, color: "bg-slate-50 text-slate-600" },
+  { title: "Aprovações", desc: "Fila de ações críticas aguardando decisão.", href: "/admin/aprovacoes", icon: ShieldCheck, color: "bg-teal-50 text-teal-600" },
+  { title: "Perfil", desc: "Atualize sua foto e dados do usuário logado.", href: "/perfil", icon: Camera, color: "bg-pink-50 text-pink-600" },
 ];
 
 export default function MaisPage() {
@@ -28,24 +28,25 @@ export default function MaisPage() {
         {shortcuts.map((item) => {
           const Icon = item.icon;
           return (
-            <Card key={item.href} className="premium-card p-4 sm:p-5">
-              <div className="flex items-start gap-4">
-                <div className="p-3 rounded-2xl bg-secondary/10 text-secondary shrink-0">
-                  <Icon className="w-5 h-5" />
+            <Link key={item.href} href={item.href} className="block">
+              <Card className="premium-card p-4 sm:p-5 cursor-pointer hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className={`p-3 rounded-2xl ${item.color} shrink-0`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-lg font-semibold text-on-background">{item.title}</h2>
+                    <p className="text-sm text-on-surface-variant mt-1">{item.desc}</p>
+                    <span
+                      className="inline-flex items-center justify-center mt-4 rounded-xl h-10 px-4 bg-secondary text-on-secondary font-semibold"
+                    >
+                      Abrir
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </span>
+                  </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <h2 className="text-lg font-semibold text-on-background">{item.title}</h2>
-                  <p className="text-sm text-on-surface-variant mt-1">{item.desc}</p>
-                  <Link
-                    href={item.href}
-                    className="inline-flex items-center justify-center mt-4 rounded-xl h-10 px-4 bg-secondary text-on-secondary font-semibold transition-colors hover:bg-secondary/90"
-                  >
-                    Abrir
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Link>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
           );
         })}
       </div>

@@ -47,25 +47,90 @@ function DialogContent({
 }: DialogPrimitive.Popup.Props & {
   showCloseButton?: boolean
 }) {
+  const contentRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const focusable = el.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    if (first) {
+      first.focus();
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Tab") {
+        const items = Array.from(
+          el.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+        );
+        if (items.length === 0) return;
+        const firstItem = items[0];
+        const lastItem = items[items.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstItem) {
+            e.preventDefault();
+            lastItem.focus();
+          }
+        } else {
+          if (document.activeElement === lastItem) {
+            e.preventDefault();
+            firstItem.focus();
+          }
+        }
+      }
+    };
+
+    el.addEventListener("keydown", handleKeyDown);
+    return () => el.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Popup
+        ref={contentRef}
         data-slot="dialog-content"
+        role="dialog"
+        aria-modal="true"
         className={cn(
           "fixed z-50 grid w-full bg-popover text-sm text-popover-foreground outline-none shadow-2xl transition-colors duration-200 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
-          // Mobile: Full screen
-          "bottom-0 left-0 h-[100dvh] rounded-none p-5 pt-12 overflow-y-auto",
+          // Mobile: Full screen with overflow-y-auto
+          "bottom-0 left-0 h-[100dvh] rounded-none overflow-y-auto",
           // Desktop: Centered floating modal
           "sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:h-auto sm:max-h-[85vh] sm:max-w-lg sm:rounded-3xl sm:p-6 sm:ring-1 sm:ring-foreground/5",
           className
         )}
         {...props}
       >
-        {children}
+        {/* Mobile sticky header — close button always visible */}
+        {showCloseButton && (
+          <div className="sticky top-0 z-10 flex items-center justify-end px-4 pt-3 pb-2 bg-popover sm:hidden">
+            <DialogPrimitive.Close
+              render={
+                <Button
+                  variant="ghost"
+                  className="rounded-full w-11 h-11 p-0 min-w-[44px] min-h-[44px]"
+                />
+              }
+            >
+              <XIcon />
+              <span className="sr-only">Fechar</span>
+            </DialogPrimitive.Close>
+          </div>
+        )}
+        <div className={cn("p-5 sm:p-0", className)}>
+          {children}
+        </div>
+        {/* Desktop close button */}
         {showCloseButton && (
           <DialogPrimitive.Close
-            data-slot="dialog-close"
+            className="hidden sm:block"
             render={
               <Button
                 variant="ghost"
@@ -73,14 +138,13 @@ function DialogContent({
               />
             }
           >
-            <XIcon
-            />
+            <XIcon />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Popup>
     </DialogPortal>
-  )
+  );
 }
 
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {

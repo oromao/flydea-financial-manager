@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Sidebar } from "@/components/sidebar";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 export const metadata: Metadata = {
   title: "Flydea Financial",
@@ -18,8 +19,6 @@ export const viewport: Viewport = {
   themeColor: "#1D1D1F",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export default function RootLayout({
@@ -30,9 +29,11 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className="h-full antialiased dark">
       <body className="min-h-full flex flex-col bg-background text-on-background selection:bg-secondary/30 selection:text-secondary">
-        <Providers>
-          <Sidebar>{children}</Sidebar>
-        </Providers>
+        <ErrorBoundary>
+          <Providers>
+            <Sidebar>{children}</Sidebar>
+          </Providers>
+        </ErrorBoundary>
       </body>
     </html>
   );

@@ -24,7 +24,12 @@ interface InvoiceFormData {
   installments: Installment[];
 }
 
-export function InvoiceManager() {
+interface InvoiceManagerProps {
+  onSuccess?: (message: string) => void;
+  onError?: (message: string) => void;
+}
+
+export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
   const [showForm, setShowForm] = useState(false);
   const [numInstallments, setNumInstallments] = useState(1);
   const [formData, setFormData] = useState<InvoiceFormData>({
@@ -78,7 +83,7 @@ export function InvoiceManager() {
 
       if (!res.ok) throw new Error("Erro ao criar nota");
 
-      alert("Nota criada com sucesso!");
+      onSuccess?.("Nota criada com sucesso!");
       setShowForm(false);
       setFormData({
         invoiceNumber: "",
@@ -101,7 +106,7 @@ export function InvoiceManager() {
       });
     } catch (error) {
       console.error("Error:", error);
-      alert("Erro ao criar nota");
+      onError?.("Erro ao criar nota");
     }
   };
 
@@ -116,14 +121,14 @@ export function InvoiceManager() {
       {showForm && (
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-4 sm:p-6 rounded-lg border border-gray-200"
+          className="bg-surface p-4 sm:p-6 rounded-lg border border-outline/50"
         >
           <h3 className="text-lg sm:text-xl font-bold mb-4">Criar Nota de Receita</h3>
 
           {/* Dados da Nota */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
             <div>
-              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
+              <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
                 Número da Nota*
               </label>
               <input
@@ -133,12 +138,12 @@ export function InvoiceManager() {
                 onChange={(e) =>
                   setFormData({ ...formData, invoiceNumber: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface focus:border-secondary"
               />
             </div>
 
             <div>
-              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
+              <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
                 Nome do Cliente*
               </label>
               <input
@@ -148,12 +153,12 @@ export function InvoiceManager() {
                 onChange={(e) =>
                   setFormData({ ...formData, clientName: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface focus:border-secondary"
               />
             </div>
 
             <div>
-              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
+              <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
                 Email do Cliente
               </label>
               <input
@@ -162,12 +167,12 @@ export function InvoiceManager() {
                 onChange={(e) =>
                   setFormData({ ...formData, clientEmail: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface focus:border-secondary"
               />
             </div>
 
             <div>
-              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
+              <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
                 Valor Total*
               </label>
               <input
@@ -180,12 +185,12 @@ export function InvoiceManager() {
                   setFormData({ ...formData, totalAmount: total });
                   handleInstallmentCountChange(numInstallments);
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface focus:border-secondary"
               />
             </div>
 
             <div>
-              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
+              <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
                 Data Emissão*
               </label>
               <input
@@ -195,18 +200,18 @@ export function InvoiceManager() {
                 onChange={(e) =>
                   setFormData({ ...formData, emissionDate: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface focus:border-secondary"
               />
             </div>
 
             <div>
-              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
+              <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
                 Número de Parcelas*
               </label>
               <select
                 value={numInstallments}
                 onChange={(e) => handleInstallmentCountChange(parseInt(e.target.value))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface focus:border-secondary"
               >
                 {[1, 2, 3, 4, 6, 12].map((n) => (
                   <option key={n} value={n}>
@@ -219,15 +224,15 @@ export function InvoiceManager() {
 
           {/* Parcelas */}
           <div className="mb-6">
-            <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Parcelas</h4>
+            <h4 className="text-base sm:text-lg font-semibold text-on-surface mb-4">Parcelas</h4>
             <div className="space-y-2 sm:space-y-3">
               {formData.installments.map((inst, idx) => (
                 <div
                   key={idx}
-                  className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-md"
+                  className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 p-2 sm:p-3 bg-surface-variant rounded-md"
                 >
                   <div>
-                    <label className="text-xs text-gray-600 block mb-1">
+                    <label className="text-xs text-on-surface-variant block mb-1">
                       Parcela {inst.installmentNumber}
                     </label>
                     <input
@@ -237,11 +242,11 @@ export function InvoiceManager() {
                       onChange={(e) =>
                         handleInstallmentChange(idx, "amount", parseFloat(e.target.value))
                       }
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                      className="w-full border border-outline/50 bg-surface rounded-lg px-2 py-1 text-on-surface text-sm focus:border-secondary"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-600 block mb-1">
+                    <label className="text-xs text-on-surface-variant block mb-1">
                       Vencimento
                     </label>
                     <input
@@ -250,17 +255,17 @@ export function InvoiceManager() {
                       onChange={(e) =>
                         handleInstallmentChange(idx, "dueDate", e.target.value)
                       }
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                      className="w-full border border-outline/50 bg-surface rounded-lg px-2 py-1 text-on-surface text-sm focus:border-secondary"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-600 block mb-1">Status</label>
+                    <label className="text-xs text-on-surface-variant block mb-1">Status</label>
                     <select
                       value={inst.status}
                       onChange={(e) =>
                         handleInstallmentChange(idx, "status", e.target.value)
                       }
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                      className="w-full border border-outline/50 bg-surface rounded-lg px-2 py-1 text-on-surface text-sm focus:border-secondary"
                     >
                       <option value="PENDING">Pendente</option>
                       <option value="RECEIVED">Recebida</option>
@@ -274,7 +279,7 @@ export function InvoiceManager() {
 
           {/* Observações */}
           <div className="mb-6">
-            <label className="text-sm sm:text-base font-medium text-gray-700 mb-1 block">
+            <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
               Observações
             </label>
             <textarea
@@ -282,7 +287,7 @@ export function InvoiceManager() {
               onChange={(e) =>
                 setFormData({ ...formData, observations: e.target.value })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm sm:text-base"
+              className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface text-sm focus:border-secondary"
               rows={3}
             />
           </div>

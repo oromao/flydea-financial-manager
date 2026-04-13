@@ -115,7 +115,7 @@ export default function Dashboard() {
       {/* Stats Cards - Compact Dense */}
       <motion.div
         variants={itemVariants}
-        className="grid gap-3 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+        className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-4"
       >
         <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-6 opacity-3">

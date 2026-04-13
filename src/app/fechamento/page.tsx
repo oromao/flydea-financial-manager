@@ -7,8 +7,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CalendarRange, CheckCircle2, AlertTriangle, Wallet, FileSpreadsheet, FileText } from "lucide-react";
 import { motion } from "framer-motion";
+import { useToast } from "@/components/ui/toast";
 
 export default function Fechamento() {
+  const toast = useToast();
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState("0");
@@ -47,6 +49,28 @@ export default function Fechamento() {
 
   const periodLabel = format(subMonths(new Date(), parseInt(period, 10)), "MMMM yyyy", { locale: ptBR });
 
+  const periodLabels = ["Mês atual", "Mês anterior", "2 meses atrás", "3 meses atrás"];
+
+  const handleExport = async (url: string, filename: string) => {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Falha ao exportar");
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+      toast.success("Exportação concluída!");
+    } catch (e) {
+      console.error(e);
+      toast.error("Erro ao exportar. Tente novamente.");
+    }
+  };
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
@@ -60,20 +84,20 @@ export default function Fechamento() {
           </div>
         </div>
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0">
+          <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory pb-1 md:pb-0">
             {["0", "1", "2", "3"].map((p) => (
-              <Button key={p} variant={period === p ? "default" : "outline"} className="h-10 rounded-xl whitespace-nowrap shrink-0" onClick={() => setPeriod(p)}>
-                {p === "0" ? "Mês atual" : `${p} mês${p === "1" ? "" : "es"} atrás`}
+              <Button key={p} variant={period === p ? "default" : "outline"} className="h-10 rounded-xl whitespace-nowrap snap-center shrink-0" onClick={() => setPeriod(p)}>
+                {periodLabels[parseInt(p, 10)]}
               </Button>
             ))}
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" className="h-10 rounded-xl" onClick={() => window.location.href = `/api/fechamento/export?period=${period}`}>
+            <Button variant="outline" className="h-10 rounded-xl" onClick={() => handleExport(`/api/fechamento/export?period=${period}`, "fechamento.csv")}>
               <FileSpreadsheet className="w-4 h-4 mr-2" />
               Exportar CSV
             </Button>
-            <Button variant="outline" className="h-10 rounded-xl" onClick={() => window.location.href = `/api/fechamento/export/pdf?period=${period}`}>
+            <Button variant="outline" className="h-10 rounded-xl" onClick={() => handleExport(`/api/fechamento/export/pdf?period=${period}`, "fechamento.pdf")}>
               <FileText className="w-4 h-4 mr-2" />
               Exportar PDF
             </Button>

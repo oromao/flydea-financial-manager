@@ -14,9 +14,13 @@ import { cn } from "@/lib/utils";
 import { Importer } from "@/components/importer";
 import { upload } from "@vercel/blob/client";
 import { FileUp, Cloud, Link as LinkIcon, AlertCircle, CheckCircle2, Clock3 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 
 export default function Movimentacoes() {
+  const toast = useToast();
+  const confirm = useConfirm();
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -48,12 +52,6 @@ export default function Movimentacoes() {
   const [blobUrl, setBlobUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
-
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
 
   const fetchTransactions = useCallback(async (targetPage = page) => {
     setLoading(true);
@@ -153,32 +151,40 @@ export default function Movimentacoes() {
       });
       
       if (res.ok) {
-        showToast(editingId ? "Registro atualizado!" : "Lançamento confirmado!", "success");
+        toast.success(editingId ? "Registro atualizado!" : "Lançamento confirmado!");
         setOpen(false);
         resetForm();
         fetchTransactions();
         fetchStats();
       } else {
         const errorData = await res.json();
-        const msg = typeof errorData.error === 'object' 
-          ? JSON.stringify(errorData.error) 
+        const msg = typeof errorData.error === 'object'
+          ? JSON.stringify(errorData.error)
           : (errorData.error || "Erro ao salvar o lançamento");
-        showToast(msg, "error");
+        toast.error(msg);
       }
     } catch(e) {
       console.error(e);
-      showToast("Falha na comunicação com o servidor", "error");
+      toast.error("Falha na comunicação com o servidor");
     }
   };
 
   const deleteTransaction = async (id: string) => {
-    if (!confirm("Confirmar exclusão desta movimentação?")) return;
+    const confirmed = await confirm({
+      title: "Excluir movimentação",
+      message: "Confirmar exclusão desta movimentação?",
+      confirmLabel: "Excluir",
+      variant: "danger"
+    });
+    if (!confirmed) return;
     try {
       await fetch(`/api/transactions/${id}`, { method: "DELETE" });
+      toast.success("Movimentação excluída com sucesso!");
       fetchTransactions();
       fetchStats();
     } catch(e) {
       console.error(e);
+      toast.error("Erro ao excluir movimentação");
     }
   };
 
@@ -192,15 +198,15 @@ export default function Movimentacoes() {
         body: JSON.stringify({ paymentStatus: nextStatus }),
       });
       if (res.ok) {
-        showToast(nextStatus === "PAID" ? "Marcado como pago" : "Marcado como pendente", "success");
+        toast.success(nextStatus === "PAID" ? "Marcado como pago" : "Marcado como pendente");
         fetchTransactions();
         fetchStats();
       } else {
-        showToast("Não foi possível atualizar o status", "error");
+        toast.error("Não foi possível atualizar o status");
       }
     } catch (e) {
       console.error(e);
-      showToast("Falha ao atualizar o status", "error");
+      toast.error("Falha ao atualizar o status");
     }
   };
 
@@ -235,12 +241,30 @@ export default function Movimentacoes() {
     setBlobUrl("");
   };
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     const params = new URLSearchParams();
     if (filterCategory !== "Todos") params.append("category", filterCategory);
     if (filterType) params.append("type", filterType);
     if (filterPaymentStatus !== "ALL") params.append("paymentStatus", filterPaymentStatus);
-    window.location.href = `/api/transactions/export?${params.toString()}`;
+
+    try {
+      const res = await fetch(`/api/transactions/export?${params.toString()}`);
+      if (!res.ok) throw new Error("Falha ao exportar dados");
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "export.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success("Exportação concluída com sucesso!");
+    } catch (e) {
+      console.error(e);
+      toast.error("Erro ao exportar. Tente novamente.");
+    }
   };
 
   const formatCurrency = (value: number) => 
@@ -248,26 +272,6 @@ export default function Movimentacoes() {
 
   return (
     <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto relative pb-20 md:pb-0">
-      {/* Custom Toast Notification */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className={cn(
-              "fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-lg flex items-center gap-3 border bg-surface/90 backdrop-blur-md transition-colors duration-300",
-              toast.type === "success" 
-                ? "border-emerald-200 text-emerald-700" 
-                : "border-red-200 text-red-700"
-            )}
-          >
-            {toast.type === "success" ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-            <span className="font-semibold text-xs tracking-tight">{toast.message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Header - Compact */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -392,10 +396,12 @@ export default function Movimentacoes() {
                   <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Comprovante</Label>
                   <div className="flex gap-3">
                     <div className="relative flex-1">
-                      <Input 
+                      <Input
                         disabled={uploading}
-                        className="opacity-0 absolute inset-0 cursor-pointer z-10" 
-                        type="file" 
+                        className="opacity-0 absolute inset-0 cursor-pointer z-10"
+                        type="file"
+                        aria-label="Anexar comprovante"
+                        tabIndex={-1}
                         onChange={async (e) => {
                           if (e.target.files?.[0]) {
                             setUploading(true);
@@ -557,12 +563,12 @@ export default function Movimentacoes() {
         </div>
       </motion.div>
       
-      {/* Transaction List - Desktop Table */}
+      {/* Transaction List - Desktop Table (hidden on mobile, cards handle it) */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="px-4 md:px-0"
+        className="hidden md:block px-4 md:px-0"
       >
         <Card className="premium-card overflow-hidden">
           <Table>
@@ -627,7 +633,7 @@ export default function Movimentacoes() {
                           size="icon"
                           onClick={() => updatePaymentStatus(t.id, t.paymentStatus === "PENDING" ? "PAID" : "PENDING")}
                           className={cn(
-                            "h-10 w-10 sm:h-8 sm:w-8 rounded-lg transition-colors",
+                            "h-11 w-11 rounded-lg transition-colors",
                             t.paymentStatus === "PENDING"
                               ? "hover:bg-emerald-100 text-emerald-600 hover:text-emerald-700"
                               : "hover:bg-amber-100 text-amber-600 hover:text-amber-700"
@@ -637,8 +643,8 @@ export default function Movimentacoes() {
                           {t.paymentStatus === "PENDING" ? <CheckCircle2 className="w-4 h-4" /> : <Clock3 className="w-4 h-4" />}
                         </Button>
                       )}
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-10 w-10 sm:h-8 sm:w-8 rounded-lg hover:bg-surface-variant text-secondary hover:text-secondary/90 transition-colors"><Edit2 className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-10 w-10 sm:h-8 sm:w-8 rounded-lg hover:bg-red-100 text-red-600 hover:text-red-700 font-semibold transition-colors"><Trash2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-11 w-11 rounded-lg hover:bg-surface-variant text-secondary hover:text-secondary/90 transition-colors" aria-label="Editar movimentação"><Edit2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-11 w-11 rounded-lg hover:bg-red-100 text-red-600 hover:text-red-700 font-semibold transition-colors" aria-label="Excluir movimentação"><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -696,7 +702,7 @@ export default function Movimentacoes() {
                             size="icon"
                             onClick={() => updatePaymentStatus(t.id, t.paymentStatus === "PENDING" ? "PAID" : "PENDING")}
                             className={cn(
-                              "h-8 w-8 rounded-lg transition-colors",
+                              "h-11 w-11 rounded-lg transition-colors",
                               t.paymentStatus === "PENDING"
                                 ? "bg-emerald-100/70 text-emerald-700 hover:bg-emerald-100"
                                 : "bg-amber-100/70 text-amber-700 hover:bg-amber-100"
@@ -706,10 +712,10 @@ export default function Movimentacoes() {
                             {t.paymentStatus === "PENDING" ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Clock3 className="w-3.5 h-3.5" />}
                           </Button>
                         )}
-                        <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-8 w-8 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/15 transition-colors">
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-11 w-11 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/15 transition-colors" aria-label="Editar movimentação">
                           <Edit2 className="w-3.5 h-3.5" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 rounded-lg bg-red-100/60 text-red-600 hover:bg-red-100 transition-colors">
+                        <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-11 w-11 rounded-lg bg-red-100/60 text-red-600 hover:bg-red-100 transition-colors" aria-label="Excluir movimentação">
                           <Trash2 className="w-3.5 h-3.5" />
                         </Button>
                       </div>
@@ -766,7 +772,7 @@ export default function Movimentacoes() {
       )}
 
       {/* Mobile Floating Action Button (FAB) */}
-      <div className="md:hidden fixed bottom-24 right-6 z-50">
+      <div className="md:hidden fixed z-50" style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom) + 16px)', right: '1.5rem' }}>
         <motion.button 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

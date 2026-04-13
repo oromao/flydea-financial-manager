@@ -94,7 +94,7 @@ export function WeeklyCashflow() {
   return (
     <div className="space-y-6">
       {/* Summary cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         <div className="p-4 rounded-lg border border-emerald-200 bg-emerald-50/40">
           <p className="text-xs font-bold uppercase text-on-surface-variant/70">Faturado</p>
           <p className="text-2xl font-bold text-emerald-700 mt-1">{formatCurrency(metrics.faturado)}</p>
@@ -121,7 +121,7 @@ export function WeeklyCashflow() {
       </div>
 
       {/* Weekly cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {weeks.map((week) => (
           <div
             key={week.week}
@@ -131,10 +131,10 @@ export function WeeklyCashflow() {
                 : "border-red-200 bg-red-50/40"
             }`}
           >
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">
+            <h3 className="text-sm font-semibold text-on-background mb-3">
               Semana {week.week}
             </h3>
-            <p className="text-[10px] text-gray-500 mb-3">
+            <p className="text-[10px] text-on-surface-variant/60 mb-3">
               {new Date(week.weekStart).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
               {" - "}
               {new Date(week.weekEnd).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
@@ -143,7 +143,7 @@ export function WeeklyCashflow() {
             <div className="space-y-2 text-xs sm:text-sm">
               {/* Entradas */}
               <div className="flex items-center justify-between gap-1">
-                <span className="text-gray-600 flex items-center gap-1 shrink-0">
+                <span className="text-on-surface-variant flex items-center gap-1 shrink-0">
                   <TrendingUp size={16} />
                   Entradas
                 </span>
@@ -152,17 +152,17 @@ export function WeeklyCashflow() {
                 </span>
               </div>
               {week.totalIncome > 0 && (
-                <div className="text-[10px] text-gray-500 ml-5">
+                <div className="text-[10px] text-on-surface-variant/60 ml-5">
                   Recebido: {formatCurrency(week.totalIncome - week.projectedIncome)}
                   {week.projectedIncome > 0 && ` | Previsto: ${formatCurrency(week.projectedIncome)}`}
                 </div>
               )}
 
-              <hr className="my-2 border-gray-300" />
+              <hr className="my-2 border-outline/30" />
 
               {/* Saídas */}
               <div className="flex items-center justify-between gap-1">
-                <span className="text-gray-600 flex items-center gap-1 shrink-0">
+                <span className="text-on-surface-variant flex items-center gap-1 shrink-0">
                   <TrendingDown size={16} />
                   Saídas
                 </span>
@@ -171,7 +171,7 @@ export function WeeklyCashflow() {
                 </span>
               </div>
 
-              <hr className="my-2 border-gray-300" />
+              <hr className="my-2 border-outline/30" />
 
               {/* Saldo */}
               <div className="flex items-center justify-between font-bold text-sm">
@@ -182,7 +182,7 @@ export function WeeklyCashflow() {
               </div>
 
               {/* Status */}
-              <div className="mt-3 pt-2 border-t border-gray-300">
+              <div className="mt-3 pt-2 border-t border-outline/30">
                 {week.canSpend ? (
                   <span className="text-[10px] font-semibold px-2 py-1 rounded bg-green-200 text-green-800 inline-block">
                     <CheckCircle size={12} className="inline mr-1 -mt-0.5" />
@@ -208,25 +208,25 @@ export function WeeklyCashflow() {
       </div>
 
       {/* Monthly summary */}
-      <div className="bg-gray-100 p-4 rounded-lg">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">
+      <div className="bg-surface-variant p-4 rounded-lg">
+        <h3 className="text-sm font-semibold text-on-background mb-4">
           Resumo — {monthLabel}
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
           <div>
-            <p className="text-[10px] text-gray-600 mb-1">Total Receitas</p>
+            <p className="text-[10px] text-on-surface-variant mb-1">Total Receitas</p>
             <p className="text-lg font-bold text-green-700">
               {formatCurrency(metrics.totalIncome)}
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-gray-600 mb-1">Total Despesas</p>
+            <p className="text-[10px] text-on-surface-variant mb-1">Total Despesas</p>
             <p className="text-lg font-bold text-red-700">
               {formatCurrency(metrics.totalExpenses)}
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-gray-600 mb-1">Saldo do Mês</p>
+            <p className="text-[10px] text-on-surface-variant mb-1">Saldo do Mês</p>
             <p className={`text-lg font-bold ${metrics.monthBalance >= 0 ? "text-green-700" : "text-red-700"}`}>
               {formatCurrency(metrics.monthBalance)}
             </p>

@@ -111,7 +111,7 @@ export function WeeklyCashflowForecast() {
       </div>
 
       {/* Métricas Resumidas */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <Card className="premium-card p-4">
           <p className="text-[10px] font-bold uppercase text-on-surface-variant/70">
             Faturado
@@ -162,7 +162,7 @@ export function WeeklyCashflowForecast() {
       </div>
 
       {/* Cards Semanais */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {data.map((week, idx) => (
           <motion.div
             key={week.week}

@@ -83,7 +83,7 @@ export default function Relatorios() {
   const barData = Object.keys({ ...expensesByCategory, ...incomeByCategory })
     .slice(0, 8)
     .map((name) => ({
-      name: name.length > 10 ? name.slice(0, 10) + "…" : name,
+      name: name.length > 15 ? name.slice(0, 15) + "…" : name,
       Despesa: expensesByCategory[name] || 0,
       Receita: incomeByCategory[name] || 0,
     }));
@@ -190,15 +190,16 @@ export default function Relatorios() {
           {loading ? (
             <div className="h-72 flex items-center justify-center text-on-surface-variant/20 font-bold text-xs uppercase tracking-[0.2em] italic">Analisando dados...</div>
           ) : pieData.length === 0 ? (
-            <div className="h-72 flex flex-col items-center justify-center gap-4 opacity-20">
-              <TrendingDown className="w-12 h-12" />
-              <p className="font-bold text-sm">Sem dados disponíveis</p>
+            <div className="h-72 flex flex-col items-center justify-center gap-3">
+              <TrendingDown className="w-10 h-10 text-on-surface-variant/30" />
+              <p className="font-semibold text-sm text-on-surface-variant/60">Sem dados disponíveis</p>
+              <p className="text-xs text-on-surface-variant/40">Registre movimentações neste período para ver os gráficos.</p>
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={220}>
               <RechartsPie>
                 <Pie data={pieData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} stroke="none"
-                  paddingAngle={4} dataKey="value" label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
+                  paddingAngle={4} dataKey="value" label={({ percent }) => `${((percent || 0) * 100).toFixed(0)}%`}
                   labelLine={false}>
                   {pieData.map((_, index) => (
                     <Cell key={index} fill={COLORS[index % COLORS.length]} />
@@ -228,7 +229,7 @@ export default function Relatorios() {
           {loading ? (
             <div className="h-72 flex items-center justify-center text-on-surface-variant/20 font-bold text-xs uppercase tracking-[0.2em] italic">Processando...</div>
           ) : (
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={220}>
               <BarChart data={barData} barCategoryGap="25%">
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
                 <XAxis dataKey="name" stroke="rgba(0,0,0,0.3)" fontSize={9} fontWeight="bold" tickLine={false} axisLine={false} dy={10} />
@@ -267,9 +268,10 @@ export default function Relatorios() {
           ) : (
             <div className="space-y-4">
               {Object.entries(expensesByCategory).length === 0 ? (
-                <div className="py-16 flex flex-col items-center gap-4 opacity-20">
-                  <TrendingDown className="w-12 h-12" />
-                  <p className="font-bold text-sm">Nenhum registro encontrado</p>
+                <div className="py-16 flex flex-col items-center gap-3">
+                  <TrendingDown className="w-10 h-10 text-on-surface-variant/30" />
+                  <p className="font-semibold text-sm text-on-surface-variant/60">Nenhum registro encontrado</p>
+                  <p className="text-xs text-on-surface-variant/40">Adicione despesas para ver a distribuição detalhada.</p>
                 </div>
               ) : (
                 Object.entries(expensesByCategory)

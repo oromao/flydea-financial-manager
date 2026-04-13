@@ -84,7 +84,7 @@ export function ConfirmDialogProvider({ children }: { children: ReactNode }) {
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
               className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999] w-full max-w-sm"
             >
-              <div className="glass-card rounded-3xl p-6 border-white/10 space-y-5 mx-4">
+              <div className="premium-card rounded-xl p-6 space-y-5 mx-4">
                 <div className="flex items-start gap-4">
                   <div className={`rounded-2xl p-2.5 ${styles.iconBg}`}>
                     <AlertTriangle className={`w-5 h-5 ${styles.icon}`} />

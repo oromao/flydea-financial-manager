@@ -7,8 +7,10 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
 
 export default function ContasAPagar() {
+  const toast = useToast();
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
@@ -36,15 +38,32 @@ export default function ContasAPagar() {
 
   const updatePaymentStatus = async (id: string, nextStatus: "PAID" | "PENDING") => {
     const now = new Date().toISOString().split("T")[0];
-    await fetch(`/api/transactions/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        paymentStatus: nextStatus,
-        paidAt: nextStatus === "PAID" ? now : "",
-      }),
-    });
-    fetchTransactions();
+    try {
+      await fetch(`/api/transactions/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          paymentStatus: nextStatus,
+          paidAt: nextStatus === "PAID" ? now : "",
+        }),
+      });
+      if (nextStatus === "PAID") {
+        toast.undo("Conta marcada como paga", async () => {
+          await fetch(`/api/transactions/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentStatus: "PENDING", paidAt: "" }),
+          });
+          fetchTransactions();
+        });
+      } else {
+        toast.success("Conta marcada como pendente");
+      }
+      fetchTransactions();
+    } catch (e) {
+      console.error(e);
+      toast.error("Erro ao atualizar status");
+    }
   };
 
   const applyPartial = async (id: string) => {
@@ -109,7 +128,7 @@ export default function ContasAPagar() {
         </div>
       </motion.header>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         <Card className="premium-card p-4 sm:p-5">
           <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Total pendente</p>
           <p className="text-3xl font-bold mt-2">{formatCurrency(total)}</p>
@@ -131,6 +150,8 @@ export default function ContasAPagar() {
       </div>
 
       <div className="grid gap-4">
+        {/* Atrasadas — only show when filter is "all" or "overdue" */}
+        {(filter === "all" || filter === "overdue") && (
         <Card className="premium-card p-6">
           <div className="flex items-center gap-2 mb-4">
             <Clock3 className="w-4 h-4 text-red-600" />
@@ -138,8 +159,6 @@ export default function ContasAPagar() {
           </div>
           {loading ? (
             <div className="py-10 text-center text-on-surface-variant/40 text-sm">Carregando...</div>
-          ) : filter !== "all" && filter !== "overdue" ? (
-            <div className="py-10 text-center text-on-surface-variant/40 text-sm">Filtre para ver este bloco.</div>
           ) : filteredOverdue.length === 0 ? (
             <div className="py-10 text-center text-on-surface-variant/40 text-sm">Sem atrasos.</div>
           ) : (
@@ -168,6 +187,7 @@ export default function ContasAPagar() {
                           value={partialAmounts[t.id] || ""}
                           onChange={(e) => setPartialAmounts((current) => ({ ...current, [t.id]: e.target.value }))}
                           placeholder="Baixa parcial"
+                          aria-label="Valor da baixa parcial"
                           className="h-9 w-32 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
                         />
                         <Button variant="outline" size="sm" className="rounded-xl" onClick={() => applyPartial(t.id)}>
@@ -181,7 +201,10 @@ export default function ContasAPagar() {
             </div>
           )}
         </Card>
+        )}
 
+        {/* Vencem em breve — only show when filter is "all" or "upcoming" */}
+        {(filter === "all" || filter === "upcoming") && (
         <Card className="premium-card p-6">
           <div className="flex items-center gap-2 mb-4">
             <AlertTriangle className="w-4 h-4 text-amber-600" />
@@ -189,8 +212,6 @@ export default function ContasAPagar() {
           </div>
           {loading ? (
             <div className="py-10 text-center text-on-surface-variant/40 text-sm">Carregando...</div>
-          ) : filter !== "all" && filter !== "upcoming" ? (
-            <div className="py-10 text-center text-on-surface-variant/40 text-sm">Filtre para ver este bloco.</div>
           ) : filteredUpcoming.length === 0 ? (
             <div className="py-10 text-center text-on-surface-variant/40 text-sm">Nada vencendo nos próximos 7 dias.</div>
           ) : (
@@ -219,6 +240,7 @@ export default function ContasAPagar() {
                           value={partialAmounts[t.id] || ""}
                           onChange={(e) => setPartialAmounts((current) => ({ ...current, [t.id]: e.target.value }))}
                           placeholder="Baixa parcial"
+                          aria-label="Valor da baixa parcial"
                           className="h-9 w-32 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
                         />
                         <Button variant="outline" size="sm" className="rounded-xl" onClick={() => applyPartial(t.id)}>
@@ -232,7 +254,10 @@ export default function ContasAPagar() {
             </div>
           )}
         </Card>
+        )}
 
+        {/* Sem vencimento — only show when filter is "all" or "nodate" */}
+        {(filter === "all" || filter === "nodate") && (
         <Card className="premium-card p-6">
           <div className="flex items-center gap-2 mb-4">
             <ArrowUpRight className="w-4 h-4 text-emerald-600" />
@@ -240,8 +265,6 @@ export default function ContasAPagar() {
           </div>
           {loading ? (
             <div className="py-10 text-center text-on-surface-variant/40 text-sm">Carregando...</div>
-          ) : filter !== "all" && filter !== "nodate" ? (
-            <div className="py-10 text-center text-on-surface-variant/40 text-sm">Filtre para ver este bloco.</div>
           ) : filteredNoDate.length === 0 ? (
             <div className="py-10 text-center text-on-surface-variant/40 text-sm">Nenhuma pendência sem vencimento.</div>
           ) : (
@@ -267,6 +290,7 @@ export default function ContasAPagar() {
                           value={partialAmounts[t.id] || ""}
                           onChange={(e) => setPartialAmounts((current) => ({ ...current, [t.id]: e.target.value }))}
                           placeholder="Baixa parcial"
+                          aria-label="Valor da baixa parcial"
                           className="h-9 w-32 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
                         />
                         <Button variant="outline" size="sm" className="rounded-xl" onClick={() => applyPartial(t.id)}>
@@ -280,6 +304,7 @@ export default function ContasAPagar() {
             </div>
           )}
         </Card>
+        )}
       </div>
     </div>
   );

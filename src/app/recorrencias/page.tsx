@@ -28,12 +28,16 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 
 export default function Recorrencias() {
   const [recurrences, setRecurrences] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const toast = useToast();
+  const confirm = useConfirm();
 
   // Form states
   const [description, setDescription] = useState("");
@@ -62,9 +66,35 @@ export default function Recorrencias() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isActive }),
       });
-      if (res.ok) fetchRecurrences();
+      if (res.ok) {
+        toast.success(isActive ? "Recorrência pausada" : "Recorrência reativada");
+        fetchRecurrences();
+      }
     } catch (e) {
       console.error(e);
+      toast.error("Erro ao atualizar recorrência");
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const ok = await confirm({
+      title: "Excluir recorrência",
+      message: "Tem certeza que deseja excluir esta recorrência? Lançamentos futuros não serão criados.",
+      confirmLabel: "Excluir",
+      variant: "danger",
+    });
+    if (!ok) return;
+    try {
+      const res = await fetch(`/api/recurrences/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        toast.success("Recorrência excluída");
+        fetchRecurrences();
+      } else {
+        toast.error("Erro ao excluir recorrência");
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Falha ao excluir recorrência");
     }
   };
 
@@ -136,7 +166,7 @@ export default function Recorrencias() {
           </div>
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={(v) => { setIsDialogOpen(v); if (v) resetForm(); }}>
           <DialogTrigger render={<Button className="apple-button-primary h-11 px-8" />}>
             <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA RECORRÊNCIA
           </DialogTrigger>
@@ -286,6 +316,8 @@ export default function Recorrencias() {
                         {rec.isActive ? <AlertCircle className="w-4.5 h-4.5" /> : <CheckCircle2 className="w-4.5 h-4.5" />}
                       </Button>
                       <Button variant="ghost" size="icon"
+                        onClick={() => handleDelete(rec.id)}
+                        aria-label="Excluir recorrência"
                         className="w-10 h-10 rounded-lg bg-red-100/60 hover:bg-red-100 text-red-600 hover:text-red-700 transition-colors">
                         <Trash2 className="w-4.5 h-4.5" />
                       </Button>

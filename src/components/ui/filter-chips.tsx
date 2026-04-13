@@ -32,10 +32,10 @@ export function FilterChips({ chips, active, onToggle, onClear, className }: Fil
             aria-pressed={isActive}
             className={cn(
               "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors",
-              "border focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+              "border focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary",
               isActive
-                ? "bg-primary/20 border-primary/50 text-primary"
-                : "bg-white/5 border-white/10 text-on-surface-variant/60 hover:bg-white/10 hover:border-white/20"
+                ? "bg-secondary/10 border-secondary/50 text-secondary"
+                : "bg-surface-variant border-outline/20 text-on-surface-variant/60 hover:bg-surface-variant/80 hover:border-outline/30"
             )}
             style={isActive && chip.color ? { backgroundColor: `${chip.color}22`, borderColor: `${chip.color}66`, color: chip.color } : undefined}
           >

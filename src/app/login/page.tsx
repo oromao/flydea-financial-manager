@@ -29,7 +29,12 @@ export default function LoginPage() {
     });
 
     if (res?.error) {
-      setError(res.error);
+      // Map NextAuth errors to user-friendly messages
+      const errorMessages: Record<string, string> = {
+        CredentialsSignin: "E-mail ou senha incorretos. Tente novamente.",
+        default: "Erro ao autenticar. Verifique suas credenciais.",
+      };
+      setError(errorMessages[res.error] || errorMessages.default);
       setLoading(false);
     } else {
       // Reset loading state before redirecting
