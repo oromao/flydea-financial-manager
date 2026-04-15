@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { Importer } from "@/components/importer";
+import { DocumentImporter } from "@/components/document-importer";
 import { upload } from "@vercel/blob/client";
 import { FileUp, Cloud, Link as LinkIcon, AlertCircle, CheckCircle2, Clock3 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -548,6 +549,7 @@ export default function Movimentacoes() {
           </Select>
 
           <Importer onImportSuccess={fetchTransactions} />
+          <DocumentImporter onImportSuccess={fetchTransactions} />
         </div>
 
         <div className="flex bg-surface-variant/30 rounded-2xl p-1 border border-outline/5 overflow-x-auto no-scrollbar">

@@ -30,6 +30,8 @@ model User {
   invoices              Invoice[]
   revenues              Revenue[]
   cashflowWeekly        CashflowWeekly[]
+  importedDocuments    ImportedDocument[]
+  documentImportAttempts DocumentImportAttempt[]
 }
 
 model Category {
@@ -84,6 +86,7 @@ model Transaction {
   category      Category         @relation(fields: [categoryId], references: [id])
   user          User             @relation(fields: [userId], references: [id])
   tags          TransactionTag[]
+  importedDocumentId String?
 }
 
 model Tag {
@@ -293,4 +296,50 @@ model CashflowWeekly {
 
   @@unique([userId, weekStart, monthYear])
   @@index([userId, monthYear])
+}
+
+/// === DOCUMENT IMPORT (Nota fiscal, comprovante, recibo, etc) ===
+model ImportedDocument {
+  id                String                      @id @default(uuid())
+  userId            String
+  user              User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName          String
+  fileType          String
+  fileSize         Int?
+  fileHash         String?
+  blobUrl          String?
+  status           String                      @default("PENDING_REVIEW") // PENDING_REVIEW, IMPORTED, REJECTED, ERROR
+  extractedData   Json?
+  rawText         String?
+  confidence      Float                      @default(0)
+  errorMessage    String?
+  createdAt       DateTime                    @default(now())
+  updatedAt       DateTime                    @updatedAt
+  transactionId   String?                    @unique
+
+  @@index([userId, status])
+  @@index([userId, fileHash])
+}
+
+model DocumentImportAttempt {
+  id                String   @id @default(uuid())
+  userId            String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName         String
+  fileType        String
+  blobUrl         String?
+  extractedData   Json
+  proposedCategory String?
+  proposedType   String?
+  proposedStatus String?
+  confidence    Float     @default(0)
+  isDuplicate    Boolean   @default(false)
+  duplicateOf   String?
+  reviewedAt    DateTime?
+  importedAt   DateTime?
+  status       String    @default("PENDING") // PENDING, APPROVED, REJECTED, CANCELLED
+  rejectReason String?
+  createdAt    DateTime  @default(now())
+
+  @@index([userId, status])
 }
