@@ -10,7 +10,9 @@ export type UsageEvent =
   | "close_month"
   | "view_insight"
   | "use_copilot"
-  | "export_data";
+  | "export_data"
+  | "habit_checkin"
+  | "daily_checkin";
 
 interface UseMetricsOptions {
   event: UsageEvent;
