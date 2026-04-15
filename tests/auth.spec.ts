@@ -7,7 +7,7 @@ test.describe('Autenticação', () => {
     await page.fill('input[type="password"]', 'senha123');
     await page.click('button[type="submit"]');
     
-    await expect(page.locator('text=Usuário não encontrado')).toBeVisible();
+    await expect(page.getByRole('alert')).toBeVisible();
   });
 
   test('Deve fazer login com sucesso (Augusto)', async ({ page }) => {

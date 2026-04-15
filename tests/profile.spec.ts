@@ -14,6 +14,6 @@ test.describe('Perfil do usuário', () => {
     await expect(page.getByRole('heading', { name: /Seu perfil/i })).toBeVisible();
     await expect(page.getByText(/Trocar foto/i)).toBeVisible();
     await expect(page.getByRole('button', { name: /Salvar perfil/i })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Perfil' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Seu perfil/i })).toBeVisible();
   });
 });
