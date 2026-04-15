@@ -9,11 +9,14 @@ import {
   AlertTriangle, Target, ArrowRight
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { motion } from "framer-motion";
 import { WeeklyCashflowForecast } from "@/components/weekly-cashflow-forecast";
 import { SpendDecisionIndicator } from "@/components/spend-decision-indicator";
+import { DailyInsight } from "@/components/daily-insight";
+import { QuickAdd } from "@/components/quick-add";
 
 const containerVariants: any = {
   hidden: { opacity: 0 },
@@ -25,20 +28,29 @@ const itemVariants: any = {
 };
 
 export default function Dashboard() {
+  const router = useRouter();
   const [metrics, setMetrics] = useState<any>({
     balance: 0, income: 0, expenses: 0, chartData: [],
     topCategories: [], projectedExpenses: 0, projectedIncome: 0, pendingExpenses: 0,
     nextMonths: [], budgetAlerts: [], savingsRate: 0
   });
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
     async function fetchMetrics() {
       try {
-        const res = await fetch("/api/dashboard");
-        if (res.ok) {
-          const data = await res.json();
+        const [metricsRes, categoriesRes] = await Promise.all([
+          fetch("/api/dashboard"),
+          fetch("/api/categories")
+        ]);
+        if (metricsRes.ok) {
+          const data = await metricsRes.json();
           setMetrics(data);
+        }
+        if (categoriesRes.ok) {
+          const catData = await categoriesRes.json();
+          setCategories(Array.isArray(catData) ? catData : []);
         }
       } catch (e) {
         console.error("Failed to load metrics");
@@ -106,6 +118,13 @@ export default function Dashboard() {
       <motion.div variants={itemVariants}>
         <SpendDecisionIndicator />
       </motion.div>
+
+      {/* Daily Insights - Smart Summary */}
+      {!loading && (
+        <motion.div variants={itemVariants}>
+          <DailyInsight metrics={metrics} />
+        </motion.div>
+      )}
 
       {/* Weekly Cashflow Forecast */}
       <motion.div variants={itemVariants}>
@@ -275,16 +294,17 @@ export default function Dashboard() {
               <div className="p-1.5 rounded-md bg-secondary/10 text-secondary">
                 <ArrowUpRight className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-sm text-on-background">Registrar</h3>
+              <h3 className="font-bold text-sm text-on-background">Lançamento rápido</h3>
             </div>
             <p className="text-on-surface-variant font-medium text-xs">
-              Adicione entrada ou despesa ao seu painel.
+              Adicione despesa ou receita em segundos.
             </p>
           </div>
           <div className="mt-4 flex justify-end">
-            <Link href="/movimentacoes" className="apple-button-primary h-8 px-4 rounded-lg text-xs font-bold shadow-sm group">
-              Abrir <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-0.5 transition-transform" />
-            </Link>
+            <QuickAdd 
+              categories={categories} 
+              onSuccess={() => window.location.reload()}
+            />
           </div>
         </Card>
       </motion.div>

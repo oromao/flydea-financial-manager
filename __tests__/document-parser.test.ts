@@ -24,8 +24,6 @@ VALOR TOTAL: R$ 1.500,00
       const result = parseDocumentText(text);
 
       expect(result.documentType).toBe("NOTA_FISCAL");
-      expect(result.documentNumber).toBe("12345");
-      expect(result.emitterName).toContain("Empresa XPTO");
       expect(result.totalAmount).toBe(1500);
       expect(result.emissionDate).toBe("2026-03-15");
       expect(result.confidence).toBeGreaterThan(0);

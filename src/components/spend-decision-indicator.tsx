@@ -70,22 +70,25 @@ export function SpendDecisionIndicator() {
       icon: CheckCircle2,
       bg: "bg-emerald-50/30 border-emerald-100",
       text: "text-emerald-700",
-      label: "🟢 Pode gastar",
+      label: "Pode gastar",
       emoji: "✅",
+      tip: "Você tem folga esta semana. Mas continue controls!",
     },
     ALERTA: {
       icon: AlertTriangle,
       bg: "bg-amber-50/30 border-amber-100",
       text: "text-amber-700",
-      label: "🟡 Atenção",
+      label: "Atenção Needed",
       emoji: "⚠️",
+      tip: "Fique de olho nos próximos dias. Evite gastos não essenciais.",
     },
     NAO_PODE_GASTAR: {
       icon: AlertCircle,
       bg: "bg-red-50/30 border-red-100",
       text: "text-red-700",
-      label: "🔴 Evite gastos",
-      emoji: "❌",
+      label: "Melhor evitar",
+      emoji: "⛔",
+      tip: "Priorize only essential payments this week.",
     },
   };
 
@@ -117,8 +120,7 @@ export function SpendDecisionIndicator() {
 
           <div className="pt-2 border-t border-current/10">
             <p className="text-[10px] text-on-surface-variant/60 leading-relaxed">
-              💡 <strong>Dica:</strong> Acompanhe a previsão semanal acima para
-              entender melhor seu fluxo de caixa.
+              💡 <strong>Tip:</strong> {cfg.tip}
             </p>
           </div>
         </div>
