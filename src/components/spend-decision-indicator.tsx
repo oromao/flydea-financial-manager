@@ -72,13 +72,13 @@ export function SpendDecisionIndicator() {
       text: "text-emerald-700",
       label: "Pode gastar",
       emoji: "✅",
-      tip: "Você tem folga esta semana. Mas continue controls!",
+      tip: "Você tem folga esta semana. Continue assim!",
     },
     ALERTA: {
       icon: AlertTriangle,
       bg: "bg-amber-50/30 border-amber-100",
       text: "text-amber-700",
-      label: "Atenção Needed",
+      label: "Atenção",
       emoji: "⚠️",
       tip: "Fique de olho nos próximos dias. Evite gastos não essenciais.",
     },
@@ -88,7 +88,7 @@ export function SpendDecisionIndicator() {
       text: "text-red-700",
       label: "Melhor evitar",
       emoji: "⛔",
-      tip: "Priorize only essential payments this week.",
+      tip: "Priorize apenas despesas essenciais esta semana.",
     },
   };
 
@@ -120,7 +120,7 @@ export function SpendDecisionIndicator() {
 
           <div className="pt-2 border-t border-current/10">
             <p className="text-[10px] text-on-surface-variant/60 leading-relaxed">
-              💡 <strong>Tip:</strong> {cfg.tip}
+              💡 {cfg.tip}
             </p>
           </div>
         </div>

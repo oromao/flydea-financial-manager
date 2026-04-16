@@ -66,8 +66,8 @@ export default function LoginPage() {
             <h1 className="text-3xl font-bold tracking-tight text-on-background">
               Flydea
             </h1>
-            <p className="text-on-surface-variant font-medium text-xs uppercase tracking-[0.2em] opacity-70">
-              Financial Manager System
+            <p className="text-on-surface-variant font-medium text-xs tracking-wide">
+              Seu assistente financeiro pessoal
             </p>
           </div>
         </div>
@@ -115,7 +115,7 @@ export default function LoginPage() {
               variant="default"
               className="w-full h-14 text-sm font-bold tracking-tight rounded-2xl group flex items-center justify-center gap-2"
             >
-              {loading ? "Autenticando..." : "Entrar no Sistema"}
+              {loading ? "Entrando..." : "Entrar"}
               {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
             </Button>
           </form>

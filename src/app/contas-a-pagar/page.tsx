@@ -106,8 +106,8 @@ export default function ContasAPagar() {
               <BadgeDollarSign className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-on-background">Contas a Pagar e Receber</h1>
-              <p className="text-on-surface-variant text-sm mt-1">Pendências operacionais baseadas nas transações do sistema.</p>
+              <h1 className="text-3xl font-bold tracking-tight text-on-background">Contas a pagar</h1>
+              <p className="text-on-surface-variant text-sm mt-1">Suas pendências do momento</p>
             </div>
           </div>
         </div>

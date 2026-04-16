@@ -9,14 +9,14 @@ import { cn } from "@/lib/utils";
 import { BottomNav } from "./bottom-nav";
 
 const navItems = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Movimentações", href: "/movimentacoes", icon: ReceiptText },
+  { name: "Início", href: "/", icon: LayoutDashboard },
+  { name: "Transações", href: "/movimentacoes", icon: ReceiptText },
   { name: "Contas", href: "/contas", icon: CreditCard },
   { name: "Fluxo de Caixa", href: "/fluxo-caixa", icon: TrendingUp },
-  { name: "Pendências", href: "/contas-a-pagar", icon: BadgeDollarSign },
+  { name: "Contas a Pagar", href: "/contas-a-pagar", icon: BadgeDollarSign },
   { name: "Orçamentos", href: "/orcamentos", icon: Target },
   { name: "Recorrências", href: "/recorrencias", icon: RotateCcw },
-  { name: "Fechamento", href: "/fechamento", icon: CalendarRange },
+  { name: "Fechamento Mensal", href: "/fechamento", icon: CalendarRange },
   { name: "Relatórios", href: "/relatorios", icon: BarChart3 },
   { name: "Logs", href: "/admin/logs", icon: History },
   { name: "Aprovações", href: "/admin/aprovacoes", icon: ShieldCheck },

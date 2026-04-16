@@ -91,7 +91,7 @@ export function DailyInsight({ metrics }: DailyInsightProps) {
     if (day === 1) return { title: "Nova semana", description: "Dia de planejar!" };
     if (day === 5) return { title: "Sextou!", description: "Fim de semana chegando" };
     if (date <= 5) return { title: "Início de mês", description: "Hora de revisar gastos" };
-    if (date >= 25) return { title: "Fim de mês", description: "Falta poco para fechar" };
+    if (date >= 25) return { title: "Fim de mês", description: "Falta pouco para fechar" };
     return null;
   };
 

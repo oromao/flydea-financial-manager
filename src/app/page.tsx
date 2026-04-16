@@ -71,33 +71,59 @@ export default function Dashboard() {
       variants={containerVariants}
       className="space-y-6 md:space-y-8 max-w-7xl mx-auto pb-20 px-4 md:px-0"
     >
-      {/* Header - Compact */}
-      <motion.header variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-2">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-on-background">
-            Visão Geral
-          </h1>
-          <p className="text-on-surface-variant font-medium text-sm mt-1">
-            Seu controle financeiro
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          {metrics.budgetAlerts?.length > 0 && (
-            <Link href="/orcamentos" className="p-2.5 rounded-lg hover:bg-surface-variant transition-colors relative">
-              <Bell className="w-5 h-5 text-amber-500" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-amber-500 rounded-full border border-background" />
+      {/* Header - Copiloto Style */}
+      <motion.header variants={itemVariants} className="space-y-2 py-2">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="space-y-1">
+            <p className="text-sm text-on-surface-variant font-medium">
+              {(() => {
+                const hour = new Date().getHours();
+                if (hour < 12) return "Bom dia";
+                if (hour < 18) return "Boa tarde";
+                return "Boa noite";
+              })()}
+            </p>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-on-background">
+              Como você está hoje?
+            </h1>
+          </div>
+          <div className="flex items-center gap-3">
+            {metrics.budgetAlerts?.length > 0 && (
+              <Link href="/orcamentos" className="p-2.5 rounded-lg hover:bg-surface-variant transition-colors relative">
+                <Bell className="w-5 h-5 text-amber-500" />
+                <span className="absolute top-2 right-2 w-2 h-2 bg-amber-500 rounded-full border border-background" />
+              </Link>
+            )}
+            <Link href="/alertas" className="p-2.5 rounded-lg hover:bg-surface-variant transition-colors relative">
+              <Bell className="w-5 h-5 text-secondary" />
             </Link>
-          )}
-          <Link href="/alertas" className="p-2.5 rounded-lg hover:bg-surface-variant transition-colors relative">
-            <Bell className="w-5 h-5 text-secondary" />
-          </Link>
-          <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-surface-variant/60 border border-outline/20">
-            <CalendarDays className="w-4 h-4 text-secondary" />
-            <span className="text-xs font-semibold text-on-background uppercase">
-              {new Date().toLocaleDateString("pt-BR", { month: "short", year: "numeric" })}
-            </span>
+            <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-surface-variant/60 border border-outline/20">
+              <CalendarDays className="w-4 h-4 text-secondary" />
+              <span className="text-xs font-semibold text-on-background uppercase">
+                {new Date().toLocaleDateString("pt-BR", { month: "short", year: "numeric" })}
+              </span>
+            </div>
           </div>
         </div>
+
+        {/* Mensagem do dia */}
+        {(() => {
+          const day = new Date().getDay();
+          const date = new Date().getDate();
+          let msg = null;
+          if (day === 1) msg = { title: "Nova semana", desc: "Que tal revisar suas pendências?" };
+          else if (day === 5) msg = { title: "Sextou!", desc: "Bom início de fim de semana!" };
+          else if (date <= 5) msg = { title: "Início de mês", desc: "Hora de acompanhar o fluxo" };
+          else if (date >= 25) msg = { title: "Fim de mês", desc: "Falta pouco para fechar o mês" };
+          if (msg) {
+            return (
+              <p className="text-xs text-on-surface-variant">
+                <span className="font-semibold text-secondary">{msg.title}:</span> {msg.desc}
+              </p>
+            );
+          }
+          return null;
+        })()}
       </motion.header>
 
       {/* Budget Alerts Banner */}
@@ -131,17 +157,14 @@ export default function Dashboard() {
         <WeeklyCashflowForecast />
       </motion.div>
 
-      {/* Stats Cards - Compact Dense */}
-      <motion.div
-        variants={itemVariants}
-        className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-4"
-      >
+      {/* Resumo do Momento Financeiro */}
+      <motion.div variants={itemVariants} className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-4">
         <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-6 opacity-3">
             <Wallet className="w-20 h-20" />
           </div>
           <div>
-            <p className="text-on-surface-variant text-xs font-bold uppercase tracking-widest opacity-90 mb-2">Saldo Geral</p>
+            <p className="text-on-surface-variant text-xs font-bold uppercase tracking-widest opacity-90 mb-2">Seu saldo</p>
             {loading ? <Skeleton className="h-9 w-40 mb-3" /> : (
               <div className="text-3xl md:text-4xl font-bold tracking-tight text-on-background leading-tight">
                 {formatCurrency(metrics.balance)}
@@ -151,7 +174,7 @@ export default function Dashboard() {
           <div className="mt-3 flex items-center gap-2">
             <div className={cn("w-2 h-2 rounded-full", metrics.balance >= 0 ? "bg-emerald-500" : "bg-red-500")} />
             <span className="text-xs sm:text-[10px] font-semibold text-on-surface-variant">
-              {metrics.balance >= 0 ? "Saudável" : "Atenção"} · Acumulado de todos os meses
+              {metrics.balance >= 0 ? "Tudo OK" : "Atenção"} · Total guardado
             </span>
           </div>
         </Card>
@@ -159,40 +182,40 @@ export default function Dashboard() {
         <Card className="premium-card p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70">Entradas</p>
+              <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70">Entrou</p>
               <ArrowUpRight className="w-4 h-4 text-emerald-600" />
             </div>
             {loading ? <Skeleton className="h-9 w-32 mb-3" /> : (
               <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.income)}</div>
             )}
           </div>
-          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Mês atual · Previsto</p>
+          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Este mês</p>
         </Card>
 
         <Card className="premium-card p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70">Saídas</p>
+              <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70">Saiu</p>
               <ArrowDownRight className="w-4 h-4 text-red-600" />
             </div>
             {loading ? <Skeleton className="h-9 w-32 mb-3" /> : (
               <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.expenses)}</div>
             )}
           </div>
-          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Mês atual · Previsto</p>
+          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Este mês</p>
         </Card>
 
         <Card className="premium-card p-6 flex flex-col justify-between border-amber-100 bg-amber-50/20">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70">Desp. Pendentes</p>
+              <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70">Contas a pagar</p>
               <ReceiptText className="w-4 h-4 text-amber-600" />
             </div>
             {loading ? <Skeleton className="h-9 w-32 mb-3" /> : (
               <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.pendingExpenses || 0)}</div>
             )}
           </div>
-          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Despesas ainda não pagas</p>
+          <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Pendentes</p>
         </Card>
       </motion.div>
 
@@ -203,7 +226,7 @@ export default function Dashboard() {
           <CardHeader className="p-6 pb-3">
             <CardTitle className="text-base font-bold text-on-background flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-secondary" />
-              Fluxo Mensal
+              Seu fluxo mensal
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 pt-2 h-[280px]">
@@ -240,7 +263,7 @@ export default function Dashboard() {
         <Card className="premium-card p-6 flex flex-col">
           <div className="flex items-center gap-2 mb-4">
             <Target className="w-4.5 h-4.5 text-secondary" />
-            <h3 className="text-sm font-bold text-on-background">Top Gastos</h3>
+            <h3 className="text-sm font-bold text-on-background">Onde você mais gastou</h3>
           </div>
           {loading ? (
             <div className="space-y-3 flex-1">
@@ -271,20 +294,20 @@ export default function Dashboard() {
         </Card>
       </motion.div>
 
-      {/* Quick Actions - Compact */}
+      {/* Ações Rápidas */}
       <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2">
         <Card className="premium-card p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-3">
               <History className="w-4.5 h-4.5 text-secondary" />
-              <h3 className="font-bold text-sm text-on-background">Atividade Recente</h3>
+              <h3 className="font-bold text-sm text-on-background">Suas transações</h3>
             </div>
             <p className="text-on-surface-variant font-medium text-xs">
-              Acompanhe suas transações em tempo real.
+              Acompanhe o que entrou e saiu.
             </p>
           </div>
           <Link href="/movimentacoes" className="text-secondary font-semibold text-xs hover:underline mt-4 flex items-center gap-1.5">
-            Ver <ArrowRight className="w-3 h-3" />
+            Ver todas <ArrowRight className="w-3 h-3" />
           </Link>
         </Card>
 
@@ -294,10 +317,10 @@ export default function Dashboard() {
               <div className="p-1.5 rounded-md bg-secondary/10 text-secondary">
                 <ArrowUpRight className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-sm text-on-background">Lançamento rápido</h3>
+              <h3 className="font-bold text-sm text-on-background">Registrar movimento</h3>
             </div>
             <p className="text-on-surface-variant font-medium text-xs">
-              Adicione despesa ou receita em segundos.
+              Adicione uma nova despesa ou receita.
             </p>
           </div>
           <div className="mt-4 flex justify-end">

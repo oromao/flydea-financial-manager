@@ -288,9 +288,9 @@ export default function Movimentacoes() {
           </motion.div>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-on-background">
-              Movimentações
+              Suas transações
             </h1>
-            <p className="text-on-surface-variant font-medium text-xs mt-0.5">Controle seu fluxo de caixa</p>
+            <p className="text-on-surface-variant font-medium text-xs mt-0.5">Todas as entradas e saídas</p>
           </div>
         </div>
 
@@ -468,52 +468,52 @@ export default function Movimentacoes() {
       >
         <Card className="premium-card p-4 sm:p-5 flex flex-col justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Saldo</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Saldo total</p>
               <h2 className="text-2xl md:text-3xl font-bold text-on-background tracking-tight">
                   {formatCurrency(stats.balance)}
               </h2>
             </div>
             <div className="mt-3 flex items-center gap-2">
               <Wallet className="w-4 h-4 text-secondary" />
-              <span className="text-[10px] font-semibold text-on-surface-variant">Consolidado</span>
+              <span className="text-[10px] font-semibold text-on-surface-variant">Todas as contas</span>
             </div>
         </Card>
 
         <Card className="premium-card p-5 flex flex-col justify-between border-emerald-100 bg-emerald-50/20">
             <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1">Entradas</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1">Entrou</p>
                 <h2 className="text-2xl font-bold text-emerald-700 tracking-tight">
                     {formatCurrency(stats.income)}
                 </h2>
             </div>
             <div className="mt-3 flex items-center gap-2 text-emerald-600">
                 <ArrowUp className="w-4 h-4" />
-                <span className="text-xs font-semibold">Receitas</span>
+                <span className="text-xs font-semibold">Este mês</span>
             </div>
         </Card>
 
         <Card className="premium-card p-5 flex flex-col justify-between border-red-100 bg-red-50/20">
             <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-red-700 mb-1">Saídas</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-red-700 mb-1">Saiu</p>
                 <h2 className="text-2xl font-bold text-red-700 tracking-tight">
                     {formatCurrency(stats.expenses)}
                 </h2>
               </div>
               <div className="mt-3 flex items-center gap-2 text-red-600">
                   <ArrowDown className="w-4 h-4" />
-                  <span className="text-xs font-semibold">Despesas</span>
+                  <span className="text-xs font-semibold">Este mês</span>
               </div>
           </Card>
         <Card className="premium-card p-5 flex flex-col justify-between border-amber-100 bg-amber-50/20">
             <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-1">Pendentes</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-1">A pagar</p>
                 <h2 className="text-2xl font-bold text-amber-700 tracking-tight">
                     {formatCurrency(stats.pending)}
                 </h2>
             </div>
             <div className="mt-3 flex items-center gap-2 text-amber-700">
                 <AlertCircle className="w-4 h-4" />
-                <span className="text-xs font-semibold">Despesas não pagas</span>
+                <span className="text-xs font-semibold">Contas pendentes</span>
             </div>
         </Card>
       </motion.div>
@@ -560,8 +560,8 @@ export default function Movimentacoes() {
 
         <div className="flex bg-surface-variant/30 rounded-2xl p-1 border border-outline/5 overflow-x-auto no-scrollbar">
           <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "ALL" ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("ALL")}>Todos</Button>
-          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "PAID" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PAID")}>Pagos</Button>
-          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "PENDING" ? "bg-amber-100 text-amber-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PENDING")}>Pendentes</Button>
+          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "PAID" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PAID")}>Pagas</Button>
+          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "PENDING" ? "bg-amber-100 text-amber-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PENDING")}>A pagar</Button>
         </div>
       </motion.div>
       
