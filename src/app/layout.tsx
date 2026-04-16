@@ -6,8 +6,8 @@ import { Sidebar } from "@/components/sidebar";
 import { ErrorBoundary } from "@/components/error-boundary";
 
 export const metadata: Metadata = {
-  title: "Flydea Financial",
-  description: "Controle financeiro inteligente",
+  title: "Flydea - Seu assistente financeiro",
+  description: "Assistente financeiro pessoal que ajuda você a decidir melhor",
   appleWebApp: {
     capable: true,
     title: "Flydea",

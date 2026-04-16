@@ -2,9 +2,9 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Flydea Financial Manager',
+    name: 'Flydea',
     short_name: 'Flydea',
-    description: 'A sua solução Apple-like de gestão financeira.',
+    description: 'Seu assistente financeiro pessoal.',
     start_url: '/',
     display: 'standalone',
     background_color: '#FBFBFD',

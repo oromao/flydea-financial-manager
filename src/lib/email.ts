@@ -46,7 +46,7 @@ export async function sendRecurrenceNotification({
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;background:#09090B;color:#fff;padding:32px;border-radius:16px">
         <h1 style="font-size:24px;font-weight:900;margin-bottom:8px">FLY DEA</h1>
-        <p style="color:#888;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:32px">Financial Manager</p>
+        <p style="color:#888;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:32px">Assistente Financeiro</p>
         <p style="font-size:16px">Olá, <strong>${userName}</strong>!</p>
         <p>Um lançamento automático foi gerado:</p>
         <div style="background:#1a1a1d;border-radius:12px;padding:24px;margin:24px 0">
