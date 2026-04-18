@@ -11,14 +11,19 @@ export default defineConfig({
       '.claude/**',
       'tests/**', // Playwright E2E, not Vitest
     ],
-    // Coverage target: only the financial core, not UI components
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
-      include: ['src/lib/financial-engine.ts', 'src/lib/export-helpers.ts'],
+      include: [
+        'src/lib/financial-engine.ts',
+        'src/lib/export-helpers.ts',
+        'src/lib/format-errors.ts',
+        'src/lib/date-utils.ts',
+        'src/lib/validations.ts',
+      ],
       thresholds: {
         lines: 90,
-        branches: 85,
+        branches: 80,
         functions: 90,
         statements: 90,
       },

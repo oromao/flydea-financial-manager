@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { InvoiceSchema } from "@/lib/validations";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -96,7 +97,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(invoice, { status: 201 });
   } catch (error: any) {
-    console.error("Invoice creation error:", error);
+    logger.error("Invoice creation error", { error: error instanceof Error ? error.message : String(error) });
     if (error.code === "P2002") {
       return NextResponse.json(
         { error: "Número de nota já existe para este mês" },

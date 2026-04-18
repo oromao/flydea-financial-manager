@@ -726,19 +726,19 @@ export default function Movimentacoes() {
                         </Button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 mt-3">
-                      <span className={cn(
-                        "px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-wider",
-                        t.paymentStatus === "PENDING" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"
-                      )}>
-                        {t.paymentStatus === "PENDING" ? "Pendente" : "Pago"}
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className={cn(
+                      "px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-wider",
+                      t.paymentStatus === "PENDING" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"
+                    )}>
+                      {t.paymentStatus === "PENDING" ? "Pendente" : "Pago"}
+                    </span>
+                    {t.frequency === "MONTHLY" && (
+                      <span className="flex items-center gap-1 text-[8px] font-bold text-secondary uppercase tracking-wider">
+                        <RotateCcw className="w-2.5 h-2.5" /> Mensal
                       </span>
-                      {t.frequency === "MONTHLY" && (
-                        <span className="flex items-center gap-1 text-[8px] font-bold text-secondary uppercase tracking-wider">
-                          <RotateCcw className="w-2.5 h-2.5" /> Mensal
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </div>
               </Card>
             </motion.div>

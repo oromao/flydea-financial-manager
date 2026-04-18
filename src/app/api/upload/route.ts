@@ -2,6 +2,7 @@ import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 import fs from "fs";
 import path from "path";
 
@@ -36,7 +37,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       const filePath = path.join(uploadDir, safeFilename);
       fs.writeFileSync(filePath, fileBuffer);
 
-      console.log(`Local upload success: /uploads/${safeFilename}`);
+      logger.info("Local upload success", { path: `/uploads/${safeFilename}` });
       return NextResponse.json({
         url: `/uploads/${safeFilename}`,
         downloadUrl: `/uploads/${safeFilename}`,
@@ -44,7 +45,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         contentType: contentType,
       });
     } catch (error) {
-      console.error("Local upload error:", error);
+      logger.error("Local upload error", { error: error instanceof Error ? error.message : String(error) });
       return NextResponse.json({ error: (error as Error).message }, { status: 500 });
     }
   }

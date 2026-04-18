@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -33,8 +34,7 @@ export async function POST(request: NextRequest) {
 
     // AQUI: Integração real com WhatsApp (Twilio, WhatsApp Business API, etc.)
     // Por agora, simulamos o envio
-    console.log(`[WhatsApp] Para: ${phoneNumber}`);
-    console.log(`[WhatsApp] Mensagem: ${finalMessage}`);
+    logger.info("WhatsApp: simulated send", { to: phoneNumber, messageLength: finalMessage.length });
 
     // Salvar registro de cobrança
     await prisma.notification.create({
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       sentAt: new Date().toISOString()
     });
   } catch (error) {
-    console.error("WhatsApp send error:", error);
+    logger.error("WhatsApp send error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { error: "Erro ao enviar cobrança" },
       { status: 500 }

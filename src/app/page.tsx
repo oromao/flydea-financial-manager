@@ -159,60 +159,60 @@ export default function Dashboard() {
 
       {/* Resumo do Momento Financeiro */}
       <motion.div variants={itemVariants} className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-4">
-        <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between relative overflow-hidden group">
+        <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between relative overflow-hidden group min-w-0">
           <div className="absolute top-0 right-0 p-6 opacity-3">
             <Wallet className="w-20 h-20" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-on-surface-variant text-xs font-bold uppercase tracking-widest opacity-90 mb-2">Seu saldo</p>
             {loading ? <Skeleton className="h-9 w-40 mb-3" /> : (
-              <div className="text-3xl md:text-4xl font-bold tracking-tight text-on-background leading-tight">
+              <div className="text-2xl md:text-3xl font-bold tracking-tight text-on-background leading-tight truncate">
                 {formatCurrency(metrics.balance)}
               </div>
             )}
           </div>
           <div className="mt-3 flex items-center gap-2">
-            <div className={cn("w-2 h-2 rounded-full", metrics.balance >= 0 ? "bg-emerald-500" : "bg-red-500")} />
-            <span className="text-xs sm:text-[10px] font-semibold text-on-surface-variant">
+            <div className={cn("w-2 h-2 rounded-full shrink-0", metrics.balance >= 0 ? "bg-emerald-500" : "bg-red-500")} />
+            <span className="text-xs sm:text-[10px] font-semibold text-on-surface-variant truncate">
               {metrics.balance >= 0 ? "Tudo OK" : "Atenção"} · Total guardado
             </span>
           </div>
         </Card>
 
-        <Card className="premium-card p-6 flex flex-col justify-between">
-          <div>
+        <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between min-w-0 overflow-hidden">
+          <div className="min-w-0">
             <div className="flex items-center justify-between mb-2">
               <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70">Entrou</p>
-              <ArrowUpRight className="w-4 h-4 text-emerald-600" />
+              <ArrowUpRight className="w-4 h-4 text-emerald-600 shrink-0" />
             </div>
             {loading ? <Skeleton className="h-9 w-32 mb-3" /> : (
-              <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.income)}</div>
+              <div className="text-2xl md:text-3xl font-bold text-on-background truncate">{formatCurrency(metrics.income)}</div>
             )}
           </div>
           <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Este mês</p>
         </Card>
 
-        <Card className="premium-card p-6 flex flex-col justify-between">
-          <div>
+        <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between min-w-0 overflow-hidden">
+          <div className="min-w-0">
             <div className="flex items-center justify-between mb-2">
               <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70">Saiu</p>
-              <ArrowDownRight className="w-4 h-4 text-red-600" />
+              <ArrowDownRight className="w-4 h-4 text-red-600 shrink-0" />
             </div>
             {loading ? <Skeleton className="h-9 w-32 mb-3" /> : (
-              <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.expenses)}</div>
+              <div className="text-2xl md:text-3xl font-bold text-on-background truncate">{formatCurrency(metrics.expenses)}</div>
             )}
           </div>
           <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Este mês</p>
         </Card>
 
-        <Card className="premium-card p-6 flex flex-col justify-between border-amber-100 bg-amber-50/20">
-          <div>
+        <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between border-amber-100 bg-amber-50/20 min-w-0 overflow-hidden">
+          <div className="min-w-0">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70">Contas a pagar</p>
-              <ReceiptText className="w-4 h-4 text-amber-600" />
+              <p className="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest opacity-70 truncate">Contas a pagar</p>
+              <ReceiptText className="w-4 h-4 text-amber-600 shrink-0" />
             </div>
             {loading ? <Skeleton className="h-9 w-32 mb-3" /> : (
-              <div className="text-3xl font-bold text-on-background">{formatCurrency(metrics.pendingExpenses || 0)}</div>
+              <div className="text-2xl md:text-3xl font-bold text-on-background truncate">{formatCurrency(metrics.pendingExpenses || 0)}</div>
             )}
           </div>
           <p className="text-xs sm:text-[10px] text-on-surface-variant font-medium mt-3">Pendentes</p>

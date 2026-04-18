@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export async function GET(
   request: NextRequest,
@@ -95,7 +96,7 @@ export async function PUT(
 
     return NextResponse.json({ success: true, installment });
   } catch (error) {
-    console.error("Update error:", error);
+    logger.error("Invoice update error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Erro ao atualizar" }, { status: 500 });
   }
 }

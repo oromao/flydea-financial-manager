@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[Metrics] Error:", error);
+    logger.error("Metrics error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
@@ -82,7 +83,7 @@ export async function GET(request: NextRequest) {
       period: days,
     });
   } catch (error) {
-    console.error("[Metrics] Error:", error);
+    logger.error("Metrics error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
