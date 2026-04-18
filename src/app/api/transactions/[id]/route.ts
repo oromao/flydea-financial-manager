@@ -72,41 +72,16 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const existing = await prisma.transaction.findFirst({ where: { id, userId: session.user.id } });
-  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
   if (session.user.role !== "ADMIN") {
-    const approval = await prisma.approvalRequest.create({
-      data: {
-        action: "DELETE",
-        entity: "TRANSACTION",
-        entityId: id,
-        payload: { description: existing.description, amount: existing.amount },
-        requestedById: session.user.id,
-        reason: "Exclusão solicitada por usuário não administrador"
-      }
-    });
-
-    prisma.auditLog.create({
-      data: {
-        action: "CREATE",
-        entity: "APPROVAL_REQUEST",
-        entityId: approval.id,
-        details: `Solicitação de exclusão de transação: ${existing.description}`,
-        userId: session.user.id
-      }
-    }).catch(() => {});
-
-    // 202 Accepted: request pending admin approval
-    return NextResponse.json(
-      { approvalRequested: true, approvalId: approval.id, message: "Exclusão solicitada. Aguardando aprovação do administrador." },
-      { status: 202 }
-    );
+    return NextResponse.json({ error: "Apenas administradores podem deletar transações" }, { status: 403 });
   }
+
+  const existing = await prisma.transaction.findFirst({ where: { id } });
+  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   try {
     await prisma.transaction.delete({ where: { id } });
-    prisma.auditLog.create({
+    await prisma.auditLog.create({
       data: {
         action: "DELETE",
         entity: "TRANSACTION",
@@ -114,7 +89,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
         details: `Removida transação: ${existing.description}`,
         userId: session.user.id
       }
-    }).catch(() => {});
+    });
     return NextResponse.json({ success: true });
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "Erro ao excluir";

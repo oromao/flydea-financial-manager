@@ -40,31 +40,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   if (session.user.role !== "ADMIN") {
-    const approval = await prisma.approvalRequest.create({
-      data: {
-        action: "DELETE",
-        entity: "ACCOUNT",
-        entityId: id,
-        payload: { name: existing.name, type: existing.type },
-        requestedById: session.user.id,
-        reason: "Exclusão solicitada por usuário não administrador"
-      }
-    });
-
-    await prisma.auditLog.create({
-      data: {
-        action: "CREATE",
-        entity: "APPROVAL_REQUEST",
-        entityId: approval.id,
-        details: `Solicitação de exclusão de conta: ${existing.name}`,
-        userId: session.user.id
-      }
-    });
-
-    return NextResponse.json({ approvalRequested: true, approvalId: approval.id });
+    return NextResponse.json({ error: "Apenas administradores podem deletar contas" }, { status: 403 });
   }
 
-  // Unlink transactions from this account before deleting
   await prisma.transaction.updateMany({
     where: { accountId: id },
     data: { accountId: null }

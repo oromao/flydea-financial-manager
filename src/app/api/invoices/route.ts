@@ -96,9 +96,11 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(invoice, { status: 201 });
-  } catch (error: any) {
-    logger.error("Invoice creation error", { error: error instanceof Error ? error.message : String(error) });
-    if (error.code === "P2002") {
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error("Invoice creation error", { error: err.message });
+    const prismaError = error as { code?: string };
+    if (prismaError.code === "P2002") {
       return NextResponse.json(
         { error: "Número de nota já existe para este mês" },
         { status: 409 }
