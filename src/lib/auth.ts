@@ -4,6 +4,14 @@ import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 import { checkRateLimit } from "./rate-limit";
 
+interface CustomUser {
+  id: string;
+  email: string;
+  name: string | null;
+  image: string | null;
+  role: string;
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -54,9 +62,10 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = (user as any).role;
-        token.image = (user as any).image;
+        const customUser = user as CustomUser;
+        token.id = customUser.id;
+        token.role = customUser.role;
+        token.image = customUser.image;
       }
       return token;
     },
