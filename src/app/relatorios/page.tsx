@@ -36,7 +36,6 @@ export default function Relatorios() {
         const data = await res.json();
         setTransactions(Array.isArray(data.data) ? data.data : []);
       } catch (e) {
-        console.error(e);
       } finally {
         setLoading(false);
       }

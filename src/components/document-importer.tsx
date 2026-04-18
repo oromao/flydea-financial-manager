@@ -70,7 +70,6 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
       const data = await res.json();
       setCategories(Array.isArray(data) ? data : []);
     } catch (e) {
-      console.error(e);
     }
   }, []);
 
@@ -119,7 +118,6 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
 
       await fetchCategories();
     } catch (e) {
-      console.error(e);
       toast.error("Erro ao processar documento");
     } finally {
       setParsing(false);
@@ -172,7 +170,6 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
       setPreview(null);
       onImportSuccess();
     } catch (e) {
-      console.error(e);
       toast.error("Erro ao importar transação");
     }
   };
@@ -182,7 +179,6 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
     try {
       await fetch(`/api/document-import/confirm?id=${preview.id}`, { method: "DELETE" });
     } catch (e) {
-      console.error(e);
     }
     setPreview(null);
     setFile(null);

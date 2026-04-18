@@ -80,7 +80,6 @@ export function Importer({ onImportSuccess }: ImporterProps) {
         onImportSuccess();
       }
     } catch (e) {
-      console.error(e);
     }
   };
 

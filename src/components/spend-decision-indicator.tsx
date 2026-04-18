@@ -34,7 +34,6 @@ export function SpendDecisionIndicator() {
         setData(result);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
-        console.error("Error fetching spend decision:", err);
       } finally {
         setLoading(false);
       }

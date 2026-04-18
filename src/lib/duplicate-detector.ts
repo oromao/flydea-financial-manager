@@ -13,8 +13,6 @@ export async function checkForDuplicate(
   extractedData: ExtractedDocumentData,
   fileHash: string
 ): Promise<DuplicateCheck> {
-  console.log(`[DuplicateDetector] Checking for duplicates for user ${userId}`);
-
   const existingDocs = await prisma.importedDocument.findMany({
     where: {
       userId,
@@ -36,7 +34,6 @@ export async function checkForDuplicate(
   if (fileHash) {
     const exactMatch = existingDocs.find((d: { fileHash: string | null }) => d.fileHash === fileHash);
     if (exactMatch) {
-      console.log(`[DuplicateDetector] Exact file hash match found: ${exactMatch.id}`);
       return {
         isDuplicate: true,
         duplicateOf: exactMatch.id,
@@ -54,7 +51,6 @@ export async function checkForDuplicate(
       const existingEmitter = data.emitterDocument as string | null;
       const existingAmount = data.totalAmount as number | null;
       if (existingDocNum === docNumber && existingEmitter === emitterDoc && existingAmount === amount) {
-        console.log(`[DuplicateDetector] Document number + CNPJ + amount match found`);
         return {
           isDuplicate: true,
           duplicateOf: doc.id,
@@ -73,7 +69,6 @@ export async function checkForDuplicate(
       const existingAmount = data.totalAmount as number | null;
       const existingDate = data.emissionDate as string | null;
       if (existingDocNum === docNumber && existingAmount === amount && existingDate === emissionDate) {
-        console.log(`[DuplicateDetector] Document + amount + date match found`);
         return {
           isDuplicate: true,
           duplicateOf: doc.id,
@@ -84,7 +79,6 @@ export async function checkForDuplicate(
     }
   }
 
-  console.log(`[DuplicateDetector] No duplicate found`);
   return {
     isDuplicate: false,
     duplicateOf: null,

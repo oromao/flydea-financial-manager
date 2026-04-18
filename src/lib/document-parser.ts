@@ -35,8 +35,6 @@ const NUMERO_DOC_PATTERN = /(?:N[º°]?|N[º°]\s*(?:fe)?|N\.?F\.?e\.?|NFse?|Rec
 const INSTALMENTES_PATTERN = /(\d+)\s*\/\s*(\d+)|(\d+)º?\s*(?:parcela|parcelas?)|(?:(?:pos|parcelas?|x)\s*(?:de\s*)?(\d+))/i;
 
 export function extractDocumentText(buffer: Buffer, mimeType: string): string {
-  console.log(`[DocumentParser] Extracting text from ${mimeType}, ${buffer.length} bytes`);
-
   if (mimeType === "application/pdf") {
     return extractFromPdf(buffer);
   }
@@ -61,12 +59,10 @@ function extractFromPdf(buffer: Buffer): string {
         .replace(/<[^\x20-\x7E\n]/g, "")
         .replace(/\s+/g, " ")
         .slice(0, 50000);
-      console.log(`[DocumentParser] Extracted ${cleaned.length} chars from PDF`);
       return cleaned;
     }
     return "";
   } catch (e) {
-    console.error("[DocumentParser] PDF extraction error:", e);
     return "";
   }
 }
@@ -76,8 +72,6 @@ function extractFromImage(buffer: Buffer, mimeType: string): string {
 }
 
 export function parseDocumentText(text: string): ExtractedDocumentData {
-  console.log(`[DocumentParser] Parsing document text (${text.length} chars)`);
-
   const docType = detectDocumentType(text);
   const docNumber = extractDocumentNumber(text);
   const emitterName = extractEmitterName(text);
