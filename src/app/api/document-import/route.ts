@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { extractDocumentText, parseDocumentText, computeFileHash, ExtractedDocumentData } from "@/lib/document-parser";
 import { classifyDocument } from "@/lib/category-classifier";
 import { checkForDuplicate, DuplicateCheck } from "@/lib/duplicate-detector";
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  console.log("[DocumentImport] Processing document upload");
+  logger.info("DocumentImport: processing upload", { userId: session.user.id });
 
   try {
     const formData = await request.formData();
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer());
     const fileHash = computeFileHash(buffer);
 
-    console.log(`[DocumentImport] File: ${file.name}, ${mimeType}, ${buffer.length} bytes`);
+    logger.info("DocumentImport: file received", { name: file.name, mimeType, bytes: buffer.length });
 
     const text = extractDocumentText(buffer, mimeType);
     if (!text || text.length < 20) {
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log(`[DocumentImport] Created document: ${importedDoc.id}`);
+    logger.info("DocumentImport: document created", { id: importedDoc.id });
 
     return NextResponse.json({
       id: importedDoc.id,
@@ -125,7 +126,7 @@ export async function POST(request: NextRequest) {
       needsReview: classification.confidence < 0.8 || duplicateCheck.isDuplicate,
     });
   } catch (error) {
-    console.error("[DocumentImport] Error:", error);
+    logger.error("DocumentImport error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { error: "Erro ao processar documento" },
       { status: 500 }

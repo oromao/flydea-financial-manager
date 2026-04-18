@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
   try {
@@ -37,7 +38,7 @@ export async function GET(request: Request) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error fetching revenues:", error);
+    logger.error("Error fetching revenues", { error: error instanceof Error ? error.message : String(error) });
     return new Response(
       JSON.stringify({ error: "Failed to fetch revenues" }),
       {
@@ -160,7 +161,7 @@ export async function POST(request: Request) {
       }
     );
   } catch (error) {
-    console.error("Error creating revenue:", error);
+    logger.error("Error creating revenue", { error: error instanceof Error ? error.message : String(error) });
     return new Response(
       JSON.stringify({
         error: "Failed to create revenue",

@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
     confirmAnyway,
   } = body;
 
-  console.log(`[DocumentImportConfirm] User ${session.user.id} confirming document ${documentId}`);
+  logger.info("DocumentImportConfirm: confirming", { userId: session.user.id, documentId });
 
   if (!documentId) {
     return NextResponse.json({ error: "ID do documento obrigatório" }, { status: 400 });
@@ -113,7 +114,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log(`[DocumentImportConfirm] Transaction created: ${transaction.id}`);
+    logger.info("DocumentImportConfirm: transaction created", { transactionId: transaction.id });
 
     return NextResponse.json({
       success: true,
@@ -127,7 +128,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[DocumentImportConfirm] Error:", error);
+    logger.error("DocumentImportConfirm error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { error: "Erro ao criar transação" },
       { status: 500 }

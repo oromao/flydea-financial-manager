@@ -88,6 +88,10 @@ export async function POST(request: NextRequest) {
 
   const { type, description, categoryId, amount, date, dueDate, paidAt, amountPaid, observations, frequency, paymentStatus, attachmentUrl, blobUrl, accountId, tagIds } = parsed.data;
 
+  if (!categoryId) {
+    return NextResponse.json({ error: "Categoria obrigatória" }, { status: 400 });
+  }
+
   const transaction = await prisma.transaction.create({
     data: {
       type,

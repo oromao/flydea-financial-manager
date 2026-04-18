@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import {
   computeWeeklyForecast,
   computeCashflowMetrics,
@@ -104,7 +105,7 @@ export async function GET(request: Request) {
       }
     );
   } catch (error) {
-    console.error("Error fetching weekly cashflow:", error);
+    logger.error("Error fetching weekly cashflow", { error: error instanceof Error ? error.message : String(error) });
     return new Response(
       JSON.stringify({
         error: "Failed to fetch weekly cashflow",

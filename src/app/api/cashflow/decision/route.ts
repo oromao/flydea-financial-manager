@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import {
   computeWeeklyForecast,
   computeSpendDecision,
@@ -88,7 +89,7 @@ export async function GET(request: Request) {
       }
     );
   } catch (error) {
-    console.error("Error calculating spend decision:", error);
+    logger.error("Error calculating spend decision", { error: error instanceof Error ? error.message : String(error) });
     return new Response(
       JSON.stringify({
         error: "Failed to calculate spend decision",
