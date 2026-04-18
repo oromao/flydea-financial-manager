@@ -87,7 +87,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       }
     });
 
-    await prisma.auditLog.create({
+    prisma.auditLog.create({
       data: {
         action: "CREATE",
         entity: "APPROVAL_REQUEST",
@@ -95,22 +95,29 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
         details: `Solicitação de exclusão de transação: ${existing.description}`,
         userId: session.user.id
       }
-    });
+    }).catch(() => {});
 
-    return NextResponse.json({ approvalRequested: true, approvalId: approval.id });
+    // 202 Accepted: request pending admin approval
+    return NextResponse.json(
+      { approvalRequested: true, approvalId: approval.id, message: "Exclusão solicitada. Aguardando aprovação do administrador." },
+      { status: 202 }
+    );
   }
 
-  await prisma.transaction.delete({ where: { id } });
-
-  await prisma.auditLog.create({
-    data: {
-      action: "DELETE",
-      entity: "TRANSACTION",
-      entityId: id,
-      details: `Removida transação: ${existing.description}`,
-      userId: session.user.id
-    }
-  });
-
-  return NextResponse.json({ success: true });
+  try {
+    await prisma.transaction.delete({ where: { id } });
+    prisma.auditLog.create({
+      data: {
+        action: "DELETE",
+        entity: "TRANSACTION",
+        entityId: id,
+        details: `Removida transação: ${existing.description}`,
+        userId: session.user.id
+      }
+    }).catch(() => {});
+    return NextResponse.json({ success: true });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : "Erro ao excluir";
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }

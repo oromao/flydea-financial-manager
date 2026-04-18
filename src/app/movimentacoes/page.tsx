@@ -18,6 +18,8 @@ import { FileUp, Cloud, Link as LinkIcon, AlertCircle, CheckCircle2, Clock3 } fr
 import { motion } from "framer-motion";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
+import { formatZodError } from "@/lib/format-errors";
+import { toLocalDateInput } from "@/lib/date-utils";
 
 export default function Movimentacoes() {
   const toast = useToast();
@@ -127,45 +129,41 @@ export default function Movimentacoes() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!description.trim()) return toast.error("Descrição é obrigatória");
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) return toast.error("Valor inválido");
+    if (!date) return toast.error("Data é obrigatória");
+
     const payload = {
       type,
-      description,
-      categoryId,
-      amount: parseFloat(amount),
+      description: description.trim(),
+      categoryId: categoryId || null,
+      amount: parsedAmount,
       date,
-      frequency,
-      paymentStatus,
-      dueDate,
-      paidAt,
-      attachmentUrl,
-      blobUrl
+      frequency: frequency || "NONE",
+      paymentStatus: paymentStatus || "PAID",
+      dueDate: dueDate || null,
+      paidAt: paidAt || null,
+      attachmentUrl: attachmentUrl || null,
+      blobUrl: blobUrl || null,
     };
 
     try {
       const url = editingId ? `/api/transactions/${editingId}` : "/api/transactions";
       const method = editingId ? "PUT" : "POST";
-      
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
-      
-      if (res.ok) {
-        toast.success(editingId ? "Registro atualizado!" : "Lançamento confirmado!");
-        setOpen(false);
-        resetForm();
-        fetchTransactions();
-        fetchStats();
-      } else {
-        const errorData = await res.json();
-        const msg = typeof errorData.error === 'object'
-          ? JSON.stringify(errorData.error)
-          : (errorData.error || "Erro ao salvar o lançamento");
-        toast.error(msg);
-      }
-    } catch(e) {
-      console.error(e);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { toast.error(formatZodError(data.error)); return; }
+      toast.success(editingId ? "Registro atualizado!" : "Lançamento confirmado!");
+      setOpen(false);
+      resetForm();
+      await Promise.all([fetchTransactions(), fetchStats()]);
+    } catch (e) {
+      console.error("[handleSubmit]", e);
       toast.error("Falha na comunicação com o servidor");
     }
   };
@@ -173,19 +171,25 @@ export default function Movimentacoes() {
   const deleteTransaction = async (id: string) => {
     const confirmed = await confirm({
       title: "Excluir movimentação",
-      message: "Confirmar exclusão desta movimentação?",
+      message: "MEMBERs criam solicitação de aprovação. ADMINs excluem diretamente.",
       confirmLabel: "Excluir",
-      variant: "danger"
+      variant: "danger",
     });
     if (!confirmed) return;
     try {
-      await fetch(`/api/transactions/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/transactions/${id}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 202 || data.approvalRequested) {
+        toast.info(data.message || "Exclusão solicitada. Aguardando aprovação.");
+        return;
+      }
+      if (!res.ok) throw new Error(data.error || `Erro ${res.status}`);
       toast.success("Movimentação excluída com sucesso!");
-      fetchTransactions();
-      fetchStats();
-    } catch(e) {
-      console.error(e);
-      toast.error("Erro ao excluir movimentação");
+      await Promise.all([fetchTransactions(), fetchStats()]);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Erro ao excluir";
+      console.error("[deleteTransaction]", e);
+      toast.error(msg);
     }
   };
 
@@ -212,16 +216,17 @@ export default function Movimentacoes() {
   };
 
   const handleEdit = (t: any) => {
+    if (!t?.id) { toast.error("Transação inválida"); return; }
     setEditingId(t.id);
-    setType(t.type);
-    setDescription(t.description);
-    setCategoryId(t.categoryId);
-    setAmount(t.amount.toString());
-    setDate(t.date.split("T")[0]);
-    setFrequency(t.frequency || "NONE");
-    setPaymentStatus(t.paymentStatus || "PAID");
-    setDueDate(t.dueDate ? t.dueDate.split("T")[0] : "");
-    setPaidAt(t.paidAt ? t.paidAt.split("T")[0] : "");
+    setType(t.type || "EXPENSE");
+    setDescription(t.description || "");
+    setCategoryId(t.categoryId || "");
+    setAmount(t.amount != null ? String(t.amount) : "");
+    setDate(toLocalDateInput(t.date));
+    setFrequency(t.frequency ?? "NONE");
+    setPaymentStatus(t.paymentStatus ?? "PAID");
+    setDueDate(toLocalDateInput(t.dueDate));
+    setPaidAt(toLocalDateInput(t.paidAt));
     setAttachmentUrl(t.attachmentUrl || "");
     setBlobUrl(t.blobUrl || "");
     setOpen(true);
@@ -404,27 +409,26 @@ export default function Movimentacoes() {
                         aria-label="Anexar comprovante"
                         tabIndex={-1}
                         onChange={async (e) => {
-                          if (e.target.files?.[0]) {
-                            setUploading(true);
-                            try {
-                              const f = e.target.files[0];
-                              const formData = new FormData();
-                              formData.append("file", f);
-                              
-                              const res = await fetch(`/api/upload?filename=${encodeURIComponent(f.name)}`, {
-                                method: 'POST',
-                                body: formData,
-                              });
-                              
-                              if (!res.ok) throw new Error("Upload failed");
-                              const newBlob = await res.json();
-                              setBlobUrl(newBlob.url);
-                              setAttachmentUrl(""); 
-                            } catch (error) {
-                              console.error(error);
-                            } finally {
-                              setUploading(false);
-                            }
+                          if (!e.target.files?.[0]) return;
+                          setUploading(true);
+                          try {
+                            const f = e.target.files[0];
+                            const formData = new FormData();
+                            formData.append("file", f);
+                            const res = await fetch(`/api/upload?filename=${encodeURIComponent(f.name)}`, {
+                              method: "POST",
+                              body: formData,
+                            });
+                            if (!res.ok) throw new Error("Upload falhou");
+                            const newBlob = await res.json();
+                            setBlobUrl(newBlob.url);
+                            setAttachmentUrl("");
+                            toast.success("Arquivo anexado!");
+                          } catch (error) {
+                            console.error("[upload]", error);
+                            toast.error("Falha no upload. Tente novamente.");
+                          } finally {
+                            setUploading(false);
                           }
                         }}
                       />
