@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "[ -z \"$DATABASE_URL\" ] && export DATABASE_URL='file:./prisma/dev.db' || true; next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate",
+    "postinstall": "[ -z \"$DATABASE_URL\" ] && export DATABASE_URL='file:./prisma/dev.db' || true; prisma generate",
     "test:e2e": "playwright test",
     "test:e2e:remote": "playwright test --config=playwright.remote.config.ts",
     "test": "vitest run",
