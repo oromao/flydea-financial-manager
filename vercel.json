@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "buildCommand": "[ -z \"$DATABASE_URL\" ] && export DATABASE_URL='file:./prisma/prod.db' || true; npx prisma generate && next build",
+  "buildCommand": "npx prisma generate && npx prisma db push && next build",
   "installCommand": "npm install",
   "regions": ["gru1"],
   "crons": [
