@@ -2,12 +2,51 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { format, isBefore, isAfter, addDays } from "date-fns";
-import { AlertTriangle, CheckCircle2, Clock3, ArrowUpRight, BadgeDollarSign, CalendarDays } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock3, ArrowUpRight, BadgeDollarSign, CalendarDays, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+
+function QuickPayButton({
+  transactionId,
+  isPaid,
+  onStatusChange,
+}: {
+  transactionId: string;
+  isPaid: boolean;
+  onStatusChange: (id: string, status: "PAID" | "PENDING") => void;
+}) {
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    setLoading(true);
+    try {
+      const nextStatus = isPaid ? "PENDING" : "PAID";
+      await onStatusChange(transactionId, nextStatus);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      disabled={loading}
+      className="flex-shrink-0 p-2 rounded-lg transition-colors active:scale-[0.98] hover:bg-surface-variant disabled:opacity-50"
+      aria-label={isPaid ? "Marcar como pendente" : "Marcar como paga"}
+    >
+      {loading ? (
+        <Loader2 className="w-5 h-5 text-on-surface-variant animate-spin" />
+      ) : (
+        <CheckCircle2
+          className={`w-5 h-5 ${isPaid ? "text-emerald-600 fill-emerald-600" : "text-on-surface-variant"}`}
+        />
+      )}
+    </button>
+  );
+}
 
 export default function ContasAPagar() {
   const toast = useToast();
@@ -163,8 +202,9 @@ export default function ContasAPagar() {
           ) : (
             <div className="space-y-3">
               {filteredOverdue.map((t) => (
-                <div key={t.id} className="flex items-center justify-between gap-4 p-4 rounded-xl border border-red-100 bg-red-50/20">
-                  <div className="min-w-0">
+                <div key={t.id} className="flex items-center justify-between gap-2 p-4 rounded-xl border border-red-100 bg-red-50/20">
+                  <QuickPayButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
+                  <div className="min-w-0 flex-1">
                     <div className="font-semibold text-on-background truncate">{t.description}</div>
                     <div className="text-xs text-on-surface-variant flex items-center gap-2 mt-1">
                       <CalendarDays className="w-3.5 h-3.5" />
@@ -216,8 +256,9 @@ export default function ContasAPagar() {
           ) : (
             <div className="space-y-3">
               {filteredUpcoming.map((t) => (
-                <div key={t.id} className="flex items-center justify-between gap-4 p-4 rounded-xl border border-amber-100 bg-amber-50/20">
-                  <div className="min-w-0">
+                <div key={t.id} className="flex items-center justify-between gap-2 p-4 rounded-xl border border-amber-100 bg-amber-50/20">
+                  <QuickPayButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
+                  <div className="min-w-0 flex-1">
                     <div className="font-semibold text-on-background truncate">{t.description}</div>
                     <div className="text-xs text-on-surface-variant flex items-center gap-2 mt-1">
                       <CalendarDays className="w-3.5 h-3.5" />
@@ -269,8 +310,9 @@ export default function ContasAPagar() {
           ) : (
             <div className="space-y-3">
               {filteredNoDate.map((t) => (
-                <div key={t.id} className="flex items-center justify-between gap-4 p-4 rounded-xl border border-outline/10 bg-surface">
-                  <div className="min-w-0">
+                <div key={t.id} className="flex items-center justify-between gap-2 p-4 rounded-xl border border-outline/10 bg-surface">
+                  <QuickPayButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
+                  <div className="min-w-0 flex-1">
                     <div className="font-semibold text-on-background truncate">{t.description}</div>
                     <div className="text-xs text-on-surface-variant mt-1">Sem data de vencimento</div>
                   </div>
