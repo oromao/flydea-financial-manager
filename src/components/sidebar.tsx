@@ -7,6 +7,10 @@ import { LayoutDashboard, ReceiptText, BarChart3, LogOut, Wallet, UserCircle, Ro
 import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { BottomNav } from "./bottom-nav";
+import { DarkModeToggle } from "./dark-mode-toggle";
+import dynamic from "next/dynamic";
+
+const DarkModeToggleClient = dynamic(() => import("./dark-mode-toggle").then(mod => ({ default: mod.DarkModeToggle })), { ssr: false });
 
 const navItems = [
   { name: "Início", href: "/", icon: LayoutDashboard },
@@ -156,12 +160,15 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
           </div>
           <span className="text-sm font-bold text-on-background tracking-tighter uppercase italic">FLYDEA</span>
         </div>
-        <div className="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden relative">
+        <div className="flex items-center gap-1">
+          <DarkModeToggleClient />
+          <div className="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden relative">
           {session?.user?.image ? (
             <img src={(session.user.image) as string} alt="Foto do perfil" className="h-full w-full object-cover" />
           ) : (
             <UserCircle className="w-7 h-7 text-on-surface-variant" />
           )}
+        </div>
         </div>
       </header>
 
@@ -213,6 +220,10 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
             <LogOut className="w-4 h-4" />
             Sair
           </button>
+
+          <div className="flex items-center justify-center pt-2 border-t border-outline/20">
+            <DarkModeToggleClient />
+          </div>
         </div>
       </aside>
 
