@@ -297,7 +297,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-[10px] uppercase text-on-surface-variant/60">Valor</p>
                     <p className="font-bold text-on-background">{formatCurrency(preview.extractedData.totalAmount)}</p>
@@ -399,7 +399,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-on-surface-variant ml-1">Valor (R$)</Label>
                   <Input
@@ -421,7 +421,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-on-surface-variant ml-1">Categoria</Label>
                   <Select

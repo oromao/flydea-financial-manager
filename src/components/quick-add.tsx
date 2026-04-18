@@ -141,7 +141,7 @@ export function QuickAdd({ categories, onSuccess }: QuickAddProps) {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-xs font-semibold text-on-surface-variant ml-1">Categoria</Label>
                 <Select value={categoryId || ""} onValueChange={(val) => setCategoryId(val)}>

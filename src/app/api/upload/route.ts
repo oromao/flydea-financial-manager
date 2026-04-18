@@ -15,16 +15,33 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.VERCEL_BLOB_READ_WRITE_TOKEN;
 
+  const validMimeTypes = ["application/pdf", "image/png", "image/jpeg", "image/webp", "text/plain"];
+  const validExtensions = [".pdf", ".png", ".jpg", ".jpeg", ".webp", ".txt"];
+
+  // Validate MIME type and extension
+  const contentType = request.headers.get("content-type") || "";
+  const safeFilename = filename.replace(/[^a-z0-9.]/gi, "_").toLowerCase();
+  const fileExt = path.extname(safeFilename);
+
+  if (!validExtensions.includes(fileExt)) {
+    return NextResponse.json({ error: "Tipo de arquivo não permitido" }, { status: 400 });
+  }
+
   // If Vercel Blob token is missing and we are in development, save locally
   if (!token && process.env.NODE_ENV === "development") {
     try {
-      const contentType = request.headers.get("content-type") || "";
       let fileBuffer: Buffer;
 
       if (contentType.includes("multipart/form-data")) {
         const formData = await request.formData();
         const file = formData.get("file") as File;
         if (!file) throw new Error("No file in form data");
+        if (!validMimeTypes.includes(file.type)) {
+          throw new Error("Tipo de arquivo não permitido");
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          throw new Error("Arquivo muito grande (máximo 10MB)");
+        }
         fileBuffer = Buffer.from(await file.arrayBuffer());
       } else {
         fileBuffer = Buffer.from(await request.arrayBuffer());
@@ -33,7 +50,6 @@ export async function POST(request: Request): Promise<NextResponse> {
       const uploadDir = path.join(process.cwd(), "public", "uploads");
       if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-      const safeFilename = filename.replace(/[^a-z0-9.]/gi, "_").toLowerCase();
       const filePath = path.join(uploadDir, safeFilename);
       fs.writeFileSync(filePath, fileBuffer);
 
@@ -52,18 +68,23 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   // Production / Token present: Use Vercel Blob
   try {
-    const contentType = request.headers.get("content-type") || "";
     let body: any;
 
     if (contentType.includes("multipart/form-data")) {
       const formData = await request.formData();
       const file = formData.get("file") as File;
+      if (!validMimeTypes.includes(file.type)) {
+        return NextResponse.json({ error: "Tipo de arquivo não permitido" }, { status: 400 });
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        return NextResponse.json({ error: "Arquivo muito grande (máximo 10MB)" }, { status: 400 });
+      }
       body = file;
     } else {
       body = request.body;
     }
 
-    const blob = await put(filename, body, {
+    const blob = await put(safeFilename, body, {
       access: "public",
       token
     });

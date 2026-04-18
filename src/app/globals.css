@@ -8,13 +8,13 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  /* Premium Fintech Palette (Institucional + Contraste) */
-  --color-primary: #1D1D1F; /* Charcoal preto */
+  /* Premium Fintech Palette - Light Mode (Default) */
+  --color-primary: #1D1D1F;
   --color-on-primary: #FFFFFF;
   --color-primary-container: #F5F5F7;
   --color-on-primary-container: #1D1D1F;
 
-  --color-secondary: #0071E3; /* Azul institucional */
+  --color-secondary: #0071E3;
   --color-on-secondary: #FFFFFF;
   --color-secondary-container: #E8F2FF;
   --color-on-secondary-container: #0071E3;
@@ -44,6 +44,50 @@
     from { height: var(--radix-accordion-content-height); }
     to { height: 0; }
   }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:has(.dark) {
+    --color-primary: #F5F5F7;
+    --color-on-primary: #1D1D1F;
+    --color-primary-container: #2C2C2E;
+    --color-on-primary-container: #F5F5F7;
+
+    --color-secondary: #64B5F6;
+    --color-on-secondary: #1D1D1F;
+    --color-secondary-container: #1E3A5F;
+    --color-on-secondary-container: #64B5F6;
+
+    --color-surface: #1D1D1F;
+    --color-on-surface: #F5F5F7;
+    --color-surface-variant: #2C2C2E;
+    --color-on-surface-variant: #A5A5A7;
+
+    --color-outline: #505052;
+    --color-background: #0A0A0A;
+    --color-on-background: #F5F5F7;
+  }
+}
+
+.dark {
+  --color-primary: #F5F5F7;
+  --color-on-primary: #1D1D1F;
+  --color-primary-container: #2C2C2E;
+  --color-on-primary-container: #F5F5F7;
+
+  --color-secondary: #64B5F6;
+  --color-on-secondary: #1D1D1F;
+  --color-secondary-container: #1E3A5F;
+  --color-on-secondary-container: #64B5F6;
+
+  --color-surface: #1D1D1F;
+  --color-on-surface: #F5F5F7;
+  --color-surface-variant: #2C2C2E;
+  --color-on-surface-variant: #A5A5A7;
+
+  --color-outline: #505052;
+  --color-background: #0A0A0A;
+  --color-on-background: #F5F5F7;
 }
 
 @layer base {
