@@ -73,7 +73,7 @@ model Transaction {
   recurrenceDate DateTime?
   observations  String?
   frequency     String           @default("NONE")
-  paymentStatus String           @default("PAID")
+  paymentStatus String           @default("PENDING")
   attachmentUrl String?
   blobUrl       String?
   status        String           @default("CONFIRMED")
