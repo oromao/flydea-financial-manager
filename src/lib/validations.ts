@@ -1,20 +1,35 @@
 import { z } from "zod";
 
+const optionalDate = z
+  .string().optional().nullable()
+  .transform((v) => (v === "" || v === null ? undefined : v))
+  .refine((v) => v === undefined || !isNaN(Date.parse(v)), "Data inválida");
+
+const optionalUuid = z
+  .string().optional().nullable()
+  .transform((v) => (v === "" || v === null ? undefined : v))
+  .refine(
+    (v) =>
+      v === undefined ||
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v),
+    "ID inválido"
+  );
+
 export const TransactionSchema = z.object({
   type: z.enum(["INCOME", "EXPENSE"]),
   description: z.string().min(1, "Descrição obrigatória").max(255),
-  categoryId: z.string().uuid("Categoria inválida"),
+  categoryId: optionalUuid,
   amount: z.coerce.number().positive("Valor deve ser positivo"),
   date: z.string().refine((d) => !isNaN(Date.parse(d)), "Data inválida"),
-  dueDate: z.string().refine((d) => !isNaN(Date.parse(d)), "Data inválida").optional().or(z.literal("")),
-  paidAt: z.string().refine((d) => !isNaN(Date.parse(d)), "Data inválida").optional().or(z.literal("")),
+  dueDate: optionalDate,
+  paidAt: optionalDate,
   amountPaid: z.coerce.number().min(0).optional(),
   observations: z.string().max(1000).optional(),
   frequency: z.enum(["NONE", "MONTHLY", "WEEKLY"]).default("NONE"),
   paymentStatus: z.enum(["PAID", "PENDING"]).default("PAID"),
-  attachmentUrl: z.string().url().optional().or(z.literal("")),
-  blobUrl: z.string().url().optional().or(z.literal("")),
-  accountId: z.string().uuid().optional().or(z.literal("")),
+  attachmentUrl: z.string().url().optional().or(z.literal("")).nullable(),
+  blobUrl: z.string().url().optional().or(z.literal("")).nullable(),
+  accountId: optionalUuid,
   tagIds: z.array(z.string().uuid()).optional(),
 });
 
