@@ -167,7 +167,7 @@ export default function Movimentacoes() {
   const deleteTransaction = async (id: string) => {
     const confirmed = await confirm({
       title: "Excluir movimentação",
-      message: "MEMBERs criam solicitação de aprovação. ADMINs excluem diretamente.",
+      message: "Tem certeza que deseja excluir esta movimentação? Esta ação não pode ser desfeita.",
       confirmLabel: "Excluir",
       variant: "danger",
     });
@@ -175,11 +175,14 @@ export default function Movimentacoes() {
     try {
       const res = await fetch(`/api/transactions/${id}`, { method: "DELETE" });
       const data = await res.json().catch(() => ({}));
-      if (res.status === 202 || data.approvalRequested) {
-        toast.info(data.message || "Exclusão solicitada. Aguardando aprovação.");
+
+      if (res.status === 403) {
+        toast.error("Apenas administradores podem excluir transações");
         return;
       }
+
       if (!res.ok) throw new Error(data.error || `Erro ${res.status}`);
+
       toast.success("Movimentação excluída com sucesso!");
       await Promise.all([fetchTransactions(), fetchStats()]);
     } catch (e: unknown) {
@@ -406,19 +409,40 @@ export default function Movimentacoes() {
                           setUploading(true);
                           try {
                             const f = e.target.files[0];
+
+                            if (f.size > 20 * 1024 * 1024) {
+                              toast.error("Arquivo muito grande (máximo 20MB)");
+                              setUploading(false);
+                              return;
+                            }
+
                             const formData = new FormData();
                             formData.append("file", f);
-                            const res = await fetch(`/api/upload?filename=${encodeURIComponent(f.name)}`, {
+
+                            const filename = `comprovante_${Date.now()}.${f.name.split('.').pop() || 'pdf'}`;
+                            const res = await fetch(`/api/upload?filename=${encodeURIComponent(filename)}`, {
                               method: "POST",
                               body: formData,
                             });
-                            if (!res.ok) throw new Error("Upload falhou");
+
+                            if (!res.ok) {
+                              const error = await res.json().catch(() => ({}));
+                              throw new Error(error.error || `Upload falhou com status ${res.status}`);
+                            }
+
                             const newBlob = await res.json();
-                            setBlobUrl(newBlob.url);
+                            const uploadUrl = newBlob.url || newBlob.downloadUrl || newBlob.pathname;
+
+                            if (!uploadUrl) {
+                              throw new Error("Resposta inválida do servidor");
+                            }
+
+                            setBlobUrl(uploadUrl);
                             setAttachmentUrl("");
-                            toast.success("Arquivo anexado!");
-                          } catch (error) {
-                            toast.error("Falha no upload. Tente novamente.");
+                            toast.success("Arquivo anexado com sucesso!");
+                          } catch (error: unknown) {
+                            const msg = error instanceof Error ? error.message : "Falha no upload";
+                            toast.error(msg);
                           } finally {
                             setUploading(false);
                           }

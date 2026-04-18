@@ -91,9 +91,26 @@ export default function Contas() {
   const handleDelete = async (id: string) => {
     const ok = await confirm({ title: "Excluir conta", message: "Tem certeza que deseja remover esta conta? As transações vinculadas serão desvinculadas.", confirmLabel: "Excluir", variant: "danger" });
     if (!ok) return;
-    const res = await fetch(`/api/accounts/${id}`, { method: "DELETE" });
-    if (res.ok) { toast.success("Conta removida!"); fetchAccounts(); }
-    else toast.error("Erro ao remover conta");
+    try {
+      const res = await fetch(`/api/accounts/${id}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+
+      if (res.status === 403) {
+        toast.error("Apenas administradores podem excluir contas");
+        return;
+      }
+
+      if (!res.ok) {
+        toast.error(data.error || "Erro ao remover conta");
+        return;
+      }
+
+      toast.success("Conta removida!");
+      fetchAccounts();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Erro ao remover conta";
+      toast.error(msg);
+    }
   };
 
   const formatCurrency = (v: number) =>

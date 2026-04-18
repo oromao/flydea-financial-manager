@@ -107,18 +107,28 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
       exit={{ opacity: 0, y: 10, scale: 0.95 }}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
       role="status"
-      className="pointer-events-auto w-full glass-card rounded-2xl overflow-hidden border-white/10"
+      className="pointer-events-auto w-full rounded-2xl overflow-hidden border-2 shadow-lg"
+      style={{
+        backgroundColor: toast.type === "success" ? "rgba(16, 185, 129, 0.95)" :
+                       toast.type === "error" ? "rgba(220, 38, 38, 0.95)" :
+                       toast.type === "undo" ? "rgba(217, 119, 6, 0.95)" :
+                       "rgba(3, 102, 214, 0.95)",
+        borderColor: toast.type === "success" ? "rgba(5, 150, 105, 0.5)" :
+                    toast.type === "error" ? "rgba(153, 27, 27, 0.5)" :
+                    toast.type === "undo" ? "rgba(146, 64, 14, 0.5)" :
+                    "rgba(12, 74, 110, 0.5)",
+      }}
     >
       <div className="flex items-center gap-3 px-4 py-3">
         {icons[toast.type]}
-        <span className="flex-1 text-sm text-on-surface font-medium">{toast.message}</span>
+        <span className="flex-1 text-sm text-white font-semibold">{toast.message}</span>
         {toast.type === "undo" && toast.onUndo && (
           <button
             onClick={() => {
               toast.onUndo!();
               onDismiss(toast.id);
             }}
-            className="text-amber-400 text-xs font-bold uppercase tracking-wider hover:text-amber-300 transition-colors px-2 py-1 rounded-lg hover:bg-amber-400/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+            className="text-white text-xs font-bold uppercase tracking-wider hover:text-white/80 transition-colors px-2 py-1 rounded-lg hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             Desfazer
           </button>
@@ -126,12 +136,12 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
         <button
           onClick={() => onDismiss(toast.id)}
           aria-label="Fechar notificação"
-          className="text-on-surface-variant/50 hover:text-on-surface-variant transition-colors p-1 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="text-white/70 hover:text-white transition-colors p-1 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
-      <div className="h-0.5 bg-white/5">
+      <div className="h-1 bg-black/20">
         <div
           className={`h-full transition-none ${barColors[toast.type]}`}
           style={{ width: `${progress}%` }}

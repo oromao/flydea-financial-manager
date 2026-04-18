@@ -15,16 +15,21 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.VERCEL_BLOB_READ_WRITE_TOKEN;
 
-  const validMimeTypes = ["application/pdf", "image/png", "image/jpeg", "image/webp", "text/plain"];
-  const validExtensions = [".pdf", ".png", ".jpg", ".jpeg", ".webp", ".txt"];
+  // More flexible MIME types and extensions
+  const validMimeTypes = ["application/pdf", "image/png", "image/jpeg", "image/jpg", "image/webp", "text/plain", "image/heic", "image/heif"];
+  const validExtensions = [".pdf", ".png", ".jpg", ".jpeg", ".webp", ".txt", ".heic", ".heif"];
 
-  // Validate MIME type and extension
+  // Validate extension
   const contentType = request.headers.get("content-type") || "";
-  const safeFilename = filename.replace(/[^a-z0-9.]/gi, "_").toLowerCase();
-  const fileExt = path.extname(safeFilename);
+  let safeFilename = filename;
 
+  // Only sanitize dangerous characters, keep dots and dashes
+  safeFilename = safeFilename.replace(/[^a-z0-9._-]/gi, "_").toLowerCase();
+
+  // Ensure extension is preserved
+  const fileExt = path.extname(safeFilename);
   if (!validExtensions.includes(fileExt)) {
-    return NextResponse.json({ error: "Tipo de arquivo não permitido" }, { status: 400 });
+    return NextResponse.json({ error: `Tipo de arquivo não permitido. Extensão: ${fileExt}` }, { status: 400 });
   }
 
   // If Vercel Blob token is missing and we are in development, save locally
@@ -36,12 +41,12 @@ export async function POST(request: Request): Promise<NextResponse> {
         const formData = await request.formData();
         const file = formData.get("file") as File;
         if (!file) throw new Error("No file in form data");
-        if (!validMimeTypes.includes(file.type)) {
-          throw new Error("Tipo de arquivo não permitido");
+
+        // Validate file size (more lenient with MIME types)
+        if (file.size > 20 * 1024 * 1024) {
+          throw new Error("Arquivo muito grande (máximo 20MB)");
         }
-        if (file.size > 10 * 1024 * 1024) {
-          throw new Error("Arquivo muito grande (máximo 10MB)");
-        }
+
         fileBuffer = Buffer.from(await file.arrayBuffer());
       } else {
         fileBuffer = Buffer.from(await request.arrayBuffer());
@@ -53,16 +58,19 @@ export async function POST(request: Request): Promise<NextResponse> {
       const filePath = path.join(uploadDir, safeFilename);
       fs.writeFileSync(filePath, fileBuffer);
 
-      logger.info("Local upload success", { path: `/uploads/${safeFilename}` });
+      const uploadUrl = `/uploads/${safeFilename}`;
+      logger.info("Local upload success", { path: uploadUrl, size: fileBuffer.length });
       return NextResponse.json({
-        url: `/uploads/${safeFilename}`,
-        downloadUrl: `/uploads/${safeFilename}`,
+        url: uploadUrl,
+        downloadUrl: uploadUrl,
         pathname: safeFilename,
         contentType: contentType,
+        size: fileBuffer.length,
       });
     } catch (error) {
-      logger.error("Local upload error", { error: error instanceof Error ? error.message : String(error) });
-      return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      logger.error("Local upload error", { error: errorMsg, filename: safeFilename });
+      return NextResponse.json({ error: errorMsg }, { status: 500 });
     }
   }
 
@@ -73,11 +81,9 @@ export async function POST(request: Request): Promise<NextResponse> {
     if (contentType.includes("multipart/form-data")) {
       const formData = await request.formData();
       const file = formData.get("file") as File;
-      if (!validMimeTypes.includes(file.type)) {
-        return NextResponse.json({ error: "Tipo de arquivo não permitido" }, { status: 400 });
-      }
-      if (file.size > 10 * 1024 * 1024) {
-        return NextResponse.json({ error: "Arquivo muito grande (máximo 10MB)" }, { status: 400 });
+
+      if (file.size > 20 * 1024 * 1024) {
+        return NextResponse.json({ error: "Arquivo muito grande (máximo 20MB)" }, { status: 400 });
       }
       body = file;
     } else {
@@ -89,8 +95,11 @@ export async function POST(request: Request): Promise<NextResponse> {
       token
     });
 
+    logger.info("Vercel blob upload success", { url: blob.url });
     return NextResponse.json(blob);
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    logger.error("Vercel blob upload error", { error: errorMsg });
+    return NextResponse.json({ error: errorMsg }, { status: 500 });
   }
 }

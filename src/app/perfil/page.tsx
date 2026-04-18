@@ -52,15 +52,29 @@ export default function PerfilPage() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await fetch(`/api/upload?filename=avatar-${Date.now()}-${file.name}`, {
+      const filename = `avatar_${Date.now()}.${file.name.split('.').pop() || 'jpg'}`;
+      const res = await fetch(`/api/upload?filename=${encodeURIComponent(filename)}`, {
         method: "POST",
         body: formData,
       });
-      if (!res.ok) throw new Error("Upload failed");
+
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({}));
+        throw new Error(error.error || `Upload failed with status ${res.status}`);
+      }
+
       const data = await res.json();
-      if (data.url) setAvatarUrl(data.url);
-    } catch (e) {
-      toast.error("Erro ao enviar foto. Tente novamente.");
+      const uploadUrl = data.url || data.downloadUrl || data.pathname;
+
+      if (!uploadUrl) {
+        throw new Error("Resposta inválida do servidor");
+      }
+
+      setAvatarUrl(uploadUrl);
+      toast.success("Foto atualizada com sucesso!");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Erro ao enviar foto";
+      toast.error(msg);
     } finally {
       setUploading(false);
     }
