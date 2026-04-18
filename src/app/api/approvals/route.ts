@@ -58,10 +58,10 @@ export async function POST(request: NextRequest) {
 
   await prisma.auditLog.create({
     data: {
-      action: action === "APPROVE" ? "UPDATE" : "DELETE",
+      action: "UPDATE",
       entity: "APPROVAL_REQUEST",
       entityId: approvalId,
-      details: `${action === "APPROVE" ? "Aprovada" : "Rejeitada"} solicitação de ${approval.entity}`,
+      details: `${action === "APPROVE" ? "Aprovada" : "Rejeitada"} solicitação de deletar ${approval.entity}`,
       userId: session.user.id,
     }
   });

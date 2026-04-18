@@ -53,7 +53,6 @@ export default function Dashboard() {
           setCategories(Array.isArray(catData) ? catData : []);
         }
       } catch (e) {
-        console.error("Failed to load metrics");
       } finally {
         setLoading(false);
       }

@@ -53,7 +53,6 @@ export default function Recorrencias() {
       const data = await res.json();
       setRecurrences(data);
     } catch (e) {
-      console.error(e);
     } finally {
       setLoading(false);
     }
@@ -71,7 +70,6 @@ export default function Recorrencias() {
         fetchRecurrences();
       }
     } catch (e) {
-      console.error(e);
       toast.error("Erro ao atualizar recorrência");
     }
   };
@@ -93,7 +91,6 @@ export default function Recorrencias() {
         toast.error("Erro ao excluir recorrência");
       }
     } catch (e) {
-      console.error(e);
       toast.error("Falha ao excluir recorrência");
     }
   };
@@ -105,7 +102,6 @@ export default function Recorrencias() {
       setCategories(data);
       if (data.length > 0) setCategoryId(data[0].id);
     } catch (e) {
-      console.error(e);
     }
   }, []);
 
@@ -130,7 +126,6 @@ export default function Recorrencias() {
         fetch("/api/cron/recurrence");
       }
     } catch (e) {
-      console.error(e);
     }
   };
 

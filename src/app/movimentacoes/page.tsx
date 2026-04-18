@@ -77,7 +77,6 @@ export default function Movimentacoes() {
         setTransactions(Array.isArray(data) ? data : []);
       }
     } catch (e) {
-      console.error(e);
     } finally {
       setLoading(false);
     }
@@ -94,7 +93,6 @@ export default function Movimentacoes() {
       const pending = allTx.filter((t: any) => t.type === "EXPENSE" && t.paymentStatus === "PENDING").reduce((acc: number, t: any) => acc + t.amount, 0);
       setStats({ balance, income, expenses, pending });
     } catch (e) {
-      console.error("Failed to fetch stats:", e);
     }
   }, []);
 
@@ -107,7 +105,6 @@ export default function Movimentacoes() {
         setCategoryId(data.find((c: any) => c.name === "Outros")?.id || data[0].id);
       }
     } catch (e) {
-      console.error(e);
     }
   }, [editingId]);
 
@@ -163,7 +160,6 @@ export default function Movimentacoes() {
       resetForm();
       await Promise.all([fetchTransactions(), fetchStats()]);
     } catch (e) {
-      console.error("[handleSubmit]", e);
       toast.error("Falha na comunicação com o servidor");
     }
   };
@@ -188,7 +184,6 @@ export default function Movimentacoes() {
       await Promise.all([fetchTransactions(), fetchStats()]);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Erro ao excluir";
-      console.error("[deleteTransaction]", e);
       toast.error(msg);
     }
   };
@@ -210,7 +205,6 @@ export default function Movimentacoes() {
         toast.error("Não foi possível atualizar o status");
       }
     } catch (e) {
-      console.error(e);
       toast.error("Falha ao atualizar o status");
     }
   };
@@ -268,7 +262,6 @@ export default function Movimentacoes() {
       URL.revokeObjectURL(url);
       toast.success("Exportação concluída com sucesso!");
     } catch (e) {
-      console.error(e);
       toast.error("Erro ao exportar. Tente novamente.");
     }
   };
@@ -425,7 +418,6 @@ export default function Movimentacoes() {
                             setAttachmentUrl("");
                             toast.success("Arquivo anexado!");
                           } catch (error) {
-                            console.error("[upload]", error);
                             toast.error("Falha no upload. Tente novamente.");
                           } finally {
                             setUploading(false);

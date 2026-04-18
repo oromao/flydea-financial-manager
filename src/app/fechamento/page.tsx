@@ -66,7 +66,6 @@ export default function Fechamento() {
       URL.revokeObjectURL(blobUrl);
       toast.success("Exportação concluída!");
     } catch (e) {
-      console.error(e);
       toast.error("Erro ao exportar. Tente novamente.");
     }
   };

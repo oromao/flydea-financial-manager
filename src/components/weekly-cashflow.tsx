@@ -49,7 +49,6 @@ export function WeeklyCashflow() {
       } catch (err) {
         const message = err instanceof Error ? err.message : "Erro desconhecido";
         setError(message);
-        console.error("Error fetching cashflow:", err);
       } finally {
         setLoading(false);
       }

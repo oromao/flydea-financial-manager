@@ -61,7 +61,6 @@ export default function ContasAPagar() {
       }
       fetchTransactions();
     } catch (e) {
-      console.error(e);
       toast.error("Erro ao atualizar status");
     }
   };

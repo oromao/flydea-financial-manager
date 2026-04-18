@@ -105,7 +105,6 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
         ]
       });
     } catch (error) {
-      console.error("Error:", error);
       onError?.("Erro ao criar nota");
     }
   };
