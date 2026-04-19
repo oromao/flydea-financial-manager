@@ -4,6 +4,7 @@ import { IAgentRepository } from "@/domain/agent/repositories/IAgentRepository";
 import { IAgentExecutionRepository } from "@/domain/agent/repositories/IAgentExecutionRepository";
 import { ragQueryEngine } from "@/lib/rag/query-engine";
 import { getUserFinancialData } from "@/lib/financial-rag";
+import { EmailService } from "@/infrastructure/services/EmailService";
 
 export interface ExecuteAgentOutput {
   executionId: string;
@@ -35,8 +36,34 @@ export class ExecuteAgentUseCase {
       const query = this.buildQueryForAgent(agent.type.toString(), financialData);
       const result = ragQueryEngine.processQuery(query, financialData, 3);
 
+      // Execute actions
       const actionResults: Record<string, unknown> = {};
-      // TODO: Execute actions (email, SMS, etc)
+      const emailService = new EmailService();
+
+      for (const action of agent.actions) {
+        if (action.type === "EMAIL" && action.recipient) {
+          try {
+            const sent = await emailService.sendAgentNotification({
+              recipient: action.recipient,
+              agentName: agent.name,
+              agentType: agent.type.toString(),
+              executionStatus: "SUCCESS",
+              output: result.relevantMetrics,
+            });
+            actionResults[action.id] = {
+              type: "EMAIL",
+              status: sent ? "SUCCESS" : "FAILED",
+              recipient: action.recipient,
+            };
+          } catch (error) {
+            actionResults[action.id] = {
+              type: "EMAIL",
+              status: "FAILED",
+              error: error instanceof Error ? error.message : "Unknown error",
+            };
+          }
+        }
+      }
 
       execution.markSuccess(result.relevantMetrics || {}, actionResults);
     } catch (error) {
