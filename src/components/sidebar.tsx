@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ReceiptText, BarChart3, LogOut, Wallet, UserCircle, RotateCcw, History, Target, CreditCard, BadgeDollarSign, CalendarRange, Camera, ShieldCheck, TrendingUp, Menu, X } from "lucide-react";
+import { LayoutDashboard, ReceiptText, BarChart3, LogOut, Wallet, UserCircle, RotateCcw, History, Target, CreditCard, BadgeDollarSign, CalendarRange, Camera, ShieldCheck, TrendingUp, Menu, X, Brain } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { BottomNav } from "./bottom-nav";
@@ -21,6 +21,7 @@ const navItems = [
   { name: "Orçamentos", href: "/orcamentos", icon: Target },
   { name: "Recorrências", href: "/recorrencias", icon: RotateCcw },
   { name: "Fechamento Mensal", href: "/fechamento", icon: CalendarRange },
+  { name: "Agentes IA", href: "/agents", icon: Brain },
   { name: "Relatórios", href: "/relatorios", icon: BarChart3 },
   { name: "Logs", href: "/admin/logs", icon: History },
   { name: "Aprovações", href: "/admin/aprovacoes", icon: ShieldCheck },
