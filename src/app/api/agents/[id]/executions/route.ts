@@ -6,8 +6,9 @@ import { PrismaAgentExecutionRepository } from "@/infrastructure/repositories/Pr
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -15,14 +16,14 @@ export async function GET(
 
   try {
     const agentRepository = new PrismaAgentRepository();
-    const agent = await agentRepository.findById(params.id);
+    const agent = await agentRepository.findById(id);
 
     if (!agent || agent.userId !== session.user.id) {
       return NextResponse.json({ error: "Agent not found" }, { status: 404 });
     }
 
     const executionRepository = new PrismaAgentExecutionRepository();
-    const executions = await executionRepository.findByAgentId(params.id);
+    const executions = await executionRepository.findByAgentId(id);
 
     const formatted = executions.map((e) => ({
       id: e.id,

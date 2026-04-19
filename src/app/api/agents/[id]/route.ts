@@ -8,8 +8,9 @@ import { DeleteAgentUseCase } from "@/application/agent/use-cases/DeleteAgentUse
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -17,7 +18,7 @@ export async function GET(
 
   try {
     const repository = new PrismaAgentRepository();
-    const agent = await repository.findById(params.id);
+    const agent = await repository.findById(id);
 
     if (!agent || agent.userId !== session.user.id) {
       return NextResponse.json({ error: "Agent not found" }, { status: 404 });
@@ -31,8 +32,9 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -43,7 +45,7 @@ export async function POST(
     const executionRepository = new PrismaAgentExecutionRepository();
     const useCase = new ExecuteAgentUseCase(agentRepository, executionRepository);
 
-    const result = await useCase.execute(params.id, session.user.id);
+    const result = await useCase.execute(id, session.user.id);
 
     return NextResponse.json(result);
   } catch (error) {
@@ -54,8 +56,9 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -66,7 +69,7 @@ export async function DELETE(
     const useCase = new DeleteAgentUseCase(repository);
 
     await useCase.execute({
-      agentId: params.id,
+      agentId: id,
       userId: session.user.id,
     });
 
