@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/recurrence",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/agent-scheduler",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
