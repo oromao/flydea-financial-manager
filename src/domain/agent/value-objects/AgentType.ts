@@ -42,6 +42,10 @@ export class AgentType {
     return this.value === AgentTypeEnum.SAVINGS_GOAL;
   }
 
+  isCustom(): boolean {
+    return this.value === AgentTypeEnum.CUSTOM;
+  }
+
   equals(other: AgentType): boolean {
     return this.value === other.value;
   }

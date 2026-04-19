@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { AgentExecution, ExecutionStatus } from "@/domain/agent/entities/AgentExecution";
 import { IAgentExecutionRepository } from "@/domain/agent/repositories/IAgentExecutionRepository";
+import type { Prisma } from "@prisma/client";
 
 export class PrismaAgentExecutionRepository implements IAgentExecutionRepository {
   async create(execution: AgentExecution): Promise<AgentExecution> {
@@ -9,9 +10,9 @@ export class PrismaAgentExecutionRepository implements IAgentExecutionRepository
         id: execution.id,
         agentId: execution.agentId,
         status: execution.status,
-        output: execution.output || undefined,
-        actionResults: execution.actionResults || undefined,
-        error: execution.error || undefined,
+        output: execution.output ? (execution.output as Prisma.InputJsonValue) : undefined,
+        actionResults: execution.actionResults ? (execution.actionResults as Prisma.InputJsonValue) : undefined,
+        error: execution.error || null,
         scheduledAt: execution.scheduledAt,
         startedAt: execution.startedAt,
         completedAt: execution.completedAt,
@@ -53,9 +54,9 @@ export class PrismaAgentExecutionRepository implements IAgentExecutionRepository
       where: { id: execution.id },
       data: {
         status: execution.status,
-        output: execution.output || undefined,
-        actionResults: execution.actionResults || undefined,
-        error: execution.error || undefined,
+        output: execution.output ? (execution.output as Prisma.InputJsonValue) : undefined,
+        actionResults: execution.actionResults ? (execution.actionResults as Prisma.InputJsonValue) : undefined,
+        error: execution.error || null,
         startedAt: execution.startedAt,
         completedAt: execution.completedAt,
       },

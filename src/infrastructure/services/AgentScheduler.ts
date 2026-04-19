@@ -60,7 +60,7 @@ export class AgentScheduler {
 
   private shouldRunAgent(cronExpression: string, timezone: string): boolean {
     try {
-      const interval = cronParser.parseExpression(cronExpression, {
+      const interval = (cronParser as any).parseExpression(cronExpression, {
         tz: timezone,
       });
 

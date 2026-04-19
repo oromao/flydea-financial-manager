@@ -123,7 +123,7 @@ async function extractFromImage(buffer: Buffer, mimeType: string): Promise<strin
     for (const optimization of optimizations) {
       try {
         const optimizedBuffer = await optimization();
-        const result = await Tesseract.recognize(optimizedBuffer, ["por", "eng"], {
+        const result = await Tesseract.recognize(optimizedBuffer, "por+eng", {
           logger: () => {}, // Suppress logging
         });
 

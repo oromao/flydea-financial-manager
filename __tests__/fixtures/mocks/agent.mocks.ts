@@ -1,6 +1,6 @@
 import { AIAgent } from '@/domain/agent/entities/AIAgent';
 import { AgentType } from '@/domain/agent/value-objects/AgentType';
-import { AgentExecution } from '@/domain/agent/entities/AgentExecution';
+import { AgentExecution, ExecutionStatus } from '@/domain/agent/entities/AgentExecution';
 import { IAgentRepository } from '@/domain/agent/repositories/IAgentRepository';
 import { IAgentExecutionRepository } from '@/domain/agent/repositories/IAgentExecutionRepository';
 import { vi } from 'vitest';
@@ -125,13 +125,22 @@ export class MockAgentExecutionRepository implements IAgentExecutionRepository {
 
   async findPending(): Promise<AgentExecution[]> {
     return Array.from(this.executions.values()).filter(
-      (e) => e.status === 'RUNNING' || e.status === 'PENDING'
+      (e) => e.status === ExecutionStatus.PENDING
     );
   }
 
   async update(execution: AgentExecution): Promise<AgentExecution> {
     this.executions.set(execution.id, execution);
     return execution;
+  }
+
+  // Helper for testing
+  clear() {
+    this.executions.clear();
+  }
+
+  getAll() {
+    return Array.from(this.executions.values());
   }
 }
 
