@@ -42,6 +42,7 @@ export default function Movimentacoes() {
   const [filterPaymentStatus, setFilterPaymentStatus] = useState("ALL");
 
   // Form states
+  const [saving, setSaving] = useState(false);
   const [type, setType] = useState<string>("EXPENSE");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -131,6 +132,7 @@ export default function Movimentacoes() {
     if (isNaN(parsedAmount) || parsedAmount <= 0) return toast.error("Valor inválido");
     if (!date) return toast.error("Data é obrigatória");
 
+    setSaving(true);
     const payload = {
       type,
       description: description.trim(),
@@ -161,6 +163,8 @@ export default function Movimentacoes() {
       await Promise.all([fetchTransactions(), fetchStats()]);
     } catch (e) {
       toast.error("Falha na comunicação com o servidor");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -470,8 +474,13 @@ export default function Movimentacoes() {
                   </div>
                 </div>
 
-                <Button type="submit" className="apple-button-primary w-full h-12 text-base mt-2">
-                  {editingId ? "Salvar Alterações" : "Confirmar Lançamento"}
+                <Button type="submit" disabled={saving} className="apple-button-primary w-full h-12 text-base mt-2">
+                  {saving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Salvando...
+                    </>
+                  ) : editingId ? "Salvar Alterações" : "Confirmar Lançamento"}
                 </Button>
               </form>
             </DialogContent>
