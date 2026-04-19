@@ -295,7 +295,7 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Ações Rápidas */}
-      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2">
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-3">
         <Card className="premium-card p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-3">
@@ -324,12 +324,72 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="mt-4 flex justify-end">
-            <QuickAdd 
-              categories={categories} 
+            <QuickAdd
+              categories={categories}
               onSuccess={() => window.location.reload()}
             />
           </div>
         </Card>
+
+        <Link href="/insights">
+          <Card className="premium-card p-6 flex flex-col justify-between bg-blue-50/50 border-blue-100/40 cursor-pointer hover:shadow-lg transition-all h-full">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="p-1.5 rounded-md bg-blue-500/10 text-blue-600">
+                  <TrendingUp className="w-4 h-4" />
+                </div>
+                <h3 className="font-bold text-sm text-on-background">IA Insights</h3>
+              </div>
+              <p className="text-on-surface-variant font-medium text-xs">
+                Chat com análise inteligente de dados.
+              </p>
+            </div>
+            <div className="mt-4 flex items-center text-blue-600 font-semibold text-xs">
+              Acessar <ArrowRight className="w-3 h-3 ml-1.5" />
+            </div>
+          </Card>
+        </Link>
+      </motion.div>
+
+      {/* Agents & Advanced Features */}
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2">
+        <Link href="/agents">
+          <Card className="premium-card p-6 flex flex-col justify-between bg-purple-50/50 border-purple-100/40 cursor-pointer hover:shadow-lg transition-all">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="p-1.5 rounded-md bg-purple-500/10 text-purple-600">
+                  <BarChart3 className="w-4 h-4" />
+                </div>
+                <h3 className="font-bold text-sm text-on-background">🤖 Agentes IA</h3>
+              </div>
+              <p className="text-on-surface-variant font-medium text-xs">
+                Automatize tarefas financeiras. Crie agentes que executam automaticamente.
+              </p>
+            </div>
+            <div className="mt-4 flex items-center text-purple-600 font-semibold text-xs">
+              Gerenciar <ArrowRight className="w-3 h-3 ml-1.5" />
+            </div>
+          </Card>
+        </Link>
+
+        <Link href="/movimentacoes">
+          <Card className="premium-card p-6 flex flex-col justify-between bg-green-50/50 border-green-100/40 cursor-pointer hover:shadow-lg transition-all">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="p-1.5 rounded-md bg-green-500/10 text-green-600">
+                  <ReceiptText className="w-4 h-4" />
+                </div>
+                <h3 className="font-bold text-sm text-on-background">📄 Importar Comprovante</h3>
+              </div>
+              <p className="text-on-surface-variant font-medium text-xs">
+                OCR automático de documentos. Extrai valores, datas e partes automaticamente.
+              </p>
+            </div>
+            <div className="mt-4 flex items-center text-green-600 font-semibold text-xs">
+              Importar <ArrowRight className="w-3 h-3 ml-1.5" />
+            </div>
+          </Card>
+        </Link>
       </motion.div>
     </motion.div>
   );

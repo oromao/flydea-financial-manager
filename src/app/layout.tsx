@@ -3,7 +3,9 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Sidebar } from "@/components/sidebar";
 import { ErrorBoundary } from "@/components/error-boundary";
-import { CopilotSidebar } from "@/components/copilot/copilot-sidebar";
+import dynamic from "next/dynamic";
+
+const CopilotSidebar = dynamic(() => import("@/components/copilot/copilot-sidebar").then(mod => ({ default: mod.CopilotSidebar })), { ssr: false });
 
 export const metadata: Metadata = {
   title: "Flydea - Seu assistente financeiro",
