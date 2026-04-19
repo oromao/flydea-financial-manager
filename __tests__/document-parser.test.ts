@@ -79,9 +79,9 @@ Parcelas: 3x de R$ 1.000,00
   });
 
   describe("extractDocumentText", () => {
-    it("should extract text from plain text buffer", () => {
+    it("should extract text from plain text buffer", async () => {
       const buffer = Buffer.from("Nota fiscal teste valor R$ 100,00");
-      const result = extractDocumentText(buffer, "text/plain");
+      const result = await extractDocumentText(buffer, "text/plain");
       expect(result).toContain("Nota fiscal");
     });
   });

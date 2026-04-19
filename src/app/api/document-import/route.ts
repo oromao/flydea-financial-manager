@@ -40,9 +40,9 @@ export async function POST(request: NextRequest) {
 
     logger.info("DocumentImport: file received", { name: file.name, mimeType, bytes: buffer.length });
 
-    const text = extractDocumentText(buffer, mimeType);
+    const text = await extractDocumentText(buffer, mimeType);
     if (!text || text.length < 20) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: "Não foi possível extrair texto do documento",
         warning: "Tente um arquivo mais legível ou PDF textual",
       }, { status: 400 });

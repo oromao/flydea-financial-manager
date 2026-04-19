@@ -1,4 +1,6 @@
 import crypto from "crypto";
+import Tesseract from "tesseract.js";
+import sharp from "sharp";
 
 export interface ExtractedDocumentData {
   documentType: "NOTA_FISCAL" | "RECIBO" | "BOLETO" | "COMPROVANTE" | "EXTRATO" | "OUTRO" | "UNKNOWN";
@@ -34,13 +36,19 @@ const VALOR_SIMPLES_PATTERN = /(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*,\d{2})/g;
 const NUMERO_DOC_PATTERN = /(?:N[º°]?|N[º°]\s*(?:fe)?|N\.?F\.?e\.?|NFse?|Recibo|Fatura|Boleto)[\s:]*([\d\-\/]+)/i;
 const INSTALMENTES_PATTERN = /(\d+)\s*\/\s*(\d+)|(\d+)º?\s*(?:parcela|parcelas?)|(?:(?:pos|parcelas?|x)\s*(?:de\s*)?(\d+))/i;
 
-export function extractDocumentText(buffer: Buffer, mimeType: string): string {
+// Transfer/PIX specific patterns
+const PIX_ID_PATTERN = /(?:ID|id)\s*(?:da\s*)?(?:transação|transferência)?[\s:]*([a-f0-9]{32}|\d{20,})/gi;
+const TRANSFER_DESTINO_PATTERN = /(?:destino|para|favorecido|recebedor)[\s:]*(.{0,80}?)(?:\n|CNPJ|CPF|Banco|$)/i;
+const TRANSFER_ORIGEM_PATTERN = /(?:origem|de|remetente|pagador)[\s:]*(.{0,80}?)(?:\n|CNPJ|CPF|Banco|$)/i;
+const TRANSFER_BANCO_PATTERN = /(?:banco|instituição|agência)[\s:]*([^\n]{0,100})/i;
+
+export async function extractDocumentText(buffer: Buffer, mimeType: string): Promise<string> {
   if (mimeType === "application/pdf") {
     return extractFromPdf(buffer);
   }
 
   if (mimeType.startsWith("image/")) {
-    return extractFromImage(buffer, mimeType);
+    return await extractFromImage(buffer, mimeType);
   }
 
   if (mimeType === "text/plain" || mimeType === "text/csv") {
@@ -67,21 +75,53 @@ function extractFromPdf(buffer: Buffer): string {
   }
 }
 
-function extractFromImage(buffer: Buffer, mimeType: string): string {
-  return `[Image ${mimeType}] - ${buffer.length} bytes - OCR not configured`;
+async function extractFromImage(buffer: Buffer, mimeType: string): Promise<string> {
+  try {
+    // Optimize image before OCR
+    const optimizedBuffer = await sharp(buffer)
+      .greyscale()
+      .normalize()
+      .toBuffer();
+
+    // Run Tesseract OCR
+    const result = await Tesseract.recognize(optimizedBuffer, "por", {
+      logger: () => {}, // Suppress logging
+    });
+
+    const text = result.data.text || "";
+    if (text.trim().length > 20) {
+      return text;
+    }
+
+    // Fallback if OCR gives poor results
+    return `[OCR] Extração de imagem com ${buffer.length} bytes`;
+  } catch (error) {
+    console.warn("OCR extraction failed:", error);
+    return `[Image OCR failed] ${buffer.length} bytes`;
+  }
 }
 
 export function parseDocumentText(text: string): ExtractedDocumentData {
   const docType = detectDocumentType(text);
-  const docNumber = extractDocumentNumber(text);
-  const emitterName = extractEmitterName(text);
+  const isTransfer = docType === "COMPROVANTE" && (text.toLowerCase().includes("pix") || text.toLowerCase().includes("transferência"));
+
+  // Extract transfer-specific fields if applicable
+  const pixId = extractPixId(text);
+  const transferDestino = extractTransferField(text, "destino");
+  const transferOrigem = extractTransferField(text, "origem");
+
+  const docNumber = pixId || extractDocumentNumber(text);
+  const emitterName = isTransfer ? (transferOrigem || extractEmitterName(text)) : extractEmitterName(text);
+  const receiverName = isTransfer ? (transferDestino || null) : null;
   const emitterDoc = extractDocument(text, CNPJ_PATTERN) || extractDocument(text, CPF_PATTERN);
   const emissionDate = extractDate(text);
   const dueDate = extractDueDate(text);
-  const paymentDate = extractPaymentDate(text);
+  const paymentDate = extractPaymentDate(text) || emissionDate;
   const totalAmount = extractAmount(text, "total");
   const netAmount = extractAmount(text, "net") || totalAmount;
-  const description = extractDescription(text, emitterName, docNumber);
+  const description = isTransfer
+    ? extractTransferDescription(text, transferOrigem, transferDestino, totalAmount)
+    : extractDescription(text, emitterName, docNumber);
   const installments = extractInstallments(text);
   const confidence = calculateConfidence(docType, totalAmount, emissionDate, docNumber);
   const lineItems = extractLineItems(text);
@@ -91,7 +131,7 @@ export function parseDocumentText(text: string): ExtractedDocumentData {
     documentNumber: docNumber,
     emitterName,
     emitterDocument: emitterDoc,
-    receiverName: null,
+    receiverName,
     receiverDocument: null,
     emissionDate,
     dueDate,
@@ -287,6 +327,39 @@ function extractLineItems(text: string): ExtractedDocumentData["lineItems"] {
   }
 
   return items.slice(0, 20);
+}
+
+function extractPixId(text: string): string | null {
+  const match = text.match(PIX_ID_PATTERN);
+  return match?.[1] || null;
+}
+
+function extractTransferField(text: string, fieldType: "origem" | "destino"): string | null {
+  const pattern = fieldType === "origem" ? TRANSFER_ORIGEM_PATTERN : TRANSFER_DESTINO_PATTERN;
+  const match = text.match(pattern);
+  if (match?.[1]) {
+    return match[1].trim().replace(/\s+/g, " ").slice(0, 100);
+  }
+  return null;
+}
+
+function extractTransferDescription(
+  text: string,
+  origin: string | null,
+  destination: string | null,
+  amount: number | null
+): string | null {
+  const parts = [];
+
+  if (origin) parts.push(`De: ${origin}`);
+  if (destination) parts.push(`Para: ${destination}`);
+  if (amount) parts.push(`Valor: R$ ${amount.toFixed(2)}`);
+
+  if (parts.length > 0) {
+    return parts.join(" | ");
+  }
+
+  return extractDescription(text, null, null);
 }
 
 function calculateConfidence(
