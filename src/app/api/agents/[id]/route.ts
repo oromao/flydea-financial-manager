@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { PrismaAgentRepository } from "@/infrastructure/repositories/PrismaAgentRepository";
 import { PrismaAgentExecutionRepository } from "@/infrastructure/repositories/PrismaAgentExecutionRepository";
 import { ExecuteAgentUseCase } from "@/application/agent/use-cases/ExecuteAgentUseCase";
+import { DeleteAgentUseCase } from "@/application/agent/use-cases/DeleteAgentUseCase";
 
 export async function GET(
   request: NextRequest,
@@ -47,6 +48,31 @@ export async function POST(
     return NextResponse.json(result);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Error executing agent";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const repository = new PrismaAgentRepository();
+    const useCase = new DeleteAgentUseCase(repository);
+
+    await useCase.execute({
+      agentId: params.id,
+      userId: session.user.id,
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Error deleting agent";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
