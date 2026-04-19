@@ -10,7 +10,7 @@
     },
     {
       "path": "/api/cron/agent-scheduler",
-      "schedule": "*/5 * * * *"
+      "schedule": "0 9 * * *"
     }
   ]
 }
