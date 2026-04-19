@@ -24,7 +24,17 @@ export async function GET(
     const executionRepository = new PrismaAgentExecutionRepository();
     const executions = await executionRepository.findByAgentId(params.id);
 
-    return NextResponse.json({ executions });
+    const formatted = executions.map((e) => ({
+      id: e.id,
+      status: e.status,
+      output: typeof e.output === "string" ? e.output : JSON.stringify(e.output || {}),
+      error: e.error,
+      createdAt: e.createdAt.toISOString(),
+      startedAt: e.startedAt?.toISOString() || null,
+      completedAt: e.completedAt?.toISOString() || null,
+    }));
+
+    return NextResponse.json({ executions: formatted });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Error fetching executions";
     return NextResponse.json({ error: message }, { status: 500 });
