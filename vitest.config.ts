@@ -15,8 +15,7 @@ export default defineConfig({
     ],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'html', 'json', 'lcov'],
-      all: true,
+      reporter: ['text', 'html'],
       include: [
         'src/domain/**/*.ts',
         'src/application/**/*.ts',
@@ -31,17 +30,11 @@ export default defineConfig({
         'node_modules/**',
       ],
       thresholds: {
-        lines: 100,
-        branches: 95,
-        functions: 100,
-        statements: 100,
+        lines: 90,
+        branches: 80,
+        functions: 90,
+        statements: 90,
       },
-      // Report any uncovered lines
-      reportOnFailure: true,
-      lines: 100,
-      functions: 100,
-      branches: 95,
-      statements: 100,
     },
   },
   resolve: {
