@@ -24,6 +24,10 @@ interface ImportedTransaction {
   categoryId: string | null;
   paymentStatus: "PAID" | "PENDING";
   documentUrl?: string;
+  documentType?: string;
+  confidence?: number;
+  emitterName?: string;
+  receiverName?: string;
 }
 
 export function PaymentImporter({ onImportSuccess, variant = "button" }: PaymentImporterProps) {
@@ -123,6 +127,10 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
         categoryId: classification.categoryId || null,
         paymentStatus: classification.paymentStatus || "PENDING",
         documentUrl: result.blobUrl,
+        documentType: extracted.documentType,
+        confidence: classification.confidence,
+        emitterName: extracted.emitterName,
+        receiverName: extracted.receiverName,
       };
 
       setPreview(transaction);
@@ -441,6 +449,51 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
                     </p>
                   </div>
                 </div>
+
+                {preview.documentType && (
+                  <div className="pt-2 border-t border-secondary/10">
+                    <p className="text-xs font-semibold text-on-surface-variant mb-1">
+                      Tipo de Documento
+                    </p>
+                    <p className="text-sm text-on-background">
+                      {preview.documentType}{" "}
+                      {preview.confidence && (
+                        <span className="text-xs text-on-surface-variant">
+                          • Confiança: {(preview.confidence * 100).toFixed(0)}%
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                )}
+
+                {(preview.emitterName || preview.receiverName) && (
+                  <div className="pt-2 border-t border-secondary/10 text-xs">
+                    {preview.emitterName && (
+                      <p className="text-on-background">
+                        <span className="font-semibold text-on-surface-variant">De:</span> {preview.emitterName}
+                      </p>
+                    )}
+                    {preview.receiverName && (
+                      <p className="text-on-background mt-1">
+                        <span className="font-semibold text-on-surface-variant">Para:</span> {preview.receiverName}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {preview.documentUrl && (
+                  <div className="pt-2 border-t border-secondary/10">
+                    <a
+                      href={preview.documentUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-secondary hover:underline flex items-center gap-1"
+                    >
+                      <ImageIcon className="w-3 h-3" />
+                      Ver documento original
+                    </a>
+                  </div>
+                )}
               </div>
 
               {preview.amount === 0 && (

@@ -77,27 +77,90 @@ function extractFromPdf(buffer: Buffer): string {
 
 async function extractFromImage(buffer: Buffer, mimeType: string): Promise<string> {
   try {
-    // Optimize image before OCR
-    const optimizedBuffer = await sharp(buffer)
-      .greyscale()
-      .normalize()
-      .toBuffer();
+    // Try multiple optimization strategies
+    const optimizations = [
+      // Strategy 1: Greyscale + normalize
+      async () => {
+        const optimized = await sharp(buffer)
+          .greyscale()
+          .normalize()
+          .toBuffer();
+        return optimized;
+      },
+      // Strategy 2: Enhance contrast + sharpen
+      async () => {
+        const optimized = await sharp(buffer)
+          .modulate({
+            saturation: 2,
+            brightness: 1.1,
+          })
+          .sharpen()
+          .toBuffer();
+        return optimized;
+      },
+      // Strategy 3: Resize + enhance
+      async () => {
+        const metadata = await sharp(buffer).metadata();
+        const optimized = await sharp(buffer)
+          .resize(
+            Math.min(2400, (metadata.width || 1200) * 1.5),
+            Math.min(3600, (metadata.height || 1600) * 1.5),
+            {
+              withoutEnlargement: true,
+              fit: "contain",
+            }
+          )
+          .greyscale()
+          .normalize()
+          .toBuffer();
+        return optimized;
+      },
+    ];
 
-    // Run Tesseract OCR
-    const result = await Tesseract.recognize(optimizedBuffer, "por", {
-      logger: () => {}, // Suppress logging
-    });
+    let bestResult = "";
+    let bestConfidence = 0;
 
-    const text = result.data.text || "";
-    if (text.trim().length > 20) {
-      return text;
+    for (const optimization of optimizations) {
+      try {
+        const optimizedBuffer = await optimization();
+        const result = await Tesseract.recognize(optimizedBuffer, ["por", "eng"], {
+          logger: () => {}, // Suppress logging
+        });
+
+        const text = (result.data.text || "").trim();
+        const confidence = result.data.confidence || 0;
+
+        // Log results for debugging
+        console.log(`OCR attempt - Length: ${text.length}, Confidence: ${confidence}`);
+
+        if (text.length > bestResult.length) {
+          bestResult = text;
+          bestConfidence = confidence;
+        }
+
+        // If we got good results, stop trying
+        if (text.length > 100 && confidence > 50) {
+          break;
+        }
+      } catch (strategyError) {
+        console.warn("OCR strategy failed:", strategyError);
+        continue;
+      }
     }
 
-    // Fallback if OCR gives poor results
-    return `[OCR] Extração de imagem com ${buffer.length} bytes`;
+    if (bestResult.trim().length > 20) {
+      return bestResult;
+    }
+
+    // Fallback: at least return that we tried
+    return `[OCR] Imagem processada com ${buffer.length} bytes. Conteúdo extraído pode estar incompleto.`;
   } catch (error) {
-    console.warn("OCR extraction failed:", error);
-    return `[Image OCR failed] ${buffer.length} bytes`;
+    console.error("OCR extraction failed:", error);
+    throw new Error(
+      `Falha na extração de OCR: ${
+        error instanceof Error ? error.message : "Erro desconhecido"
+      }`
+    );
   }
 }
 
@@ -251,28 +314,54 @@ function extractPaymentDate(text: string): string | null {
 
 function extractAmount(text: string, type: "total" | "net"): number | null {
   const amounts: number[] = [];
-  const matches = text.matchAll(/R\$\s*([\d.]+),(\d{2})/g);
 
-  for (const match of matches) {
+  // Pattern 1: R$ 1.234,56
+  const pattern1 = /R\$\s*([\d.]+),(\d{2})/g;
+  for (const match of text.matchAll(pattern1)) {
     const value = parseFloat(match[1].replace(/\./g, "") + "." + match[2]);
     if (!isNaN(value) && value > 0) {
       amounts.push(value);
     }
   }
 
-  if (amounts.length === 0) {
+  // Pattern 2: 1234,56 (without R$)
+  const pattern2 = /\b(\d{1,3}(?:\.\d{3})*),(\d{2})\b/g;
+  for (const match of text.matchAll(pattern2)) {
+    const value = parseFloat(match[1].replace(/\./g, "") + "." + match[2]);
+    if (!isNaN(value) && value > 0 && value < 1000000) {
+      // Reasonable upper limit
+      amounts.push(value);
+    }
+  }
+
+  // Pattern 3: Valor: number, Valor = number
+  const pattern3 = /(?:valor|amount|total|transferência)[\s:=]*[\s]*([\d,.]+)/gi;
+  for (const match of text.matchAll(pattern3)) {
+    const cleanValue = match[1].replace(/\./g, "").replace(",", ".");
+    const value = parseFloat(cleanValue);
+    if (!isNaN(value) && value > 0 && value < 1000000) {
+      amounts.push(value);
+    }
+  }
+
+  // Remove duplicates and sort
+  const uniqueAmounts = Array.from(new Set(amounts.map((a) => parseFloat(a.toFixed(2))))).sort((a, b) => b - a);
+
+  if (uniqueAmounts.length === 0) {
     return null;
   }
 
   if (type === "total") {
-    return Math.max(...amounts);
+    // Return the largest amount (most likely the total)
+    return uniqueAmounts[0];
   }
 
-  if (amounts.length > 1) {
-    return amounts.reduce((a, b) => a + b, 0) - Math.max(...amounts);
+  if (uniqueAmounts.length > 1) {
+    // For "net", return sum of all but the largest
+    return uniqueAmounts.slice(1).reduce((a, b) => a + b, 0);
   }
 
-  return amounts[0];
+  return uniqueAmounts[0];
 }
 
 function extractDescription(text: string, emitterName: string | null, docNumber: string | null): string | null {

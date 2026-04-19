@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger";
 import { extractDocumentText, parseDocumentText, computeFileHash, ExtractedDocumentData } from "@/lib/document-parser";
 import { classifyDocument } from "@/lib/category-classifier";
 import { checkForDuplicate, DuplicateCheck } from "@/lib/duplicate-detector";
+import { uploadFileToBlobStorage } from "@/lib/blob-storage";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ["application/pdf", "image/png", "image/jpeg", "image/jpg", "image/webp", "text/plain"];
@@ -76,7 +77,17 @@ export async function POST(request: NextRequest) {
       (c) => c.name === classification.categoryName
     ) || userCategories.find((c) => c.name === "Outros");
 
-    const blobUrl = `/uploads/${fileHash}-${file.name.replace(/[^a-z0-9.]/gi, "_").toLowerCase()}`;
+    // Upload file to Vercel Blob Storage
+    let blobUrl = "";
+    try {
+      blobUrl = await uploadFileToBlobStorage(file.name, buffer, mimeType);
+      logger.info("DocumentImport: file uploaded to blob", { url: blobUrl });
+    } catch (blobError) {
+      logger.warn("DocumentImport: blob upload failed, continuing without file", {
+        error: blobError instanceof Error ? blobError.message : String(blobError),
+      });
+      blobUrl = ""; // Continue without blob URL
+    }
 
     const importedDoc = await prisma.importedDocument.create({
       data: {
@@ -85,7 +96,7 @@ export async function POST(request: NextRequest) {
         fileType: mimeType,
         fileSize: file.size,
         fileHash,
-        blobUrl,
+        blobUrl: blobUrl || null,
         status: "PENDING_REVIEW",
         extractedData: extractedData as unknown as object,
         rawText: text.slice(0, 10000),
@@ -93,11 +104,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    logger.info("DocumentImport: document created", { id: importedDoc.id });
+    logger.info("DocumentImport: document created", { id: importedDoc.id, hasBlob: !!blobUrl });
 
     return NextResponse.json({
       id: importedDoc.id,
       fileName: file.name,
+      blobUrl: blobUrl || null,
       extractedData: {
         documentType: extractedData.documentType,
         documentNumber: extractedData.documentNumber,
@@ -124,7 +136,7 @@ export async function POST(request: NextRequest) {
       },
       duplicateCheck,
       needsReview: classification.confidence < 0.8 || duplicateCheck.isDuplicate,
-    });
+    }, { status: 201 });
   } catch (error) {
     logger.error("DocumentImport error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
