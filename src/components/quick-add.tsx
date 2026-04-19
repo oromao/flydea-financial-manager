@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, X, ArrowDown, ArrowUp, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -28,9 +28,24 @@ export function QuickAdd({ categories, onSuccess }: QuickAddProps) {
 
   const filteredCategories = categories.filter(c => c.type === type);
 
+  useEffect(() => {
+    if (open) {
+      document.documentElement.style.overflow = "hidden";
+      return () => {
+        document.documentElement.style.overflow = "";
+      };
+    }
+  }, [open]);
+
   const handleSubmit = async () => {
     if (!amount || !description || !categoryId || !date) {
       toast.error("Preencha todos os campos");
+      return;
+    }
+
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount) || numAmount <= 0) {
+      toast.error("Valor deve ser maior que zero");
       return;
     }
 
@@ -41,8 +56,8 @@ export function QuickAdd({ categories, onSuccess }: QuickAddProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type,
-          description,
-          amount: parseFloat(amount),
+          description: description.trim(),
+          amount: numAmount,
           date,
           categoryId,
           paymentStatus: "PAID"
@@ -51,14 +66,15 @@ export function QuickAdd({ categories, onSuccess }: QuickAddProps) {
 
       if (res.ok) {
         toast.success(`${type === "EXPENSE" ? "Despesa" : "Receita"} adicionada!`);
-        trackEvent("quick_add", { type, amount: parseFloat(amount), category: categoryId });
+        trackEvent("quick_add", { type, amount: numAmount, category: categoryId });
         setOpen(false);
         setAmount("");
         setDescription("");
         setCategoryId("");
         onSuccess?.();
       } else {
-        toast.error("Erro ao adicionar");
+        const error = await res.json().catch(() => ({}));
+        toast.error(error.error || "Erro ao adicionar");
       }
     } catch (e) {
       toast.error("Erro ao adicionar");
@@ -69,12 +85,14 @@ export function QuickAdd({ categories, onSuccess }: QuickAddProps) {
 
   return (
     <>
-      <Button
-        onClick={() => setOpen(true)}
-        className="fixed bottom-24 right-6 h-14 w-14 rounded-full bg-primary shadow-lg hover:bg-primary/90 transition-all hover:scale-110 z-50 md:hidden"
-      >
-        <Plus className="w-6 h-6" />
-      </Button>
+      {!open && (
+        <Button
+          onClick={() => setOpen(true)}
+          className="fixed bottom-24 right-6 h-14 w-14 rounded-full bg-primary shadow-lg hover:bg-primary/90 transition-all hover:scale-110 z-40 md:hidden"
+        >
+          <Plus className="w-6 h-6" />
+        </Button>
+      )}
 
       <Button
         onClick={() => setOpen(true)}
@@ -85,7 +103,7 @@ export function QuickAdd({ categories, onSuccess }: QuickAddProps) {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="w-[95vw] max-w-md bg-surface border-none rounded-[32px] p-0 shadow-[0_32px_80px_rgba(0,0,0,0.8)]">
+        <DialogContent className="w-[95vw] max-w-md bg-surface border-none rounded-[32px] p-0 shadow-[0_32px_80px_rgba(0,0,0,0.8)] z-[9999]">
           <div className="bg-white/5 p-6 border-b border-white/5">
             <DialogHeader>
               <DialogTitle className="text-xl font-black text-on-background">

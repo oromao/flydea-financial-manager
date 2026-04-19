@@ -72,12 +72,15 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Apenas administradores podem deletar transações" }, { status: 403 });
-  }
-
-  const existing = await prisma.transaction.findFirst({ where: { id } });
+  const existing = await prisma.transaction.findUnique({ where: { id } });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const isOwner = existing.userId === session.user.id;
+  const isAdmin = session.user.role === "ADMIN";
+
+  if (!isOwner && !isAdmin) {
+    return NextResponse.json({ error: "Você não tem permissão para deletar esta transação" }, { status: 403 });
+  }
 
   try {
     await prisma.transaction.delete({ where: { id } });

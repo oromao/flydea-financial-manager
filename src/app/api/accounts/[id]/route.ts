@@ -36,11 +36,14 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  const existing = await prisma.account.findFirst({ where: { id, userId: session.user.id } });
+  const existing = await prisma.account.findUnique({ where: { id } });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  if (session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Apenas administradores podem deletar contas" }, { status: 403 });
+  const isOwner = existing.userId === session.user.id;
+  const isAdmin = session.user.role === "ADMIN";
+
+  if (!isOwner && !isAdmin) {
+    return NextResponse.json({ error: "Você não tem permissão para deletar esta conta" }, { status: 403 });
   }
 
   await prisma.transaction.updateMany({
