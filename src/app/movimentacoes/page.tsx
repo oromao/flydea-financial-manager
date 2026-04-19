@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 import { Importer } from "@/components/importer";
 import { DocumentImporter } from "@/components/document-importer";
+import { PaymentImporter } from "@/components/payment-importer";
 import { upload } from "@vercel/blob/client";
 import { FileUp, Cloud, Link as LinkIcon, AlertCircle, CheckCircle2, Clock3 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -579,8 +580,7 @@ export default function Movimentacoes() {
         </div>
 
         <div className="flex flex-wrap gap-2 sm:gap-3">
-          <Importer onImportSuccess={fetchTransactions} />
-          <DocumentImporter onImportSuccess={fetchTransactions} />
+          <PaymentImporter onImportSuccess={fetchTransactions} />
         </div>
 
         <div className="flex flex-wrap gap-2 bg-surface-variant/30 rounded-2xl p-1 border border-outline/5">
