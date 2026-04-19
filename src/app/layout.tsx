@@ -5,7 +5,7 @@ import { Sidebar } from "@/components/sidebar";
 import { ErrorBoundary } from "@/components/error-boundary";
 import dynamic from "next/dynamic";
 
-const CopilotSidebar = dynamic(() => import("@/components/copilot/copilot-sidebar").then(mod => ({ default: mod.CopilotSidebar })), { ssr: false });
+const IntelligentCopilot = dynamic(() => import("@/components/copilot/intelligent-copilot").then(mod => ({ default: mod.IntelligentCopilot })), { ssr: false });
 
 export const metadata: Metadata = {
   title: "Flydea - Seu assistente financeiro",
@@ -36,7 +36,7 @@ export default function RootLayout({
         <ErrorBoundary>
           <Providers>
             <Sidebar>{children}</Sidebar>
-            <CopilotSidebar />
+            <IntelligentCopilot />
           </Providers>
         </ErrorBoundary>
       </body>
