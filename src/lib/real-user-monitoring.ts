@@ -86,11 +86,12 @@ class RealUserMonitoring {
     try {
       const lcpObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        const lastEntry = entries[entries.length - 1];
+        const lastEntry = entries[entries.length - 1] as any;
+        const value = lastEntry.renderTime || lastEntry.loadTime || 0;
         this.recordMetric({
           name: 'LCP',
-          value: lastEntry.renderTime || lastEntry.loadTime,
-          rating: this.getLCPRating(lastEntry.renderTime || lastEntry.loadTime),
+          value,
+          rating: this.getLCPRating(value),
           delta: 0,
           id: `lcp-${Date.now()}`
         });
@@ -105,8 +106,9 @@ class RealUserMonitoring {
       let clsValue = 0;
       const clsObserver = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
-          if ('hadRecentInput' in entry && !entry.hadRecentInput) {
-            clsValue += entry.value;
+          const layoutShift = entry as any;
+          if ('hadRecentInput' in layoutShift && !layoutShift.hadRecentInput && 'value' in layoutShift) {
+            clsValue += layoutShift.value;
           }
         }
         this.recordMetric({
@@ -162,13 +164,13 @@ class RealUserMonitoring {
   private interceptFetch(): void {
     if (typeof window === 'undefined') return;
 
-    const originalFetch = window.fetch;
-    window.fetch = async (...args: any[]) => {
+    const originalFetch = (window as any).fetch;
+    (window as any).fetch = async (...args: any[]): Promise<any> => {
       const startTime = performance.now();
       const [resource] = args;
 
       try {
-        const response = await originalFetch.apply(window, args);
+        const response = await originalFetch(...args);
         const duration = performance.now() - startTime;
 
         const isAPI = typeof resource === 'string' && resource.includes('/api');
