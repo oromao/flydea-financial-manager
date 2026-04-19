@@ -1,7 +1,7 @@
 # Local RAG System Documentation
 
 ## Overview
-
+ 
 The Flydea Financial Manager includes a **local Retrieval-Augmented Generation (RAG)** system that provides personalized financial insights without external API dependencies or costs.
 
 ## How It Works
