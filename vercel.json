@@ -2,15 +2,5 @@
   "framework": "nextjs",
   "buildCommand": "npx prisma generate && npx prisma db push && next build",
   "installCommand": "npm install",
-  "regions": ["gru1"],
-  "crons": [
-    {
-      "path": "/api/cron/recurrence",
-      "schedule": "0 6 * * *"
-    },
-    {
-      "path": "/api/cron/agent-scheduler",
-      "schedule": "0 9 * * *"
-    }
-  ]
+  "regions": ["gru1"]
 }
