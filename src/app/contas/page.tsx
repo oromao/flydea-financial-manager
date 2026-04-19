@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Trash2, Wallet, CreditCard, PiggyBank, Banknote, Edit2, TrendingUp, TrendingDown } from "lucide-react";
+import { Plus, Trash2, Wallet, CreditCard, PiggyBank, Banknote, Edit2, TrendingUp, TrendingDown, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -37,6 +37,7 @@ export default function Contas() {
   const confirm = useConfirm();
   const [accounts, setAccounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -76,19 +77,24 @@ export default function Contas() {
       return;
     }
 
-    const payload = { name, type, balance: numBalance, color };
-    const url = editingId ? `/api/accounts/${editingId}` : "/api/accounts";
-    const method = editingId ? "PUT" : "POST";
+    setSaving(true);
+    try {
+      const payload = { name, type, balance: numBalance, color };
+      const url = editingId ? `/api/accounts/${editingId}` : "/api/accounts";
+      const method = editingId ? "PUT" : "POST";
 
-    const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    if (res.ok) {
-      toast.success(editingId ? "Conta atualizada!" : "Conta criada!");
-      setIsOpen(false);
-      resetForm();
-      fetchAccounts();
-    } else {
-      const err = await res.json().catch(() => ({}));
-      toast.error(err.error || "Erro ao salvar conta");
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      if (res.ok) {
+        toast.success(editingId ? "Conta atualizada!" : "Conta criada!");
+        setIsOpen(false);
+        resetForm();
+        fetchAccounts();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Erro ao salvar conta");
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -207,8 +213,13 @@ export default function Contas() {
                 </div>
               </div>
 
-              <Button type="submit" className="apple-button-primary w-full h-12 text-base mt-2">
-                {editingId ? "Salvar Alterações" : "Criar Conta"}
+              <Button type="submit" disabled={saving} className="apple-button-primary w-full h-12 text-base mt-2">
+                {saving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Salvando...
+                  </>
+                ) : editingId ? "Salvar Alterações" : "Criar Conta"}
               </Button>
             </form>
           </DialogContent>

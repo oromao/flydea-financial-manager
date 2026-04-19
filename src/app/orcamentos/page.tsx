@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Trash2, Target, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Plus, Trash2, Target, AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,7 @@ export default function Orcamentos() {
   const [budgets, setBudgets] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const toast = useToast();
   const confirm = useConfirm();
@@ -72,20 +73,25 @@ export default function Orcamentos() {
       return;
     }
 
-    const payload = { categoryId, amount: numAmount, period, alertAt: parseFloat(alertAt) };
-    const res = await fetch("/api/budgets", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    if (res.ok) {
-      toast.success("Orçamento criado!");
-      setIsOpen(false);
-      resetForm();
-      fetchData();
-    } else {
-      const err = await res.json();
-      toast.error(err.error || "Erro ao criar orçamento");
+    setSaving(true);
+    try {
+      const payload = { categoryId, amount: numAmount, period, alertAt: parseFloat(alertAt) };
+      const res = await fetch("/api/budgets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        toast.success("Orçamento criado!");
+        setIsOpen(false);
+        resetForm();
+        fetchData();
+      } else {
+        const err = await res.json();
+        toast.error(err.error || "Erro ao criar orçamento");
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -194,8 +200,13 @@ export default function Orcamentos() {
                 </div>
               </div>
 
-              <Button type="submit" className="apple-button-primary w-full h-12 text-base mt-2">
-                Confirmar Configuração
+              <Button type="submit" disabled={saving} className="apple-button-primary w-full h-12 text-base mt-2">
+                {saving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Salvando...
+                  </>
+                ) : "Confirmar Configuração"}
               </Button>
             </form>
           </DialogContent>

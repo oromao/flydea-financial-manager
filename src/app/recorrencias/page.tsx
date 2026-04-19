@@ -3,9 +3,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { 
-  History, RotateCcw, Plus, Trash2, Calendar, 
-  ArrowUpRight, ArrowDownLeft, AlertCircle, CheckCircle2 
+import {
+  History, RotateCcw, Plus, Trash2, Calendar,
+  ArrowUpRight, ArrowDownLeft, AlertCircle, CheckCircle2, Loader2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -35,6 +35,7 @@ export default function Recorrencias() {
   const [recurrences, setRecurrences] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const toast = useToast();
   const confirm = useConfirm();
@@ -124,6 +125,7 @@ export default function Recorrencias() {
       return;
     }
 
+    setSaving(true);
     try {
       const res = await fetch("/api/recurrences", {
         method: "POST",
@@ -142,6 +144,8 @@ export default function Recorrencias() {
       }
     } catch (e) {
       alert("Erro ao criar recorrência");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -241,8 +245,13 @@ export default function Recorrencias() {
                 </div>
               </div>
 
-              <Button type="submit" className="apple-button-primary w-full h-12 text-base mt-2">
-                Confirmar Agendamento
+              <Button type="submit" disabled={saving} className="apple-button-primary w-full h-12 text-base mt-2">
+                {saving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Salvando...
+                  </>
+                ) : "Confirmar Agendamento"}
               </Button>
             </form>
           </DialogContent>

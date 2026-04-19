@@ -75,6 +75,14 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   // Production / Token present: Use Vercel Blob
+  if (!token) {
+    logger.error("Vercel Blob token not configured", { nodeEnv: process.env.NODE_ENV });
+    return NextResponse.json(
+      { error: "Upload não configurado. Contate o administrador." },
+      { status: 500 }
+    );
+  }
+
   try {
     let body: any;
 
