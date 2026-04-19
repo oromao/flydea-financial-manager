@@ -103,21 +103,26 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
       const result = await res.json();
 
       // Transform API response to our format
+      const extracted = result.extractedData || {};
+      const classification = result.classification || {};
+
+      // Build description from extracted data
+      let description = extracted.description || f.name;
+      if (extracted.receiverName && extracted.emitterName) {
+        description = `De: ${extracted.emitterName} → Para: ${extracted.receiverName}`;
+      } else if (extracted.emitterName) {
+        description = extracted.emitterName;
+      }
+
       const transaction: ImportedTransaction = {
         id: result.id || `temp-${Date.now()}`,
-        description:
-          result.description ||
-          result.extractedData?.description ||
-          f.name,
-        amount: result.amount || result.extractedData?.totalAmount || 0,
-        date:
-          result.date ||
-          result.extractedData?.emissionDate ||
-          new Date().toISOString().split("T")[0],
-        type: result.type || "EXPENSE",
-        categoryId: result.categoryId || null,
-        paymentStatus: result.paymentStatus || "PENDING",
-        documentUrl: result.documentUrl,
+        description,
+        amount: extracted.totalAmount || 0,
+        date: extracted.paymentDate || extracted.emissionDate || new Date().toISOString().split("T")[0],
+        type: classification.transactionType || "EXPENSE",
+        categoryId: classification.categoryId || null,
+        paymentStatus: classification.paymentStatus || "PENDING",
+        documentUrl: result.blobUrl,
       };
 
       setPreview(transaction);
@@ -398,42 +403,55 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
           ) : (
             /* Preview Mode */
             <div className="space-y-4">
-              <div className="p-4 rounded-lg bg-surface-variant/20 space-y-3">
-                <div>
-                  <p className="text-xs font-semibold text-on-surface-variant mb-1">
-                    Descrição
-                  </p>
-                  <p className="text-sm font-medium text-on-background">
-                    {preview.description}
-                  </p>
+              <div className="p-4 rounded-lg bg-gradient-to-br from-secondary/10 to-secondary/5 border border-secondary/20 space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-on-surface-variant mb-1">
+                      Descrição
+                    </p>
+                    <p className="text-sm font-medium text-on-background line-clamp-2">
+                      {preview.description}
+                    </p>
+                  </div>
+                  <FileText className="w-5 h-5 text-secondary/60 flex-shrink-0 ml-2" />
                 </div>
 
-                <div>
-                  <p className="text-xs font-semibold text-on-surface-variant mb-1">
-                    Valor
+                <div className="pt-2 border-t border-secondary/10">
+                  <p className="text-xs font-semibold text-on-surface-variant mb-2">
+                    Valor Extraído
                   </p>
-                  <p className="text-xl font-bold text-on-background">
+                  <p className="text-2xl font-bold text-on-background">
                     R$ {preview.amount.toFixed(2).replace(".", ",")}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-2 gap-3 text-xs pt-1">
                   <div>
                     <p className="font-semibold text-on-surface-variant mb-0.5">
                       Data
                     </p>
-                    <p className="text-on-background">{preview.date}</p>
+                    <p className="text-on-background font-medium">{preview.date}</p>
                   </div>
                   <div>
                     <p className="font-semibold text-on-surface-variant mb-0.5">
                       Tipo
                     </p>
-                    <p className="text-on-background">
-                      {preview.type === "INCOME" ? "Receita" : "Despesa"}
+                    <p className="text-on-background font-medium">
+                      {preview.type === "INCOME" ? "💰 Receita" : "💸 Despesa"}
                     </p>
                   </div>
                 </div>
               </div>
+
+              {preview.amount === 0 && (
+                <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 flex gap-3">
+                  <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-xs text-amber-700">
+                    <p className="font-semibold">Aviso: Valor não foi extraído</p>
+                    <p className="mt-0.5">Edite o valor manualmente antes de importar</p>
+                  </div>
+                </div>
+              )}
 
               <div className="flex gap-2">
                 <Button
