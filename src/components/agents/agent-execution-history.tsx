@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 interface Execution {
   id: string;
   status: "PENDING" | "RUNNING" | "SUCCESS" | "FAILED";
-  output: string | null;
+  output: string | object | null;
   error: string | null;
   createdAt: string;
   startedAt: string | null;
@@ -239,7 +239,9 @@ export function AgentExecutionHistory({
                     </h3>
                     <div className="p-3 rounded-lg bg-surface-variant/20 max-h-48 overflow-y-auto">
                       <p className="text-sm text-on-surface-variant whitespace-pre-wrap font-mono">
-                        {selectedExecution.output}
+                        {typeof selectedExecution.output === "string"
+                          ? selectedExecution.output
+                          : JSON.stringify(selectedExecution.output, null, 2)}
                       </p>
                     </div>
                   </div>
