@@ -552,21 +552,21 @@ export default function Movimentacoes() {
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="flex flex-col md:flex-row items-stretch md:items-center gap-3 bg-surface p-4 rounded-xl border border-outline/10 mx-4 md:mx-0"
+        className="space-y-3 bg-surface p-4 rounded-xl border border-outline/10 mx-4 md:mx-0"
       >
-        <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/60" />
-          <Input 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Pesquisar..." 
-            className="pl-12 h-11 bg-surface-variant/40 border-outline/10 rounded-2xl placeholder:opacity-70 font-medium focus:bg-surface focus:border-outline/40 transition-colors text-on-surface" 
-          />
-        </div>
-        
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/60" />
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Pesquisar..."
+              className="pl-12 h-11 bg-surface-variant/40 border-outline/10 rounded-2xl placeholder:opacity-70 font-medium focus:bg-surface focus:border-outline/40 transition-colors text-on-surface"
+            />
+          </div>
+
           <Select value={filterCategory} onValueChange={(v) => setFilterCategory(v || "Todos")}>
-            <SelectTrigger className="md:w-56 h-11 rounded-2xl bg-surface-variant/30 border-transparent font-semibold">
+            <SelectTrigger className="sm:w-48 h-11 rounded-2xl bg-surface-variant/30 border-transparent font-semibold">
               <div className="flex items-center gap-2"><Filter className="w-4 h-4 text-secondary" /><SelectValue /></div>
             </SelectTrigger>
             <SelectContent className="rounded-xl">
@@ -576,21 +576,23 @@ export default function Movimentacoes() {
               ))}
             </SelectContent>
           </Select>
+        </div>
 
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           <Importer onImportSuccess={fetchTransactions} />
           <DocumentImporter onImportSuccess={fetchTransactions} />
         </div>
 
-        <div className="flex bg-surface-variant/30 rounded-2xl p-1 border border-outline/5 overflow-x-auto no-scrollbar">
-          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", !filterType ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterType(null)}>Todos</Button>
-          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterType === "INCOME" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
-          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterType === "EXPENSE" ? "bg-red-100 text-red-700" : "text-on-surface-variant")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
+        <div className="flex flex-wrap gap-2 bg-surface-variant/30 rounded-2xl p-1 border border-outline/5">
+          <Button variant="ghost" className={cn("h-9 px-3 sm:px-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shrink-0", !filterType ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterType(null)}>Todos</Button>
+          <Button variant="ghost" className={cn("h-9 px-3 sm:px-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shrink-0", filterType === "INCOME" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
+          <Button variant="ghost" className={cn("h-9 px-3 sm:px-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shrink-0", filterType === "EXPENSE" ? "bg-red-100 text-red-700" : "text-on-surface-variant")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
         </div>
 
-        <div className="flex bg-surface-variant/30 rounded-2xl p-1 border border-outline/5 overflow-x-auto no-scrollbar">
-          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "ALL" ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("ALL")}>Todos</Button>
-          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "PAID" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PAID")}>Pagas</Button>
-          <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors", filterPaymentStatus === "PENDING" ? "bg-amber-100 text-amber-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PENDING")}>A pagar</Button>
+        <div className="flex flex-wrap gap-2 bg-surface-variant/30 rounded-2xl p-1 border border-outline/5">
+          <Button variant="ghost" className={cn("h-9 px-3 sm:px-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shrink-0", filterPaymentStatus === "ALL" ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("ALL")}>Todos</Button>
+          <Button variant="ghost" className={cn("h-9 px-3 sm:px-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shrink-0", filterPaymentStatus === "PAID" ? "bg-emerald-100 text-emerald-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PAID")}>Pagas</Button>
+          <Button variant="ghost" className={cn("h-9 px-3 sm:px-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shrink-0", filterPaymentStatus === "PENDING" ? "bg-amber-100 text-amber-700" : "text-on-surface-variant")} onClick={() => setFilterPaymentStatus("PENDING")}>A pagar</Button>
         </div>
       </motion.div>
       

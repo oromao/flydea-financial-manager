@@ -211,25 +211,25 @@ export default function ContasAPagar() {
                       Venceu em {format(new Date(t.dueDate), "dd/MM/yyyy")}
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-sm font-bold">{formatCurrency(t.amount)}</span>
-                    <div className="flex flex-col gap-2">
-                      <Button size="sm" className="rounded-xl" onClick={() => updatePaymentStatus(t.id, "PAID")}>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
+                    <span className="text-sm font-bold shrink-0">{formatCurrency(t.amount)}</span>
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                      <Button size="sm" className="rounded-xl text-xs" onClick={() => updatePaymentStatus(t.id, "PAID")}>
                         <CheckCircle2 className="w-4 h-4 mr-2" />
                         Marcar paga
                       </Button>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 w-full sm:w-auto">
                         <input
                           type="number"
                           min="0"
                           step="0.01"
                           value={partialAmounts[t.id] || ""}
                           onChange={(e) => setPartialAmounts((current) => ({ ...current, [t.id]: e.target.value }))}
-                          placeholder="Baixa parcial"
+                          placeholder="Parcial"
                           aria-label="Valor da baixa parcial"
-                          className="h-9 w-32 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
+                          className="h-9 flex-1 sm:w-24 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
                         />
-                        <Button variant="outline" size="sm" className="rounded-xl" onClick={() => applyPartial(t.id)}>
+                        <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => applyPartial(t.id)}>
                           Parcial
                         </Button>
                       </div>
@@ -265,25 +265,25 @@ export default function ContasAPagar() {
                       Vence em {format(new Date(t.dueDate), "dd/MM/yyyy")}
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-sm font-bold">{formatCurrency(t.amount)}</span>
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" className="rounded-xl" onClick={() => updatePaymentStatus(t.id, "PAID")}>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
+                    <span className="text-sm font-bold shrink-0">{formatCurrency(t.amount)}</span>
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                      <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => updatePaymentStatus(t.id, "PAID")}>
                         <CheckCircle2 className="w-4 h-4 mr-2" />
                         Baixar
                       </Button>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 w-full sm:w-auto">
                         <input
                           type="number"
                           min="0"
                           step="0.01"
                           value={partialAmounts[t.id] || ""}
                           onChange={(e) => setPartialAmounts((current) => ({ ...current, [t.id]: e.target.value }))}
-                          placeholder="Baixa parcial"
+                          placeholder="Parcial"
                           aria-label="Valor da baixa parcial"
-                          className="h-9 w-32 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
+                          className="h-9 flex-1 sm:w-24 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
                         />
-                        <Button variant="outline" size="sm" className="rounded-xl" onClick={() => applyPartial(t.id)}>
+                        <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => applyPartial(t.id)}>
                           Parcial
                         </Button>
                       </div>
@@ -316,25 +316,25 @@ export default function ContasAPagar() {
                     <div className="font-semibold text-on-background truncate">{t.description}</div>
                     <div className="text-xs text-on-surface-variant mt-1">Sem data de vencimento</div>
                   </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-sm font-bold">{formatCurrency(t.amount)}</span>
-                    <div className="flex flex-col gap-2">
-                      <Button size="sm" className="rounded-xl" onClick={() => updatePaymentStatus(t.id, "PAID")}>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
+                    <span className="text-sm font-bold shrink-0">{formatCurrency(t.amount)}</span>
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                      <Button size="sm" className="rounded-xl text-xs" onClick={() => updatePaymentStatus(t.id, "PAID")}>
                         <CheckCircle2 className="w-4 h-4 mr-2" />
                         Baixar
                       </Button>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 w-full sm:w-auto">
                         <input
                           type="number"
                           min="0"
                           step="0.01"
                           value={partialAmounts[t.id] || ""}
                           onChange={(e) => setPartialAmounts((current) => ({ ...current, [t.id]: e.target.value }))}
-                          placeholder="Baixa parcial"
+                          placeholder="Parcial"
                           aria-label="Valor da baixa parcial"
-                          className="h-9 w-32 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
+                          className="h-9 flex-1 sm:w-24 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
                         />
-                        <Button variant="outline" size="sm" className="rounded-xl" onClick={() => applyPartial(t.id)}>
+                        <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => applyPartial(t.id)}>
                           Parcial
                         </Button>
                       </div>
