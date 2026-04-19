@@ -32,6 +32,8 @@ model User {
   cashflowWeekly        CashflowWeekly[]
   importedDocuments    ImportedDocument[]
   documentImportAttempts DocumentImportAttempt[]
+  copilotConversations  CopilotConversation[]
+  aiAgents              AIAgent[]
 }
 
 model Category {
@@ -342,4 +344,115 @@ model DocumentImportAttempt {
   createdAt    DateTime  @default(now())
 
   @@index([userId, status])
+}
+
+// ===== COPILOTO RAG =====
+model CopilotConversation {
+  id            String            @id @default(uuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Page context
+  pageType      String            // DASHBOARD, ACCOUNTS, TRANSACTIONS, BUDGETS, RECURRENCES, INSIGHTS
+  pageContext   Json?             // Dados da página (métricas, filtros, IDs)
+
+  messages      CopilotMessage[]
+
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model CopilotMessage {
+  id              String                  @id @default(uuid())
+  conversationId  String
+  conversation    CopilotConversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  role            String                  // "user" | "assistant"
+  content         String                  @db.Text
+
+  // Metadata
+  sources         String[]                // RAG document IDs
+  metrics         Json?                   // Métricas incluídas
+
+  createdAt       DateTime                @default(now())
+
+  @@index([conversationId])
+  @@index([createdAt])
+}
+
+// ===== AI AGENTS =====
+model AIAgent {
+  id            String              @id @default(uuid())
+  userId        String
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Identification
+  name          String              // "Revisar orçamento diariamente"
+  description   String?
+  type          String              // BUDGET_REVIEW, EXPENSE_ALERT, INCOME_CHECK, CASHFLOW_FORECAST, SAVINGS_GOAL, CUSTOM
+
+  // Schedule
+  schedule      String              // Cron expression: "0 8 * * *"
+  isActive      Boolean             @default(true)
+  timezone      String              @default("America/Sao_Paulo")
+
+  // Configuration
+  config        Json                // Type-specific config
+
+  // Relations
+  actions       AgentAction[]
+  executions    AgentExecution[]
+
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@index([userId])
+  @@index([isActive])
+}
+
+model AgentAction {
+  id          String    @id @default(uuid())
+  agentId     String
+  agent       AIAgent   @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  // Type
+  type        String    // EMAIL, SMS, IN_APP_NOTIFICATION, WEBHOOK
+
+  // Configuration
+  recipient   String?   // Email, phone, or webhook URL
+  template    String?   // Template name for rendering
+
+  order       Int       // Execution order
+
+  createdAt   DateTime  @default(now())
+
+  @@unique([agentId, order])
+}
+
+model AgentExecution {
+  id              String    @id @default(uuid())
+  agentId         String
+  agent           AIAgent   @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  // Status
+  status          String    // PENDING, RUNNING, SUCCESS, FAILED
+
+  // Results
+  output          Json?     // Insights gerados
+  actionResults   Json?     // Resultado de cada ação {EMAIL: {sent: true}, ...}
+  error           String?   // Error message
+
+  // Timeline
+  scheduledAt     DateTime
+  startedAt       DateTime?
+  completedAt     DateTime?
+
+  createdAt       DateTime  @default(now())
+
+  @@index([agentId])
+  @@index([status])
+  @@index([scheduledAt])
 }
