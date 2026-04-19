@@ -3,6 +3,7 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Sidebar } from "@/components/sidebar";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { CopilotSidebar } from "@/components/copilot/copilot-sidebar";
 
 export const metadata: Metadata = {
   title: "Flydea - Seu assistente financeiro",
@@ -33,6 +34,7 @@ export default function RootLayout({
         <ErrorBoundary>
           <Providers>
             <Sidebar>{children}</Sidebar>
+            <CopilotSidebar />
           </Providers>
         </ErrorBoundary>
       </body>
