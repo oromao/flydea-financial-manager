@@ -93,7 +93,11 @@ export default function PerfilPage() {
           <div className="flex items-center gap-4">
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl overflow-hidden bg-surface-variant border border-outline/20 flex items-center justify-center relative shrink-0">
               {avatarUrl ? (
-                <img src={avatarUrl} alt="Foto do perfil" className="h-full w-full object-cover" />
+                <img
+                  src={avatarUrl.includes("blob.vercel") ? `/api/image-proxy?url=${encodeURIComponent(avatarUrl)}` : avatarUrl}
+                  alt="Foto do perfil"
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 <UserIcon className="w-10 h-10 text-on-surface-variant" />
               )}

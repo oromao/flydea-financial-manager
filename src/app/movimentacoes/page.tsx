@@ -637,7 +637,7 @@ export default function Movimentacoes() {
                   <TableCell className="py-4 font-medium text-on-background text-sm">
                     <div className="flex items-center gap-3">
                       {t.description}
-                      {t.blobUrl && <motion.a whileHover={{ scale: 1.1 }} href={t.blobUrl} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100"><Cloud className="w-3 h-3" /></motion.a>}
+                      {t.blobUrl && <motion.a whileHover={{ scale: 1.1 }} href={t.blobUrl.includes("blob.vercel") ? `/api/blob-download?url=${encodeURIComponent(t.blobUrl)}&filename=${encodeURIComponent(t.description)}.pdf` : t.blobUrl} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100"><Cloud className="w-3 h-3" /></motion.a>}
                       {t.attachmentUrl && !t.blobUrl && <motion.a whileHover={{ scale: 1.1 }} href={t.attachmentUrl} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-surface-variant text-secondary border border-outline/10"><LinkIcon className="w-3 h-3" /></motion.a>}
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
