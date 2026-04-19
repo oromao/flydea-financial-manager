@@ -9,6 +9,50 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 
+function MarkAsPaidButton({
+  transactionId,
+  isPaid,
+  onStatusChange,
+}: {
+  transactionId: string;
+  isPaid: boolean;
+  onStatusChange: (id: string, status: "PAID" | "PENDING") => void;
+}) {
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    setLoading(true);
+    try {
+      const nextStatus = isPaid ? "PENDING" : "PAID";
+      await onStatusChange(transactionId, nextStatus);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <motion.button
+      onClick={handleClick}
+      disabled={loading}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      className={`px-4 py-2.5 rounded-xl font-semibold text-sm uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap ${
+        isPaid
+          ? "bg-emerald-100/60 hover:bg-emerald-100 text-emerald-700 border border-emerald-200"
+          : "bg-blue-100/60 hover:bg-blue-100 text-blue-700 border border-blue-200"
+      } disabled:opacity-50 disabled:cursor-not-allowed`}
+      aria-label={isPaid ? "Marcar como pendente" : "Marcar como pago"}
+    >
+      {loading ? (
+        <Loader2 className="w-4 h-4 animate-spin" />
+      ) : (
+        <CheckCircle2 className="w-4 h-4" />
+      )}
+      {isPaid ? "Pendente" : "Marcar Pago"}
+    </motion.button>
+  );
+}
+
 function QuickPayButton({
   transactionId,
   isPaid,
@@ -217,10 +261,7 @@ export default function ContasAPagar() {
                   <div className="pt-2 border-t border-red-100">
                     <p className="text-sm font-bold text-on-background mb-3">{formatCurrency(t.amount)}</p>
                     <div className="flex flex-col sm:flex-row gap-2">
-                      <Button size="sm" className="rounded-xl text-xs flex-1 sm:flex-none" onClick={() => updatePaymentStatus(t.id, "PAID")}>
-                        <CheckCircle2 className="w-4 h-4 mr-2" />
-                        Marcar Pago
-                      </Button>
+                      <MarkAsPaidButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
                       <div className="flex gap-2 flex-1 sm:flex-none">
                         <input
                           type="number"
@@ -274,10 +315,7 @@ export default function ContasAPagar() {
                   <div className="pt-2 border-t border-amber-100">
                     <p className="text-sm font-bold text-on-background mb-3">{formatCurrency(t.amount)}</p>
                     <div className="flex flex-col sm:flex-row gap-2">
-                      <Button size="sm" className="rounded-xl text-xs flex-1 sm:flex-none" onClick={() => updatePaymentStatus(t.id, "PAID")}>
-                        <CheckCircle2 className="w-4 h-4 mr-2" />
-                        Marcar Pago
-                      </Button>
+                      <MarkAsPaidButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
                       <div className="flex gap-2 flex-1 sm:flex-none">
                         <input
                           type="number"
