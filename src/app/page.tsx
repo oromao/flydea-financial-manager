@@ -53,6 +53,7 @@ export default function Dashboard() {
           setCategories(Array.isArray(catData) ? catData : []);
         }
       } catch (e) {
+        console.error("Dashboard fetch error:", e);
       } finally {
         setLoading(false);
       }
