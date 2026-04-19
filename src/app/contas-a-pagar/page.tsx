@@ -202,32 +202,35 @@ export default function ContasAPagar() {
           ) : (
             <div className="space-y-3">
               {filteredOverdue.map((t) => (
-                <div key={t.id} className="flex items-center justify-between gap-2 p-4 rounded-xl border border-red-100 bg-red-50/20">
-                  <QuickPayButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
-                  <div className="min-w-0 flex-1">
-                    <div className="font-semibold text-on-background truncate">{t.description}</div>
-                    <div className="text-xs text-on-surface-variant flex items-center gap-2 mt-1">
-                      <CalendarDays className="w-3.5 h-3.5" />
-                      Venceu em {format(new Date(t.dueDate), "dd/MM/yyyy")}
+                <div key={t.id} className="flex flex-col gap-3 p-4 rounded-xl border border-red-100 bg-red-50/20">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-on-background truncate">{t.description}</div>
+                      <div className="text-xs text-on-surface-variant flex items-center gap-2 mt-1">
+                        <CalendarDays className="w-3.5 h-3.5" />
+                        Venceu em {format(new Date(t.dueDate), "dd/MM/yyyy")}
+                      </div>
                     </div>
+                    <QuickPayButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
-                    <span className="text-sm font-bold shrink-0">{formatCurrency(t.amount)}</span>
-                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                      <Button size="sm" className="rounded-xl text-xs" onClick={() => updatePaymentStatus(t.id, "PAID")}>
+
+                  <div className="pt-2 border-t border-red-100">
+                    <p className="text-sm font-bold text-on-background mb-3">{formatCurrency(t.amount)}</p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button size="sm" className="rounded-xl text-xs flex-1 sm:flex-none" onClick={() => updatePaymentStatus(t.id, "PAID")}>
                         <CheckCircle2 className="w-4 h-4 mr-2" />
-                        Marcar paga
+                        Marcar Pago
                       </Button>
-                      <div className="flex gap-2 w-full sm:w-auto">
+                      <div className="flex gap-2 flex-1 sm:flex-none">
                         <input
                           type="number"
                           min="0"
                           step="0.01"
                           value={partialAmounts[t.id] || ""}
                           onChange={(e) => setPartialAmounts((current) => ({ ...current, [t.id]: e.target.value }))}
-                          placeholder="Parcial"
+                          placeholder="Valor"
                           aria-label="Valor da baixa parcial"
-                          className="h-9 flex-1 sm:w-24 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
+                          className="h-9 flex-1 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
                         />
                         <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => applyPartial(t.id)}>
                           Parcial
@@ -256,32 +259,35 @@ export default function ContasAPagar() {
           ) : (
             <div className="space-y-3">
               {filteredUpcoming.map((t) => (
-                <div key={t.id} className="flex items-center justify-between gap-2 p-4 rounded-xl border border-amber-100 bg-amber-50/20">
-                  <QuickPayButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
-                  <div className="min-w-0 flex-1">
-                    <div className="font-semibold text-on-background truncate">{t.description}</div>
-                    <div className="text-xs text-on-surface-variant flex items-center gap-2 mt-1">
-                      <CalendarDays className="w-3.5 h-3.5" />
-                      Vence em {format(new Date(t.dueDate), "dd/MM/yyyy")}
+                <div key={t.id} className="flex flex-col gap-3 p-4 rounded-xl border border-amber-100 bg-amber-50/20">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-on-background truncate">{t.description}</div>
+                      <div className="text-xs text-on-surface-variant flex items-center gap-2 mt-1">
+                        <CalendarDays className="w-3.5 h-3.5" />
+                        Vence em {format(new Date(t.dueDate), "dd/MM/yyyy")}
+                      </div>
                     </div>
+                    <QuickPayButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
-                    <span className="text-sm font-bold shrink-0">{formatCurrency(t.amount)}</span>
-                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                      <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => updatePaymentStatus(t.id, "PAID")}>
+
+                  <div className="pt-2 border-t border-amber-100">
+                    <p className="text-sm font-bold text-on-background mb-3">{formatCurrency(t.amount)}</p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button size="sm" className="rounded-xl text-xs flex-1 sm:flex-none" onClick={() => updatePaymentStatus(t.id, "PAID")}>
                         <CheckCircle2 className="w-4 h-4 mr-2" />
-                        Baixar
+                        Marcar Pago
                       </Button>
-                      <div className="flex gap-2 w-full sm:w-auto">
+                      <div className="flex gap-2 flex-1 sm:flex-none">
                         <input
                           type="number"
                           min="0"
                           step="0.01"
                           value={partialAmounts[t.id] || ""}
                           onChange={(e) => setPartialAmounts((current) => ({ ...current, [t.id]: e.target.value }))}
-                          placeholder="Parcial"
+                          placeholder="Valor"
                           aria-label="Valor da baixa parcial"
-                          className="h-9 flex-1 sm:w-24 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
+                          className="h-9 flex-1 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
                         />
                         <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => applyPartial(t.id)}>
                           Parcial
@@ -310,29 +316,32 @@ export default function ContasAPagar() {
           ) : (
             <div className="space-y-3">
               {filteredNoDate.map((t) => (
-                <div key={t.id} className="flex items-center justify-between gap-2 p-4 rounded-xl border border-outline/10 bg-surface">
-                  <QuickPayButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
-                  <div className="min-w-0 flex-1">
-                    <div className="font-semibold text-on-background truncate">{t.description}</div>
-                    <div className="text-xs text-on-surface-variant mt-1">Sem data de vencimento</div>
+                <div key={t.id} className="flex flex-col gap-3 p-4 rounded-xl border border-outline/10 bg-surface">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-on-background truncate">{t.description}</div>
+                      <div className="text-xs text-on-surface-variant mt-1">Sem data de vencimento</div>
+                    </div>
+                    <QuickPayButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
-                    <span className="text-sm font-bold shrink-0">{formatCurrency(t.amount)}</span>
-                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                      <Button size="sm" className="rounded-xl text-xs" onClick={() => updatePaymentStatus(t.id, "PAID")}>
+
+                  <div className="pt-2 border-t border-outline/10">
+                    <p className="text-sm font-bold text-on-background mb-3">{formatCurrency(t.amount)}</p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button size="sm" className="rounded-xl text-xs flex-1 sm:flex-none" onClick={() => updatePaymentStatus(t.id, "PAID")}>
                         <CheckCircle2 className="w-4 h-4 mr-2" />
-                        Baixar
+                        Marcar Pago
                       </Button>
-                      <div className="flex gap-2 w-full sm:w-auto">
+                      <div className="flex gap-2 flex-1 sm:flex-none">
                         <input
                           type="number"
                           min="0"
                           step="0.01"
                           value={partialAmounts[t.id] || ""}
                           onChange={(e) => setPartialAmounts((current) => ({ ...current, [t.id]: e.target.value }))}
-                          placeholder="Parcial"
+                          placeholder="Valor"
                           aria-label="Valor da baixa parcial"
-                          className="h-9 flex-1 sm:w-24 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
+                          className="h-9 flex-1 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
                         />
                         <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => applyPartial(t.id)}>
                           Parcial
