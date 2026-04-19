@@ -18,41 +18,10 @@ jobs:
         with:
           node-version: '20'
 
-      - name: 🔐 Configure Vercel Environment Variables
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: |
-          echo "🔐 Configurando variáveis de ambiente via API..."
-
-          # Gerar NEXTAUTH_SECRET
-          NEXTAUTH_SECRET=$(openssl rand -base64 32)
-
-          # Função para adicionar variável via API
-          add_env_var() {
-            local KEY=$1
-            local VALUE=$2
-
-            curl -X POST https://api.vercel.com/v9/projects/$VERCEL_PROJECT_ID/env \
-              -H "Authorization: Bearer $VERCEL_TOKEN" \
-              -H "Content-Type: application/json" \
-              -d "{\"key\":\"$KEY\",\"value\":\"$VALUE\",\"target\":[\"production\",\"preview\",\"development\"]}" \
-              -s -o /dev/null
-
-            echo "  ✅ $KEY configurada"
-          }
-
-          # Adicionar variáveis
-          add_env_var "DATABASE_URL" "postgresql://neondb_owner:npg_LhFS0qK7rkaZ@ep-lucky-truth-antd5lhh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-          add_env_var "DIRECT_URL" "postgresql://neondb_owner:npg_LhFS0qK7rkaZ@ep-lucky-truth-antd5lhh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require"
-          add_env_var "NEXTAUTH_URL" "https://flydea-financial-manager.vercel.app"
-          add_env_var "NEXTAUTH_SECRET" "$NEXTAUTH_SECRET"
-
-          echo "✅ Todas as variáveis foram configuradas!"
-
       - name: 🚀 Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           npm install -g vercel@latest
@@ -60,5 +29,6 @@ jobs:
 
       - name: ✅ Deploy Completo!
         run: |
-          echo "✅ Deploy finalizado!"
-          echo "🌐 Acesse: https://flydea-financial-manager.vercel.app"
+          echo "✅ Deploy finalizado com sucesso!"
+          echo "🌐 Seu app está em: https://flydea-financial-manager.vercel.app"
+
