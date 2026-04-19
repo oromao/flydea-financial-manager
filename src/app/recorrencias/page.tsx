@@ -112,11 +112,23 @@ export default function Recorrencias() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!description || !amount || !categoryId || !startDate) {
+      alert("Preencha todos os campos obrigatórios");
+      return;
+    }
+
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount) || numAmount <= 0) {
+      alert("O valor deve ser maior que zero");
+      return;
+    }
+
     try {
       const res = await fetch("/api/recurrences", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description, amount, frequency, startDate, categoryId })
+        body: JSON.stringify({ description, amount: numAmount, frequency, startDate, categoryId })
       });
       if (res.ok) {
         setIsDialogOpen(false);
@@ -124,8 +136,12 @@ export default function Recorrencias() {
         fetchRecurrences();
         // Also trigger a cron run to catch up
         fetch("/api/cron/recurrence");
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || "Erro ao criar recorrência");
       }
     } catch (e) {
+      alert("Erro ao criar recorrência");
     }
   };
 

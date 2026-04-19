@@ -177,7 +177,7 @@ export default function Movimentacoes() {
       const data = await res.json().catch(() => ({}));
 
       if (res.status === 403) {
-        toast.error("Apenas administradores podem excluir transações");
+        toast.error(data.error || "Você não tem permissão para excluir esta transação");
         return;
       }
 

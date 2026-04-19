@@ -64,7 +64,19 @@ export default function Contas() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = { name, type, balance: parseFloat(balance), color };
+
+    if (!name || !type) {
+      toast.error("Preencha todos os campos obrigatórios");
+      return;
+    }
+
+    const numBalance = parseFloat(balance);
+    if (isNaN(numBalance)) {
+      toast.error("Saldo inválido");
+      return;
+    }
+
+    const payload = { name, type, balance: numBalance, color };
     const url = editingId ? `/api/accounts/${editingId}` : "/api/accounts";
     const method = editingId ? "PUT" : "POST";
 
@@ -75,7 +87,8 @@ export default function Contas() {
       resetForm();
       fetchAccounts();
     } else {
-      toast.error("Erro ao salvar conta");
+      const err = await res.json().catch(() => ({}));
+      toast.error(err.error || "Erro ao salvar conta");
     }
   };
 
@@ -96,7 +109,7 @@ export default function Contas() {
       const data = await res.json().catch(() => ({}));
 
       if (res.status === 403) {
-        toast.error("Apenas administradores podem excluir contas");
+        toast.error(data.error || "Você não tem permissão para excluir esta conta");
         return;
       }
 

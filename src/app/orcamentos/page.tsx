@@ -60,7 +60,19 @@ export default function Orcamentos() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = { categoryId, amount: parseFloat(amount), period, alertAt: parseFloat(alertAt) };
+
+    if (!amount || !categoryId) {
+      toast.error("Preencha todos os campos obrigatórios");
+      return;
+    }
+
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount) || numAmount <= 0) {
+      toast.error("O valor do orçamento deve ser maior que zero");
+      return;
+    }
+
+    const payload = { categoryId, amount: numAmount, period, alertAt: parseFloat(alertAt) };
     const res = await fetch("/api/budgets", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
