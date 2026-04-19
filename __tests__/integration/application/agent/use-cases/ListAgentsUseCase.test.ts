@@ -3,7 +3,7 @@ import { ListAgentsUseCase } from '@/application/agent/use-cases/ListAgentsUseCa
 import {
   MockAgentRepository,
   createMockAgent,
-} from '@/__tests__/fixtures/mocks/agent.mocks';
+} from '../../../../fixtures/mocks/agent.mocks';
 
 describe('ListAgentsUseCase', () => {
   let useCase: ListAgentsUseCase;

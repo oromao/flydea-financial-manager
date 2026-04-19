@@ -1,11 +1,22 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+
+// Mock external dependencies at top level before import
+vi.mock('@/lib/resend', () => ({
+  resend: {
+    emails: {
+      send: vi.fn().mockResolvedValue({ id: 'email-123' }),
+    },
+  },
+}));
+vi.mock('@/lib/rag/query-engine');
+vi.mock('@/lib/financial-rag');
+
 import { ExecuteAgentUseCase } from '@/application/agent/use-cases/ExecuteAgentUseCase';
 import {
   MockAgentRepository,
   MockAgentExecutionRepository,
-  MockEmailService,
   createMockAgent,
-} from '@/__tests__/fixtures/mocks/agent.mocks';
+} from '../../../../fixtures/mocks/agent.mocks';
 
 describe('ExecuteAgentUseCase', () => {
   let useCase: ExecuteAgentUseCase;
@@ -16,11 +27,6 @@ describe('ExecuteAgentUseCase', () => {
     agentRepository = new MockAgentRepository();
     executionRepository = new MockAgentExecutionRepository();
     useCase = new ExecuteAgentUseCase(agentRepository, executionRepository);
-
-    // Mock external dependencies
-    vi.mock('@/lib/rag/query-engine');
-    vi.mock('@/lib/financial-rag');
-    vi.mock('@/infrastructure/services/EmailService');
   });
 
   describe('execute', () => {

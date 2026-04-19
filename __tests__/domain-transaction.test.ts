@@ -20,7 +20,7 @@ describe('Transaction Entity', () => {
     const transaction = Transaction.create(
       txId,
       userId,
-      TransactionType.EXPENSE,
+      TransactionType.expense(),
       'Test transaction',
       Money.create(100),
       categoryId,
@@ -31,7 +31,7 @@ describe('Transaction Entity', () => {
     expect(transaction.getId()).toBe(txId);
     expect(transaction.getDescription()).toBe('Test transaction');
     expect(transaction.getAmount().getValue()).toBe(100);
-    expect(transaction.getType()).toBe(TransactionType.EXPENSE);
+    expect(transaction.getType()).toEqual(TransactionType.expense());
     expect(transaction.getPaymentStatus().isPending()).toBe(true);
   });
 
@@ -40,7 +40,7 @@ describe('Transaction Entity', () => {
       Transaction.create(
         txId,
         userId,
-        TransactionType.EXPENSE,
+        TransactionType.expense(),
         '',
         Money.create(100),
         categoryId,
@@ -55,7 +55,7 @@ describe('Transaction Entity', () => {
       Transaction.create(
         txId,
         userId,
-        TransactionType.EXPENSE,
+        TransactionType.expense(),
         'Valid description',
         Money.create(100),
         '',
@@ -70,7 +70,7 @@ describe('Transaction Entity', () => {
     const transaction = Transaction.create(
       txId,
       userId,
-      TransactionType.EXPENSE,
+      TransactionType.expense(),
       'Test',
       amount,
       categoryId,
@@ -86,7 +86,7 @@ describe('Transaction Entity', () => {
     const transaction = Transaction.create(
       txId,
       userId,
-      TransactionType.EXPENSE,
+      TransactionType.expense(),
       'Test',
       Money.create(100),
       categoryId,
@@ -102,7 +102,7 @@ describe('Transaction Entity', () => {
     const transaction = Transaction.create(
       txId,
       userId,
-      TransactionType.EXPENSE,
+      TransactionType.expense(),
       'Test',
       Money.create(100),
       categoryId,
@@ -122,7 +122,7 @@ describe('Transaction Entity', () => {
     const transaction = Transaction.restore(
       'tx-123',
       userId,
-      TransactionType.INCOME,
+      TransactionType.income(),
       'Restored',
       amount,
       categoryId,
@@ -143,7 +143,7 @@ describe('Transaction Entity', () => {
     const transaction = Transaction.create(
       txId,
       userId,
-      TransactionType.EXPENSE,
+      TransactionType.expense(),
       'Test',
       Money.create(100),
       categoryId,

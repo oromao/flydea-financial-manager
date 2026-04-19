@@ -3,7 +3,7 @@ import { DeleteAgentUseCase } from '@/application/agent/use-cases/DeleteAgentUse
 import {
   MockAgentRepository,
   createMockAgent,
-} from '@/__tests__/fixtures/mocks/agent.mocks';
+} from '../../../../fixtures/mocks/agent.mocks';
 
 describe('DeleteAgentUseCase', () => {
   let useCase: DeleteAgentUseCase;

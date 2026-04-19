@@ -1,60 +1,78 @@
-import { vi } from 'vitest';
 import { AIAgent } from '@/domain/agent/entities/AIAgent';
 import { AgentType } from '@/domain/agent/value-objects/AgentType';
-import { AgentExecution } from '@/domain/agent/entities/AgentExecution';
+import { AgentExecution, ExecutionStatus } from '@/domain/agent/entities/AgentExecution';
 import { IAgentRepository } from '@/domain/agent/repositories/IAgentRepository';
 import { IAgentExecutionRepository } from '@/domain/agent/repositories/IAgentExecutionRepository';
+import { vi } from 'vitest';
 
-/**
- * Mock Agent Data
- */
-export const mockAgentData = {
+export interface CreateAgentInput {
+  userId?: string;
+  name?: string;
+  description?: string;
+  type?: string;
+  schedule?: string;
+  timezone?: string;
+  config?: Record<string, unknown>;
+}
+
+export const mockAgentData: CreateAgentInput = {
   userId: 'user-123',
   name: 'Test Agent',
-  description: 'Test agent for testing',
   type: 'BUDGET_REVIEW',
   schedule: '0 9 * * *',
   timezone: 'America/Sao_Paulo',
-  config: { threshold: 100 },
+  config: {},
 };
 
-/**
- * Create Mock AIAgent Entity
- */
-export function createMockAgent(overrides?: Partial<typeof mockAgentData>) {
+export function createMockAgent(overrides: CreateAgentInput = {}): AIAgent {
   const data = { ...mockAgentData, ...overrides };
+  const type = AgentType.create(data.type || 'BUDGET_REVIEW');
+
   return AIAgent.create(
-    'agent-123',
-    data.userId,
-    data.name,
+    `agent-${Math.random().toString(36).substr(2, 9)}`,
+    data.userId || 'user-123',
+    data.name || 'Test Agent',
     data.description || null,
-    AgentType.create(data.type),
-    data.schedule,
+    type,
+    data.schedule || '0 9 * * *',
     true,
-    data.timezone,
-    data.config
+    data.timezone || 'America/Sao_Paulo',
+    data.config || {}
   );
 }
 
-/**
- * Create Mock Agent Execution
- */
-export function createMockExecution(agentId: string = 'agent-123') {
-  return AgentExecution.create('exec-123', agentId, new Date());
+export function createMockExecution(
+  agentId: string = 'agent-123',
+  overrides: Partial<AgentExecution> = {}
+): AgentExecution {
+  const execution = AgentExecution.create(
+    `execution-${Math.random().toString(36).substr(2, 9)}`,
+    agentId,
+    new Date()
+  );
+  return { ...execution, ...overrides };
 }
 
-/**
- * Mock Agent Repository
- */
+export function createMockFinancialData(): Record<string, unknown> {
+  return {
+    totalIncome: 5000,
+    totalExpenses: 3000,
+    balance: 2000,
+    budgets: [
+      { category: 'Food', limit: 500, spent: 450 },
+      { category: 'Transport', limit: 300, spent: 280 },
+    ],
+    transactions: [
+      { date: '2024-01-15', amount: 100, category: 'Food', type: 'expense' },
+      { date: '2024-01-16', amount: 2000, category: 'Salary', type: 'income' },
+    ],
+  };
+}
+
 export class MockAgentRepository implements IAgentRepository {
   private agents: Map<string, AIAgent> = new Map();
 
   async create(agent: AIAgent): Promise<AIAgent> {
-    this.agents.set(agent.id, agent);
-    return agent;
-  }
-
-  async update(agent: AIAgent): Promise<AIAgent> {
     this.agents.set(agent.id, agent);
     return agent;
   }
@@ -67,33 +85,22 @@ export class MockAgentRepository implements IAgentRepository {
     return Array.from(this.agents.values()).filter((a) => a.userId === userId);
   }
 
+  async update(agent: AIAgent): Promise<AIAgent> {
+    this.agents.set(agent.id, agent);
+    return agent;
+  }
+
   async delete(id: string): Promise<void> {
     this.agents.delete(id);
   }
 
-  async findActive(): Promise<AIAgent[]> {
-    return Array.from(this.agents.values()).filter((a) => a.isActive);
-  }
-
-  async findByUserIdAndActive(userId: string): Promise<AIAgent[]> {
+  async findActiveByUserId(userId: string): Promise<AIAgent[]> {
     return Array.from(this.agents.values()).filter(
       (a) => a.userId === userId && a.isActive
     );
   }
-
-  // Helper for testing
-  clear() {
-    this.agents.clear();
-  }
-
-  getAll() {
-    return Array.from(this.agents.values());
-  }
 }
 
-/**
- * Mock Agent Execution Repository
- */
 export class MockAgentExecutionRepository implements IAgentExecutionRepository {
   private executions: Map<string, AgentExecution> = new Map();
 
@@ -102,26 +109,29 @@ export class MockAgentExecutionRepository implements IAgentExecutionRepository {
     return execution;
   }
 
-  async update(execution: AgentExecution): Promise<AgentExecution> {
-    this.executions.set(execution.id, execution);
-    return execution;
-  }
-
   async findById(id: string): Promise<AgentExecution | null> {
     return this.executions.get(id) || null;
   }
 
-  async findByAgentId(agentId: string): Promise<AgentExecution[]> {
-    return Array.from(this.executions.values()).filter(
+  async findByAgentId(agentId: string, limit?: number): Promise<AgentExecution[]> {
+    let results = Array.from(this.executions.values()).filter(
       (e) => e.agentId === agentId
+    );
+    if (limit) {
+      results = results.slice(0, limit);
+    }
+    return results;
+  }
+
+  async findPending(): Promise<AgentExecution[]> {
+    return Array.from(this.executions.values()).filter(
+      (e) => e.status === ExecutionStatus.PENDING
     );
   }
 
-  async findRecent(agentId: string, limit: number): Promise<AgentExecution[]> {
-    return Array.from(this.executions.values())
-      .filter((e) => e.agentId === agentId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(0, limit);
+  async update(execution: AgentExecution): Promise<AgentExecution> {
+    this.executions.set(execution.id, execution);
+    return execution;
   }
 
   // Helper for testing
@@ -134,48 +144,7 @@ export class MockAgentExecutionRepository implements IAgentExecutionRepository {
   }
 }
 
-/**
- * Mock EmailService
- */
-export class MockEmailService {
-  sendAgentNotification = vi.fn().mockResolvedValue(true);
-  sendNotification = vi.fn().mockResolvedValue(true);
-}
-
-/**
- * Mock RAG Query Engine
- */
-export const mockRagQueryEngine = {
-  processQuery: vi.fn().mockReturnValue({
-    relevantMetrics: {
-      totalExpenses: 1000,
-      budgetStatus: 'OK',
-      anomalies: [],
-    },
-    confidence: 0.95,
-  }),
+export const MockEmailService = {
+  sendAgentNotification: vi.fn().mockResolvedValue(true),
+  sendAlert: vi.fn().mockResolvedValue(true),
 };
-
-/**
- * Mock Financial Data
- */
-export function createMockFinancialData() {
-  return {
-    userId: 'user-123',
-    totalIncome: 5000,
-    totalExpenses: 1500,
-    accountBalance: 3500,
-    budgets: [
-      { category: 'Food', limit: 300, spent: 250 },
-      { category: 'Transport', limit: 200, spent: 180 },
-    ],
-    recentTransactions: [
-      {
-        id: 'trans-1',
-        amount: 50,
-        category: 'Food',
-        date: new Date(),
-      },
-    ],
-  };
-}

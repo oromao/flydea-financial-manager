@@ -3,6 +3,7 @@ import { AIAgent } from "@/domain/agent/entities/AIAgent";
 import { IAgentRepository } from "@/domain/agent/repositories/IAgentRepository";
 import { AgentType } from "@/domain/agent/value-objects/AgentType";
 import { AgentAction, ActionType } from "@/domain/agent/entities/AgentAction";
+import type { Prisma } from "@prisma/client";
 
 export class PrismaAgentRepository implements IAgentRepository {
   async create(agent: AIAgent): Promise<AIAgent> {
@@ -16,7 +17,7 @@ export class PrismaAgentRepository implements IAgentRepository {
         schedule: agent.schedule,
         isActive: agent.isActive,
         timezone: agent.timezone,
-        config: agent.config,
+        config: agent.config as Prisma.InputJsonValue,
         actions: {
           createMany: {
             data: agent.actions.map((action) => ({
@@ -72,7 +73,7 @@ export class PrismaAgentRepository implements IAgentRepository {
         schedule: agent.schedule,
         isActive: agent.isActive,
         timezone: agent.timezone,
-        config: agent.config,
+        config: agent.config as Prisma.InputJsonValue,
         updatedAt: new Date(),
       },
       include: { actions: true },

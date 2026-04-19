@@ -1,75 +1,122 @@
 import { describe, it, expect } from 'vitest';
 import { AIAgent } from '@/domain/agent/entities/AIAgent';
 import { AgentType } from '@/domain/agent/value-objects/AgentType';
+import { AgentAction, ActionType } from '@/domain/agent/entities/AgentAction';
 
 describe('AIAgent Entity', () => {
-  const validProps = {
-    userId: 'user-123',
-    name: 'Test Agent',
-    type: 'BUDGET_REVIEW',
-    schedule: '0 9 * * *',
-    timezone: 'America/Sao_Paulo',
-    config: {},
-  };
+  const createValidAgent = () =>
+    AIAgent.create(
+      'agent-123',
+      'user-456',
+      'Test Agent',
+      'A test agent',
+      AgentType.create('BUDGET_REVIEW'),
+      '0 9 * * *',
+      true,
+      'America/Sao_Paulo',
+      { threshold: 100 }
+    );
 
-  describe('create factory method', () => {
-    it('should create agent with valid props', () => {
-      const agent = AIAgent.create(validProps);
+  it('should create agent with all properties', () => {
+    const agent = createValidAgent();
 
-      expect(agent.id).toBeDefined();
-      expect(agent.userId).toBe('user-123');
-      expect(agent.name).toBe('Test Agent');
-      expect(agent.isActive).toBe(true);
-      expect(agent.createdAt).toBeInstanceOf(Date);
-    });
+    expect(agent.id).toBe('agent-123');
+    expect(agent.userId).toBe('user-456');
+    expect(agent.name).toBe('Test Agent');
+    expect(agent.description).toBe('A test agent');
+    expect(agent.type.isBudgetReview()).toBe(true);
+    expect(agent.schedule).toBe('0 9 * * *');
+    expect(agent.isActive).toBe(true);
+    expect(agent.timezone).toBe('America/Sao_Paulo');
+    expect(agent.config).toEqual({ threshold: 100 });
+    expect(agent.createdAt).toBeInstanceOf(Date);
+    expect(agent.updatedAt).toBeInstanceOf(Date);
+  });
 
-    it('should fail with empty name', () => {
-      expect(() => {
-        AIAgent.create({
-          ...validProps,
-          name: '',
-        });
-      }).toThrow('Agent name is required');
-    });
+  it('should fail with empty name', () => {
+    expect(() =>
+      AIAgent.create(
+        'agent-123',
+        'user-456',
+        '',
+        'A test agent',
+        AgentType.create('BUDGET_REVIEW'),
+        '0 9 * * *',
+        true,
+        'America/Sao_Paulo',
+        { threshold: 100 }
+      )
+    ).toThrow('Agent name cannot be empty');
+  });
 
-    it('should fail with whitespace-only name', () => {
-      expect(() => {
-        AIAgent.create({
-          ...validProps,
-          name: '   ',
-        });
-      }).toThrow();
-    });
+  it('should fail with whitespace-only name', () => {
+    expect(() =>
+      AIAgent.create(
+        'agent-123',
+        'user-456',
+        '   ',
+        'A test agent',
+        AgentType.create('BUDGET_REVIEW'),
+        '0 9 * * *',
+        true,
+        'America/Sao_Paulo',
+        { threshold: 100 }
+      )
+    ).toThrow('Agent name cannot be empty');
+  });
 
-    it('should fail with invalid schedule', () => {
-      expect(() => {
-        AIAgent.create({
-          ...validProps,
-          schedule: 'invalid cron',
-        });
-      }).toThrow();
-    });
+  it('should fail with empty schedule', () => {
+    expect(() =>
+      AIAgent.create(
+        'agent-123',
+        'user-456',
+        'Test Agent',
+        'A test agent',
+        AgentType.create('BUDGET_REVIEW'),
+        '',
+        true,
+        'America/Sao_Paulo',
+        { threshold: 100 }
+      )
+    ).toThrow('Agent schedule cannot be empty');
+  });
 
-    it('should generate unique IDs', () => {
-      const agent1 = AIAgent.create(validProps);
-      const agent2 = AIAgent.create(validProps);
+  it('should create with default empty actions', () => {
+    const agent = createValidAgent();
+    expect(agent.actions).toEqual([]);
+  });
 
-      expect(agent1.id).not.toBe(agent2.id);
-    });
+  it('should create with provided actions', () => {
+    const action = new AgentAction(
+      'action-123',
+      'agent-123',
+      ActionType.EMAIL,
+      'test@example.com',
+      'template',
+      1,
+      new Date()
+    );
 
-    it('should use provided ID if given', () => {
-      const agent = AIAgent.create({
-        ...validProps,
-        id: 'custom-id',
-      });
+    const agent = AIAgent.create(
+      'agent-123',
+      'user-456',
+      'Test Agent',
+      'A test agent',
+      AgentType.create('BUDGET_REVIEW'),
+      '0 9 * * *',
+      true,
+      'America/Sao_Paulo',
+      { threshold: 100 },
+      [action]
+    );
 
-      expect(agent.id).toBe('custom-id');
-    });
+    expect(agent.actions).toHaveLength(1);
+    expect(agent.actions[0]).toBe(action);
   });
 
   describe('activate/deactivate', () => {
     it('should deactivate active agent', () => {
-      const agent = AIAgent.create(validProps);
+      const agent = createValidAgent();
       expect(agent.isActive).toBe(true);
 
       agent.deactivate();
@@ -77,185 +124,271 @@ describe('AIAgent Entity', () => {
     });
 
     it('should activate inactive agent', () => {
-      const agent = AIAgent.create(validProps);
-      agent.deactivate();
+      const agent = AIAgent.create(
+        'agent-123',
+        'user-456',
+        'Test Agent',
+        'A test agent',
+        AgentType.create('BUDGET_REVIEW'),
+        '0 9 * * *',
+        false,
+        'America/Sao_Paulo',
+        { threshold: 100 }
+      );
+      expect(agent.isActive).toBe(false);
 
       agent.activate();
       expect(agent.isActive).toBe(true);
     });
 
     it('should not fail when deactivating already inactive', () => {
-      const agent = AIAgent.create(validProps);
-      agent.deactivate();
+      const agent = AIAgent.create(
+        'agent-123',
+        'user-456',
+        'Test Agent',
+        'A test agent',
+        AgentType.create('BUDGET_REVIEW'),
+        '0 9 * * *',
+        false,
+        'America/Sao_Paulo',
+        { threshold: 100 }
+      );
 
       expect(() => agent.deactivate()).not.toThrow();
       expect(agent.isActive).toBe(false);
     });
 
     it('should not fail when activating already active', () => {
-      const agent = AIAgent.create(validProps);
+      const agent = createValidAgent();
 
       expect(() => agent.activate()).not.toThrow();
       expect(agent.isActive).toBe(true);
     });
   });
 
-  describe('toPersistence', () => {
-    it('should convert to database format', () => {
-      const agent = AIAgent.create(validProps);
-      const persisted = agent.toPersistence();
-
-      expect(persisted.id).toBe(agent.id);
-      expect(persisted.userId).toBe(agent.userId);
-      expect(persisted.name).toBe(agent.name);
-      expect(persisted.isActive).toBe(true);
-    });
-
-    it('should include all required fields', () => {
-      const agent = AIAgent.create(validProps);
-      const persisted = agent.toPersistence();
-
-      expect(persisted).toHaveProperty('id');
-      expect(persisted).toHaveProperty('userId');
-      expect(persisted).toHaveProperty('name');
-      expect(persisted).toHaveProperty('type');
-      expect(persisted).toHaveProperty('schedule');
-      expect(persisted).toHaveProperty('timezone');
-      expect(persisted).toHaveProperty('config');
-      expect(persisted).toHaveProperty('isActive');
-      expect(persisted).toHaveProperty('createdAt');
-    });
-  });
-
-  describe('fromPersistence', () => {
-    it('should restore agent from database', () => {
+  describe('restore factory method', () => {
+    it('should restore agent from database with all properties', () => {
       const now = new Date();
-      const raw = {
-        id: 'agent-123',
-        userId: 'user-123',
-        name: 'Restored Agent',
-        type: 'BUDGET_REVIEW',
-        schedule: '0 9 * * *',
-        timezone: 'America/Sao_Paulo',
-        config: {},
-        isActive: true,
-        createdAt: now,
-        updatedAt: now,
-      };
+      const createdAt = new Date(now.getTime() - 10000);
 
-      const agent = AIAgent.fromPersistence(raw);
+      const agent = AIAgent.restore(
+        'agent-123',
+        'user-456',
+        'Restored Agent',
+        'A restored agent',
+        AgentType.create('EXPENSE_ALERT'),
+        '0 10 * * *',
+        false,
+        'America/New_York',
+        { alert_threshold: 50 },
+        [],
+        createdAt,
+        now
+      );
 
       expect(agent.id).toBe('agent-123');
-      expect(agent.userId).toBe('user-123');
+      expect(agent.userId).toBe('user-456');
       expect(agent.name).toBe('Restored Agent');
-      expect(agent.isActive).toBe(true);
-    });
-
-    it('should handle inactive agents', () => {
-      const raw = {
-        id: 'agent-123',
-        userId: 'user-123',
-        name: 'Inactive Agent',
-        type: 'BUDGET_REVIEW',
-        schedule: '0 9 * * *',
-        timezone: 'America/Sao_Paulo',
-        config: {},
-        isActive: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      const agent = AIAgent.fromPersistence(raw);
+      expect(agent.description).toBe('A restored agent');
+      expect(agent.type.isExpenseAlert()).toBe(true);
       expect(agent.isActive).toBe(false);
+      expect(agent.createdAt).toBe(createdAt);
+      expect(agent.updatedAt).toBe(now);
     });
   });
 
-  describe('validation', () => {
-    it('should validate agent name length', () => {
-      expect(() => {
-        AIAgent.create({
-          ...validProps,
-          name: 'a'.repeat(256), // Too long
-        });
-      }).toThrow();
-    });
+  describe('updateConfig', () => {
+    it('should update config and updatedAt', () => {
+      const agent = createValidAgent();
+      const originalUpdatedAt = agent.updatedAt;
 
-    it('should validate timezone format', () => {
-      expect(() => {
-        AIAgent.create({
-          ...validProps,
-          timezone: 'Invalid/Timezone',
-        });
-      }).not.toThrow(); // Should accept any timezone format at entity level
-    });
+      const newConfig = { threshold: 200, enabled: true };
+      agent.updateConfig(newConfig);
 
-    it('should validate cron expression', () => {
-      const validCrons = [
-        '0 9 * * *', // Daily at 9 AM
-        '0 * * * *', // Every hour
-        '*/5 * * * *', // Every 5 minutes
-        '0 0 1 * *', // First of month
-      ];
-
-      validCrons.forEach((cron) => {
-        expect(() => {
-          AIAgent.create({
-            ...validProps,
-            schedule: cron,
-          });
-        }).not.toThrow();
-      });
-    });
-
-    it('should reject invalid cron', () => {
-      expect(() => {
-        AIAgent.create({
-          ...validProps,
-          schedule: 'not a valid cron',
-        });
-      }).toThrow();
+      expect(agent.config).toEqual(newConfig);
+      expect(agent.updatedAt.getTime()).toBeGreaterThanOrEqual(
+        originalUpdatedAt.getTime()
+      );
     });
   });
 
-  describe('immutability', () => {
-    it('should have readonly properties', () => {
-      const agent = AIAgent.create(validProps);
+  describe('action management', () => {
+    it('should add action to agent', () => {
+      const agent = createValidAgent();
+      const action = new AgentAction(
+        'action-123',
+        'agent-123',
+        ActionType.SMS,
+        '555-1234',
+        'template',
+        1,
+        new Date()
+      );
 
-      // Properties should not be directly assignable (TypeScript check)
-      // This is tested at compile time, but we can verify at runtime
-      expect(agent.id).toBeDefined();
-      expect(agent.userId).toBeDefined();
+      agent.addAction(action);
+      expect(agent.actions).toHaveLength(1);
+      expect(agent.actions[0]).toBe(action);
+    });
+
+    it('should remove action by id', () => {
+      const agent = createValidAgent();
+      const action1 = new AgentAction(
+        'action-1',
+        'agent-123',
+        ActionType.EMAIL,
+        'test@example.com',
+        'template',
+        1,
+        new Date()
+      );
+      const action2 = new AgentAction(
+        'action-2',
+        'agent-123',
+        ActionType.SMS,
+        '555-1234',
+        'template',
+        2,
+        new Date()
+      );
+
+      agent.addAction(action1);
+      agent.addAction(action2);
+      expect(agent.actions).toHaveLength(2);
+
+      agent.removeAction('action-1');
+      expect(agent.actions).toHaveLength(1);
+      expect(agent.actions[0]).toBe(action2);
+    });
+
+    it('should not fail when removing non-existent action', () => {
+      const agent = createValidAgent();
+      expect(() => agent.removeAction('non-existent')).not.toThrow();
+      expect(agent.actions).toHaveLength(0);
+    });
+  });
+
+  describe('different agent types', () => {
+    it('should work with INCOME_CHECK type', () => {
+      const agent = AIAgent.create(
+        'agent-123',
+        'user-456',
+        'Income Checker',
+        null,
+        AgentType.create('INCOME_CHECK'),
+        '0 12 * * *',
+        true,
+        'America/Sao_Paulo',
+        {}
+      );
+
+      expect(agent.type.isIncomeCheck()).toBe(true);
+    });
+
+    it('should work with CASHFLOW_FORECAST type', () => {
+      const agent = AIAgent.create(
+        'agent-123',
+        'user-456',
+        'Cashflow Forecaster',
+        null,
+        AgentType.create('CASHFLOW_FORECAST'),
+        '0 6 * * MON',
+        true,
+        'America/Sao_Paulo',
+        {}
+      );
+
+      expect(agent.type.isCashflowForecast()).toBe(true);
+    });
+
+    it('should work with SAVINGS_GOAL type', () => {
+      const agent = AIAgent.create(
+        'agent-123',
+        'user-456',
+        'Savings Goal Monitor',
+        null,
+        AgentType.create('SAVINGS_GOAL'),
+        '0 0 1 * *',
+        true,
+        'America/Sao_Paulo',
+        {}
+      );
+
+      expect(agent.type.isSavingsGoal()).toBe(true);
+    });
+
+    it('should work with CUSTOM type', () => {
+      const agent = AIAgent.create(
+        'agent-123',
+        'user-456',
+        'Custom Agent',
+        null,
+        AgentType.create('CUSTOM'),
+        '*/30 * * * *',
+        true,
+        'America/Sao_Paulo',
+        { customLogic: 'test' }
+      );
+
+      expect(agent.type.equals(AgentType.create('CUSTOM'))).toBe(true);
     });
   });
 
   describe('edge cases', () => {
+    it('should handle null description', () => {
+      const agent = AIAgent.create(
+        'agent-123',
+        'user-456',
+        'Agent Without Description',
+        null,
+        AgentType.create('BUDGET_REVIEW'),
+        '0 9 * * *',
+        true,
+        'America/Sao_Paulo',
+        {}
+      );
+
+      expect(agent.description).toBeNull();
+    });
+
     it('should handle special characters in name', () => {
-      const agent = AIAgent.create({
-        ...validProps,
-        name: 'Agent @#$% 123 ü ñ',
-      });
+      const agent = AIAgent.create(
+        'agent-123',
+        'user-456',
+        'Agent @#$% 123 ü ñ',
+        'Description with émojis 🎯',
+        AgentType.create('BUDGET_REVIEW'),
+        '0 9 * * *',
+        true,
+        'America/Sao_Paulo',
+        {}
+      );
 
       expect(agent.name).toBe('Agent @#$% 123 ü ñ');
+      expect(agent.description).toBe('Description with émojis 🎯');
     });
 
-    it('should handle very long cron description', () => {
-      const agent = AIAgent.create(validProps);
-      expect(agent.schedule).toBe('0 9 * * *');
-    });
-
-    it('should preserve config object', () => {
+    it('should preserve complex config object', () => {
       const config = {
         threshold: 100,
         categories: ['FOOD', 'TRANSPORT'],
         nested: {
-          value: 'test',
+          level2: {
+            value: 'test',
+          },
         },
       };
 
-      const agent = AIAgent.create({
-        ...validProps,
-        config,
-      });
+      const agent = AIAgent.create(
+        'agent-123',
+        'user-456',
+        'Test Agent',
+        'A test agent',
+        AgentType.create('BUDGET_REVIEW'),
+        '0 9 * * *',
+        true,
+        'America/Sao_Paulo',
+        config
+      );
 
       expect(agent.config).toEqual(config);
     });

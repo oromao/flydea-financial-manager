@@ -45,7 +45,9 @@ export default function AuditLogs() {
   }, [logs, query, action, entity]);
 
   // Reset to page 1 when filters change
-  useEffect(() => { setPage(1); }, [query, action, entity]);
+  useEffect(() => {
+    setPage(1);
+  }, [query, action, entity]);
 
   const totalPages = Math.max(1, Math.ceil(filteredLogs.length / LOGS_PER_PAGE));
   const paginatedLogs = useMemo(() => {
