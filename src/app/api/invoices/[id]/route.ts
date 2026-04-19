@@ -12,8 +12,6 @@ export async function GET(
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = await params;
-
   const invoice = await prisma.invoice.findUnique({
     where: { id },
     include: { installments: true }
@@ -34,7 +32,6 @@ export async function PUT(
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = await params;
   const body = await request.json();
   const { installmentId, status, paidAmount } = body;
 
