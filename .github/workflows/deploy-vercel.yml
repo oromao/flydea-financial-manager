@@ -28,18 +28,20 @@ jobs:
           # Instalar Vercel CLI
           npm install -g vercel@latest
 
+          # Gerar NEXTAUTH_SECRET
+          NEXTAUTH_SECRET=$(openssl rand -base64 32)
+
           # Configurar DATABASE_URL
-          vercel env add DATABASE_URL "postgresql://neondb_owner:npg_LhFS0qK7rkaZ@ep-lucky-truth-antd5lhh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require" --token=$VERCEL_TOKEN --yes || true
+          vercel env add DATABASE_URL "postgresql://neondb_owner:npg_LhFS0qK7rkaZ@ep-lucky-truth-antd5lhh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require" --token "$VERCEL_TOKEN" --yes || true
 
           # Configurar DIRECT_URL
-          vercel env add DIRECT_URL "postgresql://neondb_owner:npg_LhFS0qK7rkaZ@ep-lucky-truth-antd5lhh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require" --token=$VERCEL_TOKEN --yes || true
+          vercel env add DIRECT_URL "postgresql://neondb_owner:npg_LhFS0qK7rkaZ@ep-lucky-truth-antd5lhh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require" --token "$VERCEL_TOKEN" --yes || true
 
           # Configurar NEXTAUTH_URL
-          vercel env add NEXTAUTH_URL "https://flydea-financial-manager.vercel.app" --token=$VERCEL_TOKEN --yes || true
+          vercel env add NEXTAUTH_URL "https://flydea-financial-manager.vercel.app" --token "$VERCEL_TOKEN" --yes || true
 
-          # Gerar e configurar NEXTAUTH_SECRET
-          NEXTAUTH_SECRET=$(openssl rand -base64 32)
-          vercel env add NEXTAUTH_SECRET "$NEXTAUTH_SECRET" --token=$VERCEL_TOKEN --yes || true
+          # Configurar NEXTAUTH_SECRET
+          vercel env add NEXTAUTH_SECRET "$NEXTAUTH_SECRET" --token "$VERCEL_TOKEN" --yes || true
 
           echo "✅ Variáveis configuradas!"
 
@@ -48,7 +50,8 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          vercel deploy --prod --token=$VERCEL_TOKEN
+          npm install -g vercel@latest
+          vercel deploy --prod --token "$VERCEL_TOKEN"
 
       - name: ✅ Deploy Completo!
         run: |
