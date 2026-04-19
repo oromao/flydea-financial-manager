@@ -46,7 +46,6 @@ const AGENT_TYPES = [
 ];
 
 const CRON_PRESETS = [
-  { label: "A cada hora", value: "0 * * * *" },
   { label: "Todo dia às 9:00", value: "0 9 * * *" },
   { label: "Todo dia às 18:00", value: "0 18 * * *" },
   { label: "Segunda a Sexta às 9:00", value: "0 9 * * 1-5" },
