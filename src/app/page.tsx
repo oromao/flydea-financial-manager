@@ -32,7 +32,8 @@ export default function Dashboard() {
   const [metrics, setMetrics] = useState<any>({
     balance: 0, income: 0, expenses: 0, chartData: [],
     topCategories: [], projectedExpenses: 0, projectedIncome: 0, pendingExpenses: 0,
-    nextMonths: [], budgetAlerts: [], savingsRate: 0
+    nextMonths: [], budgetAlerts: [], savingsRate: 0,
+    copilot: { proactiveMessage: "", insights: [], healthScore: 0 }
   });
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<any[]>([]);
@@ -72,19 +73,19 @@ export default function Dashboard() {
       className="space-y-6 md:space-y-8 max-w-7xl mx-auto pb-20 px-4 md:px-0"
     >
       {/* Header - Copiloto Style */}
-      <motion.header variants={itemVariants} className="space-y-2 py-2">
+      <motion.header variants={itemVariants} className="space-y-4 py-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">
-            <p className="text-sm text-on-surface-variant font-medium">
-              {(() => {
-                const hour = new Date().getHours();
-                if (hour < 12) return "Bom dia";
-                if (hour < 18) return "Boa tarde";
-                return "Boa noite";
-              })()}
-            </p>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-on-background">
-              Como você está hoje?
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-full bg-blue-500/10 text-blue-500 animate-pulse">
+                <Brain className="w-4 h-4" />
+              </div>
+              <p className="text-sm text-blue-500 font-bold uppercase tracking-wider">
+                Copiloto Inteligente
+              </p>
+            </div>
+            <h1 className="text-2xl md:text-4xl font-black tracking-tight text-on-background max-w-2xl leading-tight">
+              {loading ? "Carregando seu panorama..." : metrics.copilot?.proactiveMessage || "Como você está hoje?"}
             </h1>
           </div>
           <div className="flex items-center gap-3">
@@ -140,17 +141,17 @@ export default function Dashboard() {
         </motion.div>
       )}
 
+      {/* Daily Insights - Smart Summary - MOVED TO TOP */}
+      {!loading && metrics.copilot?.insights?.length > 0 && (
+        <motion.div variants={itemVariants} className="space-y-4">
+          <DailyInsight metrics={metrics} />
+        </motion.div>
+      )}
+
       {/* Spend Decision Indicator */}
       <motion.div variants={itemVariants}>
         <SpendDecisionIndicator />
       </motion.div>
-
-      {/* Daily Insights - Smart Summary */}
-      {!loading && (
-        <motion.div variants={itemVariants}>
-          <DailyInsight metrics={metrics} />
-        </motion.div>
-      )}
 
       {/* Weekly Cashflow Forecast */}
       <motion.div variants={itemVariants}>

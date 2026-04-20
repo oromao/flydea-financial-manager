@@ -10,6 +10,20 @@ export function toLocalDateInput(
 ): string {
   if (!isoDate) return "";
   try {
+    // If it's a string that looks like yyyy-MM-dd...
+    if (typeof isoDate === "string") {
+      // If it contains a T, it's a full ISO string. 
+      // To avoid timezone shifts, we just take the first 10 characters if they match yyyy-mm-dd
+      if (isoDate.includes("T")) {
+        const datePart = isoDate.split("T")[0];
+        if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+          return datePart;
+        }
+      } else if (/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) {
+        return isoDate;
+      }
+    }
+
     const d = typeof isoDate === "string" ? parseISO(isoDate) : isoDate;
     if (isNaN(d.getTime())) return "";
     return format(d, "yyyy-MM-dd");

@@ -174,21 +174,28 @@ O que você gostaria de saber?`,
     <>
       {/* Floating Button */}
       <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => {
           setIsOpen(!isOpen);
           setIsMinimized(false);
         }}
         className={cn(
-          "fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-lg",
+          "fixed bottom-6 right-6 z-40 h-14 rounded-full flex items-center gap-3 px-4 transition-all shadow-2xl group",
           isOpen
-            ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white"
-            : "bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
+            ? "bg-white text-blue-600 border border-blue-500/20"
+            : "bg-gradient-to-br from-blue-500 to-blue-700 text-white"
         )}
-        title="Copiloto Inteligente"
       >
-        <Brain className="w-6 h-6" />
+        <div className="relative">
+          <Brain className="w-6 h-6" />
+          {!isOpen && (
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full animate-bounce" />
+          )}
+        </div>
+        <span className="font-bold text-sm tracking-tight pr-2">
+          {isOpen ? "Fechar" : "Copiloto IA"}
+        </span>
       </motion.button>
 
       {/* Sidebar Panel */}

@@ -3,11 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ReceiptText, BarChart3, LogOut, Wallet, UserCircle, RotateCcw, History, Target, CreditCard, BadgeDollarSign, CalendarRange, Camera, ShieldCheck, TrendingUp, Menu, X, Brain } from "lucide-react";
+import { 
+  LayoutDashboard, ReceiptText, BarChart3, LogOut, Wallet, 
+  UserCircle, RotateCcw, History, Target, CreditCard, 
+  BadgeDollarSign, CalendarRange, Camera, ShieldCheck, 
+  TrendingUp, Menu, X, Brain, Clock
+} from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { BottomNav } from "./bottom-nav";
-import { DarkModeToggle } from "./dark-mode-toggle";
 import dynamic from "next/dynamic";
 
 const DarkModeToggleClient = dynamic(() => import("./dark-mode-toggle").then(mod => ({ default: mod.DarkModeToggle })), { ssr: false });
@@ -16,21 +20,26 @@ const navItems = [
   { name: "Início", href: "/", icon: LayoutDashboard },
   { name: "Transações", href: "/movimentacoes", icon: ReceiptText },
   { name: "Contas", href: "/contas", icon: CreditCard },
-  { name: "Fluxo de Caixa", href: "/fluxo-caixa", icon: TrendingUp },
-  { name: "Contas a Pagar", href: "/contas-a-pagar", icon: BadgeDollarSign },
+  { name: "Fluxo", href: "/fluxo-caixa", icon: TrendingUp },
+  { name: "Pendências", href: "/contas-a-pagar", icon: BadgeDollarSign },
   { name: "Orçamentos", href: "/orcamentos", icon: Target },
   { name: "Recorrências", href: "/recorrencias", icon: RotateCcw },
-  { name: "Fechamento Mensal", href: "/fechamento", icon: CalendarRange },
+  { name: "Fechamento", href: "/fechamento", icon: CalendarRange },
   { name: "Agentes IA", href: "/agents", icon: Brain },
   { name: "Relatórios", href: "/relatorios", icon: BarChart3 },
+];
+
+const adminItems = [
   { name: "Logs", href: "/admin/logs", icon: History },
   { name: "Aprovações", href: "/admin/aprovacoes", icon: ShieldCheck },
 ];
 
-function NavLinks({ pathname, onItemClick }: { pathname: string; onItemClick?: () => void }) {
+function NavLinks({ pathname, isAdmin, onItemClick }: { pathname: string; isAdmin: boolean; onItemClick?: () => void }) {
+  const allItems = isAdmin ? [...navItems, ...adminItems] : navItems;
+
   return (
     <>
-      {navItems.map((item) => {
+      {allItems.map((item) => {
         const isActive = pathname === item.href;
         const Icon = item.icon;
 
@@ -62,7 +71,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
 
   if (pathname === '/login') return <>{children}</>;
 
-  const isAdmin = session?.user?.role === "ADMIN";
+  const isAdmin = (session?.user as any)?.role === "ADMIN";
 
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row font-sans overflow-x-hidden">
@@ -108,7 +117,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
 
         {/* Nav Links */}
         <div className="flex-1 space-y-0.5">
-          <NavLinks pathname={pathname} onItemClick={() => setDrawerOpen(false)} />
+          <NavLinks pathname={pathname} isAdmin={isAdmin} onItemClick={() => setDrawerOpen(false)} />
         </div>
 
         {/* User Section */}
@@ -190,7 +199,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex-1 space-y-0.5">
-          <NavLinks pathname={pathname} />
+          <NavLinks pathname={pathname} isAdmin={isAdmin} />
         </div>
 
         <div className="mt-auto space-y-3 pt-4 border-t border-outline/20">

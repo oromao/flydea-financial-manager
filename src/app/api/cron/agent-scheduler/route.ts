@@ -1,11 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
-import { AgentQueue } from "@/infrastructure/services/AgentQueue";
+import { DailyIntelligenceOrchestrator } from "@/infrastructure/services/DailyIntelligenceOrchestrator";
 
 const CRON_SECRET = process.env.CRON_SECRET || "development";
 
 /**
- * Daily agent processor (runs once per day via Vercel cron)
- * Processes all active agents in a queue with retry logic
+ * Daily agent processor (runs once per day via Vercel cron at 09:00)
+ * Acts as the single central orchestrator for the Mini IA features and agents.
  */
 export async function GET(request: NextRequest) {
   const secret = request.nextUrl.searchParams.get("secret");
@@ -13,58 +13,27 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const startTime = Date.now();
-
   try {
-    const queue = new AgentQueue();
-
-    // Get metrics before processing
-    const metricsBefore = await queue.getMetrics();
-
-    // Enqueue all active agents
-    const items = await queue.enqueueAllActive();
-
-    // Process queue
-    const result = await queue.processQueue(items);
-
-    // Get metrics after processing
-    const metricsAfter = await queue.getMetrics();
-
-    const duration = Date.now() - startTime;
+    const orchestrator = new DailyIntelligenceOrchestrator();
+    const result = await orchestrator.runDailyPipeline();
 
     return NextResponse.json(
       {
         success: true,
         timestamp: new Date().toISOString(),
-        duration: `${duration}ms`,
-        metrics: {
-          before: metricsBefore,
-          after: metricsAfter,
-        },
-        results: {
-          executed: result.executed.length,
-          failed: result.failed.length,
-          queued: result.queued.length,
-          agents: {
-            executed: result.executed,
-            failed: result.failed,
-            queued: result.queued,
-            errors: result.errors,
-          },
-        },
+        results: result,
       },
       { status: 200 }
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("[AgentScheduler] Critical error:", message);
+    console.error("[AgentScheduler] Critical error in DailyOrchestrator:", message);
 
     return NextResponse.json(
       {
         success: false,
         error: message,
         timestamp: new Date().toISOString(),
-        duration: `${Date.now() - startTime}ms`,
       },
       { status: 500 }
     );
@@ -83,18 +52,13 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const queue = new AgentQueue();
-    const items = await queue.enqueueAllActive();
-    const result = await queue.processQueue(items);
+    const orchestrator = new DailyIntelligenceOrchestrator();
+    const result = await orchestrator.runDailyPipeline();
 
     return NextResponse.json({
       success: true,
       timestamp: new Date().toISOString(),
-      results: {
-        executed: result.executed.length,
-        failed: result.failed.length,
-        agents: result,
-      },
+      results: result,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

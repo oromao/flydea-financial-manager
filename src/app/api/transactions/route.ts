@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TransactionSchema } from "@/lib/validations";
+import { BehavioralIntelligenceService } from "@/infrastructure/services/BehavioralIntelligenceService";
 
 const PAGE_SIZE = 20;
 
@@ -118,6 +119,14 @@ export async function POST(request: NextRequest) {
     },
     include: { category: true, account: true, tags: { include: { tag: true } } }
   });
+
+  // Real-time Intelligence Hook
+  try {
+    const behavioralService = new BehavioralIntelligenceService();
+    await behavioralService.onTransactionCreated(session.user.id, amount, categoryId);
+  } catch (intelError) {
+    console.error("[IntelligenceHook] Error:", intelError);
+  }
 
   await prisma.auditLog.create({
     data: {

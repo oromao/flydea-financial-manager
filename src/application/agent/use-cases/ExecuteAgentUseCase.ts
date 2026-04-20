@@ -2,9 +2,10 @@ import { randomUUID } from "crypto";
 import { AgentExecution } from "@/domain/agent/entities/AgentExecution";
 import { IAgentRepository } from "@/domain/agent/repositories/IAgentRepository";
 import { IAgentExecutionRepository } from "@/domain/agent/repositories/IAgentExecutionRepository";
-import { ragQueryEngine } from "@/lib/rag/query-engine";
+import { cagEngine } from "@/lib/rag/cag-engine";
 import { getUserFinancialData } from "@/lib/financial-rag";
 import { EmailService } from "@/infrastructure/services/EmailService";
+import { prisma } from "@/lib/prisma";
 
 export interface ExecuteAgentOutput {
   executionId: string;
@@ -32,15 +33,31 @@ export class ExecuteAgentUseCase {
       // Get user financial data
       const financialData = await getUserFinancialData(userId);
 
-      // Generate insights based on agent type
-      const query = this.buildQueryForAgent(agent.type.toString(), financialData);
-      const result = ragQueryEngine.processQuery(query, financialData, 3);
+      // Generate insights using CAG Engine
+      const insights = cagEngine.rankInsights(financialData);
+      const topInsight = insights[0] || {
+        title: "Tudo em ordem",
+        message: "Não identifiquei riscos imediatos na sua conta.",
+        type: "INFORMAÇÃO"
+      };
+
+      // Map output metrics
+      const output = {
+        insight: topInsight,
+        metrics: {
+          balance: financialData.summary.totalBalance,
+          netFlow: financialData.summary.netFlow,
+          pending: financialData.summary.pendingPayments,
+          healthScore: cagEngine.calculateScores(financialData).healthScore
+        }
+      };
 
       // Execute actions
       const actionResults: Record<string, unknown> = {};
       const emailService = new EmailService();
 
       for (const action of agent.actions) {
+        // 1. EMAIL ACTION
         if (action.type === "EMAIL" && action.recipient) {
           try {
             const sent = await emailService.sendAgentNotification({
@@ -48,7 +65,7 @@ export class ExecuteAgentUseCase {
               agentName: agent.name,
               agentType: agent.type.toString(),
               executionStatus: "SUCCESS",
-              output: result.relevantMetrics,
+              output,
             });
             actionResults[action.id] = {
               type: "EMAIL",
@@ -63,9 +80,36 @@ export class ExecuteAgentUseCase {
             };
           }
         }
+
+        // 2. IN_APP_NOTIFICATION ACTION
+        if (action.type === "IN_APP_NOTIFICATION") {
+          try {
+            await prisma.notification.create({
+              data: {
+                userId,
+                title: `Agente: ${agent.name}`,
+                message: topInsight.message,
+                type: topInsight.type === "URGENTE" ? "ALERT" : "INFO",
+                relatedId: agentId,
+                relatedType: "AGENT_EXECUTION",
+                metadata: output as any,
+              }
+            });
+            actionResults[action.id] = {
+              type: "IN_APP_NOTIFICATION",
+              status: "SUCCESS"
+            };
+          } catch (error) {
+            actionResults[action.id] = {
+              type: "IN_APP_NOTIFICATION",
+              status: "FAILED",
+              error: error instanceof Error ? error.message : "Unknown error",
+            };
+          }
+        }
       }
 
-      execution.markSuccess(result.relevantMetrics || {}, actionResults);
+      execution.markSuccess(output, actionResults);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
       execution.markFailed(message);
@@ -77,23 +121,5 @@ export class ExecuteAgentUseCase {
       executionId: execution.id,
       status: execution.status,
     };
-  }
-
-  private buildQueryForAgent(
-    agentType: string,
-    financialData: any
-  ): string {
-    switch (agentType) {
-      case "BUDGET_REVIEW":
-        return "Revise os orçamentos e me diga se algum está acima do limite";
-      case "EXPENSE_ALERT":
-        return "Quais foram meus gastos anormais este mês?";
-      case "INCOME_CHECK":
-        return "Qual foi minha receita total e como está se comparado ao mês anterior?";
-      case "CASHFLOW_FORECAST":
-        return "Qual é minha projeção de fluxo de caixa para os próximos 30 dias?";
-      default:
-        return "Analise minha situação financeira atual";
-    }
   }
 }

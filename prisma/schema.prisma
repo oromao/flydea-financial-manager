@@ -33,6 +33,10 @@ model User {
   documentImportAttempts DocumentImportAttempt[]
   copilotConversations  CopilotConversation[]
   aiAgents              AIAgent[]
+  intelligence          UserIntelligence?
+  insights              Insight[]
+  predictions           Prediction[]
+  behavioralLogs        UserBehavioralLog[]
 }
 
 model Category {
@@ -454,4 +458,126 @@ model AgentExecution {
   @@index([agentId])
   @@index([status])
   @@index([scheduledAt])
+}
+
+// ===== DAILY INTELLIGENCE & MINI IA =====
+
+model UserIntelligence {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Profile & Scoring
+  riskScore             Float    @default(50) // 0-100
+  savingsRate           Float    @default(0)  // %
+  predictabilityScore   Float    @default(50) // 0-100
+  impulsivityScore      Float    @default(50) // 0-100
+  behaviorChangeScore   Float    @default(0)  // 0-100
+  predictionAccuracyScore Float  @default(50) // 0-100
+  impactScore           Float    @default(50) // 0-100 (overall success of system)
+  
+  // States
+  recentPatternShift    Boolean  @default(false)
+  cashflowStability     Float    @default(50) // 0-100
+  
+  lastCalculatedAt      DateTime @default(now())
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model Insight {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type            String   // EXPENSE_WARNING, CASHFLOW_RISK, SAVINGS_OPP
+  content         String
+  templateId      String?
+  template        InsightTemplate? @relation(fields: [templateId], references: [id])
+  
+  score           Float    @default(0) // dynamic priority
+  priority        String   @default("LOW") // HIGH, MEDIUM, LOW
+  impactScore     Float    @default(0) // 0-100 (actual improvement)
+  
+  status          String   @default("GENERATED") // GENERATED, SHOWN, ACTED, IGNORED
+  
+  expectedEffect  String?
+  actualEffect    String?
+  
+  interactions    InsightInteraction[]
+  
+  createdAt       DateTime @default(now())
+  actedAt         DateTime?
+}
+
+model Prediction {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type            String   // CASHFLOW_NEGATIVE, BUDGET_OVERRUN
+  predictedDate   DateTime
+  predictedAmount Float?
+  
+  actualDate      DateTime?
+  actualAmount    Float?
+  
+  errorMargin     Float?
+  status          String   @default("PENDING") // PENDING, VERIFIED
+  
+  createdAt       DateTime @default(now())
+  verifiedAt      DateTime?
+}
+
+model InsightTemplate {
+  id              String   @id @default(uuid())
+  type            String   // matches Insight.type
+  content         String   // The text template
+  
+  performanceScore Float   @default(50) // 0-100
+  usageCount      Int      @default(0)
+  actionCount     Int      @default(0)
+  ignoreCount     Int      @default(0)
+  
+  insights        Insight[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model DailyExecutionLog {
+  id              String   @id @default(uuid())
+  date            DateTime @default(now())
+  status          String   // SUCCESS, PARTIAL_SUCCESS, FAILED
+  usersProcessed  Int      @default(0)
+  usersFailed     Int      @default(0)
+  insightsGenerated Int    @default(0)
+  agentsExecuted  Int      @default(0)
+  executionTimeMs Int      @default(0)
+  errors          Json?
+  
+  createdAt       DateTime @default(now())
+}
+
+model InsightInteraction {
+  id              String   @id @default(uuid())
+  insightId       String
+  insight         Insight  @relation(fields: [insightId], references: [id], onDelete: Cascade)
+  
+  interactionType String   // VIEWED, CLICKED, DISMISSED, ACTED
+  metadata        Json?    // Context at time of interaction
+  
+  createdAt       DateTime @default(now())
+}
+
+model UserBehavioralLog {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  changeType      String   // SPENDING_INCREASE, NEW_CATEGORY, FREQUENCY_SHIFT
+  description     String?
+  severity        Float    @default(0) // 0-100
+  
+  createdAt       DateTime @default(now())
 }

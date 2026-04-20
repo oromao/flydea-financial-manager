@@ -18,14 +18,24 @@ interface DailyInsightProps {
     savingsRate: number;
     monthIncome: number;
     monthExpenses: number;
+    copilot?: {
+      insights: Array<{
+        id: string;
+        type: "URGENTE" | "IMPACTO" | "INFORMAÇÃO";
+        title: string;
+        message: string;
+        actionLabel?: string;
+        actionUrl?: string;
+      }>;
+    };
   };
 }
 
 interface Insight {
-  type: "success" | "warning" | "info" | "action";
+  type: "success" | "warning" | "info" | "action" | "error";
   title: string;
   description: string;
-  icon: "trend" | "warning" | "success" | "action";
+  icon: "trend" | "warning" | "success" | "action" | "info";
   action?: string;
   actionHref?: string;
 }
@@ -100,9 +110,25 @@ export function DailyInsight({ metrics }: DailyInsightProps) {
 
     if (!metrics) return result;
 
-    const monthProgress = metrics.monthIncome > 0 
-      ? ((metrics.monthExpenses / metrics.monthIncome) * 100).toFixed(0)
-      : "0";
+    // 1. Load Copilot Intelligent Insights (Highest Priority)
+    if (metrics.copilot?.insights) {
+      metrics.copilot.insights.forEach(ci => {
+        result.push({
+          type: ci.type === "URGENTE" ? "warning" : ci.type === "IMPACTO" ? "action" : "success",
+          title: ci.title,
+          description: ci.message,
+          icon: ci.type === "URGENTE" ? "warning" : ci.type === "IMPACTO" ? "trend" : "info",
+          action: ci.actionLabel,
+          actionHref: ci.actionUrl
+        });
+      });
+    }
+
+    // 2. Legacy/Fallback Heuristics (if result is not full)
+    if (result.length < 3) {
+      const monthProgress = metrics.monthIncome > 0 
+        ? ((metrics.monthExpenses / metrics.monthIncome) * 100).toFixed(0)
+        : "0";
 
     const projectedOverIncome = metrics.projectedExpenses > metrics.projectedIncome + metrics.balance;
 
@@ -183,6 +209,7 @@ export function DailyInsight({ metrics }: DailyInsightProps) {
         icon: "success"
       });
     }
+    }
 
     return result.slice(0, 3);
   }, [metrics]);
@@ -193,6 +220,7 @@ export function DailyInsight({ metrics }: DailyInsightProps) {
       case "warning": return <AlertTriangle className="w-5 h-5" />;
       case "success": return <CheckCircle2 className="w-5 h-5" />;
       case "action": return <ArrowRight className="w-5 h-5" />;
+      case "info": return <Lightbulb className="w-5 h-5" />;
       default: return <Lightbulb className="w-5 h-5" />;
     }
   };
@@ -202,6 +230,7 @@ export function DailyInsight({ metrics }: DailyInsightProps) {
       case "success": return "bg-emerald-50 border-emerald-200 text-emerald-900";
       case "warning": return "bg-amber-50 border-amber-200 text-amber-900";
       case "action": return "bg-blue-50 border-blue-200 text-blue-900";
+      case "error": return "bg-rose-50 border-rose-200 text-rose-900";
       default: return "bg-surface-variant/50 border-outline/20 text-on-surface";
     }
   };
@@ -211,6 +240,7 @@ export function DailyInsight({ metrics }: DailyInsightProps) {
       case "success": return "text-emerald-600 bg-emerald-100";
       case "warning": return "text-amber-600 bg-amber-100";
       case "action": return "text-blue-600 bg-blue-100";
+      case "error": return "text-rose-600 bg-rose-100";
       default: return "text-secondary bg-surface";
     }
   };

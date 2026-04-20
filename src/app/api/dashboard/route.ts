@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { startOfMonth, endOfMonth, addMonths } from "date-fns";
 import { computeMonthlySummary } from "@/lib/financial-engine";
+import { getUserFinancialData } from "@/lib/financial-rag";
+import { cagEngine } from "@/lib/rag/cag-engine";
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -13,6 +15,11 @@ export async function GET(request: NextRequest) {
   const now = new Date();
   const startDate = startOfMonth(now);
   const endDate = endOfMonth(now);
+
+  // Fetch data for CAG Engine
+  const financialData = await getUserFinancialData(session.user.id);
+  const copilotInsights = cagEngine.rankInsights(financialData);
+  const proactiveMessage = cagEngine.generateProactiveMessage(financialData);
 
   // Fetch current month transactions + all-time for balance
   const [monthTransactions, allTransactions, recurrences, budgets] =
@@ -146,5 +153,10 @@ export async function GET(request: NextRequest) {
       summary.monthIncome > 0
         ? ((summary.monthIncome - summary.monthExpenses) / summary.monthIncome) * 100
         : 0,
+    copilot: {
+      proactiveMessage,
+      insights: copilotInsights.slice(0, 3),
+      healthScore: cagEngine.calculateScores(financialData).healthScore,
+    },
   });
 }

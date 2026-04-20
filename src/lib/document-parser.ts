@@ -31,16 +31,16 @@ export interface ExtractedDocumentData {
 const CNPJ_PATTERN = /\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g;
 const CPF_PATTERN = /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g;
 const DATA_BR_PATTERN = /\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})\b/g;
-const VALOR_PATTERN = /R\$\s*([\d.]+,\d{2})/g;
+const VALOR_PATTERN = /(?:R\$|VALOR|TOTAL|PAGO)[\s:]*([\d.]+,\d{2})/gi;
 const VALOR_SIMPLES_PATTERN = /(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*,\d{2})/g;
 const NUMERO_DOC_PATTERN = /(?:N[º°]?|N[º°]\s*(?:fe)?|N\.?F\.?e\.?|NFse?|Recibo|Fatura|Boleto)[\s:]*([\d\-\/]+)/i;
 const INSTALMENTES_PATTERN = /(\d+)\s*\/\s*(\d+)|(\d+)º?\s*(?:parcela|parcelas?)|(?:(?:pos|parcelas?|x)\s*(?:de\s*)?(\d+))/i;
 
 // Transfer/PIX specific patterns
-const PIX_ID_PATTERN = /(?:ID|id)\s*(?:da\s*)?(?:transação|transferência)?[\s:]*([a-f0-9]{32}|\d{20,})/gi;
-const TRANSFER_DESTINO_PATTERN = /(?:destino|para|favorecido|recebedor)[\s:]*(.{0,80}?)(?:\n|CNPJ|CPF|Banco|$)/i;
-const TRANSFER_ORIGEM_PATTERN = /(?:origem|de|remetente|pagador)[\s:]*(.{0,80}?)(?:\n|CNPJ|CPF|Banco|$)/i;
-const TRANSFER_BANCO_PATTERN = /(?:banco|instituição|agência)[\s:]*([^\n]{0,100})/i;
+const PIX_ID_PATTERN = /(?:ID|E2E|id|Autenticação)\s*(?:da\s*)?(?:transação|transferência)?[\s:]*([a-z0-9]{32}|[a-z0-9\-]{36}|\d{20,})/gi;
+const TRANSFER_DESTINO_PATTERN = /(?:destino|para|favorecido|recebedor|pago a|crédito para)[\s:]*(.{0,80}?)(?:\n|CNPJ|CPF|Banco|Valor|$)/i;
+const TRANSFER_ORIGEM_PATTERN = /(?:origem|de|remetente|pagador|nome do pagador)[\s:]*(.{0,80}?)(?:\n|CNPJ|CPF|Banco|Valor|$)/i;
+const TRANSFER_BANCO_PATTERN = /(?:banco|instituição|agência|isbp)[\s:]*([^\n]{0,100})/i;
 
 export async function extractDocumentText(buffer: Buffer, mimeType: string): Promise<string> {
   if (mimeType === "application/pdf") {
@@ -316,7 +316,7 @@ function extractAmount(text: string, type: "total" | "net"): number | null {
   const amounts: number[] = [];
 
   // Pattern 1: R$ 1.234,56
-  const pattern1 = /R\$\s*([\d.]+),(\d{2})/g;
+  const pattern1 = /(?:R\$|VALOR|TOTAL|PAGO)[\s:]*([\d.]+),(\d{2})/gi;
   for (const match of text.matchAll(pattern1)) {
     const value = parseFloat(match[1].replace(/\./g, "") + "." + match[2]);
     if (!isNaN(value) && value > 0) {
@@ -335,7 +335,7 @@ function extractAmount(text: string, type: "total" | "net"): number | null {
   }
 
   // Pattern 3: Valor: number, Valor = number
-  const pattern3 = /(?:valor|amount|total|transferência)[\s:=]*[\s]*([\d,.]+)/gi;
+  const pattern3 = /(?:valor|amount|total|transferência|pagamento)[\s:=]*[\s]*([\d,.]+)/gi;
   for (const match of text.matchAll(pattern3)) {
     const cleanValue = match[1].replace(/\./g, "").replace(",", ".");
     const value = parseFloat(cleanValue);

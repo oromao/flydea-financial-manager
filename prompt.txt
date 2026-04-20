@@ -1,0 +1,376 @@
+Atue como um engenheiro fullstack sênior trabalhando no repositório FlyDea Financial Manager.
+
+Stack do projeto:
+- Next.js 16
+- React 19
+- TypeScript
+- Prisma
+- PostgreSQL
+- Tailwind CSS
+- shadcn/ui
+
+Sua missão é executar uma correção completa em uma única branch chamada:
+
+fix/transactions-crud-and-mobile
+
+Objetivo geral:
+1. Corrigir 6 bugs críticos do CRUD de transações
+2. Corrigir problemas de responsividade mobile, com foco em iPhone 16 Plus (430x932)
+3. Fazer auditoria técnica geral e corrigir problemas relevantes encontrados no caminho
+4. Validar build, lint, testes e TypeScript
+5. Abrir PR para main no final, se tudo estiver estável
+
+Regras inegociáveis:
+- Não quebrar o que já funciona
+- Sempre ler o código real antes de editar
+- Nunca sobrescrever arquivo inteiro sem necessidade
+- Fazer commits atômicos, um por responsabilidade
+- Se encontrar ambiguidade, decidir de forma conservadora e documentar no PR
+- Rodar npm run build após cada fase grande
+- Não refatorar por estética; só mexer no que:
+  a) tem bug
+  b) não é responsivo
+  c) impede build/lint/testes
+- UI em português pt-BR
+- Código, commits e nomes técnicos em inglês
+- Datas no banco em UTC midnight
+- Exibição em America/Sao_Paulo
+- Se o baseline estiver quebrado por problema não relacionado, parar e reportar em vez de empilhar correções
+
+Fluxo obrigatório de execução:
+
+FASE 0 — SETUP E BASELINE
+
+Execute:
+- git checkout main
+- git pull origin main
+- git status
+- git checkout -b fix/transactions-crud-and-mobile
+- npm install
+- npm run build 2>&1 | tee /tmp/baseline-build.log
+- npm run lint 2>&1 | tee /tmp/baseline-lint.log
+- npm test -- --passWithNoTests 2>&1 | tee /tmp/baseline-test.log
+- npx tsc --noEmit 2>&1 | tee /tmp/baseline-tsc.log
+
+Se npm run build falhar por erro não relacionado aos bugs conhecidos, pare imediatamente e gere um relatório explicando:
+- qual comando falhou
+- qual erro apareceu
+- por que não é seguro continuar
+
+Registrar no PR depois:
+- quantidade inicial de erros TS
+- quantidade inicial de erros de lint
+- quantidade inicial de falhas de teste
+- status do build baseline
+
+FASE 1 — DESCOBERTA E AUDITORIA
+
+Antes de corrigir qualquer coisa, faça uma auditoria automatizada e gere AUDIT_REPORT.md na raiz do repositório.
+
+Rode os scans:
+
+1. TypeScript
+npx tsc --noEmit > /tmp/tsc-errors.txt 2>&1
+
+2. Lint
+npm run lint > /tmp/lint.txt 2>&1 || true
+
+3. Anti-patterns
+- procurar console.log e console.debug esquecidos em src/
+- procurar TODO, FIXME, XXX, HACK
+- procurar uso explícito de : any e as any
+- procurar larguras fixas em px que possam quebrar mobile
+- procurar tabelas sem overflow horizontal
+- procurar layouts flex horizontais sem wrap
+- procurar alert() e confirm() nativos
+- procurar process.env sem fallback
+
+Gerar AUDIT_REPORT.md com esta estrutura:
+
+# Auditoria Pré-Fix — <data>
+
+## Baseline
+- TS errors: X
+- Lint errors: Y
+- Test failures: Z
+- Build: OK | FAIL
+
+## Anti-patterns detectados
+### Console.logs
+### Larguras fixas em px
+### Tabelas sem overflow
+### any explícito
+### TODOs/FIXMEs
+
+## Componentes potencialmente não responsivos
+## Priorização proposta
+
+Prioridade:
+1. bugs críticos do CRUD
+2. responsividade das páginas mais usadas
+3. demais problemas relevantes
+
+Depois disso, fazer commit:
+chore(audit): initial repository audit report
+
+FASE 2 — CORREÇÃO DOS 6 BUGS DO CRUD
+
+Corrigir os bugs abaixo com validação cuidadosa do código real antes de cada patch.
+
+BUG 1 — categoryId null quebra edição
+Arquivo-alvo principal:
+src/lib/validations.ts
+
+Objetivo:
+- Fazer o TransactionSchema aceitar categoryId opcional ou nulo
+- Tratar datas vazias como undefined
+- Garantir defaults seguros em enums
+- Preservar campos adicionais já existentes no schema real do projeto
+
+Se houver campos extras como notes, installment, projectId ou outros, manter.
+
+Commit esperado:
+fix(validations): allow nullable categoryId and normalize empty transaction dates
+
+BUG 2 — Criar helpers compartilhados
+Criar ou mesclar:
+- src/lib/format-errors.ts
+- src/lib/date-utils.ts
+
+Objetivo:
+- formatar erros de validação de forma amigável para UI
+- substituir usos inseguros de split("T")[0]
+- garantir conversão timezone-safe entre input date e UTC midnight
+
+Se date-utils.ts já existir, mesclar sem apagar funções existentes.
+
+Commit esperado:
+feat(lib): add validation error formatter and timezone-safe date helpers
+
+BUG 3 — PUT robusto e DELETE com 202 para aprovação
+Arquivo:
+src/app/api/transactions/[id]/route.ts
+
+Objetivo:
+- PUT defensivo com safeParse
+- tratamento consistente de JSON inválido
+- validação de permissão
+- parse defensivo de datas
+- categoryId nulo persistido como null
+- tags atualizadas via set
+- DELETE retornar 202 quando MEMBER pedir exclusão sujeita à aprovação
+- manter logs de auditoria
+- adaptar ao schema Prisma real sem quebrar nomes de campos existentes
+
+Antes de editar:
+- ler prisma/schema.prisma
+- confirmar nomes reais de approvalRequest e auditLog
+
+Commit esperado:
+fix(api): harden transaction update and support approval-based delete flow
+
+BUG 4 — POST consistente com PUT
+Arquivo:
+src/app/api/transactions/route.ts
+
+Objetivo:
+- aplicar o mesmo padrão defensivo do PUT
+- parse seguro de datas
+- categoryId tratado como null
+- try/catch consistente
+- log útil em erro
+- não reescrever o arquivo inteiro sem necessidade
+
+Commit esperado:
+fix(api): make transaction create route consistent with update validation
+
+BUG 5 — Frontend robusto em /movimentacoes
+Arquivo:
+src/app/movimentacoes/page.tsx
+
+Objetivo:
+- importar formatZodError
+- importar toLocalDateInput
+- corrigir handleEdit para suportar categoryId null e datas timezone-safe
+- corrigir handleSubmit para mensagens de erro legíveis
+- corrigir fluxo de POST/PUT com payload consistente
+- atualizar stats após mutações
+- corrigir deleteTransaction para tratar status 202 e approvalRequested
+- manter UX clara em português
+
+Commit esperado:
+fix(movimentacoes): harden edit submit and delete flows for transactions
+
+BUG 6 — Upload não pode travar o formulário
+Ainda em:
+src/app/movimentacoes/page.tsx
+
+Objetivo:
+- localizar handler de upload
+- envolver com try/catch/finally
+- garantir setUploading(false) sempre no finally
+- exibir toast amigável em falha
+
+Commit esperado:
+fix(upload): ensure transaction upload state always resets on failure
+
+FASE 3 — RESPONSIVIDADE MOBILE
+
+Foco:
+iPhone 16 Plus — 430x932
+
+Aplicar revisão responsiva nas páginas mais críticas, nesta ordem:
+1. src/app/layout.tsx
+2. src/app/movimentacoes/page.tsx
+3. src/app/dashboard/page.tsx
+4. src/app/fluxo-caixa/page.tsx
+5. src/app/contas-pagar/page.tsx
+6. src/app/orcamentos/page.tsx
+7. src/app/recorrencias/page.tsx
+8. src/app/fechamento/page.tsx
+9. src/app/relatorios/page.tsx
+10. src/app/admin/**
+11. src/components/** compartilhados relevantes
+
+Princípios obrigatórios:
+- evitar scroll horizontal
+- trocar tabela pura por:
+  - tabela no desktop
+  - cards no mobile
+- wrappers com overflow-x-auto em tabelas desktop
+- modais com largura e altura limitadas à viewport
+- touch targets com mínimo de 44px
+- inputs com 16px em mobile para evitar zoom no iOS
+- safe-area suportada
+- containers com overflow-x-hidden quando necessário
+- grids ajustados para 1 coluna no mobile
+- flex-wrap em linhas longas
+- evitar larguras fixas agressivas em px
+
+No src/app/layout.tsx:
+- garantir viewport com device-width, initialScale 1, viewportFit cover
+- body com min-h-[100dvh] e overflow-x-hidden
+
+No globals.css:
+- utilitários de safe-area
+- anti-zoom para input, select e textarea
+
+Dialogs:
+- revisar DialogContent para usar width responsiva e max-height com scroll interno
+
+Se houver sidebar fixa:
+- manter fixa em desktop
+- usar Sheet/Drawer em mobile
+
+Preferência:
+- reutilizar componentes mobile já existentes em vez de duplicar UI
+
+Fazer commits por página ou por grupo pequeno de páginas, por exemplo:
+fix(mobile): make /movimentacoes responsive on iPhone 16 Plus
+fix(mobile): make /dashboard responsive on iPhone 16 Plus
+
+FASE 4 — LIMPEZA E QUALIDADE GERAL
+
+Com base no AUDIT_REPORT.md:
+
+1. Remover console.log de produção
+- criar logger condicional se necessário
+- manter console.error em catches relevantes
+
+2. Reduzir anys óbvios
+- focar handlers, dados de API e pontos críticos
+- não perder tempo com anys de bibliotecas externas
+
+3. Corrigir erros de TypeScript encontrados na auditoria
+- objetivo: tsc limpo
+
+4. process.env com fallback seguro
+- validar variáveis críticas
+
+5. Melhorar acessibilidade e qualidade visual óbvia
+- alt em imagens
+- evitar img simples quando next/image fizer sentido
+- corrigir problemas gritantes de usabilidade
+
+Commit esperado:
+chore: general cleanup for logs typing env safety and TS stability
+
+FASE 5 — VALIDAÇÃO FINAL E PR
+
+Executar obrigatoriamente:
+- npm run build
+- npx tsc --noEmit
+- npm run lint
+- npm test -- --passWithNoTests
+
+Se Playwright existir:
+- rodar testes E2E/mobile
+Se não existir:
+- criar um teste simples de responsividade para verificar ausência de scroll horizontal nas páginas principais
+
+Critério mínimo para finalizar:
+- build passando
+- TypeScript limpo
+- lint passando
+- testes passando ou sem testes com passWithNoTests
+
+Depois gerar PR_DESCRIPTION.md com:
+- resumo do que foi corrigido
+- bugs do brainstorming resolvidos
+- páginas revisadas no mobile
+- limpeza geral feita
+- baseline antes vs depois
+- observações de atenção para revisão visual e fluxo de aprovação
+
+Estrutura esperada do PR:
+- título claro
+- descrição completa
+- lista dos arquivos afetados
+- riscos conhecidos ou decisões conservadoras adotadas
+
+Se gh CLI estiver disponível:
+- abrir PR para main
+Se não estiver:
+- deixar PR_DESCRIPTION.md pronto e informar que o PR precisa ser aberto manualmente
+
+PROTOCOLO DE FALHA
+
+Se qualquer fase falhar:
+1. não force merge
+2. salvar FAILURE_REPORT.md com:
+   - fase que falhou
+   - comando que falhou
+   - erro completo
+   - commits já aplicados
+   - git status
+   - git log --oneline -20
+3. interromper execução e reportar claramente
+
+MODO DE TRABALHO OBRIGATÓRIO
+
+Durante a execução:
+- pense passo a passo
+- leia arquivos reais antes de editar
+- prefira mudanças pequenas e seguras
+- valide o impacto de cada alteração
+- não assuma nomes de campos Prisma sem confirmar
+- não invente componentes que já existam no projeto
+- preserve comportamento funcional atual sempre que possível
+
+ORDEM SAGRADA
+1. Fazer baseline
+2. Se baseline quebrar por problema alheio, parar
+3. Gerar AUDIT_REPORT.md
+4. Corrigir os bugs do CRUD
+5. Corrigir mobile
+6. Fazer limpeza geral
+7. Validar tudo
+8. Criar PR
+
+Entrega esperada:
+- branch pronta
+- commits atômicos
+- build estável
+- CRUD de transações funcionando
+- mobile usável
+- PR preparado para main
