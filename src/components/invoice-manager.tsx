@@ -1,8 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Check } from "lucide-react";
+import { Plus, Check, Loader2, X, Wallet, User, Mail, FileText, Calendar, CreditCard, AlertCircle } from "lucide-react";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Card, CardContent } from "./ui/card";
+import { useToast } from "./ui/toast";
+import { MoneyInput } from "./ui/money-input";
+import { cn } from "@/lib/utils";
 
 interface Installment {
   installmentNumber: number;
@@ -31,7 +38,10 @@ interface InvoiceManagerProps {
 
 export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [numInstallments, setNumInstallments] = useState(1);
+  const toast = useToast();
+
   const [formData, setFormData] = useState<InvoiceFormData>({
     invoiceNumber: "",
     clientName: "",
@@ -40,7 +50,7 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
     totalAmount: 0,
     emissionDate: new Date().toISOString().split("T")[0],
     dueDate: "",
-    paymentMethod: "",
+    paymentMethod: "PIX",
     observations: "",
     installments: [
       {
@@ -73,7 +83,11 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.invoiceNumber || !formData.clientName || formData.totalAmount <= 0) {
+      return toast.error("Preencha os campos obrigatórios");
+    }
 
+    setLoading(true);
     try {
       const res = await fetch("/api/invoices", {
         method: "POST",
@@ -81,231 +95,186 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
         body: JSON.stringify(formData)
       });
 
-      if (!res.ok) throw new Error("Erro ao criar nota");
+      if (!res.ok) throw new Error("Erro no servidor");
 
+      toast.success("Nota de Receita registrada!");
       onSuccess?.("Nota criada com sucesso!");
       setShowForm(false);
-      setFormData({
-        invoiceNumber: "",
-        clientName: "",
-        clientEmail: "",
-        description: "",
-        totalAmount: 0,
-        emissionDate: new Date().toISOString().split("T")[0],
-        dueDate: "",
-        paymentMethod: "",
-        observations: "",
-        installments: [
-          {
-            installmentNumber: 1,
-            amount: 0,
-            dueDate: new Date().toISOString().split("T")[0],
-            status: "PENDING"
-          }
-        ]
-      });
+      resetForm();
     } catch (error) {
+      toast.error("Falha ao criar nota.");
       onError?.("Erro ao criar nota");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      invoiceNumber: "",
+      clientName: "",
+      clientEmail: "",
+      description: "",
+      totalAmount: 0,
+      emissionDate: new Date().toISOString().split("T")[0],
+      dueDate: "",
+      paymentMethod: "PIX",
+      observations: "",
+      installments: [
+        {
+          installmentNumber: 1,
+          amount: 0,
+          dueDate: new Date().toISOString().split("T")[0],
+          status: "PENDING"
+        }
+      ]
+    });
+    setNumInstallments(1);
   };
 
   return (
     <div className="space-y-6">
       {!showForm && (
-        <Button onClick={() => setShowForm(true)} className="w-full">
-          <Plus size={18} className="mr-2" /> Nova Nota de Receita
+        <Button 
+          onClick={() => setShowForm(true)} 
+          className="w-full h-14 rounded-2xl bg-secondary text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-secondary/20 hover:scale-[1.01] active:scale-[0.99] transition-all border-none"
+        >
+          <Plus size={18} className="mr-2" strokeWidth={3} /> Nova Nota de Receita
         </Button>
       )}
 
       {showForm && (
-        <form
-          onSubmit={handleSubmit}
-          className="bg-surface p-4 sm:p-6 rounded-lg border border-outline/50"
-        >
-          <h3 className="text-lg sm:text-xl font-bold mb-4">Criar Nota de Receita</h3>
-
-          {/* Dados da Nota */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
-            <div>
-              <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
-                Número da Nota*
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.invoiceNumber}
-                onChange={(e) =>
-                  setFormData({ ...formData, invoiceNumber: e.target.value })
-                }
-                className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface focus:border-secondary"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
-                Nome do Cliente*
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.clientName}
-                onChange={(e) =>
-                  setFormData({ ...formData, clientName: e.target.value })
-                }
-                className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface focus:border-secondary"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
-                Email do Cliente
-              </label>
-              <input
-                type="email"
-                value={formData.clientEmail}
-                onChange={(e) =>
-                  setFormData({ ...formData, clientEmail: e.target.value })
-                }
-                className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface focus:border-secondary"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
-                Valor Total*
-              </label>
-              <input
-                type="number"
-                required
-                step="0.01"
-                value={formData.totalAmount}
-                onChange={(e) => {
-                  const total = parseFloat(e.target.value);
-                  setFormData({ ...formData, totalAmount: total });
-                  handleInstallmentCountChange(numInstallments);
-                }}
-                className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface focus:border-secondary"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
-                Data Emissão*
-              </label>
-              <input
-                type="date"
-                required
-                value={formData.emissionDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, emissionDate: e.target.value })
-                }
-                className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface focus:border-secondary"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
-                Número de Parcelas*
-              </label>
-              <select
-                value={numInstallments}
-                onChange={(e) => handleInstallmentCountChange(parseInt(e.target.value))}
-                className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface focus:border-secondary"
-              >
-                {[1, 2, 3, 4, 6, 12].map((n) => (
-                  <option key={n} value={n}>
-                    {n}x
-                  </option>
-                ))}
-              </select>
-            </div>
+        <Card className="premium-card border-none shadow-2xl overflow-hidden bg-surface">
+          <div className="p-6 border-b border-outline/10 flex justify-between items-center bg-surface-variant/20">
+             <div className="flex items-center gap-3">
+               <div className="p-2 rounded-xl bg-secondary text-white">
+                 <FileText className="w-5 h-5" />
+               </div>
+               <h3 className="text-xl font-black text-on-background tracking-tight">Criar Nota de Receita</h3>
+             </div>
+             <Button variant="ghost" size="icon" onClick={() => setShowForm(false)} className="rounded-full hover:bg-red-50 hover:text-red-500 transition-colors">
+               <X className="w-5 h-5" />
+             </Button>
           </div>
 
-          {/* Parcelas */}
-          <div className="mb-6">
-            <h4 className="text-base sm:text-lg font-semibold text-on-surface mb-4">Parcelas</h4>
-            <div className="space-y-2 sm:space-y-3">
-              {formData.installments.map((inst, idx) => (
-                <div
-                  key={idx}
-                  className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 p-2 sm:p-3 bg-surface-variant rounded-md"
-                >
-                  <div>
-                    <label className="text-xs text-on-surface-variant block mb-1">
-                      Parcela {inst.installmentNumber}
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={inst.amount}
-                      onChange={(e) =>
-                        handleInstallmentChange(idx, "amount", parseFloat(e.target.value))
-                      }
-                      className="w-full border border-outline/50 bg-surface rounded-lg px-2 py-1 text-on-surface text-sm focus:border-secondary"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-on-surface-variant block mb-1">
-                      Vencimento
-                    </label>
-                    <input
-                      type="date"
-                      value={inst.dueDate}
-                      onChange={(e) =>
-                        handleInstallmentChange(idx, "dueDate", e.target.value)
-                      }
-                      className="w-full border border-outline/50 bg-surface rounded-lg px-2 py-1 text-on-surface text-sm focus:border-secondary"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-on-surface-variant block mb-1">Status</label>
-                    <select
-                      value={inst.status}
-                      onChange={(e) =>
-                        handleInstallmentChange(idx, "status", e.target.value)
-                      }
-                      className="w-full border border-outline/50 bg-surface rounded-lg px-2 py-1 text-on-surface text-sm focus:border-secondary"
-                    >
-                      <option value="PENDING">Pendente</option>
-                      <option value="RECEIVED">Recebida</option>
-                      <option value="OVERDUE">Vencida</option>
-                    </select>
-                  </div>
+          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 ml-1">Número da Nota*</Label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 font-bold text-xs">#</span>
+                  <Input required value={formData.invoiceNumber} onChange={e => setFormData({...formData, invoiceNumber: e.target.value})} className="h-12 pl-8 rounded-2xl font-bold bg-surface-variant/20 border-outline/10" placeholder="0001" />
                 </div>
-              ))}
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 ml-1">Valor Total*</Label>
+                <MoneyInput 
+                  value={formData.totalAmount.toString()} 
+                  onChange={(val) => {
+                    const total = parseFloat(val) || 0;
+                    setFormData({ ...formData, totalAmount: total });
+                  }} 
+                  className="h-12 font-black text-2xl rounded-2xl bg-surface-variant/20 border-outline/10" 
+                  required 
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Observações */}
-          <div className="mb-6">
-            <label className="text-xs font-semibold text-on-surface-variant mb-1 block">
-              Observações
-            </label>
-            <textarea
-              value={formData.observations}
-              onChange={(e) =>
-                setFormData({ ...formData, observations: e.target.value })
-              }
-              className="w-full border border-outline/50 bg-surface rounded-lg px-3 py-2 text-on-surface text-sm focus:border-secondary"
-              rows={3}
-            />
-          </div>
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 ml-1">Nome do Cliente*</Label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
+                <Input required value={formData.clientName} onChange={e => setFormData({...formData, clientName: e.target.value})} className="h-12 pl-11 rounded-2xl font-bold bg-surface-variant/20 border-outline/10" placeholder="Nome Completo ou Empresa" />
+              </div>
+            </div>
 
-          {/* Buttons */}
-          <div className="flex gap-2 sm:gap-3">
-            <Button type="submit" className="flex-1 text-sm sm:text-base h-10 sm:h-11">
-              <Check size={18} className="mr-2" /> Salvar Nota
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1 text-sm sm:text-base h-10 sm:h-11"
-              onClick={() => setShowForm(false)}
-            >
-              Cancelar
-            </Button>
-          </div>
-        </form>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+               <div className="space-y-2">
+                 <Label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 ml-1">Data Emissão*</Label>
+                 <Input type="date" required value={formData.emissionDate} onChange={e => setFormData({...formData, emissionDate: e.target.value})} className="h-12 rounded-2xl font-bold bg-surface-variant/20 border-outline/10" />
+               </div>
+               <div className="space-y-2">
+                 <Label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 ml-1">Parcelamento*</Label>
+                 <Select value={numInstallments.toString()} onValueChange={v => handleInstallmentCountChange(parseInt(v))}>
+                    <SelectTrigger className="h-12 rounded-2xl font-black bg-surface-variant/20 border-outline/10">
+                       <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl font-bold">
+                       {[1, 2, 3, 4, 6, 12].map(n => <SelectItem key={n} value={n.toString()} className="rounded-xl">{n}x Parcelas</SelectItem>)}
+                    </SelectContent>
+                 </Select>
+               </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between ml-1">
+                <h4 className="text-xs font-black uppercase tracking-widest text-on-surface-variant/60">Detalhamento de Parcelas</h4>
+                <div className="h-px bg-outline/5 flex-1 mx-4" />
+              </div>
+              
+              <div className="grid gap-3">
+                {formData.installments.map((inst, idx) => (
+                  <div key={idx} className="flex flex-col sm:flex-row gap-4 p-4 rounded-2xl bg-surface-variant/20 border border-outline/5 items-center">
+                    <div className="w-8 h-8 rounded-full bg-secondary/10 text-secondary flex items-center justify-center font-black text-[10px] shrink-0">
+                      {inst.installmentNumber}
+                    </div>
+                    <div className="flex-1 w-full sm:w-auto">
+                      <Label className="text-[8px] font-black uppercase tracking-widest opacity-40 ml-1">Vencimento</Label>
+                      <Input type="date" value={inst.dueDate} onChange={e => handleInstallmentChange(idx, "dueDate", e.target.value)} className="h-10 bg-white border-transparent rounded-xl font-bold text-xs" />
+                    </div>
+                    <div className="w-full sm:w-32">
+                       <Label className="text-[8px] font-black uppercase tracking-widest opacity-40 ml-1">Valor</Label>
+                       <MoneyInput value={inst.amount.toString()} onChange={v => handleInstallmentChange(idx, "amount", parseFloat(v) || 0)} className="h-10 bg-white border-transparent rounded-xl font-bold text-xs" />
+                    </div>
+                    <div className="w-full sm:w-32">
+                       <Label className="text-[8px] font-black uppercase tracking-widest opacity-40 ml-1">Status</Label>
+                       <Select value={inst.status} onValueChange={v => handleInstallmentChange(idx, "status", v)}>
+                          <SelectTrigger className="h-10 bg-white border-transparent rounded-xl font-bold text-[10px] uppercase">
+                             <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-xl font-bold">
+                             <SelectItem value="PENDING" className="text-amber-500">Pendente</SelectItem>
+                             <SelectItem value="RECEIVED" className="text-emerald-500">Recebido</SelectItem>
+                             <SelectItem value="OVERDUE" className="text-red-500">Atrasado</SelectItem>
+                          </SelectContent>
+                       </Select>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 ml-1">Observações Internas</Label>
+              <textarea
+                value={formData.observations}
+                onChange={e => setFormData({ ...formData, observations: e.target.value })}
+                className="w-full rounded-[24px] bg-surface-variant/20 border border-outline/10 p-4 font-medium text-sm focus:bg-surface focus:border-outline/20 outline-none transition-all"
+                rows={3}
+                placeholder="Notas sobre o serviço ou cliente..."
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 pt-4 sticky bottom-0 bg-surface pb-4 z-10 border-t border-outline/5">
+              <Button 
+                type="submit" 
+                disabled={loading}
+                className="flex-1 h-14 rounded-2xl bg-primary text-on-primary font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 active:scale-95 transition-all"
+              >
+                {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Check size={18} className="mr-2" strokeWidth={3} /> Gerar Nota Fiscal</>}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="h-14 px-8 rounded-2xl font-black text-xs uppercase tracking-widest text-on-surface-variant/60 hover:bg-surface-variant"
+                onClick={() => setShowForm(false)}
+              >
+                Cancelar
+              </Button>
+            </div>
+          </form>
+        </Card>
       )}
     </div>
   );

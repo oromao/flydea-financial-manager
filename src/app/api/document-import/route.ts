@@ -41,15 +41,23 @@ export async function POST(request: NextRequest) {
 
     logger.info("DocumentImport: file received", { name: file.name, mimeType, bytes: buffer.length });
 
-    const text = await extractDocumentText(buffer, mimeType);
-    if (!text || text.length < 20) {
+    // 1. PaddleOCR Pipeline
+    const { raw, structured } = await paddleOCR.process(buffer, mimeType);
+    
+    if (!raw.text || raw.text.length < 5) {
       return NextResponse.json({
-        error: "Não foi possível extrair texto do documento",
-        warning: "Tente um arquivo mais legível ou PDF textual",
+        error: "Não foi possível extrair texto do documento via PaddleOCR",
+        warning: "Certifique-se que o arquivo é legível.",
       }, { status: 400 });
     }
 
-    const extractedData = parseDocumentText(text);
+    // 2. Data Parsing & Normalization
+    const extractedData = parseDocumentText(raw.text);
+    
+    // Merge heuristic data with PaddleOCR structured data (favoring heuristics if robust)
+    if (structured.amount) extractedData.totalAmount = structured.amount;
+    if (structured.date) extractedData.emissionDate = structured.date;
+    if (structured.merchant) extractedData.emitterName = structured.merchant;
 
     const duplicateCheck = await checkForDuplicate(session.user.id, extractedData, fileHash);
 

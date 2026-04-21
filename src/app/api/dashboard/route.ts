@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { startOfMonth, endOfMonth, addMonths } from "date-fns";
 import { computeMonthlySummary } from "@/lib/financial-engine";
+import { picoClaw } from "@/lib/ai/pico-claw";
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -14,43 +15,19 @@ export async function GET(request: NextRequest) {
   const startDate = startOfMonth(now);
   const endDate = endOfMonth(now);
 
-  // 1. Fetch DB Intelligence (Replacement for in-memory CAG Engine)
+  // 1. Fetch data for Tiny AI (PicoClaw) - Replaced RAG/CAG
+  const financialData = await picoClaw.fetchData(session.user.id);
+  const aiInsights = await picoClaw.generateInsights(financialData);
+  const proactiveMessage = await picoClaw.getQuickSummary(financialData);
+
+  // 2. Fetch User Intelligence and other system components
   const intel = await prisma.userIntelligence.findUnique({
     where: { userId: session.user.id }
   });
 
-  const dbInsights = await prisma.insight.findMany({
-    where: { 
-      userId: session.user.id,
-      status: { in: ["GENERATED", "SHOWN"] }
-    },
-    orderBy: { score: "desc" },
-    take: 3
-  });
-
-  // Calculate AI Level based on impactScore
-  const impact = intel?.impactScore || 50;
   const accuracy = intel?.predictionAccuracyScore || 50;
-  
-  let aiLevel = "Iniciante";
-  if (impact > 80) aiLevel = "Consultor Sênior";
-  else if (impact > 60) aiLevel = "Analista";
+  const impact = intel?.impactScore || 50;
 
-  // Dynamic greeting based on evolution
-  let proactiveMessage = "Sua vida financeira parece estar em ordem! Continue acompanhando seus gastos diariamente.";
-  if (dbInsights.length > 0) {
-    const top = dbInsights[0];
-    if (top.type === "CASHFLOW_RISK") proactiveMessage = `Atenção aqui: ${top.content}`;
-    else if (top.type === "EXPENSE_WARNING") proactiveMessage = `💡 Insight: ${top.content}`;
-    else proactiveMessage = `Sabia que... ${top.content}`;
-  }
-
-  // If AI accuracy is remarkably high, showcase it!
-  if (accuracy > 80) {
-    proactiveMessage = `Evoluímos! Minha precisão de previsões subiu para ${accuracy.toFixed(0)}%. ${proactiveMessage}`;
-  }
-
-  // Fetch current month transactions + all-time for balance
   const [monthTransactions, allTransactions, recurrences, budgets] =
     await Promise.all([
       prisma.transaction.findMany({
@@ -88,7 +65,6 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-  // Map month transactions for financial engine
   const mappedMonthTx = monthTransactions.map((t) => ({
     id: t.id,
     type: t.type as "INCOME" | "EXPENSE",
@@ -106,7 +82,6 @@ export async function GET(request: NextRequest) {
     createdAt: t.createdAt,
   }));
 
-  // Compute using centralized engine
   const summary = computeMonthlySummary(
     mappedMonthTx,
     startDate,
@@ -114,7 +89,6 @@ export async function GET(request: NextRequest) {
     allTransactions
   );
 
-  // Budget alerts
   const budgetAlerts = await Promise.all(
     budgets.map(async (budget) => {
       const spent = await prisma.transaction.aggregate({
@@ -137,14 +111,10 @@ export async function GET(request: NextRequest) {
     })
   );
 
-  const activeAlerts = budgetAlerts.filter((b) => b.isAlert);
-
-  // Chart data
   const chartData = Object.entries(summary.transactionsByDay)
     .map(([day, data]) => ({ day: Number(day), ...data }))
     .sort((a, b) => a.day - b.day);
 
-  // Next 3 months projection
   const projectedExpenses = recurrences
     .filter((r) => r.type === "EXPENSE" || !r.type)
     .reduce((sum, r) => sum + r.amount, 0);
@@ -164,9 +134,7 @@ export async function GET(request: NextRequest) {
   });
 
   return NextResponse.json({
-    // All-time balance
     balance: summary.allTimeBalance,
-    // Current month
     income: summary.monthIncome,
     expenses: summary.monthExpenses,
     pendingExpenses: summary.pendingExpenses,
@@ -177,25 +145,22 @@ export async function GET(request: NextRequest) {
     projectedExpenses,
     projectedIncome,
     nextMonths,
-    budgetAlerts: activeAlerts,
-    savingsRate:
-      summary.monthIncome > 0
-        ? ((summary.monthIncome - summary.monthExpenses) / summary.monthIncome) * 100
-        : 0,
+    budgetAlerts: budgetAlerts.filter(b => b.isAlert),
+    savingsRate: summary.monthIncome > 0 ? ((summary.monthIncome - summary.monthExpenses) / summary.monthIncome) * 100 : 0,
     copilot: {
       proactiveMessage,
-      insights: dbInsights.map(i => ({
-        id: i.id,
+      insights: aiInsights.map((i, idx) => ({
+        id: `pico-${idx}`,
         type: i.priority === "HIGH" ? "URGENTE" : (i.priority === "MEDIUM" ? "IMPACTO" : "INFORMAÇÃO"),
-        title: i.type === "CASHFLOW_RISK" ? "Risco Detectado" : (i.type === "EXPENSE_WARNING" ? "Aviso de Gasto" : "Oportunidade"),
-        message: i.content,
-        actionLabel: i.expectedEffect === "REDUCE_SPENDING" ? "Revisar Gastos" : "Ver Detalhes",
-        actionUrl: i.expectedEffect === "REDUCE_SPENDING" ? "/movimentacoes" : "/insights",
+        title: i.title,
+        message: i.message,
+        actionLabel: i.actionLabel,
+        actionUrl: i.actionUrl,
       })),
       healthScore: intel ? (100 - (intel.riskScore * 0.5) + (intel.savingsRate > 20 ? 10 : 0)) : 80,
       aiStats: {
-        accuracy: accuracy,
-        level: aiLevel
+        accuracy,
+        level: impact > 80 ? "Especialista" : (impact > 60 ? "Analista" : "Aprendiz")
       }
     },
   });

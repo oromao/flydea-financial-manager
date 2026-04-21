@@ -1,51 +1,41 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Trash2, Wallet, CreditCard, PiggyBank, Banknote, Edit2, TrendingUp, TrendingDown, Loader2 } from "lucide-react";
+import { Plus, Trash2, Wallet, CreditCard, PiggyBank, Banknote, Edit2, TrendingUp, TrendingDown, Loader2, X } from "lucide-react";
 import { motion } from "framer-motion";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
-import { EmptyState } from "@/components/ui/empty-state";
+import { MoneyInput } from "@/components/ui/money-input";
+import { cn } from "@/lib/utils";
 
-const ACCOUNT_TYPES = [
-  { value: "CHECKING", label: "Conta Corrente", icon: Banknote, color: "#3B82F6" },
-  { value: "SAVINGS", label: "Poupança", icon: PiggyBank, color: "#10B981" },
-  { value: "CREDIT", label: "Cartão de Crédito", icon: CreditCard, color: "#F59E0B" },
-  { value: "CASH", label: "Dinheiro", icon: Wallet, color: "#8B5CF6" },
+const accountTypes = [
+  { value: "CHECKING", label: "Conta Corrente", icon: Wallet, color: "#0071E3" },
+  { value: "SAVINGS", label: "Poupança", icon: PiggyBank, color: "#10b981" },
+  { value: "INVESTMENT", label: "Investimento", icon: TrendingUp, color: "#8b5cf6" },
+  { value: "CREDIT_CARD", label: "Cartão de Crédito", icon: CreditCard, color: "#f43f5e" },
+  { value: "CASH", label: "Dinheiro", icon: Banknote, color: "#f59e0b" },
 ];
 
-const COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#8B5CF6", "#F43F5E", "#06B6D4", "#84CC16", "#EC4899"];
-
-const containerVariants: any = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
-};
-const itemVariants: any = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } }
-};
-
-export default function Contas() {
-  const toast = useToast();
-  const confirm = useConfirm();
+export default function ContasPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Form
   const [name, setName] = useState("");
   const [type, setType] = useState("CHECKING");
-  const [balance, setBalance] = useState("0");
-  const [color, setColor] = useState("#3B82F6");
+  const [balance, setBalance] = useState("");
+  const [color, setColor] = useState("#0071E3");
+
+  const toast = useToast();
+  const confirm = useConfirm();
 
   const fetchAccounts = useCallback(async () => {
     setLoading(true);
@@ -53,48 +43,67 @@ export default function Contas() {
       const res = await fetch("/api/accounts");
       const data = await res.json();
       setAccounts(Array.isArray(data) ? data : []);
-    } catch { } finally { setLoading(false); }
-  }, []);
+    } catch (e) {
+      toast.error("Erro ao carregar contas");
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
 
-  useEffect(() => { fetchAccounts(); }, [fetchAccounts]);
-
-  const resetForm = () => {
-    setName(""); setType("CHECKING"); setBalance("0"); setColor("#3B82F6");
-    setEditingId(null);
-  };
+  useEffect(() => {
+    fetchAccounts();
+  }, [fetchAccounts]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!name || !type) {
-      toast.error("Preencha todos os campos obrigatórios");
-      return;
-    }
-
-    const numBalance = parseFloat(balance);
-    if (isNaN(numBalance)) {
-      toast.error("Saldo inválido");
-      return;
-    }
-
+    if (!name.trim()) return toast.error("Nome é obrigatório");
+    
     setSaving(true);
     try {
-      const payload = { name, type, balance: numBalance, color };
       const url = editingId ? `/api/accounts/${editingId}` : "/api/accounts";
       const method = editingId ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim(), type, balance: parseFloat(balance) || 0, color }),
+      });
 
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (res.ok) {
-        toast.success(editingId ? "Conta atualizada!" : "Conta criada!");
-        setIsOpen(false);
+        toast.success(editingId ? "Conta atualizada" : "Conta criada com sucesso!");
+        setOpen(false);
         resetForm();
         fetchAccounts();
       } else {
-        const err = await res.json().catch(() => ({}));
+        const err = await res.json();
         toast.error(err.error || "Erro ao salvar conta");
       }
+    } catch (e) {
+      toast.error("Erro na requisição");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const ok = await confirm({
+      title: "Excluir conta",
+      message: "Tem certeza? Isso pode afetar o histórico de transações vinculadas.",
+      confirmLabel: "Excluir",
+      variant: "danger",
+    });
+    if (!ok) return;
+
+    try {
+      const res = await fetch(`/api/accounts/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        toast.success("Conta removida!");
+        fetchAccounts();
+      } else {
+        const err = await res.json();
+        toast.error(err.error || "Não foi possível excluir esta conta.");
+      }
+    } catch (e) {
+      toast.error("Erro ao excluir");
     }
   };
 
@@ -102,229 +111,163 @@ export default function Contas() {
     setEditingId(acc.id);
     setName(acc.name);
     setType(acc.type);
-    setBalance(String(acc.balance));
-    setColor(acc.color || "#3B82F6");
-    setIsOpen(true);
+    setBalance(acc.balance.toString());
+    setColor(acc.color || "#0071E3");
+    setOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    const ok = await confirm({ title: "Excluir conta", message: "Tem certeza que deseja remover esta conta? As transações vinculadas serão desvinculadas.", confirmLabel: "Excluir", variant: "danger" });
-    if (!ok) return;
-    try {
-      const res = await fetch(`/api/accounts/${id}`, { method: "DELETE" });
-      const data = await res.json().catch(() => ({}));
-
-      if (res.status === 403) {
-        toast.error(data.error || "Você não tem permissão para excluir esta conta");
-        return;
-      }
-
-      if (!res.ok) {
-        toast.error(data.error || "Erro ao remover conta");
-        return;
-      }
-
-      toast.success("Conta removida!");
-      fetchAccounts();
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Erro ao remover conta";
-      toast.error(msg);
-    }
+  const resetForm = () => {
+    setEditingId(null);
+    setName("");
+    setType("CHECKING");
+    setBalance("");
+    setColor("#0071E3");
   };
 
-  const formatCurrency = (v: number) =>
-    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
-
-  const totalBalance = accounts.reduce((s, a) => s + (a.currentBalance ?? a.balance), 0);
-
-  const getTypeConfig = (typeVal: string) =>
-    ACCOUNT_TYPES.find((t) => t.value === typeVal) || ACCOUNT_TYPES[0];
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
+  };
 
   return (
-    <div className="space-y-6 md:space-y-8 max-w-7xl mx-auto pb-20 px-4 md:px-0 relative">
-      {/* Header - Compact */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row md:items-center justify-between gap-4"
-      >
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-lg bg-secondary text-on-secondary">
-            <Wallet className="w-5 h-5" />
+    <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 rounded-2xl bg-secondary text-on-secondary shadow-lg shadow-secondary/20">
+            <Wallet className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-on-background">Contas</h1>
-            <p className="text-on-surface-variant font-medium text-xs mt-0.5">Patrimônio financeiro</p>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-on-background">Minhas Contas</h1>
+            <p className="text-on-surface-variant font-medium text-sm mt-1">Organize seus bancos e carteiras</p>
           </div>
         </div>
 
-        <Dialog open={isOpen} onOpenChange={(v) => { setIsOpen(v); if (!v) resetForm(); }}>
-          <DialogTrigger render={<Button className="apple-button-primary h-10 px-5 text-sm rounded-lg" />}>
-            <Plus className="w-4 h-4 mr-2" strokeWidth={2.5} /> NOVO
+        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
+          <DialogTrigger render={<Button className="apple-button-primary h-11 px-8 rounded-xl shadow-lg shadow-secondary/20" />}>
+            <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA CONTA
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-3xl bg-surface sm:shadow-2xl">
-            <div className="p-8 border-b border-outline/10 bg-surface">
+          <DialogContent className="sm:max-w-[500px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-[32px] bg-surface sm:shadow-2xl">
+            <div className="p-8 border-b border-outline/10 bg-surface sticky top-0 z-20">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-bold tracking-tight text-on-background">
-                  {editingId ? "Editar Conta" : "Nova Conta"}
+                <DialogTitle className="text-2xl font-black tracking-tight text-on-background">
+                  {editingId ? "Editar Conta" : "Adicionar Banco"}
                 </DialogTitle>
-                <p className="text-on-surface-variant text-sm font-medium mt-1">Defina as configurações da sua carteira</p>
+                <p className="text-on-surface-variant text-sm font-medium mt-1">Conecte seus centros de custo e patrimônio</p>
               </DialogHeader>
             </div>
+
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
-                <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Identificação</Label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} required
-                  className="h-11 font-medium"
-                  placeholder="Ex: Nubank, Carteira Principal" />
+                <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Nome da Conta</Label>
+                <Input required value={name} onChange={e => setName(e.target.value)} 
+                  className="h-12 font-bold text-lg rounded-2xl bg-surface-variant/20 border-outline/10" 
+                  placeholder="Ex: Nubank, Itaú, Carteira..." />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Tipo de Conta</Label>
-                  <Select value={type} onValueChange={(v) => setType(v || "CHECKING")}>
-                    <SelectTrigger className="h-11 font-medium text-foreground">
-                      {ACCOUNT_TYPES.find(t => t.value === type)?.label || <span className="text-muted-foreground">Selecione...</span>}
+                  <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Tipo</Label>
+                  <Select value={type} onValueChange={setType}>
+                    <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
+                      <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      {ACCOUNT_TYPES.map((t) => (
-                        <SelectItem key={t.value} value={t.value} className="rounded-lg">{t.label}</SelectItem>
+                    <SelectContent className="rounded-2xl border-outline/10">
+                      {accountTypes.map(t => (
+                        <SelectItem key={t.value} value={t.value} className="rounded-xl font-bold">{t.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between ml-1">
-                    <Label className="text-xs font-semibold text-on-surface-variant font-bold">Saldo Inicial (BRL)</Label>
-                    <span className="text-[10px] text-secondary font-bold uppercase tracking-tighter bg-secondary/10 px-1.5 py-0.5 rounded">Opcional</span>
+                    <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Saldo Inicial</Label>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-secondary bg-secondary/5 px-2 py-0.5 rounded-full">Ajuste</span>
                   </div>
-                  <Input type="number" step="0.01" value={balance} onChange={(e) => setBalance(e.target.value)}
-                    className="h-11 font-bold text-lg" 
-                    placeholder="0,00"
-                  />
-                  <p className="text-[9px] text-on-surface-variant/50 ml-1 italic font-medium">Este valor será somado ao total de transações registradas.</p>
+                  <MoneyInput value={balance} onChange={setBalance} className="h-12 font-black text-2xl rounded-2xl bg-surface-variant/20 border-outline/10" />
+                  <p className="text-[9px] text-on-surface-variant/40 italic ml-1">Este valor será somado ao total de transações.</p>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Cor de Destaque</Label>
-                <div className="flex gap-2.5 flex-wrap">
-                  {COLORS.map((c) => (
-                    <button key={c} type="button" onClick={() => setColor(c)}
-                      aria-label={`Selecionar cor ${c}`}
-                      className={cn("w-10 h-10 sm:w-8 sm:h-8 rounded-full border-2 transition-colors hover:scale-110",
-                        color === c ? "border-on-background ring-4 ring-on-background/5" : "border-outline/10")}
-                      style={{ backgroundColor: c }} />
+                <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Cor de Identificação</Label>
+                <div className="flex flex-wrap gap-3 p-4 bg-surface-variant/20 rounded-2xl border border-outline/5">
+                  {["#0071E3", "#10b981", "#f43f5e", "#f59e0b", "#8b5cf6", "#64748b", "#1D1D1F"].map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setColor(c)}
+                      className={cn(
+                        "w-10 h-10 rounded-xl transition-all shadow-sm ring-offset-2 ring-offset-background",
+                        color === c ? "ring-2 ring-secondary scale-110 shadow-lg" : "hover:scale-105"
+                      )}
+                      style={{ backgroundColor: c }}
+                    />
                   ))}
                 </div>
               </div>
 
-              <Button type="submit" disabled={saving} className="apple-button-primary w-full h-12 text-base mt-2">
-                {saving ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Salvando...
-                  </>
-                ) : editingId ? "Salvar Alterações" : "Criar Conta"}
+              <Button type="submit" disabled={saving} className="apple-button-primary w-full h-14 text-lg font-black rounded-2xl shadow-xl shadow-secondary/20 active:scale-95 transition-all mt-4">
+                {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : "CONFIRMAR CONTA"}
               </Button>
             </form>
           </DialogContent>
         </Dialog>
-      </motion.div>
+      </div>
 
-      {/* Patrimônio Líquido - Compact */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.1 }}
-      >
-        <Card className="premium-card p-4 sm:p-6 flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant opacity-70">Patrimônio Total</p>
-            <h2 className={cn("text-3xl md:text-4xl font-bold tracking-tight",
-              totalBalance >= 0 ? "text-on-background" : "text-red-600")}>
-              {formatCurrency(totalBalance)}
-            </h2>
-          </div>
-          <div className={cn("p-3 rounded-lg", totalBalance >= 0 ? "bg-secondary/10 text-secondary" : "bg-red-100/50 text-red-600")}>
-            {totalBalance >= 0
-              ? <TrendingUp className="w-6 h-6" />
-              : <TrendingDown className="w-6 h-6" />}
-          </div>
-        </Card>
-      </motion.div>
-
-      {/* Accounts Grid */}
       {loading ? (
-        <div className="py-24 text-center text-on-surface-variant/30 font-semibold text-xs italic">
-          Sincronizando ativos...
+        <div className="py-32 text-center">
+           <Loader2 className="w-10 h-10 animate-spin mx-auto text-secondary/30" />
         </div>
       ) : accounts.length === 0 ? (
-        <EmptyState
-          icon={Wallet}
-          title="Nenhuma conta cadastrada"
-          description="Organize seu patrimônio criando sua primeira conta"
-          ctaLabel="Nova Conta"
-          onCta={() => setIsOpen(true)}
-        />
+        <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-30">
+            <Wallet className="w-20 h-20 text-on-surface-variant" />
+            <div className="text-center">
+              <h2 className="text-xl font-bold text-on-background">Nenhuma conta cadastrada</h2>
+              <p className="font-medium text-sm mt-1">Adicione seus bancos para começar a gestão</p>
+            </div>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {accounts.map((account, idx) => {
-            const cfg = getTypeConfig(account.type);
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {accounts.map((acc, idx) => {
+            const cfg = accountTypes.find(t => t.value === acc.type) || accountTypes[0];
             const Icon = cfg.icon;
-            const currentBalance = account.currentBalance ?? account.balance;
 
             return (
-              <motion.div
-                key={account.id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 + 0.2 }}
+              <motion.div 
+                key={acc.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.05 }}
               >
-                <Card className="premium-card p-0 overflow-hidden group hover:shadow-md transition-colors">
-                  <div className="h-1 w-full" style={{ backgroundColor: account.color || cfg.color }} />
-                  <div className="p-4 sm:p-5 space-y-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-surface-variant/40">
-                          <Icon className="w-5 h-5" style={{ color: account.color || cfg.color }} />
+                <Card className="premium-card p-0 overflow-hidden group border-none shadow-lg hover:shadow-2xl transition-all duration-500 bg-surface min-h-[180px] flex flex-col">
+                  <div className="p-6 flex-1 flex flex-col justify-between">
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg" style={{ backgroundColor: acc.color || cfg.color }}>
+                          <Icon className="w-6 h-6" />
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-base text-on-background">{account.name}</h3>
-                          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-on-surface-variant/60">
-                            {cfg.label}
-                          </span>
+                        <div className="min-w-0">
+                          <h2 className="text-xl font-black text-on-background tracking-tight truncate group-hover:text-secondary transition-colors">{acc.name}</h2>
+                          <span className="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-widest mt-1 block">{cfg.label}</span>
                         </div>
                       </div>
-                      <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" className="h-11 w-11 rounded-md bg-secondary/10 hover:bg-secondary/15 text-secondary transition-colors"
-                          onClick={() => handleEdit(account)}
-                          aria-label="Editar conta">
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-11 w-11 rounded-md bg-red-100/60 hover:bg-red-100 text-red-600 transition-colors"
-                          onClick={() => handleDelete(account.id)}
-                          aria-label="Excluir conta">
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
+                      
+                      <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(acc)} className="h-9 w-9 rounded-xl bg-surface-variant text-on-surface-variant hover:bg-secondary hover:text-white transition-all"><Edit2 className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(acc.id)} className="h-9 w-9 rounded-xl bg-surface-variant text-on-surface-variant hover:bg-red-500 hover:text-white transition-all"><Trash2 className="w-4 h-4" /></Button>
                       </div>
                     </div>
 
-                    <div className="pt-2">
-                      <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-on-surface-variant/50 mb-1">Saldo</p>
-                      <p className={cn("text-2xl font-bold tracking-tight",
-                        currentBalance >= 0 ? "text-on-background" : "text-red-600")}>
-                        {formatCurrency(currentBalance)}
-                      </p>
+                    <div className="mt-8">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">Saldo Líquido</p>
+                      <h3 className={cn("text-3xl font-black tracking-tighter mt-1", acc.balance >= 0 ? "text-on-background" : "text-red-500")}>
+                        {formatCurrency(acc.balance)}
+                      </h3>
                     </div>
-
-                    <div className="pt-3 border-t border-outline/10 flex items-center justify-between text-on-surface-variant/50 text-[10px] sm:text-xs">
-                      <span className="font-bold uppercase">{account._count?.transactions || 0} tx</span>
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-bold">Ativo</span>
-                        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: account.color || cfg.color }} />
-                      </div>
-                    </div>
+                  </div>
+                  
+                  <div className="h-1.5 w-full bg-surface-variant/30">
+                    <div className="h-full transition-all duration-1000" style={{ width: '100%', backgroundColor: acc.color || cfg.color }} />
                   </div>
                 </Card>
               </motion.div>

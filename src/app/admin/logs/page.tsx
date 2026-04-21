@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { format } from "date-fns";
 import { Search, User, ShieldCheck, ChevronLeft, ChevronRight } from "lucide-react";
@@ -21,47 +21,56 @@ export default function AuditLogs() {
   const [action, setAction] = useState("ALL");
   const [entity, setEntity] = useState("ALL");
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [uniqueEntities, setUniqueEntities] = useState<string[]>([]);
+  
   const { data: session, status } = useSession();
 
+  const fetchLogs = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(LOGS_PER_PAGE),
+        action,
+        entity,
+        query
+      });
+      const res = await fetch(`/api/logs?${params.toString()}`);
+      const data = await res.json();
+      if (data.data) {
+        setLogs(data.data);
+        setTotalPages(data.totalPages);
+        setTotal(data.total);
+      }
+    } catch (e) {
+      console.error("Failed to fetch logs", e);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, action, entity, query]);
+
   useEffect(() => {
-    fetch("/api/logs")
+    fetchLogs();
+  }, [fetchLogs]);
+
+  // Initial fetch for entities
+  useEffect(() => {
+    fetch("/api/logs?limit=500")
       .then(res => res.json())
-      .then(data => setLogs(data))
-      .finally(() => setLoading(false));
+      .then(data => {
+        const allLogs = data.data || [];
+        const entities = Array.from(new Set(allLogs.map((log: any) => log.entity).filter(Boolean))) as string[];
+        setUniqueEntities(entities.sort());
+      });
   }, []);
 
-  const filteredLogs = useMemo(() => {
-    const term = query.trim().toLowerCase();
-    return logs.filter((log) => {
-      const matchesQuery =
-        !term ||
-        [log.user?.name, log.action, log.entity, log.details]
-          .filter(Boolean)
-          .some((value) => String(value).toLowerCase().includes(term));
-      const matchesAction = action === "ALL" || log.action === action;
-      const matchesEntity = entity === "ALL" || log.entity === entity;
-      return matchesQuery && matchesAction && matchesEntity;
-    });
-  }, [logs, query, action, entity]);
-
-  // Reset to page 1 when filters change
-  useEffect(() => {
-    if (page !== 1) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPage(1);
-    }
-  }, [query, action, entity, page]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredLogs.length / LOGS_PER_PAGE));
-  const paginatedLogs = useMemo(() => {
-    const start = (page - 1) * LOGS_PER_PAGE;
-    return filteredLogs.slice(start, start + LOGS_PER_PAGE);
-  }, [filteredLogs, page]);
-
-  const uniqueEntities = useMemo(
-    () => Array.from(new Set(logs.map((log) => log.entity).filter(Boolean))).sort(),
-    [logs],
-  );
+  const handleFilterChange = (setter: (v: string) => void, val: string) => {
+    setter(val);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPage(1);
+  };
 
   if (status === "authenticated" && session?.user?.role !== "ADMIN") {
     return (
@@ -102,12 +111,12 @@ export default function AuditLogs() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />
             <Input
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => handleFilterChange(setQuery, e.target.value)}
               placeholder="Buscar por usuário, ação, entidade ou detalhe"
               className="pl-9"
             />
           </label>
-          <Select value={action} onValueChange={(value) => setAction(value ?? "ALL")}>
+          <Select value={action} onValueChange={(value) => handleFilterChange(setAction, value ?? "ALL")}>
             <SelectTrigger>
               <SelectValue placeholder="Ação" />
             </SelectTrigger>
@@ -119,7 +128,7 @@ export default function AuditLogs() {
               <SelectItem value="IMPORT">IMPORT</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={entity} onValueChange={(value) => setEntity(value ?? "ALL")}>
+          <Select value={entity} onValueChange={(value) => handleFilterChange(setEntity, value ?? "ALL")}>
             <SelectTrigger>
               <SelectValue placeholder="Entidade" />
             </SelectTrigger>
@@ -134,7 +143,7 @@ export default function AuditLogs() {
       </Card>
 
       <Card className="premium-card bg-surface rounded-[32px] border-outline-variant overflow-hidden shadow-sm">
-        {filteredLogs.length === 0 && !loading ? (
+        {logs.length === 0 && !loading ? (
           <div className="p-8">
             <EmptyState icon={ShieldCheck} title="Nenhum log encontrado" description="Ajuste os filtros para ver os registros de auditoria." />
           </div>
@@ -152,7 +161,7 @@ export default function AuditLogs() {
           <TableBody>
             {loading ? (
               <TableRow><TableCell colSpan={5} className="text-center py-24 animate-pulse uppercase text-xs font-bold tracking-widest text-on-surface-variant/60">Carregando logs...</TableCell></TableRow>
-            ) : paginatedLogs.map((log) => (
+            ) : logs.map((log) => (
               <TableRow key={log.id} className="border-b border-outline-variant/30 text-on-surface hover:bg-surface-variant/10 transition-colors">
                 <TableCell className="px-4 lg:px-6 py-4">
                   <span className="font-bold text-[10px] sm:text-sm">{format(new Date(log.createdAt), "dd/MM/yyyy HH:mm")}</span>
@@ -182,10 +191,10 @@ export default function AuditLogs() {
       </Card>
 
       {/* Pagination */}
-      {filteredLogs.length > LOGS_PER_PAGE && (
+      {total > LOGS_PER_PAGE && (
         <div className="flex items-center justify-between px-4 md:px-0">
           <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/80">
-            {filteredLogs.length} registros · Página {page} de {totalPages}
+            {total} registros · Página {page} de {totalPages}
           </p>
           <div className="flex gap-2">
             <Button

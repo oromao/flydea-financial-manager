@@ -2,95 +2,15 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { format, isBefore, isAfter, addDays } from "date-fns";
-import { AlertTriangle, CheckCircle2, Clock3, ArrowUpRight, BadgeDollarSign, CalendarDays, Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { ptBR } from "date-fns/locale";
+import { AlertTriangle, CheckCircle2, Clock3, ArrowUpRight, BadgeDollarSign, CalendarDays, Loader2, Search, X, Filter } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
-
-function MarkAsPaidButton({
-  transactionId,
-  isPaid,
-  onStatusChange,
-}: {
-  transactionId: string;
-  isPaid: boolean;
-  onStatusChange: (id: string, status: "PAID" | "PENDING") => void;
-}) {
-  const [loading, setLoading] = useState(false);
-
-  const handleClick = async () => {
-    setLoading(true);
-    try {
-      const nextStatus = isPaid ? "PENDING" : "PAID";
-      await onStatusChange(transactionId, nextStatus);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <motion.button
-      onClick={handleClick}
-      disabled={loading}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      className={`px-4 py-2.5 rounded-xl font-semibold text-sm uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap ${
-        isPaid
-          ? "bg-emerald-100/60 hover:bg-emerald-100 text-emerald-700 border border-emerald-200"
-          : "bg-blue-100/60 hover:bg-blue-100 text-blue-700 border border-blue-200"
-      } disabled:opacity-50 disabled:cursor-not-allowed`}
-      aria-label={isPaid ? "Marcar como pendente" : "Marcar como pago"}
-    >
-      {loading ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
-      ) : (
-        <CheckCircle2 className="w-4 h-4" />
-      )}
-      {isPaid ? "Pendente" : "Marcar Pago"}
-    </motion.button>
-  );
-}
-
-function QuickPayButton({
-  transactionId,
-  isPaid,
-  onStatusChange,
-}: {
-  transactionId: string;
-  isPaid: boolean;
-  onStatusChange: (id: string, status: "PAID" | "PENDING") => void;
-}) {
-  const [loading, setLoading] = useState(false);
-
-  const handleClick = async () => {
-    setLoading(true);
-    try {
-      const nextStatus = isPaid ? "PENDING" : "PAID";
-      await onStatusChange(transactionId, nextStatus);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <button
-      onClick={handleClick}
-      disabled={loading}
-      className="flex-shrink-0 p-2 rounded-lg transition-colors active:scale-[0.98] hover:bg-surface-variant disabled:opacity-50"
-      aria-label={isPaid ? "Marcar como pendente" : "Marcar como paga"}
-    >
-      {loading ? (
-        <Loader2 className="w-5 h-5 text-on-surface-variant animate-spin" />
-      ) : (
-        <CheckCircle2
-          className={`w-5 h-5 ${isPaid ? "text-emerald-600 fill-emerald-600" : "text-on-surface-variant"}`}
-        />
-      )}
-    </button>
-  );
-}
+import { cn } from "@/lib/utils";
 
 export default function ContasAPagar() {
   const toast = useToast();
@@ -110,289 +30,157 @@ export default function ContasAPagar() {
       const res = await fetch(`/api/transactions?${params.toString()}`);
       const data = await res.json();
       setTransactions(Array.isArray(data.data) ? data.data : []);
+    } catch (e) {
+      toast.error("Falha ao carregar pendências");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     fetchTransactions();
   }, [fetchTransactions]);
 
   const updatePaymentStatus = async (id: string, nextStatus: "PAID" | "PENDING") => {
-    const now = new Date().toISOString().split("T")[0];
     try {
       await fetch(`/api/transactions/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          paymentStatus: nextStatus,
-          paidAt: nextStatus === "PAID" ? now : "",
-        }),
+        body: JSON.stringify({ paymentStatus: nextStatus }),
       });
-      if (nextStatus === "PAID") {
-        toast.undo("Conta marcada como paga", async () => {
-          await fetch(`/api/transactions/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentStatus: "PENDING", paidAt: "" }),
-          });
-          fetchTransactions();
-        });
-      } else {
-        toast.success("Conta marcada como pendente");
-      }
+      toast.success(nextStatus === "PAID" ? "Conta liquidada!" : "Lançamento pendente.");
       fetchTransactions();
     } catch (e) {
-      toast.error("Erro ao atualizar status");
+      toast.error("Erro ao atualizar.");
     }
   };
 
-  const applyPartial = async (id: string) => {
-    const raw = partialAmounts[id] || "";
-    const amount = Number(raw);
-    if (!Number.isFinite(amount) || amount <= 0) return;
-    await fetch("/api/reconciliation", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ transactionId: id, amount }),
-    });
-    setPartialAmounts((current) => ({ ...current, [id]: "" }));
-    fetchTransactions();
-  };
-
   const now = new Date();
-  const dueSoon = useMemo(() => addDays(now, 7), [now]);
+  const dueSoon = addDays(now, 7);
 
-  const overdue = transactions.filter((t) => t.dueDate && isBefore(new Date(t.dueDate), now));
-  const upcoming = transactions.filter((t) => t.dueDate && !isBefore(new Date(t.dueDate), now) && !isAfter(new Date(t.dueDate), dueSoon));
-  const noDate = transactions.filter((t) => !t.dueDate);
+  const filteredData = useMemo(() => {
+    let base = transactions.filter(t => 
+      t.description.toLowerCase().includes(query.toLowerCase())
+    );
 
-  const total = transactions.reduce((sum, t) => sum + t.amount, 0);
-  const paidPartial = transactions.reduce((sum, t) => sum + (t.amountPaid || 0), 0);
-  const overdueTotal = overdue.reduce((sum, t) => sum + t.amount, 0);
-  const upcomingTotal = upcoming.reduce((sum, t) => sum + t.amount, 0);
-  const filteredOverdue = overdue.filter((t) => `${t.description}`.toLowerCase().includes(query.trim().toLowerCase()));
-  const filteredUpcoming = upcoming.filter((t) => `${t.description}`.toLowerCase().includes(query.trim().toLowerCase()));
-  const filteredNoDate = noDate.filter((t) => `${t.description}`.toLowerCase().includes(query.trim().toLowerCase()));
+    if (filter === "overdue") {
+      base = base.filter(t => t.dueDate && isBefore(new Date(t.dueDate), now));
+    } else if (filter === "upcoming") {
+      base = base.filter(t => t.dueDate && !isBefore(new Date(t.dueDate), now) && !isAfter(new Date(t.dueDate), dueSoon));
+    } else if (filter === "nodate") {
+      base = base.filter(t => !t.dueDate);
+    }
 
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+    return base;
+  }, [transactions, query, filter]);
+
+  const totals = useMemo(() => {
+    const total = transactions.reduce((s, t) => s + t.amount, 0);
+    const overdue = transactions.filter(t => t.dueDate && isBefore(new Date(t.dueDate), now)).reduce((s, t) => s + t.amount, 0);
+    const upcoming = transactions.filter(t => t.dueDate && !isBefore(new Date(t.dueDate), now) && !isAfter(new Date(t.dueDate), dueSoon)).reduce((s, t) => s + t.amount, 0);
+    return { total, overdue, upcoming };
+  }, [transactions]);
+
+  const formatCurrency = (val: number) =>
+    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
-      <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-lg bg-secondary text-on-secondary">
-              <BadgeDollarSign className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-on-background">Contas a pagar</h1>
-              <p className="text-on-surface-variant text-sm mt-1">Suas pendências do momento</p>
-            </div>
+    <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
+      <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 rounded-2xl bg-amber-500 text-white shadow-lg shadow-amber-500/30">
+            <Clock3 className="w-8 h-8" />
+          </div>
+          <div>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-on-background">Contas a Pagar</h1>
+            <p className="text-on-surface-variant font-medium text-sm mt-1">Gestão inteligente de vencimentos</p>
           </div>
         </div>
-        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar por descrição"
-            className="h-11 rounded-xl"
-          />
-          <Button onClick={fetchTransactions} variant="outline" className="h-10 rounded-xl">Atualizar</Button>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button onClick={() => setFilter("all")} variant={filter === "all" ? "default" : "outline"} className="h-10 rounded-xl">Todas</Button>
-          <Button onClick={() => setFilter("overdue")} variant={filter === "overdue" ? "default" : "outline"} className="h-10 rounded-xl">Atrasadas</Button>
-          <Button onClick={() => setFilter("upcoming")} variant={filter === "upcoming" ? "default" : "outline"} className="h-10 rounded-xl">7 dias</Button>
-          <Button onClick={() => setFilter("nodate")} variant={filter === "nodate" ? "default" : "outline"} className="h-10 rounded-xl">Sem data</Button>
+
+        <div className="flex bg-surface-variant/40 rounded-2xl p-1 border border-outline/5 self-start md:self-center">
+            <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-black uppercase tracking-widest transition-all", filter === "all" ? "bg-white text-on-surface shadow-md" : "text-on-surface-variant")} onClick={() => setFilter("all")}>Todas</Button>
+            <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-black uppercase tracking-widest transition-all", filter === "overdue" ? "bg-red-500 text-white shadow-lg shadow-red-500/20" : "text-on-surface-variant")} onClick={() => setFilter("overdue")}>Atrasadas</Button>
+            <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-black uppercase tracking-widest transition-all", filter === "upcoming" ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20" : "text-on-surface-variant")} onClick={() => setFilter("upcoming")}>Próximos 7d</Button>
         </div>
       </motion.header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-        <Card className="premium-card p-4 sm:p-5 min-w-0 overflow-hidden">
-          <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Total pendente</p>
-          <p className="text-2xl font-bold mt-2 truncate">{formatCurrency(total)}</p>
-          <p className="text-xs text-on-surface-variant mt-1">Inclui despesas e receitas pendentes</p>
-        </Card>
-        <Card className="premium-card p-4 sm:p-5 border-amber-100 bg-amber-50/20 min-w-0 overflow-hidden">
-          <p className="text-[10px] uppercase tracking-widest font-bold text-amber-700">Despesas pendentes</p>
-          <p className="text-2xl font-bold mt-2 text-amber-700 truncate">{formatCurrency(transactions.filter(t => t.type === "EXPENSE").reduce((sum, t) => sum + t.amount, 0))}</p>
-          <p className="text-xs text-on-surface-variant mt-1">Somente despesas</p>
-        </Card>
-        <Card className="premium-card p-4 sm:p-5 border-red-100 bg-red-50/20 min-w-0 overflow-hidden">
-          <p className="text-[10px] uppercase tracking-widest font-bold text-red-700">Atrasadas</p>
-          <p className="text-2xl font-bold mt-2 text-red-700 truncate">{formatCurrency(overdueTotal)}</p>
-        </Card>
-        <Card className="premium-card p-5 border-amber-100 bg-amber-50/20 min-w-0 overflow-hidden">
-          <p className="text-[10px] uppercase tracking-widest font-bold text-amber-700">Vencem em 7 dias</p>
-          <p className="text-2xl font-bold mt-2 text-amber-700 truncate">{formatCurrency(upcomingTotal)}</p>
-        </Card>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 px-4 md:px-0">
+         <Card className="premium-card p-5 bg-surface border-outline/10">
+            <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Total Pendente</p>
+            <h2 className="text-2xl md:text-4xl font-black mt-2 tracking-tighter">{formatCurrency(totals.total)}</h2>
+         </Card>
+         <Card className="premium-card p-5 bg-red-50/30 border-red-100">
+            <p className="text-[10px] font-black uppercase tracking-widest text-red-600/60">Atrasadas</p>
+            <h2 className="text-2xl md:text-4xl font-black mt-2 text-red-600 tracking-tighter">{formatCurrency(totals.overdue)}</h2>
+         </Card>
+         <Card className="premium-card p-5 bg-amber-50/30 border-amber-100">
+            <p className="text-[10px] font-black uppercase tracking-widest text-amber-600/60">Próximos 7 dias</p>
+            <h2 className="text-2xl md:text-4xl font-black mt-2 text-amber-600 tracking-tighter">{formatCurrency(totals.upcoming)}</h2>
+         </Card>
       </div>
 
-      <div className="grid gap-4">
-        {/* Atrasadas — only show when filter is "all" or "overdue" */}
-        {(filter === "all" || filter === "overdue") && (
-        <Card className="premium-card p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Clock3 className="w-4 h-4 text-red-600" />
-            <h2 className="font-bold text-lg">Atrasadas</h2>
-          </div>
-          {loading ? (
-            <div className="py-10 text-center text-on-surface-variant/40 text-sm">Carregando...</div>
-          ) : filteredOverdue.length === 0 ? (
-            <div className="py-10 text-center text-on-surface-variant/40 text-sm">Sem atrasos.</div>
-          ) : (
-            <div className="space-y-3">
-              {filteredOverdue.map((t) => (
-                <div key={t.id} className="flex flex-col gap-3 p-4 rounded-xl border border-red-100 bg-red-50/20">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-on-background truncate">{t.description}</div>
-                      <div className="text-xs text-on-surface-variant flex items-center gap-2 mt-1">
-                        <CalendarDays className="w-3.5 h-3.5" />
-                        Venceu em {format(new Date(t.dueDate), "dd/MM/yyyy")}
+      <div className="space-y-4">
+        <div className="relative mx-4 md:mx-0">
+           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/40" />
+           <Input 
+             value={query} 
+             onChange={e => setQuery(e.target.value)} 
+             placeholder="Filtrar por nome..." 
+             className="h-14 pl-12 rounded-[24px] bg-surface-variant/30 border-transparent font-bold text-lg focus:bg-surface focus:border-outline/20"
+           />
+        </div>
+
+        <div className="grid gap-3 px-4 md:px-0">
+          <AnimatePresence mode="popLayout">
+            {loading ? (
+              <div className="py-24 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-secondary/20" /></div>
+            ) : filteredData.length === 0 ? (
+              <Card className="premium-card p-20 flex flex-col items-center gap-4 opacity-30 border-dashed">
+                 <CheckCircle2 className="w-16 h-16" />
+                 <p className="font-black uppercase tracking-widest text-xs">Tudo liquidado!</p>
+              </Card>
+            ) : filteredData.map((t, idx) => (
+              <motion.div
+                key={t.id}
+                layout
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ delay: idx * 0.03 }}
+              >
+                <Card className="premium-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:shadow-xl transition-all border-none bg-surface shadow-md">
+                   <div className="flex items-center gap-5">
+                      <div className={cn(
+                        "w-14 h-14 rounded-[20px] flex items-center justify-center shadow-inner",
+                        t.dueDate && isBefore(new Date(t.dueDate), now) ? "bg-red-50 text-red-500" : "bg-surface-variant/50 text-on-surface-variant/40"
+                      )}>
+                        {t.dueDate && isBefore(new Date(t.dueDate), now) ? <AlertTriangle className="w-7 h-7" /> : <CalendarDays className="w-7 h-7" />}
                       </div>
-                    </div>
-                    <QuickPayButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
-                  </div>
-
-                  <div className="pt-2 border-t border-red-100">
-                    <p className="text-sm font-bold text-on-background mb-3">{formatCurrency(t.amount)}</p>
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <MarkAsPaidButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
-                      <div className="flex gap-2 flex-1 sm:flex-none">
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          value={partialAmounts[t.id] || ""}
-                          onChange={(e) => setPartialAmounts((current) => ({ ...current, [t.id]: e.target.value }))}
-                          placeholder="Valor"
-                          aria-label="Valor da baixa parcial"
-                          className="h-9 flex-1 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
-                        />
-                        <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => applyPartial(t.id)}>
-                          Parcial
-                        </Button>
+                      <div className="min-w-0">
+                        <h3 className="text-xl font-black text-on-background tracking-tight leading-none truncate">{t.description}</h3>
+                        <p className="text-xs font-bold text-on-surface-variant/50 uppercase tracking-widest mt-2">
+                           {t.dueDate ? `Vencimento: ${format(new Date(t.dueDate), "dd 'de' MMM", { locale: ptBR })}` : "Sem vencimento"}
+                        </p>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </Card>
-        )}
+                   </div>
 
-        {/* Vencem em breve — only show when filter is "all" or "upcoming" */}
-        {(filter === "all" || filter === "upcoming") && (
-        <Card className="premium-card p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
-            <h2 className="font-bold text-lg">Vencem em breve</h2>
-          </div>
-          {loading ? (
-            <div className="py-10 text-center text-on-surface-variant/40 text-sm">Carregando...</div>
-          ) : filteredUpcoming.length === 0 ? (
-            <div className="py-10 text-center text-on-surface-variant/40 text-sm">Nada vencendo nos próximos 7 dias.</div>
-          ) : (
-            <div className="space-y-3">
-              {filteredUpcoming.map((t) => (
-                <div key={t.id} className="flex flex-col gap-3 p-4 rounded-xl border border-amber-100 bg-amber-50/20">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-on-background truncate">{t.description}</div>
-                      <div className="text-xs text-on-surface-variant flex items-center gap-2 mt-1">
-                        <CalendarDays className="w-3.5 h-3.5" />
-                        Vence em {format(new Date(t.dueDate), "dd/MM/yyyy")}
+                   <div className="flex items-center justify-between sm:justify-end gap-8 border-t sm:border-t-0 pt-4 sm:pt-0">
+                      <div className="text-right">
+                         <p className="text-2xl font-black tracking-tighter text-on-background">{formatCurrency(t.amount)}</p>
+                         <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">Pendente</span>
                       </div>
-                    </div>
-                    <QuickPayButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
-                  </div>
-
-                  <div className="pt-2 border-t border-amber-100">
-                    <p className="text-sm font-bold text-on-background mb-3">{formatCurrency(t.amount)}</p>
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <MarkAsPaidButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
-                      <div className="flex gap-2 flex-1 sm:flex-none">
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          value={partialAmounts[t.id] || ""}
-                          onChange={(e) => setPartialAmounts((current) => ({ ...current, [t.id]: e.target.value }))}
-                          placeholder="Valor"
-                          aria-label="Valor da baixa parcial"
-                          className="h-9 flex-1 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
-                        />
-                        <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => applyPartial(t.id)}>
-                          Parcial
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </Card>
-        )}
-
-        {/* Sem vencimento — only show when filter is "all" or "nodate" */}
-        {(filter === "all" || filter === "nodate") && (
-        <Card className="premium-card p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <ArrowUpRight className="w-4 h-4 text-emerald-600" />
-            <h2 className="font-bold text-lg">Sem vencimento definido</h2>
-          </div>
-          {loading ? (
-            <div className="py-10 text-center text-on-surface-variant/40 text-sm">Carregando...</div>
-          ) : filteredNoDate.length === 0 ? (
-            <div className="py-10 text-center text-on-surface-variant/40 text-sm">Nenhuma pendência sem vencimento.</div>
-          ) : (
-            <div className="space-y-3">
-              {filteredNoDate.map((t) => (
-                <div key={t.id} className="flex flex-col gap-3 p-4 rounded-xl border border-outline/10 bg-surface">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-on-background truncate">{t.description}</div>
-                      <div className="text-xs text-on-surface-variant mt-1">Sem data de vencimento</div>
-                    </div>
-                    <QuickPayButton transactionId={t.id} isPaid={t.paymentStatus === "PAID"} onStatusChange={updatePaymentStatus} />
-                  </div>
-
-                  <div className="pt-2 border-t border-outline/10">
-                    <p className="text-sm font-bold text-on-background mb-3">{formatCurrency(t.amount)}</p>
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <Button size="sm" className="rounded-xl text-xs flex-1 sm:flex-none" onClick={() => updatePaymentStatus(t.id, "PAID")}>
-                        <CheckCircle2 className="w-4 h-4 mr-2" />
-                        Marcar Pago
+                      <Button 
+                        onClick={() => updatePaymentStatus(t.id, "PAID")}
+                        className="h-12 px-8 rounded-2xl bg-primary text-on-primary font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20"
+                      >
+                         Liquidar
                       </Button>
-                      <div className="flex gap-2 flex-1 sm:flex-none">
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          value={partialAmounts[t.id] || ""}
-                          onChange={(e) => setPartialAmounts((current) => ({ ...current, [t.id]: e.target.value }))}
-                          placeholder="Valor"
-                          aria-label="Valor da baixa parcial"
-                          className="h-9 flex-1 rounded-xl border border-outline/30 bg-surface px-3 text-xs"
-                        />
-                        <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => applyPartial(t.id)}>
-                          Parcial
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </Card>
-        )}
+                   </div>
+                </Card>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

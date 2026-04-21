@@ -27,6 +27,7 @@
   --color-outline: #D0D0D5;
   --color-background: #FBFBFD;
   --color-on-background: #1D1D1F;
+  --color-muted: #E5E5EA;
 
   --radius-xl: 16px;
   --radius-lg: 12px;
@@ -159,6 +160,10 @@
 /* Premium Fintech Cards & Components */
 .premium-card {
   @apply bg-surface border border-outline/25 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg transition-colors duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-outline/35;
+}
+
+.glass-card {
+  @apply bg-surface/60 backdrop-blur-md border border-outline/20 shadow-sm rounded-lg;
 }
 
 .apple-button-primary {
