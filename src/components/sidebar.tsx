@@ -7,7 +7,7 @@ import {
   LayoutDashboard, ReceiptText, BarChart3, LogOut, Wallet, 
   UserCircle, RotateCcw, History, Target, CreditCard, 
   BadgeDollarSign, CalendarRange, Camera, ShieldCheck, 
-  TrendingUp, Menu, X, Brain, Clock
+  TrendingUp, Menu, X, Brain, Clock, Plus
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -246,6 +246,17 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Bottom Navigation */}
       <BottomNav />
+
+      {/* Mobile FAB */}
+      <div className="fixed bottom-24 right-6 z-[45] md:hidden">
+        <Link
+          href="/movimentacoes?action=new"
+          className="flex items-center justify-center w-14 h-14 bg-primary text-on-primary rounded-2xl shadow-lg shadow-primary/40 active:scale-95 transition-all animate-in slide-in-from-bottom-4 duration-500"
+          aria-label="Nova transação"
+        >
+          <Plus className="w-8 h-8 stroke-[3px]" />
+        </Link>
+      </div>
     </div>
   );
 }
