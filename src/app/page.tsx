@@ -6,10 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowUpRight, ArrowDownRight, Wallet, TrendingUp, CalendarDays, History,
   LayoutDashboard, ReceiptText, BarChart3, Bell, User as UserIcon,
-  AlertTriangle, Target, ArrowRight, Brain
+  AlertTriangle, Target, ArrowRight, Brain, Sparkles, ChevronRight
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,11 +20,11 @@ import { EmptyDashboard } from "@/components/ui/empty-states";
 
 const containerVariants: any = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.3 } }
+  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } }
 };
 const itemVariants: any = {
-  hidden: { y: 30, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { type: "spring", damping: 20, stiffness: 100 } as any }
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { type: "spring", damping: 25, stiffness: 120 } as any }
 };
 
 export default function Dashboard() {
@@ -65,197 +64,200 @@ export default function Dashboard() {
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
+  if (!loading && metrics.balance === 0 && metrics.income === 0 && metrics.expenses === 0) {
+    return (
+      <motion.div initial="hidden" animate="visible" variants={containerVariants} className="max-w-7xl mx-auto">
+        <EmptyDashboard />
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-6 md:space-y-8 max-w-7xl mx-auto pb-20 px-4 md:px-0"
+      className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-24"
     >
-      {/* Header - Copiloto Style */}
-      <motion.header variants={itemVariants} className="space-y-4 py-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-full bg-primary/10 text-primary animate-pulse">
-                <Brain className="w-4 h-4" />
+      {/* Prime Hero Section: Intelligence Report */}
+      <motion.section variants={itemVariants} className="relative">
+        <div className="bg-primary-container rounded-3xl p-8 md:p-12 overflow-hidden shadow-xl border-none">
+          {/* Subtle Background Pattern */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/20 rounded-full -ml-10 -mb-10 blur-2xl" />
+          
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-8">
+            <div className="space-y-6 max-w-3xl">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-white/10 text-on-primary shadow-inner border border-white/10 backdrop-blur-md">
+                  <Brain className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-on-primary/60 uppercase tracking-[0.3em]">Relatório de Inteligência</span>
               </div>
-              <p className="text-sm text-primary font-bold uppercase tracking-wider">
-                Copiloto Inteligente
+              
+              <h1 className="text-4xl md:text-6xl font-display font-bold tracking-tight text-white leading-[1.05]">
+                {loading ? (
+                  <div className="h-16 w-80 bg-white/10 animate-pulse rounded-2xl" />
+                ) : metrics.copilot?.proactiveMessage || "Sua saúde financeira está sólida."}
+              </h1>
+              
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-white text-sm font-medium flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-secondary-container" />
+                  Insight do dia disponível
+                </div>
+                <QuickAdd categories={categories} onSuccess={() => window.location.reload()} />
+              </div>
+            </div>
+
+            <div className="md:text-right space-y-2 pt-2">
+              <p className="text-xs font-bold text-on-primary/50 uppercase tracking-[0.2em]">Seu Patrimônio Líquido</p>
+              <p className="text-4xl md:text-5xl font-display font-bold text-white tracking-tighter">
+                {loading ? "..." : formatCurrency(metrics.balance)}
               </p>
             </div>
-            <h1 className="text-2xl md:text-4xl font-black tracking-tight text-on-background max-w-2xl leading-tight">
-              {loading ? (
-                <div className="h-10 w-64 bg-surface-variant animate-pulse rounded-lg" />
-              ) : metrics.copilot?.proactiveMessage || "Como você está hoje?"}
-            </h1>
-          </div>
-          <div className="flex items-center gap-3">
-             <QuickAdd categories={categories} onSuccess={() => window.location.reload()} />
           </div>
         </div>
-      </motion.header>
+      </motion.section>
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-        <MetricCard
-          loading={loading}
-          title="Saldo Atual"
-          value={metrics.balance}
-          icon={Wallet}
-          color="primary"
-        />
-        <MetricCard
-          loading={loading}
-          title="Receitas"
-          value={metrics.income}
-          icon={ArrowUpRight}
-          color="emerald"
-        />
-        <MetricCard
-          loading={loading}
-          title="Despesas"
-          value={metrics.expenses}
-          icon={ArrowDownRight}
-          color="rose"
-        />
-        <MetricCard
-          loading={loading}
-          title="Economia"
-          value={`${metrics.savingsRate?.toFixed(0)}%`}
-          icon={Target}
-          color="amber"
-          isCurrency={false}
-        />
-      </div>
-
-      {!loading && metrics.balance === 0 && metrics.income === 0 && metrics.expenses === 0 ? (
-        <motion.div variants={itemVariants}>
-          <EmptyDashboard />
-        </motion.div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-           {/* Left Column (8 cols) */}
-           <div className="lg:col-span-8 space-y-6 md:space-y-8">
-              {/* Spend Decision Indicator */}
-              <motion.div variants={itemVariants}>
-                <SpendDecisionIndicator />
-              </motion.div>
-
-              {/* Weekly Cashflow Forecast */}
-              <motion.div variants={itemVariants}>
-                <WeeklyCashflowForecast />
-              </motion.div>
-
-              {/* Chart */}
-              <Card className="premium-card overflow-hidden">
-                <CardHeader className="p-6 pb-3">
-                  <CardTitle className="text-base font-bold text-on-background flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-secondary" />
-                    Seu fluxo mensal
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 pt-2 h-[280px]">
-                  {loading ? <Skeleton className="h-full w-full rounded-lg" /> : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={metrics.chartData}>
-                        <defs>
-                          <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.12} />
-                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                          </linearGradient>
-                          <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.12} />
-                            <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
-                        <XAxis dataKey="day" stroke="#6F7278" fontSize={11} tickLine={false} axisLine={false} dy={8} />
-                        <YAxis stroke="#6F7278" fontSize={11} tickLine={false} axisLine={false}
-                          tickFormatter={(v) => `R$${(v/1000).toFixed(0)}k`} width={45} />
-                        <Tooltip />
-                        <Area type="monotone" dataKey="income" stroke="#10b981" fillOpacity={1} fill="url(#colorIncome)" strokeWidth={2} />
-                        <Area type="monotone" dataKey="expense" stroke="#f43f5e" fillOpacity={1} fill="url(#colorExpenses)" strokeWidth={2} />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  )}
-                </CardContent>
-              </Card>
-           </div>
-
-           {/* Right Column (4 cols) */}
-           <div className="lg:col-span-4 space-y-6 md:space-y-8">
-              <motion.div variants={itemVariants}>
-                <DailyInsight metrics={metrics} />
-              </motion.div>
-
-              <Card className="premium-card">
-                <CardHeader>
-                  <CardTitle className="text-sm font-bold flex items-center gap-2">
-                    <Target className="w-4 h-4 text-primary" />
-                    Orçamentos Críticos
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {loading ? [1,2].map(i => <Skeleton key={i} className="h-12 w-full" />) : (
-                    metrics.budgetAlerts?.length > 0 ? metrics.budgetAlerts.map((budget: any) => (
-                      <div key={budget.id} className="space-y-1.5">
-                        <div className="flex justify-between text-xs font-bold">
-                          <span className="truncate">{budget.category.name}</span>
-                          <span>{budget.percentage.toFixed(0)}%</span>
-                        </div>
-                        <div className="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
-                          <div 
-                            className={cn("h-full transition-all duration-500", budget.percentage >= 100 ? "bg-rose-500" : "bg-amber-500")}
-                            style={{ width: `${Math.min(budget.percentage, 100)}%` }}
-                          />
-                        </div>
-                      </div>
-                    )) : (
-                      <p className="text-xs text-on-surface-variant text-center py-4">Tudo dentro do limite!</p>
-                    )
-                  )}
-                </CardContent>
-              </Card>
-           </div>
-        </div>
-      )}
-    </motion.div>
-  );
-}
-
-function MetricCard({ title, value, icon: Icon, color, isCurrency = true, loading }: any) {
-  const colors: any = {
-    primary: "from-primary/20 to-primary/5 text-primary border-primary/10",
-    emerald: "from-emerald-500/20 to-emerald-600/5 text-emerald-600 border-emerald-100",
-    rose: "from-rose-500/20 to-rose-600/5 text-rose-600 border-rose-100",
-    amber: "from-amber-500/20 to-amber-600/5 text-amber-600 border-amber-100",
-  };
-
-  const formatCurrency = (val: number) =>
-    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
-
-  return (
-    <motion.div variants={itemVariants}>
-      <Card className={cn("overflow-hidden border shadow-none bg-gradient-to-br", colors[color])}>
-        <CardContent className="p-4 md:p-6">
-          <div className="flex items-center gap-3 mb-3 md:mb-4">
-            <div className={cn("p-2 rounded-xl bg-white/50")}>
-              <Icon className="w-4 h-4 md:w-5 md:h-5" />
+      {/* Main Grid: Editorial Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
+        
+        {/* Primary Content (8 cols) */}
+        <div className="lg:col-span-8 space-y-12 md:space-y-20">
+          
+          {/* Key Metrics Strip */}
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-[0.2em]">Receitas Mensais</p>
+              <div className="flex items-center gap-3">
+                <p className="text-3xl md:text-4xl font-display font-bold text-primary">
+                  {loading ? "..." : formatCurrency(metrics.income)}
+                </p>
+                <div className="p-1 rounded-full bg-emerald-500/10 text-emerald-600">
+                  <ArrowUpRight className="w-4 h-4" />
+                </div>
+              </div>
             </div>
-            <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest opacity-70">
-              {title}
-            </p>
+            <div className="space-y-3">
+              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-[0.2em]">Despesas Mensais</p>
+              <div className="flex items-center gap-3">
+                <p className="text-3xl md:text-4xl font-display font-bold text-tertiary">
+                  {loading ? "..." : formatCurrency(metrics.expenses)}
+                </p>
+                <div className="p-1 rounded-full bg-rose-500/10 text-rose-600">
+                  <ArrowDownRight className="w-4 h-4" />
+                </div>
+              </div>
+            </div>
           </div>
-          {loading ? (
-            <div className="h-7 md:h-8 w-24 bg-black/5 animate-pulse rounded" />
-          ) : (
-            <p className="text-lg md:text-2xl font-black tracking-tight">
-              {isCurrency ? formatCurrency(value) : value}
-            </p>
-          )}
-        </CardContent>
-      </Card>
+
+          {/* Weekly Forecast Chart */}
+          <section className="space-y-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-display font-bold">Projeção de Caixa</h2>
+              <button className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline">
+                Ver detalhes <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+            <motion.div variants={itemVariants}>
+              <WeeklyCashflowForecast />
+            </motion.div>
+          </section>
+
+          {/* Monthly Flux Area Chart */}
+          <section className="space-y-8">
+            <h2 className="text-2xl font-display font-bold">Fluxo Mensal</h2>
+            <Card className="premium-card p-6 md:p-10 h-[400px]">
+              {loading ? <Skeleton className="h-full w-full rounded-2xl" /> : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={metrics.chartData}>
+                    <defs>
+                      <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#004b49" stopOpacity={0.15} />
+                        <stop offset="95%" stopColor="#004b49" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#49220a" stopOpacity={0.15} />
+                        <stop offset="95%" stopColor="#49220a" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.04)" />
+                    <XAxis dataKey="day" stroke="#707978" fontSize={11} tickLine={false} axisLine={false} dy={12} />
+                    <YAxis stroke="#707978" fontSize={11} tickLine={false} axisLine={false}
+                      tickFormatter={(v) => `R$${(v/1000).toFixed(0)}k`} width={50} />
+                    <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 40px rgba(0,0,0,0.08)', padding: '12px' }} />
+                    <Area type="monotone" dataKey="income" stroke="#004b49" fillOpacity={1} fill="url(#colorIncome)" strokeWidth={3} />
+                    <Area type="monotone" dataKey="expense" stroke="#49220a" fillOpacity={1} fill="url(#colorExpenses)" strokeWidth={3} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
+            </Card>
+          </section>
+        </div>
+
+        {/* Sidebar Context (4 cols) */}
+        <div className="lg:col-span-4 space-y-12 md:space-y-16">
+          
+          {/* Decision Indicator */}
+          <motion.section variants={itemVariants}>
+            <SpendDecisionIndicator />
+          </motion.section>
+
+          {/* Critical Budgets */}
+          <section className="space-y-8">
+            <h2 className="text-xl font-display font-bold flex items-center gap-2">
+              <Target className="w-5 h-5 text-tertiary" />
+              Orçamentos Críticos
+            </h2>
+            <div className="space-y-6">
+              {loading ? [1,2,3].map(i => <Skeleton key={i} className="h-16 w-full rounded-2xl" />) : (
+                metrics.budgetAlerts?.length > 0 ? metrics.budgetAlerts.map((budget: any) => (
+                  <div key={budget.id} className="group cursor-pointer">
+                    <div className="flex justify-between text-sm mb-3">
+                      <span className="font-semibold text-on-surface">{budget.category.name}</span>
+                      <span className={cn("font-display font-bold", budget.percentage >= 100 ? "text-error" : "text-primary")}>
+                        {budget.percentage.toFixed(0)}%
+                      </span>
+                    </div>
+                    <div className="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(budget.percentage, 100)}%` }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                        className={cn("h-full transition-all duration-700", budget.percentage >= 100 ? "bg-error" : "bg-primary")}
+                      />
+                    </div>
+                  </div>
+                )) : (
+                  <div className="p-8 rounded-3xl bg-surface-container-low text-center">
+                    <p className="text-sm font-semibold text-on-surface-variant">Tudo sob controle no momento.</p>
+                  </div>
+                )
+              )}
+            </div>
+          </section>
+
+          {/* Daily Insight Card */}
+          <motion.div variants={itemVariants}>
+            <DailyInsight metrics={metrics} />
+          </motion.div>
+          
+          {/* Security Status */}
+          <section className="p-6 rounded-3xl bg-tertiary/5 border border-tertiary/10 space-y-4">
+             <div className="flex items-center gap-3 text-tertiary">
+               <div className="p-2 rounded-lg bg-tertiary/10">
+                 <Target className="w-4 h-4" />
+               </div>
+               <span className="text-xs font-bold uppercase tracking-[0.2em]">Cofre Digital</span>
+             </div>
+             <p className="text-sm font-medium text-on-surface-variant leading-relaxed">
+               Seus dados estão protegidos por criptografia de ponta a ponta e auditoria constante.
+             </p>
+          </section>
+
+        </div>
+      </div>
     </motion.div>
   );
 }
