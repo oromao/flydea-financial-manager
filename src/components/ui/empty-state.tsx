@@ -22,7 +22,7 @@ export function EmptyState({ icon: Icon, title, description, ctaLabel, onCta }: 
       {ctaLabel && onCta && (
         <Button
           onClick={onCta}
-          className="m3-button-premium px-8 h-12 border-none"
+          className="apple-button-primary px-8 h-12 border-none"
         >
           {ctaLabel}
         </Button>

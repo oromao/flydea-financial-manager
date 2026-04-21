@@ -13,7 +13,7 @@ test.describe("Intelligent Copilot & Agents E2E", () => {
     
     // Check for DailyInsight cards
     const insights = page.locator(".daily-insight-card"); // Assuming class
-    await expect(insights).toHaveCount({ min: 1 });
+    await expect(insights).not.toHaveCount(0);
   });
 
   test("should answer questions with context in Copilot Chat", async ({ page }) => {

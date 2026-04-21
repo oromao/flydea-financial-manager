@@ -65,7 +65,7 @@ export class PicoClawEngine {
 
     logger.info("PicoClaw: generating insights", { userId: data.userId });
 
-    // Rule 1: Immediate Cashflow Risk
+    // 1. Immediate Cashflow Risk
     if (summary.totalBalance < summary.pendingPayments) {
       insights.push({
         title: "Risco de Caixa",
@@ -76,11 +76,11 @@ export class PicoClawEngine {
       });
     }
 
-    // Rule 2: Budget Overrun
+    // 2. Budget Overrun & Concentration
     const topCat = Object.entries(summary.expensesByCategory)
       .sort(([, a], [, b]) => b - a)[0];
     
-    if (topCat && topCat[1] > (summary.monthlyIncome * 0.4)) {
+    if (topCat && topCat[1] > (summary.monthlyIncome * 0.4) && summary.monthlyIncome > 0) {
       insights.push({
         title: "Alerta de Gastos",
         message: `A categoria ${topCat[0]} está consumindo ${((topCat[1] / summary.monthlyIncome) * 100).toFixed(0)}% da sua renda.`,
@@ -90,8 +90,8 @@ export class PicoClawEngine {
       });
     }
 
-    // Rule 3: Savings Opportunity
-    if (summary.netFlow > (summary.monthlyIncome * 0.2)) {
+    // 3. Savings Opportunity
+    if (summary.netFlow > (summary.monthlyIncome * 0.2) && summary.monthlyIncome > 0) {
       insights.push({
         title: "Oportunidade",
         message: "Você poupou mais de 20% este mês. Que tal investir o excedente?",
@@ -99,6 +99,17 @@ export class PicoClawEngine {
         actionLabel: "Investir",
         actionUrl: "/insights"
       });
+    }
+
+    // 4. Pattern Shift (Implicit Tiny AI logic)
+    if (summary.monthlyExpenses > summary.monthlyIncome && summary.monthlyIncome > 0) {
+       insights.push({
+         title: "Déficit Mensal",
+         message: "Seus gastos este mês superaram suas receitas. Revise seus lançamentos.",
+         priority: "HIGH",
+         actionLabel: "Revisar",
+         actionUrl: "/movimentacoes"
+       });
     }
 
     return insights.sort((a, b) => {

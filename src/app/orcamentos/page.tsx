@@ -152,7 +152,7 @@ export default function Orcamentos() {
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
                 <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Categoria</Label>
-                <Select value={categoryId} onValueChange={(v) => setCategoryId(v || "")}>
+                <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
                   <SelectTrigger className="h-11 font-medium text-foreground">
                     {categories.find(c => c.id === categoryId)?.name || <span className="text-muted-foreground">Selecione...</span>}
                   </SelectTrigger>
@@ -173,7 +173,7 @@ export default function Orcamentos() {
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Período</Label>
-                  <Select value={period} onValueChange={(v) => setPeriod(v || "MONTHLY")}>
+                  <Select value={period} onValueChange={(v: string | null) => setPeriod(v || "MONTHLY")}>
                     <SelectTrigger className="h-11 font-medium text-foreground">
                       {period === "MONTHLY" ? "Mensal" : period === "YEARLY" ? "Anual" : <span className="text-muted-foreground">Selecione...</span>}
                     </SelectTrigger>

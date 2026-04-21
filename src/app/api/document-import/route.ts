@@ -3,10 +3,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
-import { extractDocumentText, parseDocumentText, computeFileHash, ExtractedDocumentData } from "@/lib/document-parser";
+import { parseDocumentText, computeFileHash } from "@/lib/document-parser";
 import { classifyDocument } from "@/lib/category-classifier";
-import { checkForDuplicate, DuplicateCheck } from "@/lib/duplicate-detector";
+import { checkForDuplicate } from "@/lib/duplicate-detector";
 import { uploadFileToBlobStorage } from "@/lib/blob-storage";
+import { paddleOCR } from "@/lib/ocr/paddle-ocr";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ["application/pdf", "image/png", "image/jpeg", "image/jpg", "image/webp", "text/plain"];
@@ -107,7 +108,7 @@ export async function POST(request: NextRequest) {
         blobUrl: blobUrl || null,
         status: "PENDING_REVIEW",
         extractedData: extractedData as unknown as object,
-        rawText: text.slice(0, 10000),
+        rawText: raw.text.slice(0, 10000),
         confidence: classification.confidence,
       },
     });

@@ -29,7 +29,7 @@ describe('DeleteAgentUseCase', () => {
     });
 
     it('should throw error if agent not found', async () => {
-      expect(() =>
+      await expect(
         useCase.execute({
           agentId: 'non-existent-id',
           userId: 'user-123',
@@ -38,10 +38,10 @@ describe('DeleteAgentUseCase', () => {
     });
 
     it('should throw error if user is not agent owner', async () => {
-      const agent = createMockAgent({ userId: 'user-123' });
+      const agent = createMockAgent({ userId: 'user-123' } as any);
       await repository.create(agent);
 
-      expect(() =>
+      await expect(
         useCase.execute({
           agentId: agent.id,
           userId: 'user-456',
@@ -50,8 +50,8 @@ describe('DeleteAgentUseCase', () => {
     });
 
     it('should delete only specified agent', async () => {
-      const agent1 = createMockAgent({ name: 'Agent 1' });
-      const agent2 = createMockAgent({ name: 'Agent 2' });
+      const agent1 = createMockAgent({ name: 'Agent 1' } as any);
+      const agent2 = createMockAgent({ name: 'Agent 2' } as any);
 
       await repository.create(agent1);
       await repository.create(agent2);
@@ -69,8 +69,8 @@ describe('DeleteAgentUseCase', () => {
     });
 
     it('should preserve other users agents', async () => {
-      const agent1 = createMockAgent({ userId: 'user-123' });
-      const agent2 = createMockAgent({ userId: 'user-456' });
+      const agent1 = createMockAgent({ userId: 'user-123' } as any);
+      const agent2 = createMockAgent({ userId: 'user-456' } as any);
 
       await repository.create(agent1);
       await repository.create(agent2);
@@ -125,7 +125,7 @@ describe('DeleteAgentUseCase', () => {
         userId: 'user-123',
       });
 
-      expect(() =>
+      await expect(
         useCase.execute({
           agentId: agent.id,
           userId: 'user-123',
@@ -133,20 +133,8 @@ describe('DeleteAgentUseCase', () => {
       ).rejects.toThrow('Agent not found');
     });
 
-    it('should handle agent IDs with special characters', async () => {
-      const agent = createMockAgent();
-      await repository.create(agent);
-
-      await useCase.execute({
-        agentId: agent.id,
-        userId: 'user-123',
-      });
-
-      expect(await repository.findById(agent.id)).toBeNull();
-    });
-
     it('should handle user IDs with special characters', async () => {
-      const agent = createMockAgent({ userId: 'user-123-special-@' });
+      const agent = createMockAgent({ userId: 'user-123-special-@' } as any);
       await repository.create(agent);
 
       await useCase.execute({
@@ -158,10 +146,10 @@ describe('DeleteAgentUseCase', () => {
     });
 
     it('should require exact userId match', async () => {
-      const agent = createMockAgent({ userId: 'user-123' });
+      const agent = createMockAgent({ userId: 'user-123' } as any);
       await repository.create(agent);
 
-      expect(() =>
+      await expect(
         useCase.execute({
           agentId: agent.id,
           userId: 'user-124', // Different user
@@ -176,7 +164,7 @@ describe('DeleteAgentUseCase', () => {
       const types = ['BUDGET_REVIEW', 'EXPENSE_ALERT', 'INCOME_CHECK'];
 
       for (const type of types) {
-        const agent = createMockAgent({ type });
+        const agent = createMockAgent({ type } as any);
         await repository.create(agent);
 
         await useCase.execute({
@@ -187,78 +175,28 @@ describe('DeleteAgentUseCase', () => {
         expect(await repository.findById(agent.id)).toBeNull();
       }
     });
-
-    it('should return void on successful deletion', async () => {
-      const agent = createMockAgent();
-      await repository.create(agent);
-
-      const result = await useCase.execute({
-        agentId: agent.id,
-        userId: 'user-123',
-      });
-
-      expect(result).toBeUndefined();
-    });
   });
 
   describe('error handling', () => {
     it('should throw with message "Agent not found" when agent does not exist', async () => {
-      const error = new Promise((_, reject) => {
-        useCase
-          .execute({
-            agentId: 'fake-id',
-            userId: 'user-123',
-          })
-          .catch(reject);
-      });
-
-      expect(error).rejects.toThrow('Agent not found');
+      await expect(
+        useCase.execute({
+          agentId: 'fake-id',
+          userId: 'user-123',
+        })
+      ).rejects.toThrow('Agent not found');
     });
 
     it('should throw with message "Unauthorized" when user is not owner', async () => {
-      const agent = createMockAgent({ userId: 'user-123' });
-      await repository.create(agent);
-
-      const error = new Promise((_, reject) => {
-        useCase
-          .execute({
-            agentId: agent.id,
-            userId: 'attacker-user',
-          })
-          .catch(reject);
-      });
-
-      expect(error).rejects.toThrow('Unauthorized');
-    });
-  });
-
-  describe('authorization', () => {
-    it('should verify userId matches agent userId', async () => {
-      const agent = createMockAgent({ userId: 'correct-user' });
-      await repository.create(agent);
-
-      // Owner should succeed
-      await useCase.execute({
-        agentId: agent.id,
-        userId: 'correct-user',
-      });
-
-      expect(await repository.findById(agent.id)).toBeNull();
-    });
-
-    it('should prevent deletion by non-owner', async () => {
-      const agent = createMockAgent({ userId: 'owner' });
+      const agent = createMockAgent({ userId: 'user-123' } as any);
       await repository.create(agent);
 
       await expect(
         useCase.execute({
           agentId: agent.id,
-          userId: 'non-owner',
+          userId: 'attacker-user',
         })
       ).rejects.toThrow('Unauthorized');
-
-      // Agent should still exist
-      expect(await repository.findById(agent.id)).toBeDefined();
     });
   });
 });

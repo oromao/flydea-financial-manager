@@ -3,6 +3,8 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { WeeklyCashflow } from "@/components/weekly-cashflow";
 import { InvoiceManager } from "@/components/invoice-manager";
+import { BarChart3, ReceiptText, Brain } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 export const metadata = {
   title: "Fluxo de Caixa",
@@ -17,43 +19,47 @@ export default async function CashflowPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-            Seu fluxo de caixa
-          </h1>
-          <p className="text-sm sm:text-base text-gray-600">
-            Previsão das próximas semanas
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-          {/* Coluna principal: Fluxo semanal */}
-          <div className="md:col-span-2">
-            <WeeklyCashflow />
+    <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 rounded-2xl bg-secondary text-on-secondary shadow-lg shadow-secondary/20">
+            <BarChart3 className="w-8 h-8" />
           </div>
-
-          {/* Sidebar: Gerenciar notas */}
-          <div className="md:col-span-1">
-            <div className="bg-white p-4 sm:p-6 rounded-lg border border-gray-200 md:sticky md:top-4">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
-                Receitas esperadas
-              </h2>
-              <InvoiceManager />
-
-              {/* Info */}
-              <div className="mt-6 sm:mt-8 p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h4 className="text-sm sm:text-base font-semibold text-blue-900 mb-2">💡 Dica</h4>
-                <p className="text-xs sm:text-sm text-blue-800">
-                  Adicione suas receitas programadas para ver a previsão das próximas semanas.
-                </p>
-              </div>
-            </div>
+          <div>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-on-background">Fluxo de Caixa</h1>
+            <p className="text-on-surface-variant font-medium text-sm mt-1">Previsão e controle de liquidez</p>
           </div>
         </div>
       </div>
-    </main>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Coluna principal: Fluxo semanal */}
+        <div className="lg:col-span-8">
+          <WeeklyCashflow />
+        </div>
+
+        {/* Sidebar: Gerenciar notas */}
+        <div className="lg:col-span-4 space-y-6">
+          <Card className="premium-card p-6 md:sticky md:top-8 bg-surface">
+            <h2 className="text-xl font-black text-on-background tracking-tight mb-6 flex items-center gap-2">
+              <ReceiptText className="w-5 h-5 text-secondary" />
+              Receitas Esperadas
+            </h2>
+            <InvoiceManager />
+
+            {/* Info */}
+            <div className="mt-8 p-4 bg-secondary/5 rounded-2xl border border-secondary/10">
+              <h4 className="text-sm font-black uppercase tracking-widest text-secondary mb-2 flex items-center gap-2">
+                <Brain className="w-4 h-4" /> Dica da IA
+              </h4>
+              <p className="text-xs font-medium text-on-surface-variant leading-relaxed">
+                Adicione suas notas de receita futuras para que o PicoClaw possa prever com precisão seu saldo nos próximos 30 dias.
+              </p>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 }

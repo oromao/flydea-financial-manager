@@ -2,8 +2,7 @@ import { randomUUID } from "crypto";
 import { AgentExecution } from "@/domain/agent/entities/AgentExecution";
 import { IAgentRepository } from "@/domain/agent/repositories/IAgentRepository";
 import { IAgentExecutionRepository } from "@/domain/agent/repositories/IAgentExecutionRepository";
-import { cagEngine } from "@/lib/rag/cag-engine";
-import { getUserFinancialData } from "@/lib/financial-rag";
+import { picoClaw } from "@/lib/ai/pico-claw";
 import { EmailService } from "@/infrastructure/services/EmailService";
 import { prisma } from "@/lib/prisma";
 
@@ -30,15 +29,15 @@ export class ExecuteAgentUseCase {
     try {
       execution.markRunning();
 
-      // Get user financial data
-      const financialData = await getUserFinancialData(userId);
+      // Get user financial data via PicoClaw fetcher
+      const financialData = await picoClaw.fetchData(userId);
 
-      // Generate insights using CAG Engine
-      const insights = cagEngine.rankInsights(financialData);
+      // Generate insights using PicoClaw Engine
+      const insights = await picoClaw.generateInsights(financialData);
       const topInsight = insights[0] || {
         title: "Tudo em ordem",
         message: "Não identifiquei riscos imediatos na sua conta.",
-        type: "INFORMAÇÃO"
+        priority: "LOW"
       };
 
       // Map output metrics
@@ -48,7 +47,7 @@ export class ExecuteAgentUseCase {
           balance: financialData.summary.totalBalance,
           netFlow: financialData.summary.netFlow,
           pending: financialData.summary.pendingPayments,
-          healthScore: cagEngine.calculateScores(financialData).healthScore
+          healthScore: 100 - (financialData.summary.pendingPayments / (financialData.summary.totalBalance + 1) * 100)
         }
       };
 
@@ -89,7 +88,7 @@ export class ExecuteAgentUseCase {
                 userId,
                 title: `Agente: ${agent.name}`,
                 message: topInsight.message,
-                type: topInsight.type === "URGENTE" ? "ALERT" : "INFO",
+                type: topInsight.priority === "HIGH" ? "ALERT" : "INFO",
                 relatedId: agentId,
                 relatedType: "AGENT_EXECUTION",
                 metadata: output as any,

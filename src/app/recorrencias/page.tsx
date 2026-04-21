@@ -196,7 +196,7 @@ export default function Recorrencias() {
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Frequência</Label>
-                  <Select value={frequency} onValueChange={v => setFrequency(v || "MONTHLY")}>
+                  <Select value={frequency} onValueChange={(v: string | null) => setFrequency(v || "MONTHLY")}>
                     <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
                       {frequency === "MONTHLY" ? "Mensal" : "Semanal"}
                     </SelectTrigger>
@@ -216,7 +216,7 @@ export default function Recorrencias() {
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Categoria</Label>
-                  <Select value={categoryId} onValueChange={v => setCategoryId(v || "")}>
+                  <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
                     <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
                       {categories.find(c => c.id === categoryId)?.name || <span className="text-on-surface-variant/50">Selecione...</span>}
                     </SelectTrigger>

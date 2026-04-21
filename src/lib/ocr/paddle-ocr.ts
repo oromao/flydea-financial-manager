@@ -1,3 +1,4 @@
+import { createWorker } from "tesseract.js";
 import { logger } from "@/lib/logger";
 
 export interface OCRResult {
@@ -16,54 +17,44 @@ export interface StructuredFinanceData {
   notes?: string;
 }
 
-/**
- * PaddleOCR Service - Production-ready implementation
- * Note: PaddleOCR usually requires a Python environment.
- * This service acts as the orchestrator for the PaddleOCR pipeline.
- */
 export class PaddleOCRService {
-  /**
-   * Main pipeline: preprocess -> ocr -> postprocess -> structure
-   */
   async process(buffer: Buffer, mimeType: string): Promise<{ raw: OCRResult; structured: StructuredFinanceData }> {
     logger.info("PaddleOCR: starting pipeline", { mimeType, size: buffer.length });
 
-    // 1. Pre-processing (Normalization)
-    const normalizedBuffer = await this.preprocess(buffer, mimeType);
+    try {
+      const text = await this.executeOCR(buffer);
+      const structured = this.structureData(text);
 
-    // 2. OCR Execution (PaddleOCR Core)
-    // In a real environment, this would call a local python script or a dedicated microservice.
-    // For now, we simulate the PaddleOCR output structure.
-    const rawResult = await this.executeOCR(normalizedBuffer);
-
-    // 3. Post-processing & Structuring
-    const structured = this.structureData(rawResult.text);
-
-    return {
-      raw: rawResult,
-      structured
-    };
+      return {
+        raw: {
+          text,
+          confidence: 0.9,
+        },
+        structured
+      };
+    } catch (error) {
+      logger.error("PaddleOCR pipeline failed", { error });
+      throw error;
+    }
   }
 
-  private async preprocess(buffer: Buffer, mimeType: string): Promise<Buffer> {
-    // Basic normalization: greyscale, standard resolution
-    return buffer; 
-  }
-
-  private async executeOCR(buffer: Buffer): Promise<OCRResult> {
-    // Mocking PaddleOCR output format.
-    // Transitioning from Tesseract to Paddle logic.
-    return {
-      text: "SIMULATED PADDLEOCR TEXT",
-      confidence: 0.95
-    };
+  private async executeOCR(buffer: Buffer): Promise<string> {
+    const worker = await createWorker("por+eng");
+    const { data: { text } } = await worker.recognize(buffer);
+    await worker.terminate();
+    return text;
   }
 
   private structureData(text: string): StructuredFinanceData {
+    const amount = this.extractAmount(text);
+    const date = this.extractDate(text);
+    const merchant = this.extractMerchant(text);
+
     return {
-      amount: this.extractAmount(text),
-      date: this.extractDate(text),
-      merchant: this.extractMerchant(text),
+      amount,
+      date,
+      merchant,
+      notes: text.slice(0, 500)
     };
   }
 
@@ -80,14 +71,16 @@ export class PaddleOCRService {
     const pattern = /\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})\b/;
     const match = pattern.exec(text);
     if (match) {
-      return "2026-04-20"; // Standard format
+      const [_, d, m, yRaw] = match;
+      const y = yRaw.length === 2 ? "20" + yRaw : yRaw;
+      return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
     }
     return undefined;
   }
 
   private extractMerchant(text: string): string | undefined {
-    const lines = text.split("\n");
-    return lines[0]?.trim();
+    const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 3);
+    return lines[0];
   }
 }
 

@@ -138,7 +138,7 @@ export function Importer({ onImportSuccess }: ImporterProps) {
                     ))}
                     {preview.length > 10 && <p className="text-center text-[10px] text-[#8D9199] py-2">... e mais {preview.length - 10} registros</p>}
                   </div>
-                  <Button onClick={confirmImport} className="m3-button-premium w-full h-16 border-none">
+                  <Button onClick={confirmImport} className="apple-button-primary w-full h-16 border-none">
                     CONCLUIR IMPORTAÇÃO
                   </Button>
                 </div>

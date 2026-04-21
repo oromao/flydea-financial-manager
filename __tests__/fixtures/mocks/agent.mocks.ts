@@ -6,13 +6,13 @@ import { IAgentExecutionRepository } from '@/domain/agent/repositories/IAgentExe
 import { vi } from 'vitest';
 
 export interface CreateAgentInput {
-  userId?: string;
-  name?: string;
+  userId: string;
+  name: string;
   description?: string;
-  type?: string;
-  schedule?: string;
+  type: string;
+  schedule: string;
   timezone?: string;
-  config?: Record<string, unknown>;
+  config: Record<string, unknown>;
 }
 
 export const mockAgentData: CreateAgentInput = {
@@ -24,7 +24,7 @@ export const mockAgentData: CreateAgentInput = {
   config: {},
 };
 
-export function createMockAgent(overrides: CreateAgentInput = {}): AIAgent {
+export function createMockAgent(overrides: Partial<CreateAgentInput> = {}): AIAgent {
   const data = { ...mockAgentData, ...overrides };
   const type = AgentType.create(data.type || 'BUDGET_REVIEW');
 
@@ -50,7 +50,14 @@ export function createMockExecution(
     agentId,
     new Date()
   );
-  return { ...execution, ...overrides };
+  
+  if (overrides.status) {
+    if (overrides.status === ExecutionStatus.RUNNING) execution.markRunning();
+    if (overrides.status === ExecutionStatus.SUCCESS) execution.markSuccess(overrides.output || {}, overrides.actionResults || {});
+    if (overrides.status === ExecutionStatus.FAILED) execution.markFailed(overrides.error || 'error');
+  }
+
+  return execution;
 }
 
 export function createMockFinancialData(): Record<string, unknown> {

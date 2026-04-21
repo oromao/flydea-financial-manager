@@ -35,7 +35,7 @@ export default function GlobalError({
                 <summary className="text-xs text-muted-foreground cursor-pointer">
                   Detalhes técnicos
                 </summary>
-                <pre className="mt-2 text-xs bg-muted p-3 rounded max-h-60 overflow-auto">
+                <pre className="mt-2 text-xs bg-surface-variant p-3 rounded max-h-60 overflow-auto">
                   {error.message}
                 </pre>
               </details>

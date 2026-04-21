@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "./input";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface MoneyInputProps {
   value: string;
@@ -12,8 +12,6 @@ interface MoneyInputProps {
 }
 
 export function MoneyInput({ value, onChange, className, placeholder, required }: MoneyInputProps) {
-  const [displayValue, setDisplayValue] = useState("");
-
   const formatCurrency = (val: string) => {
     const numericValue = val.replace(/\D/g, "");
     if (!numericValue) return "";
@@ -24,22 +22,20 @@ export function MoneyInput({ value, onChange, className, placeholder, required }
     }).format(floatValue);
   };
 
-  useEffect(() => {
-    // Convert incoming numeric string (e.g. "100.50") to display format
-    if (value && !displayValue) {
-      const numeric = (parseFloat(value) * 100).toFixed(0);
-      setDisplayValue(formatCurrency(numeric));
-    } else if (!value) {
-      setDisplayValue("");
-    }
-  }, [value]);
+  const [localValue, setLocalValue] = useState("");
+  const [prevValue, setPrevValue] = useState(value);
+
+  // Synchronize state with props during render (React recommended pattern)
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setLocalValue(value ? formatCurrency((parseFloat(value) * 100).toFixed(0)) : "");
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/\D/g, "");
     const formatted = formatCurrency(raw);
-    setDisplayValue(formatted);
+    setLocalValue(formatted);
     
-    // Send numeric string to parent (e.g. "100.50")
     if (!raw) {
       onChange("");
     } else {
@@ -50,7 +46,7 @@ export function MoneyInput({ value, onChange, className, placeholder, required }
   return (
     <Input
       type="text"
-      value={displayValue}
+      value={localValue}
       onChange={handleChange}
       className={className}
       placeholder={placeholder || "R$ 0,00"}

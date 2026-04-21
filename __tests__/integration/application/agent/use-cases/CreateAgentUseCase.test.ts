@@ -13,7 +13,7 @@ describe('CreateAgentUseCase', () => {
 
   describe('execute', () => {
     it('should create agent with valid input', async () => {
-      const output = await useCase.execute(mockAgentData);
+      const output = await useCase.execute(mockAgentData as any);
 
       expect(output.id).toBeDefined();
       expect(output.name).toBe('Test Agent');
@@ -22,7 +22,7 @@ describe('CreateAgentUseCase', () => {
     });
 
     it('should persist agent in repository', async () => {
-      const output = await useCase.execute(mockAgentData);
+      const output = await useCase.execute(mockAgentData as any);
       const saved = await repository.findById(output.id);
 
       expect(saved).toBeDefined();
@@ -35,7 +35,7 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         type: 'EXPENSE_ALERT',
-      });
+      } as any);
 
       expect(output.type).toBe('EXPENSE_ALERT');
     });
@@ -44,7 +44,7 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         type: 'INCOME_CHECK',
-      });
+      } as any);
 
       expect(output.type).toBe('INCOME_CHECK');
     });
@@ -53,7 +53,7 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         type: 'CASHFLOW_FORECAST',
-      });
+      } as any);
 
       expect(output.type).toBe('CASHFLOW_FORECAST');
     });
@@ -62,7 +62,7 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         type: 'SAVINGS_GOAL',
-      });
+      } as any);
 
       expect(output.type).toBe('SAVINGS_GOAL');
     });
@@ -77,7 +77,7 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         config,
-      });
+      } as any);
 
       const saved = await repository.findById(output.id);
       expect(saved?.config).toEqual(config);
@@ -87,7 +87,7 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         timezone: undefined,
-      });
+      } as any);
 
       const saved = await repository.findById(output.id);
       expect(saved?.timezone).toBe('America/Sao_Paulo');
@@ -97,7 +97,7 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         timezone: 'America/New_York',
-      });
+      } as any);
 
       const saved = await repository.findById(output.id);
       expect(saved?.timezone).toBe('America/New_York');
@@ -107,7 +107,7 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         description: undefined,
-      });
+      } as any);
 
       const saved = await repository.findById(output.id);
       expect(saved?.description).toBeNull();
@@ -118,55 +118,54 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         description,
-      });
+      } as any);
 
       const saved = await repository.findById(output.id);
       expect(saved?.description).toBe(description);
     });
 
     it('should fail with invalid agent type', async () => {
-      expect(() =>
+      await expect(
         useCase.execute({
           ...mockAgentData,
           type: 'INVALID_TYPE',
-        })
+        } as any)
       ).rejects.toThrow();
     });
 
     it('should fail with empty name', async () => {
-      expect(() =>
+      await expect(
         useCase.execute({
           ...mockAgentData,
           name: '',
-        })
+        } as any)
       ).rejects.toThrow();
     });
 
     it('should create agent with any schedule format', async () => {
-      // Note: Schedule validation may be done at API/business layer, not at entity level
       const output = await useCase.execute({
         ...mockAgentData,
-        schedule: '0 9 * * *', // Valid cron
-      });
+        schedule: '0 9 * * *',
+      } as any);
       expect(output.schedule).toBe('0 9 * * *');
     });
 
     it('should create unique IDs for multiple agents', async () => {
-      const output1 = await useCase.execute(mockAgentData);
+      const output1 = await useCase.execute(mockAgentData as any);
       const output2 = await useCase.execute({
         ...mockAgentData,
         name: 'Another Agent',
-      });
+      } as any);
 
       expect(output1.id).not.toBe(output2.id);
     });
 
     it('should create multiple agents for same user', async () => {
-      await useCase.execute(mockAgentData);
+      await useCase.execute(mockAgentData as any);
       await useCase.execute({
         ...mockAgentData,
         name: 'Second Agent',
-      });
+      } as any);
 
       const userAgents = await repository.findByUserId('user-123');
       expect(userAgents).toHaveLength(2);
@@ -176,7 +175,7 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         name: 'Agent @#$% 123 ü ñ',
-      });
+      } as any);
 
       expect(output.name).toBe('Agent @#$% 123 ü ñ');
     });
@@ -186,7 +185,7 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         name: longName,
-      });
+      } as any);
 
       expect(output.name).toBe(longName);
     });
@@ -194,14 +193,14 @@ describe('CreateAgentUseCase', () => {
     it('should handle complex cron expressions', async () => {
       const output = await useCase.execute({
         ...mockAgentData,
-        schedule: '0 0 1 * *', // First of month
-      });
+        schedule: '0 0 1 * *',
+      } as any);
 
       expect(output.schedule).toBe('0 0 1 * *');
     });
 
     it('should return only necessary output fields', async () => {
-      const output = await useCase.execute(mockAgentData);
+      const output = await useCase.execute(mockAgentData as any);
 
       expect(output).toHaveProperty('id');
       expect(output).toHaveProperty('name');
@@ -211,7 +210,7 @@ describe('CreateAgentUseCase', () => {
     });
 
     it('should create agent with isActive = true by default', async () => {
-      const output = await useCase.execute(mockAgentData);
+      const output = await useCase.execute(mockAgentData as any);
       const saved = await repository.findById(output.id);
 
       expect(saved?.isActive).toBe(true);
@@ -221,7 +220,7 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         config: {},
-      });
+      } as any);
 
       const saved = await repository.findById(output.id);
       expect(saved?.config).toEqual({});
@@ -234,7 +233,7 @@ describe('CreateAgentUseCase', () => {
       const output = await useCase.execute({
         ...mockAgentData,
         description: longDescription,
-      });
+      } as any);
 
       const saved = await repository.findById(output.id);
       expect(saved?.description).toBe(longDescription);
@@ -248,7 +247,7 @@ describe('CreateAgentUseCase', () => {
           value2: 456,
           value3: 78.9,
         },
-      });
+      } as any);
 
       const saved = await repository.findById(output.id);
       expect(saved?.config).toEqual({
@@ -268,7 +267,7 @@ describe('CreateAgentUseCase', () => {
             },
           },
         },
-      });
+      } as any);
 
       const saved = await repository.findById(output.id);
       expect(saved?.config.level1).toBeDefined();
@@ -281,7 +280,7 @@ describe('CreateAgentUseCase', () => {
           categories: ['FOOD', 'TRANSPORT', 'ENTERTAINMENT'],
           thresholds: [100, 200, 300],
         },
-      });
+      } as any);
 
       const saved = await repository.findById(output.id);
       expect(Array.isArray(saved?.config.categories)).toBe(true);
@@ -303,7 +302,7 @@ describe('CreateAgentUseCase', () => {
           ...mockAgentData,
           type,
           name: `Agent ${type}`,
-        });
+        } as any);
 
         expect(output.type).toBe(type);
       }

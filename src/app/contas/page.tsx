@@ -163,10 +163,10 @@ export default function ContasPage() {
                   placeholder="Ex: Nubank, Itaú, Carteira..." />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Tipo</Label>
-                  <Select value={type} onValueChange={setType}>
+                  <Select value={type} onValueChange={(val: string | null) => setType(val || "CHECKING")}>
                     <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>

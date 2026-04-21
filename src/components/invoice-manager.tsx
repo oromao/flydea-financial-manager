@@ -196,7 +196,7 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
                </div>
                <div className="space-y-2">
                  <Label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 ml-1">Parcelamento*</Label>
-                 <Select value={numInstallments.toString()} onValueChange={v => handleInstallmentCountChange(parseInt(v))}>
+                 <Select value={numInstallments.toString()} onValueChange={(v: string | null) => handleInstallmentCountChange(parseInt(v || "1"))}>
                     <SelectTrigger className="h-12 rounded-2xl font-black bg-surface-variant/20 border-outline/10">
                        <SelectValue />
                     </SelectTrigger>
@@ -229,7 +229,7 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
                     </div>
                     <div className="w-full sm:w-32">
                        <Label className="text-[8px] font-black uppercase tracking-widest opacity-40 ml-1">Status</Label>
-                       <Select value={inst.status} onValueChange={v => handleInstallmentChange(idx, "status", v)}>
+                       <Select value={inst.status} onValueChange={(v: string | null) => handleInstallmentChange(idx, "status", v || "PENDING")}>
                           <SelectTrigger className="h-10 bg-white border-transparent rounded-xl font-bold text-[10px] uppercase">
                              <SelectValue />
                           </SelectTrigger>
