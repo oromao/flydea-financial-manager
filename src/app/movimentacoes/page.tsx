@@ -41,6 +41,39 @@ export default function Movimentacoes() {
   const [filterCategory, setFilterCategory] = useState("Todos");
   const [filterType, setFilterType] = useState<string | null>(null);
   const [filterPaymentStatus, setFilterPaymentStatus] = useState("ALL");
+  const [startDateFilter, setStartDateFilter] = useState("");
+  const [endDateFilter, setEndDateFilter] = useState("");
+  const [sortField, setSortField] = useState<string>("date");
+  const [sortOrder, setSortDirection] = useState<"asc" | "desc">("desc");
+
+  const sortedTransactions = useMemo(() => {
+    return [...transactions].sort((a, b) => {
+      let valA, valB;
+      if (sortField === "amount") {
+        valA = a.amount;
+        valB = b.amount;
+      } else if (sortField === "date") {
+        valA = new Date(a.date).getTime();
+        valB = new Date(b.date).getTime();
+      } else {
+        valA = String(a[sortField] || "").toLowerCase();
+        valB = String(b[sortField] || "").toLowerCase();
+      }
+
+      if (valA < valB) return sortOrder === "asc" ? -1 : 1;
+      if (valA > valB) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [transactions, sortField, sortOrder]);
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("desc");
+    }
+  };
 
   // Form states
   const [saving, setSaving] = useState(false);
@@ -66,6 +99,20 @@ export default function Movimentacoes() {
       if (filterCategory !== "Todos") params.append("category", filterCategory);
       if (filterType) params.append("type", filterType);
       if (filterPaymentStatus !== "ALL") params.append("paymentStatus", filterPaymentStatus);
+      
+      if (startDateFilter && endDateFilter) {
+        if (new Date(startDateFilter) > new Date(endDateFilter)) {
+          toast.error("A data inicial não pode ser posterior à final");
+          setLoading(false);
+          return;
+        }
+        params.append("startDate", startDateFilter);
+        params.append("endDate", endDateFilter);
+      } else {
+        if (startDateFilter) params.append("startDate", startDateFilter);
+        if (endDateFilter) params.append("endDate", endDateFilter);
+      }
+
       params.append("page", String(targetPage));
 
       const res = await fetch(`/api/transactions?${params.toString()}`);
@@ -309,7 +356,16 @@ export default function Movimentacoes() {
             <FileSpreadsheet className="w-4 h-4 mr-2" /> Exportar
           </Button>
 
-          <Dialog open={open} onOpenChange={(val) => {
+          <Dialog open={open} onOpenChange={async (val) => {
+            if (!val && !saving && (description || amount)) {
+              const confirmed = await confirm({
+                title: "Descartar alterações?",
+                message: "Você tem campos preenchidos. Deseja realmente fechar?",
+                confirmLabel: "Sim, fechar",
+                variant: "danger"
+              });
+              if (!confirmed) return;
+            }
             setOpen(val);
             if (!val) resetForm();
           }}>
@@ -475,15 +531,18 @@ export default function Movimentacoes() {
                   </div>
                 </div>
 
-                <Button type="submit" disabled={saving} className="apple-button-primary w-full h-12 text-base mt-2">
+                <Button 
+                  type="submit" 
+                  disabled={saving || !description.trim() || !amount || !date || !categoryId} 
+                  className="apple-button-primary w-full h-12 text-base mt-2"
+                >
                   {saving ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       Salvando...
                     </>
                   ) : editingId ? "Salvar Alterações" : "Confirmar Lançamento"}
-                </Button>
-              </form>
+                </Button>              </form>
             </DialogContent>
           </Dialog>
         </div>
@@ -579,6 +638,22 @@ export default function Movimentacoes() {
           </Select>
         </div>
 
+        <div className="grid grid-cols-2 sm:flex gap-3">
+          <div className="space-y-1 flex-1">
+            <Label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60 ml-2">De</Label>
+            <Input type="date" value={startDateFilter} onChange={e => setStartDateFilter(e.target.value)} className="h-10 bg-surface-variant/20 border-outline/10 rounded-xl text-xs font-bold" />
+          </div>
+          <div className="space-y-1 flex-1">
+            <Label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60 ml-2">Até</Label>
+            <Input type="date" value={endDateFilter} onChange={e => setEndDateFilter(e.target.value)} className="h-10 bg-surface-variant/20 border-outline/10 rounded-xl text-xs font-bold" />
+          </div>
+          {(startDateFilter || endDateFilter) && (
+            <Button variant="ghost" size="icon" onClick={() => { setStartDateFilter(""); setEndDateFilter(""); }} className="self-end h-10 w-10 text-on-surface-variant/40 hover:text-red-500">
+              <X className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
+
         <div className="flex flex-wrap gap-2 sm:gap-3">
           <PaymentImporter onImportSuccess={fetchTransactions} />
         </div>
@@ -607,10 +682,16 @@ export default function Movimentacoes() {
           <Table>
             <TableHeader>
               <TableRow className="bg-surface-variant/10 hover:bg-surface-variant/10 border-b border-outline/10">
-                <TableHead className="px-3 sm:px-6 py-3 sm:py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant/70">Data</TableHead>
-                <TableHead className="py-3 sm:py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant/70">Descrição</TableHead>
+                <TableHead className="px-3 sm:px-6 py-3 sm:py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant/70 cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort("date")}>
+                  <div className="flex items-center gap-2">Data {sortField === "date" && (sortOrder === "asc" ? "↑" : "↓")}</div>
+                </TableHead>
+                <TableHead className="py-3 sm:py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant/70 cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort("description")}>
+                  <div className="flex items-center gap-2">Descrição {sortField === "description" && (sortOrder === "asc" ? "↑" : "↓")}</div>
+                </TableHead>
                 <TableHead className="py-3 sm:py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant/70 text-center">Categoria</TableHead>
-                <TableHead className="px-3 sm:px-6 py-3 sm:py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant/70 text-right">Valor</TableHead>
+                <TableHead className="px-3 sm:px-6 py-3 sm:py-4 font-bold uppercase text-[11px] sm:text-xs tracking-widest text-on-surface-variant/70 text-right cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort("amount")}>
+                  <div className="flex items-center justify-end gap-2">Valor {sortField === "amount" && (sortOrder === "asc" ? "↑" : "↓")}</div>
+                </TableHead>
                 <TableHead className="w-20 sm:w-28"></TableHead>
               </TableRow>
             </TableHeader>
@@ -626,7 +707,7 @@ export default function Movimentacoes() {
                     </div>
                   </TableCell>
                 </TableRow>
-              ) : transactions.map((t) => (
+              ) : sortedTransactions.map((t) => (
                 <TableRow key={t.id} className="group border-b border-outline/5 hover:bg-surface-variant/15 transition-colors duration-200">
                   <TableCell className="px-6 py-4">
                     <div className="flex flex-col">

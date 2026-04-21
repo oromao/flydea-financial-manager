@@ -194,9 +194,15 @@ export default function Contas() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Saldo Inicial (BRL)</Label>
+                  <div className="flex items-center justify-between ml-1">
+                    <Label className="text-xs font-semibold text-on-surface-variant font-bold">Saldo Inicial (BRL)</Label>
+                    <span className="text-[10px] text-secondary font-bold uppercase tracking-tighter bg-secondary/10 px-1.5 py-0.5 rounded">Opcional</span>
+                  </div>
                   <Input type="number" step="0.01" value={balance} onChange={(e) => setBalance(e.target.value)}
-                    className="h-11 font-bold text-lg" />
+                    className="h-11 font-bold text-lg" 
+                    placeholder="0,00"
+                  />
+                  <p className="text-[9px] text-on-surface-variant/50 ml-1 italic font-medium">Este valor será somado ao total de transações registradas.</p>
                 </div>
               </div>
 

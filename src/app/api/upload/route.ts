@@ -98,16 +98,36 @@ export async function POST(request: Request): Promise<NextResponse> {
       body = request.body;
     }
 
+    // For private buckets, 'public' access still works if you want unguessable URLs.
+    // If the bucket is strictly configured, we might need to omit 'access' or handle it.
     const blob = await put(safeFilename, body, {
-      access: "public",
-      token
+      access: "public", 
+      token,
+      addRandomSuffix: true,
     });
 
     logger.info("Vercel blob upload success", { url: blob.url });
     return NextResponse.json(blob);
-  } catch (error) {
+  } catch (error: any) {
     const errorMsg = error instanceof Error ? error.message : String(error);
-    logger.error("Vercel blob upload error", { error: errorMsg });
-    return NextResponse.json({ error: errorMsg }, { status: 500 });
+    const errorCode = error?.code || "UNKNOWN_ERROR";
+    
+    // Check for specific Vercel Blob errors
+    if (errorMsg.includes("BLOB_READ_WRITE_TOKEN") || errorCode === "BLOB_INVALID_TOKEN") {
+      return NextResponse.json(
+        { error: "Erro de configuração: Token do Vercel Blob inválido ou ausente." }, 
+        { status: 500 }
+      );
+    }
+
+    logger.error("Vercel blob upload error", { error: errorMsg, code: errorCode });
+    return NextResponse.json(
+      { 
+        error: "Falha técnica no upload para o Vercel Blob.", 
+        details: errorMsg,
+        code: errorCode 
+      }, 
+      { status: 500 }
+    );
   }
 }
