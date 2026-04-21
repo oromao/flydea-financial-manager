@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowUpRight, ArrowDownRight, Wallet, TrendingUp, CalendarDays, History,
   LayoutDashboard, ReceiptText, BarChart3, Bell, User as UserIcon,
-  AlertTriangle, Target, ArrowRight
+  AlertTriangle, Target, ArrowRight, Brain
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

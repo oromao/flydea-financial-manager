@@ -9,6 +9,7 @@
  */
 
 import { describe, it, expect } from "vitest";
+import { addMonths, addWeeks, format, isBefore, isSameDay, startOfDay } from "date-fns";
 import {
   getWeekNumber,
   getWeeksForMonth,
@@ -22,7 +23,6 @@ import {
 
 describe("Recurrence date progression", () => {
   it("monthly recurrence advances by 1 month", () => {
-    const { addMonths } = require("date-fns");
     const startDate = new Date(2026, 0, 15); // Jan 15
     const nextDate = addMonths(startDate, 1);
     expect(nextDate.getMonth()).toBe(1); // February
@@ -30,14 +30,12 @@ describe("Recurrence date progression", () => {
   });
 
   it("weekly recurrence advances by 1 week", () => {
-    const { addWeeks } = require("date-fns");
     const startDate = new Date(2026, 0, 15); // Jan 15 (Thursday)
     const nextDate = addWeeks(startDate, 1);
     expect(nextDate.getDate()).toBe(22); // Jan 22
   });
 
   it("monthly recurrence crosses month boundary correctly", () => {
-    const { addMonths } = require("date-fns");
     // Start on Jan 31
     const startDate = new Date(2026, 0, 31);
     // Feb has 28 days — addMonths goes to Feb 28 (clamps to last day of month)
@@ -47,7 +45,6 @@ describe("Recurrence date progression", () => {
   });
 
   it("date-only comparison prevents duplicate detection", () => {
-    const { format } = require("date-fns");
     // Simulate the cron's idempotency check
     const date1 = new Date(2026, 2, 15, 0, 0, 0, 0); // midnight
     const date2 = new Date(2026, 2, 15, 3, 0, 0, 0); // 3am UTC
@@ -69,8 +66,6 @@ describe("Recurrence idempotency simulation", () => {
     existingTransactions: { recurrenceId: string; recurrenceDate: Date }[],
     now: Date
   ): { created: number; newNextDate: Date } {
-    const { addMonths, addWeeks, isBefore, isSameDay, format, startOfDay } = require("date-fns");
-
     let nextDate = new Date(recurrence.nextDate);
     let created = 0;
     const recId = "rec-1";
@@ -167,14 +162,12 @@ describe("Recurrence idempotency simulation", () => {
   });
 
   it("WEEKLY recurrence advances nextDate by 1 week", () => {
-    const { addWeeks } = require("date-fns");
     const startDate = new Date(2026, 2, 1); // March 1
     const nextDate = addWeeks(startDate, 1);
     expect(nextDate.getDate()).toBe(8); // March 8
   });
 
   it("MONTHLY recurrence advances nextDate by 1 month", () => {
-    const { addMonths } = require("date-fns");
     const startDate = new Date(2026, 2, 1); // March 1
     const nextDate = addMonths(startDate, 1);
     expect(nextDate.getMonth()).toBe(3); // April

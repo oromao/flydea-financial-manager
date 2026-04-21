@@ -125,11 +125,11 @@ export class DailyIntelligenceOrchestrator {
 
     // Advanced Intelligence Logic
     let riskScore = currentIntel?.riskScore || 50;
-    let savingsRate = currentIncome > 0 ? ((currentIncome - currentExpense) / currentIncome) * 100 : 0;
-    let predictabilityScore = currentIntel?.predictabilityScore || 50;
+    const savingsRate = currentIncome > 0 ? ((currentIncome - currentExpense) / currentIncome) * 100 : 0;
+    const predictabilityScore = currentIntel?.predictabilityScore || 50;
     let impulsivityScore = currentIntel?.impulsivityScore || 50;
     let behaviorChangeScore = currentIntel?.behaviorChangeScore || 0;
-    let impactScore = currentIntel?.impactScore || 50;
+    const impactScore = currentIntel?.impactScore || 50;
 
     // 1. Risk Evolution
     if (currentExpense > currentIncome * 0.9) riskScore = Math.min(100, riskScore + 8);
@@ -182,6 +182,8 @@ export class DailyIntelligenceOrchestrator {
       
       let error = 0;
       if (pred.type === "CASHFLOW_NEGATIVE") {
+        // Did the user actually hit negative balance in the window of predictedDate +/- 2 days?
+        // For simplicity, we check if today is negative or if any transaction made it negative.
         error = totalBalance < 0 ? 0 : 100;
       }
 
@@ -205,20 +207,52 @@ export class DailyIntelligenceOrchestrator {
   }
 
   /**
-   * Advanced Insight Generation with Smart Ranking
+   * Advanced Insight Generation with Smart Ranking and Recurrence Awareness
    */
   private async generateDailyInsights(userId: string, intel: any) {
     const generated = [];
+    const today = new Date();
+    
+    // 1. Fetch active templates
     const templates = await prisma.insightTemplate.findMany({
       orderBy: { performanceScore: "desc" },
     });
 
+    // 2. Fetch Recurrences for cashflow forecasting
+    const recurrences = await prisma.recurrence.findMany({
+      where: { userId, isActive: true }
+    });
+
+    const pendingBillsTotal = recurrences
+      .filter(r => r.type === "EXPENSE" && r.nextDate && r.nextDate <= addDays(today, 7))
+      .reduce((sum, r) => sum + r.amount, 0);
+
+    const accounts = await prisma.account.findMany({ where: { userId } });
+    const currentBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
+
+    const projectedRisk = currentBalance < pendingBillsTotal;
     const actionRate = (intel.impactScore || 50);
 
+    // 3. Potential Insights
     const candidates = [
-      { type: "CASHFLOW_RISK", baseScore: intel.riskScore, trigger: intel.riskScore > 70 },
-      { type: "EXPENSE_WARNING", baseScore: intel.behaviorChangeScore, trigger: intel.behaviorChangeScore > 30 },
-      { type: "SAVINGS_OPP", baseScore: intel.savingsRate, trigger: intel.savingsRate > 20 },
+      { 
+        type: "CASHFLOW_RISK", 
+        baseScore: projectedRisk ? 100 : intel.riskScore, 
+        trigger: projectedRisk || intel.riskScore > 70,
+        content: projectedRisk 
+          ? `Suas contas fixas nos próximos 7 dias (R$ ${pendingBillsTotal.toFixed(2)}) superam seu saldo atual.`
+          : undefined
+      },
+      { 
+        type: "EXPENSE_WARNING", 
+        baseScore: intel.behaviorChangeScore, 
+        trigger: intel.behaviorChangeScore > 30 
+      },
+      { 
+        type: "SAVINGS_OPP", 
+        baseScore: intel.savingsRate, 
+        trigger: intel.savingsRate > 20 && !projectedRisk
+      },
     ];
 
     for (const candidate of candidates) {
@@ -237,7 +271,7 @@ export class DailyIntelligenceOrchestrator {
         data: {
           userId,
           type: candidate.type,
-          content: template.content,
+          content: candidate.content || template.content,
           templateId: template.id,
           score: finalScore,
           priority: finalScore > 80 ? "HIGH" : (finalScore > 50 ? "MEDIUM" : "LOW"),
@@ -245,6 +279,19 @@ export class DailyIntelligenceOrchestrator {
         }
       });
       generated.push(insight);
+
+      // Create a prediction if it's a cashflow risk
+      if (candidate.type === "CASHFLOW_RISK" && projectedRisk) {
+         await prisma.prediction.create({
+           data: {
+             userId,
+             type: "CASHFLOW_NEGATIVE",
+             predictedDate: addDays(today, 7),
+             predictedAmount: currentBalance - pendingBillsTotal,
+             status: "PENDING"
+           }
+         });
+      }
     }
 
     return generated;

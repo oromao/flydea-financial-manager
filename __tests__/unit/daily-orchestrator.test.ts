@@ -47,6 +47,9 @@ vi.mock("@/lib/prisma", () => ({
       count: vi.fn(),
       findUnique: vi.fn(),
     },
+    recurrence: {
+      findMany: vi.fn(),
+    },
     dailyExecutionLog: {
       create: vi.fn(),
     },
@@ -85,6 +88,8 @@ describe("DailyIntelligenceOrchestrator", () => {
     (prisma.prediction.findMany as any).mockResolvedValue([]);
     (prisma.insightTemplate.findMany as any).mockResolvedValue([]);
     (prisma.insight.updateMany as any).mockResolvedValue({ count: 0 });
+    (prisma.recurrence.findMany as any).mockResolvedValue([]);
+    (prisma.account.findMany as any).mockResolvedValue([]);
 
     const result = await orchestrator.runDailyPipeline();
 
@@ -105,6 +110,8 @@ describe("DailyIntelligenceOrchestrator", () => {
     (prisma.prediction.findMany as any).mockResolvedValue([]);
     (prisma.insightTemplate.findMany as any).mockResolvedValue([]);
     (prisma.userIntelligence.upsert as any).mockResolvedValue({ userId: "user-b", behaviorChangeScore: 40 });
+    (prisma.recurrence.findMany as any).mockResolvedValue([]);
+    (prisma.account.findMany as any).mockResolvedValue([]);
 
     await orchestrator.runDailyPipeline();
 

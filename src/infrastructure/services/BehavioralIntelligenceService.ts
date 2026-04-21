@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { startOfMonth, subDays } from "date-fns";
+import { startOfMonth, subDays, subMonths } from "date-fns";
 
 export class BehavioralIntelligenceService {
   /**
@@ -71,60 +71,75 @@ export class BehavioralIntelligenceService {
   async onTransactionCreated(userId: string, amount: number, categoryId: string) {
     const today = new Date();
     const monthStart = startOfMonth(today);
+    const threeMonthsAgo = subMonths(today, 3);
     
-    // Check for behavior changes
-    // A) Recent spending frequency (Velocity)
-    const recentTransactionsCount = await prisma.transaction.count({
+    // 1. Fetch Category Baseline (Last 3 Months)
+    const categoryStats = await prisma.transaction.aggregate({
       where: { 
         userId, 
-        date: { gte: subDays(today, 7) } 
-      }
+        categoryId, 
+        type: "EXPENSE",
+        date: { gte: threeMonthsAgo, lt: monthStart } 
+      },
+      _sum: { amount: true },
+      _count: { id: true }
     });
 
-    // B) Category spending shift
-    const categoryTotal = await prisma.transaction.aggregate({
-      where: { userId, categoryId, date: { gte: monthStart } },
+    const avgMonthlyCategorySpending = (categoryStats._sum.amount || 0) / 3;
+    
+    // 2. Current Month Category Spending
+    const currentCategoryTotal = await prisma.transaction.aggregate({
+      where: { userId, categoryId, type: "EXPENSE", date: { gte: monthStart } },
       _sum: { amount: true }
     });
 
+    const currentSpent = (currentCategoryTotal._sum.amount || 0) + amount;
+
+    // 3. Behavior Change Detection
     const intel = await prisma.userIntelligence.findUnique({ where: { userId } });
     if (!intel) return;
 
     let behaviorChangeScore = intel.behaviorChangeScore;
     let impulsivityScore = intel.impulsivityScore;
+    let driftDetected = false;
 
-    // Detect high frequency
-    if (recentTransactionsCount > 15) { // More than 2 transactions per day on average
-      behaviorChangeScore = Math.min(100, behaviorChangeScore + 5);
-      impulsivityScore = Math.min(100, impulsivityScore + 2);
+    // Detection Rule: Current spent in category > 50% of 3-month average within first 10 days
+    // or Current spent > 120% of average overall.
+    if (avgMonthlyCategorySpending > 0 && currentSpent > avgMonthlyCategorySpending * 1.2) {
+      behaviorChangeScore = Math.min(100, behaviorChangeScore + 10);
+      impulsivityScore = Math.min(100, impulsivityScore + 5);
+      driftDetected = true;
+      
+      await prisma.userBehavioralLog.create({
+        data: {
+          userId,
+          changeType: "FREQUENCY_SHIFT",
+          description: `Gasto na categoria atual superou em 20% a média dos últimos 3 meses.`,
+          severity: 10
+        }
+      });
     }
 
-    // Update Intelligence incrementally
+    // 4. Global Velocity Check (Recent frequency)
+    const recentCount = await prisma.transaction.count({
+      where: { userId, date: { gte: subDays(today, 7) } }
+    });
+
+    if (recentCount > 20) {
+      behaviorChangeScore = Math.min(100, behaviorChangeScore + 5);
+      driftDetected = true;
+    }
+
+    // 5. Update Intelligence incrementally
     await prisma.userIntelligence.update({
       where: { userId },
       data: {
         behaviorChangeScore,
         impulsivityScore,
+        recentPatternShift: driftDetected || behaviorChangeScore > 40,
         lastCalculatedAt: new Date()
       }
     });
-
-    // C) Automatic action detection
-    // If there was a recent insight for this category/risk and user created a transaction 
-    // we might check if it matches the 'expectedEffect'
-    const recentInsights = await prisma.insight.findMany({
-      where: { 
-        userId, 
-        status: { in: ["GENERATED", "SHOWN"] },
-        createdAt: { gte: subDays(today, 1) }
-      }
-    });
-
-    for (const insight of recentInsights) {
-       // Logic to detect if this transaction "fulfilled" the insight's goal
-       // This is complex and depends on insight type.
-       // For now, if user acts on any warning, we bump the impact.
-    }
   }
 
   /**

@@ -4,8 +4,6 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { startOfMonth, endOfMonth, addMonths } from "date-fns";
 import { computeMonthlySummary } from "@/lib/financial-engine";
-import { getUserFinancialData } from "@/lib/financial-rag";
-import { cagEngine } from "@/lib/rag/cag-engine";
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -16,10 +14,41 @@ export async function GET(request: NextRequest) {
   const startDate = startOfMonth(now);
   const endDate = endOfMonth(now);
 
-  // Fetch data for CAG Engine
-  const financialData = await getUserFinancialData(session.user.id);
-  const copilotInsights = cagEngine.rankInsights(financialData);
-  const proactiveMessage = cagEngine.generateProactiveMessage(financialData);
+  // 1. Fetch DB Intelligence (Replacement for in-memory CAG Engine)
+  const intel = await prisma.userIntelligence.findUnique({
+    where: { userId: session.user.id }
+  });
+
+  const dbInsights = await prisma.insight.findMany({
+    where: { 
+      userId: session.user.id,
+      status: { in: ["GENERATED", "SHOWN"] }
+    },
+    orderBy: { score: "desc" },
+    take: 3
+  });
+
+  // Calculate AI Level based on impactScore
+  const impact = intel?.impactScore || 50;
+  const accuracy = intel?.predictionAccuracyScore || 50;
+  
+  let aiLevel = "Iniciante";
+  if (impact > 80) aiLevel = "Consultor Sênior";
+  else if (impact > 60) aiLevel = "Analista";
+
+  // Dynamic greeting based on evolution
+  let proactiveMessage = "Sua vida financeira parece estar em ordem! Continue acompanhando seus gastos diariamente.";
+  if (dbInsights.length > 0) {
+    const top = dbInsights[0];
+    if (top.type === "CASHFLOW_RISK") proactiveMessage = `Atenção aqui: ${top.content}`;
+    else if (top.type === "EXPENSE_WARNING") proactiveMessage = `💡 Insight: ${top.content}`;
+    else proactiveMessage = `Sabia que... ${top.content}`;
+  }
+
+  // If AI accuracy is remarkably high, showcase it!
+  if (accuracy > 80) {
+    proactiveMessage = `Evoluímos! Minha precisão de previsões subiu para ${accuracy.toFixed(0)}%. ${proactiveMessage}`;
+  }
 
   // Fetch current month transactions + all-time for balance
   const [monthTransactions, allTransactions, recurrences, budgets] =
@@ -155,8 +184,19 @@ export async function GET(request: NextRequest) {
         : 0,
     copilot: {
       proactiveMessage,
-      insights: copilotInsights.slice(0, 3),
-      healthScore: cagEngine.calculateScores(financialData).healthScore,
+      insights: dbInsights.map(i => ({
+        id: i.id,
+        type: i.priority === "HIGH" ? "URGENTE" : (i.priority === "MEDIUM" ? "IMPACTO" : "INFORMAÇÃO"),
+        title: i.type === "CASHFLOW_RISK" ? "Risco Detectado" : (i.type === "EXPENSE_WARNING" ? "Aviso de Gasto" : "Oportunidade"),
+        message: i.content,
+        actionLabel: i.expectedEffect === "REDUCE_SPENDING" ? "Revisar Gastos" : "Ver Detalhes",
+        actionUrl: i.expectedEffect === "REDUCE_SPENDING" ? "/movimentacoes" : "/insights",
+      })),
+      healthScore: intel ? (100 - (intel.riskScore * 0.5) + (intel.savingsRate > 20 ? 10 : 0)) : 80,
+      aiStats: {
+        accuracy: accuracy,
+        level: aiLevel
+      }
     },
   });
 }

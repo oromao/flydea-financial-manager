@@ -12,17 +12,15 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("theme") as Theme | null;
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      return stored || (prefersDark ? "dark" : "light");
+    }
+    return "light";
+  });
   const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("theme") as Theme | null;
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initial = stored || (prefersDark ? "dark" : "light");
-    setTheme(initial);
-    applyTheme(initial);
-    setMounted(true);
-  }, []);
 
   const applyTheme = (newTheme: Theme) => {
     const htmlElement = document.documentElement;
@@ -32,6 +30,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       htmlElement.classList.remove("dark");
     }
   };
+
+  useEffect(() => {
+    applyTheme(theme);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, [theme]);
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";

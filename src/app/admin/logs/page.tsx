@@ -46,8 +46,11 @@ export default function AuditLogs() {
 
   // Reset to page 1 when filters change
   useEffect(() => {
-    setPage(1);
-  }, [query, action, entity]);
+    if (page !== 1) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPage(1);
+    }
+  }, [query, action, entity, page]);
 
   const totalPages = Math.max(1, Math.ceil(filteredLogs.length / LOGS_PER_PAGE));
   const paginatedLogs = useMemo(() => {

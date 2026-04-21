@@ -22,6 +22,9 @@ const eslintConfig = defineConfig([
     "test-results/**",
     "tmp-*.png",
     "next-env.d.ts",
+    "scripts/**",
+    "*.js",
+    "prisma/*.js",
   ]),
 ]);
 

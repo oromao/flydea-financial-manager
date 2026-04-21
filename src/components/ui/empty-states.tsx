@@ -35,9 +35,7 @@ export function EmptyTransactions({ onImportClick }: EmptyTransactionsProps) {
   );
 }
 
-interface EmptyDashboardProps {}
-
-export function EmptyDashboard({}: EmptyDashboardProps) {
+export function EmptyDashboard() {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
       <div className="w-20 h-20 bg-surface rounded-3xl flex items-center justify-center mb-6">
@@ -59,9 +57,7 @@ export function EmptyDashboard({}: EmptyDashboardProps) {
   );
 }
 
-interface EmptyCategoriesProps {}
-
-export function EmptyCategories({}: EmptyCategoriesProps) {
+export function EmptyCategories() {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
       <div className="w-16 h-16 bg-surface rounded-2xl flex items-center justify-center mb-4">
