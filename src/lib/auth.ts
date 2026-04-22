@@ -21,40 +21,55 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Senha", type: "password" }
       },
       async authorize(credentials) {
+        console.log("Tentativa de login para:", credentials?.email);
+        
         if (!credentials?.email || !credentials?.password) {
+          console.error("Credenciais ausentes");
           throw new Error("Email e senha obrigatórios");
         }
 
-        // Rate limiting by email to prevent brute force
-        const { success } = await checkRateLimit(`login:${credentials.email}`);
-        if (!success) {
-          throw new Error("Muitas tentativas. Tente novamente em 60 segundos.");
+        try {
+          const { success } = await checkRateLimit(`login:${credentials.email}`);
+          if (!success) {
+            console.error("Rate limit excedido para:", credentials.email);
+            throw new Error("Muitas tentativas. Tente novamente em 60 segundos.");
+          }
+        } catch (e) {
+          console.error("Erro no checkRateLimit, prosseguindo:", e);
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
-        });
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email }
+          });
 
-        if (!user || !user.password) {
-          throw new Error("Usuário não encontrado");
+          if (!user || !user.password) {
+            console.error("Usuário não encontrado no BD:", credentials.email);
+            throw new Error("Usuário não encontrado");
+          }
+
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+
+          if (!isPasswordValid) {
+            console.error("Senha inválida para:", credentials.email);
+            throw new Error("Senha inválida");
+          }
+
+          console.log("Login autorizado com sucesso para:", credentials.email);
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.avatarUrl,
+            role: user.role,
+          };
+        } catch (error) {
+          console.error("Erro na validação do Prisma/Bcrypt:", error);
+          throw error;
         }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isPasswordValid) {
-          throw new Error("Senha inválida");
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.avatarUrl,
-          role: user.role,
-        };
       }
     })
   ],
@@ -62,22 +77,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  jwt: {
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
   useSecureCookies: process.env.NODE_ENV === "production",
-  cookies: {
-    sessionToken: {
-      name: process.env.NODE_ENV === "production" ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 30 * 24 * 60 * 60, // 30 dias para persistência de cookie
-      }
-    }
-  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
