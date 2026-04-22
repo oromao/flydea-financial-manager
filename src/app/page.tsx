@@ -77,42 +77,42 @@ export default function Dashboard() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-24"
+      className="space-y-6 md:space-y-16 max-w-7xl mx-auto pb-24 px-4 md:px-0"
     >
       {/* Prime Hero Section: Intelligence Report */}
       <motion.section variants={itemVariants} className="relative">
-        <div className="bg-primary-container rounded-3xl p-8 md:p-12 overflow-hidden shadow-xl border-none">
+        <div className="bg-primary-container rounded-3xl p-6 md:p-12 overflow-hidden shadow-xl border-none">
           {/* Subtle Background Pattern */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/20 rounded-full -ml-10 -mb-10 blur-2xl" />
           
-          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-8">
-            <div className="space-y-6 max-w-3xl">
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-6 md:gap-8">
+            <div className="space-y-4 md:space-y-6 max-w-3xl">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-white/10 text-on-primary shadow-inner border border-white/10 backdrop-blur-md">
-                  <Brain className="w-5 h-5" />
+                <div className="p-1.5 md:p-2 rounded-xl bg-white/10 text-on-primary shadow-inner border border-white/10 backdrop-blur-md">
+                  <Brain className="w-4 h-4 md:w-5 md:h-5" />
                 </div>
-                <span className="text-xs font-bold text-on-primary/60 uppercase tracking-[0.3em]">Relatório de Inteligência</span>
+                <span className="text-[10px] md:text-xs font-bold text-on-primary/60 uppercase tracking-[0.2em] md:tracking-[0.3em]">Relatório de Inteligência</span>
               </div>
               
-              <h1 className="text-4xl md:text-6xl font-display font-bold tracking-tight text-white leading-[1.05]">
+              <h1 className="text-2xl md:text-6xl font-display font-bold tracking-tight text-white leading-[1.1] md:leading-[1.05]">
                 {loading ? (
-                  <div className="h-16 w-80 bg-white/10 animate-pulse rounded-2xl" />
+                  <div className="h-10 md:h-16 w-64 md:w-80 bg-white/10 animate-pulse rounded-2xl" />
                 ) : metrics.copilot?.proactiveMessage || "Sua saúde financeira está sólida."}
               </h1>
               
-              <div className="flex flex-wrap items-center gap-4">
-                <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-white text-sm font-medium flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-secondary-container" />
-                  Insight do dia disponível
+              <div className="flex flex-wrap items-center gap-3 md:gap-4">
+                <div className="px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-white text-[11px] md:text-sm font-medium flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-secondary-container" />
+                  Insight disponível
                 </div>
                 <QuickAdd categories={categories} onSuccess={() => window.location.reload()} />
               </div>
             </div>
 
-            <div className="md:text-right space-y-2 pt-2">
-              <p className="text-xs font-bold text-on-primary/50 uppercase tracking-[0.2em]">Seu Patrimônio Líquido</p>
-              <p className="text-4xl md:text-5xl font-display font-bold text-white tracking-tighter">
+            <div className="md:text-right space-y-1 md:space-y-2 pt-0 md:pt-2">
+              <p className="text-[10px] md:text-xs font-bold text-on-primary/50 uppercase tracking-[0.2em]">Seu Patrimônio</p>
+              <p className="text-3xl md:text-5xl font-display font-bold text-white tracking-tighter">
                 {loading ? "..." : formatCurrency(metrics.balance)}
               </p>
             </div>
@@ -121,43 +121,43 @@ export default function Dashboard() {
       </motion.section>
 
       {/* Main Grid: Editorial Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16">
         
         {/* Primary Content (8 cols) */}
-        <div className="lg:col-span-8 space-y-12 md:space-y-20">
+        <div className="lg:col-span-8 space-y-10 md:space-y-20">
           
           {/* Key Metrics Strip */}
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-[0.2em]">Receitas Mensais</p>
-              <div className="flex items-center gap-3">
-                <p className="text-3xl md:text-4xl font-display font-bold text-primary">
+          <div className="grid grid-cols-2 gap-4 md:gap-6">
+            <div className="space-y-2 md:space-y-3">
+              <p className="text-[10px] md:text-xs font-bold text-on-surface-variant uppercase tracking-[0.15em] md:tracking-[0.2em]">Receitas Mensais</p>
+              <div className="flex items-center gap-2 md:gap-3">
+                <p className="text-2xl md:text-4xl font-display font-bold text-primary tracking-tight">
                   {loading ? "..." : formatCurrency(metrics.income)}
                 </p>
-                <div className="p-1 rounded-full bg-emerald-500/10 text-emerald-600">
-                  <ArrowUpRight className="w-4 h-4" />
+                <div className="p-1 rounded-full bg-emerald-500/10 text-emerald-600 shrink-0">
+                  <ArrowUpRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </div>
               </div>
             </div>
-            <div className="space-y-3">
-              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-[0.2em]">Despesas Mensais</p>
-              <div className="flex items-center gap-3">
-                <p className="text-3xl md:text-4xl font-display font-bold text-tertiary">
+            <div className="space-y-2 md:space-y-3">
+              <p className="text-[10px] md:text-xs font-bold text-on-surface-variant uppercase tracking-[0.15em] md:tracking-[0.2em]">Despesas Mensais</p>
+              <div className="flex items-center gap-2 md:gap-3">
+                <p className="text-2xl md:text-4xl font-display font-bold text-tertiary tracking-tight">
                   {loading ? "..." : formatCurrency(metrics.expenses)}
                 </p>
-                <div className="p-1 rounded-full bg-rose-500/10 text-rose-600">
-                  <ArrowDownRight className="w-4 h-4" />
+                <div className="p-1 rounded-full bg-rose-500/10 text-rose-600 shrink-0">
+                  <ArrowDownRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </div>
               </div>
             </div>
           </div>
 
           {/* Weekly Forecast Chart */}
-          <section className="space-y-8">
+          <section className="space-y-6 md:space-y-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-display font-bold">Projeção de Caixa</h2>
-              <button className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline">
-                Ver detalhes <ChevronRight className="w-4 h-4" />
+              <h2 className="text-xl md:text-2xl font-display font-bold">Projeção de Caixa</h2>
+              <button className="text-xs md:text-sm font-semibold text-primary flex items-center gap-1 hover:underline">
+                Ver detalhes <ChevronRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
               </button>
             </div>
             <motion.div variants={itemVariants}>
@@ -166,9 +166,9 @@ export default function Dashboard() {
           </section>
 
           {/* Monthly Flux Area Chart */}
-          <section className="space-y-8">
-            <h2 className="text-2xl font-display font-bold">Fluxo Mensal</h2>
-            <Card className="premium-card p-6 md:p-10 h-[400px]">
+          <section className="space-y-6 md:space-y-8">
+            <h2 className="text-xl md:text-2xl font-display font-bold">Fluxo Mensal</h2>
+            <Card className="premium-card p-4 md:p-10 h-[300px] md:h-[400px]">
               {loading ? <Skeleton className="h-full w-full rounded-2xl" /> : (
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={metrics.chartData}>
@@ -183,12 +183,12 @@ export default function Dashboard() {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.04)" />
-                    <XAxis dataKey="day" stroke="#707978" fontSize={11} tickLine={false} axisLine={false} dy={12} />
-                    <YAxis stroke="#707978" fontSize={11} tickLine={false} axisLine={false}
-                      tickFormatter={(v) => `R$${(v/1000).toFixed(0)}k`} width={50} />
-                    <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 40px rgba(0,0,0,0.08)', padding: '12px' }} />
-                    <Area type="monotone" dataKey="income" stroke="#004b49" fillOpacity={1} fill="url(#colorIncome)" strokeWidth={3} />
-                    <Area type="monotone" dataKey="expense" stroke="#49220a" fillOpacity={1} fill="url(#colorExpenses)" strokeWidth={3} />
+                    <XAxis dataKey="day" stroke="#707978" fontSize={10} tickLine={false} axisLine={false} dy={8} />
+                    <YAxis stroke="#707978" fontSize={10} tickLine={false} axisLine={false}
+                      tickFormatter={(v) => `R$${(v/1000).toFixed(0)}k`} width={35} />
+                    <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 8px 32px rgba(0,0,0,0.08)', padding: '10px', fontSize: '12px' }} />
+                    <Area type="monotone" dataKey="income" stroke="#004b49" fillOpacity={1} fill="url(#colorIncome)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="expense" stroke="#49220a" fillOpacity={1} fill="url(#colorExpenses)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               )}
