@@ -260,8 +260,9 @@ export function computeMonthlySummary(
     }
   }
 
-  // All-time balance
+  // All-time REALIZED balance (only PAID transactions)
   const allTimeBalance = allTimeTransactions.reduce((sum, t) => {
+    if (t.paymentStatus !== "PAID") return sum;
     return t.type === "INCOME" ? sum + t.amount : sum - t.amount;
   }, 0);
 
