@@ -101,5 +101,5 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/login",
   },
-  secret: process.env.NEXTAUTH_SECRET || "flydea-recovery-secret-2026-xyz987",
+  secret: process.env.NEXTAUTH_SECRET,
 };
