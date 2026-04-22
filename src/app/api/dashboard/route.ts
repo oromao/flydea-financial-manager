@@ -89,6 +89,50 @@ export async function GET(request: NextRequest) {
     allTransactions
   );
 
+  const budgetAlerts = await Promise.all(
+    budgets.map(async (budget) => {
+      const spent = await prisma.transaction.aggregate({
+        where: {
+          userId: session.user.id,
+          categoryId: budget.categoryId,
+          type: "EXPENSE",
+          date: { gte: startDate, lte: endDate },
+        },
+        _sum: { amount: true },
+      });
+      const spentAmount = spent._sum.amount || 0;
+      const percentage = (spentAmount / budget.amount) * 100;
+      return {
+        ...budget,
+        spent: spentAmount,
+        percentage,
+        isAlert: percentage >= budget.alertAt,
+      };
+    })
+  );
+
+  const chartData = Object.entries(summary.transactionsByDay)
+    .map(([day, data]) => ({ day: Number(day), ...data }))
+    .sort((a, b) => a.day - b.day);
+
+  const projectedExpenses = recurrences
+    .filter((r) => r.type === "EXPENSE" || !r.type)
+    .reduce((sum, r) => sum + r.amount, 0);
+  const projectedIncome = recurrences
+    .filter((r) => r.type === "INCOME")
+    .reduce((sum, r) => sum + r.amount, 0);
+
+  const nextMonths = [1, 2, 3].map((offset) => {
+    const d = addMonths(now, offset);
+    return {
+      month: d.toLocaleDateString("pt-BR", {
+        month: "short",
+        year: "numeric",
+      }),
+      projected: projectedIncome - projectedExpenses,
+    };
+  });
+
   // Calculate global pending (regardless of month)
   const globalPending = allTransactions
     .filter(t => t.paymentStatus === "PENDING")

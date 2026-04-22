@@ -173,6 +173,7 @@ export function getWeeksForMonth(referenceDate: Date): WeekInfo[] {
 export interface MinimalTransactionForBalance {
   type: string;
   amount: number;
+  paymentStatus: string;
 }
 
 /**
