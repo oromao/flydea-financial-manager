@@ -98,10 +98,8 @@ export async function POST(request: Request): Promise<NextResponse> {
       body = request.body;
     }
 
-    // For private buckets, 'public' access still works if you want unguessable URLs.
-    // If the bucket is strictly configured, we might need to omit 'access' or handle it.
+    // Use store default access configuration
     const blob = await put(safeFilename, body, {
-      access: "public", 
       token,
       addRandomSuffix: true,
     });
