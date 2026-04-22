@@ -79,76 +79,78 @@ export default function Dashboard() {
       variants={containerVariants}
       className="space-y-6 md:space-y-16 max-w-7xl mx-auto pb-24 px-4 md:px-0"
     >
-      {/* Prime Hero Section: Intelligence Report */}
+      {/* Fintech Hero Section: Clear Balance */}
       <motion.section variants={itemVariants} className="relative">
-        <div className="bg-primary-container rounded-3xl p-6 md:p-12 overflow-hidden shadow-xl border-none">
-          {/* Subtle Background Pattern */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/20 rounded-full -ml-10 -mb-10 blur-2xl" />
-          
-          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-6 md:gap-8">
-            <div className="space-y-4 md:space-y-6 max-w-3xl">
-              <div className="flex items-center gap-3">
-                <div className="p-1.5 md:p-2 rounded-xl bg-white/10 text-on-primary shadow-inner border border-white/10 backdrop-blur-md">
-                  <Brain className="w-4 h-4 md:w-5 md:h-5" />
-                </div>
-                <span className="text-[10px] md:text-xs font-bold text-on-primary/60 uppercase tracking-[0.2em] md:tracking-[0.3em]">Relatório de Inteligência</span>
-              </div>
-              
-              <h1 className="text-2xl md:text-6xl font-display font-bold tracking-tight text-white leading-[1.1] md:leading-[1.05]">
+        <div className="bg-primary rounded-[24px] p-6 md:p-10 shadow-lg text-white flex flex-col gap-6">
+          <div className="flex justify-between items-start">
+            <div className="space-y-1">
+              <h1 className="text-sm md:text-base font-medium text-white/80">Saldo disponível</h1>
+              <p className="text-4xl md:text-5xl font-display font-bold tracking-tight">
                 {loading ? (
-                  <div className="h-10 md:h-16 w-64 md:w-80 bg-white/10 animate-pulse rounded-2xl" />
-                ) : metrics.copilot?.proactiveMessage || "Sua saúde financeira está sólida."}
-              </h1>
-              
-              <div className="flex flex-wrap items-center gap-3 md:gap-4">
-                <div className="px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-white text-[11px] md:text-sm font-medium flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-secondary-container" />
-                  Insight disponível
-                </div>
-                <QuickAdd categories={categories} onSuccess={() => window.location.reload()} />
-              </div>
-            </div>
-
-            <div className="md:text-right space-y-1 md:space-y-2 pt-0 md:pt-2">
-              <p className="text-[10px] md:text-xs font-bold text-on-primary/50 uppercase tracking-[0.2em]">Seu Patrimônio</p>
-              <p className="text-3xl md:text-5xl font-display font-bold text-white tracking-tighter">
-                {loading ? "..." : formatCurrency(metrics.balance)}
+                  <div className="h-10 md:h-12 w-48 bg-white/20 animate-pulse rounded-lg" />
+                ) : formatCurrency(metrics.balance)}
               </p>
             </div>
+            <div className="p-2 md:p-3 rounded-full bg-white/10 backdrop-blur-sm">
+              <Wallet className="w-5 h-5 md:w-6 md:h-6 text-white" />
+            </div>
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-3">
+            <QuickAdd categories={categories} onSuccess={() => window.location.reload()} />
+            <Link href="/movimentacoes" className="px-4 py-2.5 rounded-full bg-white/10 hover:bg-white/20 transition text-sm font-medium text-white flex items-center gap-2">
+              <History className="w-4 h-4" />
+              Extrato
+            </Link>
           </div>
         </div>
       </motion.section>
 
-      {/* Main Grid: Editorial Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16">
+      {/* AI Copilot Insight Card */}
+      {!loading && metrics.copilot?.proactiveMessage && (
+        <motion.section variants={itemVariants}>
+          <div className="bg-surface-container-lowest rounded-[20px] p-5 md:p-6 shadow-sm border border-surface-container-low flex flex-col gap-3">
+            <div className="flex items-center gap-2 text-primary">
+              <Sparkles className="w-5 h-5" />
+              <h2 className="text-xs font-bold uppercase tracking-wider">Copiloto IA</h2>
+            </div>
+            <p className="text-on-surface text-sm md:text-base font-medium leading-relaxed">
+              {metrics.copilot.proactiveMessage}
+            </p>
+          </div>
+        </motion.section>
+      )}
+
+      {/* Main Grid: Clean Cards Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
         
         {/* Primary Content (8 cols) */}
-        <div className="lg:col-span-8 space-y-10 md:space-y-20">
+        <div className="lg:col-span-8 space-y-6 md:space-y-8">
           
-          {/* Key Metrics Strip */}
+          {/* Key Metrics Cards */}
           <div className="grid grid-cols-2 gap-4 md:gap-6">
-            <div className="space-y-2 md:space-y-3">
-              <p className="text-[10px] md:text-xs font-bold text-on-surface-variant uppercase tracking-[0.15em] md:tracking-[0.2em]">Receitas Mensais</p>
-              <div className="flex items-center gap-2 md:gap-3">
-                <p className="text-2xl md:text-4xl font-display font-bold text-primary tracking-tight">
-                  {loading ? "..." : formatCurrency(metrics.income)}
-                </p>
-                <div className="p-1 rounded-full bg-emerald-500/10 text-emerald-600 shrink-0">
+            <div className="bg-surface-container-lowest rounded-[20px] p-5 shadow-sm border border-surface-container-low space-y-2">
+              <div className="flex items-center gap-2 text-on-surface-variant mb-1">
+                <div className="p-1.5 rounded-full bg-emerald-500/10 text-emerald-600">
                   <ArrowUpRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </div>
+                <p className="text-xs md:text-sm font-medium">Entradas</p>
               </div>
+              <p className="text-xl md:text-2xl font-display font-bold text-on-surface">
+                {loading ? "..." : formatCurrency(metrics.income)}
+              </p>
             </div>
-            <div className="space-y-2 md:space-y-3">
-              <p className="text-[10px] md:text-xs font-bold text-on-surface-variant uppercase tracking-[0.15em] md:tracking-[0.2em]">Despesas Mensais</p>
-              <div className="flex items-center gap-2 md:gap-3">
-                <p className="text-2xl md:text-4xl font-display font-bold text-tertiary tracking-tight">
-                  {loading ? "..." : formatCurrency(metrics.expenses)}
-                </p>
-                <div className="p-1 rounded-full bg-rose-500/10 text-rose-600 shrink-0">
+            
+            <div className="bg-surface-container-lowest rounded-[20px] p-5 shadow-sm border border-surface-container-low space-y-2">
+              <div className="flex items-center gap-2 text-on-surface-variant mb-1">
+                <div className="p-1.5 rounded-full bg-red-500/10 text-red-600">
                   <ArrowDownRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </div>
+                <p className="text-xs md:text-sm font-medium">Saídas</p>
               </div>
+              <p className="text-xl md:text-2xl font-display font-bold text-on-surface">
+                {loading ? "..." : formatCurrency(metrics.expenses)}
+              </p>
             </div>
           </div>
 
