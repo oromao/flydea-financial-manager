@@ -98,12 +98,13 @@ export async function POST(request: Request): Promise<NextResponse> {
       body = request.body;
     }
 
-    // Satisfy TS and Vercel Blob requirement
-    const blob = await put(safeFilename, body, {
-      access: "public",
+    // Use store default access by bypassing strict mandatory 'public' check
+    const options: any = {
       token,
       addRandomSuffix: true,
-    });
+    };
+
+    const blob = await put(safeFilename, body, options);
 
     logger.info("Vercel blob upload success", { url: blob.url });
     return NextResponse.json(blob);
