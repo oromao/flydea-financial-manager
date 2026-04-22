@@ -13,9 +13,11 @@ export async function uploadFileToBlobStorage(
       .toLowerCase();
     const uniqueFileName = `documents/${timestamp}-${sanitizedName}`;
 
-    // Upload to Vercel Blob (using any to allow private store defaults)
-    const options: any = { contentType };
-    const blob = await put(uniqueFileName, buffer, options);
+    // Upload to Vercel Blob (using private access)
+    const blob = await put(uniqueFileName, buffer, {
+      contentType,
+      access: "private",
+    });
 
     return blob.url;
   } catch (error) {

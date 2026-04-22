@@ -98,13 +98,12 @@ export async function POST(request: Request): Promise<NextResponse> {
       body = request.body;
     }
 
-    // Use store default access by bypassing strict mandatory 'public' check
-    const options: any = {
+    // Use private access for strictly private stores
+    const blob = await put(safeFilename, body, {
+      access: "private",
       token,
       addRandomSuffix: true,
-    };
-
-    const blob = await put(safeFilename, body, options);
+    });
 
     logger.info("Vercel blob upload success", { url: blob.url });
     return NextResponse.json(blob);
