@@ -7,10 +7,10 @@
 
 export interface KnowledgeNode {
   id: string;
-  theme: "INVESTMENT" | "SAVINGS" | "TAX" | "PSYCHOLOGY" | "CASHFLOW";
+  theme: "INVESTMENT" | "SAVINGS" | "TAX" | "PSYCHOLOGY" | "CASHFLOW" | "MINDSET" | "DEBT";
   title: string;
   content: string;
-  source?: string;
+  keywords: string[];
   updatedAt: string;
 }
 
@@ -20,6 +20,7 @@ export const initialKnowledge: KnowledgeNode[] = [
     theme: "CASHFLOW",
     title: "Regra dos 50/30/20",
     content: "Divida sua renda em: 50% para necessidades básicas, 30% para desejos pessoais e 20% para poupança ou pagamento de dívidas.",
+    keywords: ["dividir", "regra", "50/30/20", "porcentagem", "distribuição"],
     updatedAt: "2026-04-20"
   },
   {
@@ -27,6 +28,7 @@ export const initialKnowledge: KnowledgeNode[] = [
     theme: "SAVINGS",
     title: "Reserva de Emergência",
     content: "O ideal é ter guardado entre 3 a 6 meses do seu custo de vida mensal em um investimento de alta liquidez.",
+    keywords: ["emergência", "reserva", "guardar", "segurança", "liquidez"],
     updatedAt: "2026-04-21"
   },
   {
@@ -34,18 +36,74 @@ export const initialKnowledge: KnowledgeNode[] = [
     theme: "INVESTMENT",
     title: "Juros Compostos",
     content: "O tempo é o fator mais importante no investimento. Começar cedo, mesmo com pouco, é melhor do que esperar ter muito para começar.",
+    keywords: ["juros", "compostos", "investimento", "tempo", "multiplicar"],
     updatedAt: "2026-04-22"
+  },
+  {
+    id: "kb-004",
+    theme: "PSYCHOLOGY",
+    title: "Gatilhos Mentais de Consumo",
+    content: "Evite comprar por impulso identificando gatilhos de escassez e urgência em anúncios. Espere 24h antes de confirmar uma compra grande.",
+    keywords: ["impulso", "comprar", "gatilhos", "psicologia", "esperar"],
+    updatedAt: "2026-04-23"
+  },
+  {
+    id: "kb-005",
+    theme: "DEBT",
+    title: "Efeito Bola de Neve",
+    content: "Pague primeiro as dívidas com os juros mais altos. Isso reduzirá o montante total pago ao longo do tempo drasticamente.",
+    keywords: ["dívida", "juros", "pagar", "atraso", "bola de neve"],
+    updatedAt: "2026-04-23"
   }
 ];
 
 export class KnowledgeService {
-  async getRelevantNodes(query: string): Promise<KnowledgeNode[]> {
-    const lowerQuery = query.toLowerCase();
-    return initialKnowledge.filter(node => 
-      node.content.toLowerCase().includes(lowerQuery) || 
-      node.title.toLowerCase().includes(lowerQuery) ||
-      node.theme.toLowerCase().includes(lowerQuery)
-    );
+  /**
+   * Performs a weighted keyword search to find relevant knowledge nodes.
+   */
+  async getRelevantNodes(query: string, limit = 2): Promise<KnowledgeNode[]> {
+    const normalized = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const words = normalized.split(/\s+/);
+const scoredNodes = initialKnowledge.map(node => {
+  let score = 0;
+
+  const normalizedTitle = node.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const normalizedKeywords = node.keywords.map(k => k.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+  const normalizedContent = node.content.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  // 1. Full Query Matches
+  if (normalizedTitle.includes(normalized)) score += 10;
+  if (normalizedContent.includes(normalized)) score += 2;
+
+  // 2. Keyword Matches
+  for (const keyword of normalizedKeywords) {
+    // Exact keyword match
+    if (words.includes(keyword)) {
+      score += 10;
+    } else if (normalized.includes(keyword)) {
+      score += 5;
+    }
+  }
+
+  // 3. Individual Word Matches (Stricter)
+  for (const word of words) {
+    if (word.length <= 3) continue; // Skip short words like "qual", "com", "uma"
+
+    if (normalizedTitle.includes(word)) score += 2;
+    if (normalizedKeywords.some(k => k.includes(word))) score += 1;
+  }
+
+  return { node, score };
+});
+
+// Use a minimum score threshold to avoid noise
+const MIN_SCORE = 5;
+
+return scoredNodes
+  .filter(sn => sn.score >= MIN_SCORE)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
+      .map(sn => sn.node);
   }
 
   async getAll(): Promise<KnowledgeNode[]> {
@@ -54,3 +112,4 @@ export class KnowledgeService {
 }
 
 export const knowledgeService = new KnowledgeService();
+

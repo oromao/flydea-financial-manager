@@ -4,8 +4,8 @@ import path from 'path';
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'node',
-    include: ['__tests__/**/*.test.ts'],
+    environment: 'jsdom',
+    include: ['__tests__/**/*.test.{ts,tsx}'],
     exclude: [
       'node_modules/**',
       '.claude/**',
@@ -21,6 +21,7 @@ export default defineConfig({
         'src/application/**/*.ts',
         'src/infrastructure/**/*.ts',
         'src/lib/**/*.ts',
+        'src/components/**/*.tsx',
       ],
       exclude: [
         'src/**/*.test.ts',

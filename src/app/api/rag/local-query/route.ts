@@ -25,44 +25,28 @@ export async function POST(req: NextRequest) {
 
     const userId = session.user.id;
     
-    // 1. Fetch real financial context & Knowledge
-    const [financialData, knowledgeNodes] = await Promise.all([
-      picoClaw.fetchData(userId),
+    // 1. Process via PicoClaw v2 (HIE)
+    const [result, knowledgeNodes] = await Promise.all([
+      picoClaw.processQuery(userId, query),
       knowledgeService.getRelevantNodes(query)
     ]);
 
-    const summary = await picoClaw.getQuickSummary(financialData);
-    const insights = await picoClaw.generateInsights(financialData);
+    let finalResponse = result.response;
 
-    // 2. Simple Heuristic Router (instead of expensive LLM)
-    let response = "";
-    const lowerQuery = query.toLowerCase();
-
-    if (knowledgeNodes.length > 0 && (lowerQuery.includes("dica") || lowerQuery.includes("como") || lowerQuery.includes("ajuda"))) {
-      const node = knowledgeNodes[0];
-      response = `${node.content} Além disso, analisando seus dados: ${summary}`;
-    } else if (lowerQuery.includes("saldo") || lowerQuery.includes("quanto eu tenho")) {
-      response = `Atualmente você possui um saldo total de R$ ${financialData.summary.totalBalance.toFixed(2)} em suas contas.`;
-    } else if (lowerQuery.includes("gastei") || lowerQuery.includes("despesa")) {
-      response = `Neste mês, suas despesas somam R$ ${financialData.summary.monthlyExpenses.toFixed(2)}. ${financialData.summary.netFlow < 0 ? "Atenção: seus gastos estão acima das suas receitas." : "Seu fluxo de caixa está positivo."}`;
-    } else if (lowerQuery.includes("insight") || lowerQuery.includes("dica") || lowerQuery.includes("ajuda")) {
-      if (insights.length > 0) {
-        response = `Aqui estão alguns insights: ${insights.map(i => `${i.title}: ${i.message}`).join(" ")}`;
-      } else {
-        response = "Sua situação financeira parece estável e não detectei alertas críticos no momento. Continue acompanhando seus lançamentos!";
-      }
-    } else {
-      // Default semantic fallback
-      response = `Analisando seus dados: ${summary}. Como posso te ajudar com mais detalhes?`;
+    // 2. Augment with Knowledge Base if relevant and confidence is high enough
+    if (knowledgeNodes.length > 0 && (result.intent === "HELP" || result.intent === "INSIGHT" || result.confidence < 0.6)) {
+      finalResponse = `${knowledgeNodes[0].content}\n\n${finalResponse}`;
     }
 
     return NextResponse.json({
-      answer: response,
+      answer: finalResponse,
       context: {
-        totalBalance: financialData.summary.totalBalance,
-        monthlyExpenses: financialData.summary.monthlyExpenses,
-        netFlow: financialData.summary.netFlow,
-        insights: insights.slice(0, 2)
+        intent: result.intent,
+        confidence: result.confidence,
+        totalBalance: result.data.summary.totalBalance,
+        monthlyExpenses: result.data.summary.monthlyExpenses,
+        netFlow: result.data.summary.netFlow,
+        insights: (await picoClaw.generateInsights(result.data)).slice(0, 2)
       }
     });
 

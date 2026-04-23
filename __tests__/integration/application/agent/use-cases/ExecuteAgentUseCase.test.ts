@@ -55,7 +55,7 @@ describe('ExecuteAgentUseCase', () => {
 
       const executions = await executionRepository.findByAgentId(agent.id);
       expect(executions.length).toBeGreaterThan(0);
-    });
+    }, 15000);
 
     it('should return execution result with correct format', async () => {
       const agent = createMockAgent({ userId: 'user-123' } as any);

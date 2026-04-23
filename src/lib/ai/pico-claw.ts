@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { intentEngine, UserIntent } from "./intent-engine";
+import { reasoningEngine } from "./reasoning-engine";
 
 export interface UserFinancialData {
   userId: string;
@@ -23,7 +25,7 @@ export interface PicoClawInsight {
 
 export class PicoClawEngine {
   /**
-   * Pragmatic data fetcher - No RAG, no complex memory.
+   * Pragmatic data fetcher - Aggregates data for the reasoning engine.
    */
   async fetchData(userId: string): Promise<UserFinancialData> {
     const now = new Date();
@@ -31,7 +33,10 @@ export class PicoClawEngine {
 
     const [accounts, transactions] = await Promise.all([
       prisma.account.findMany({ where: { userId } }),
-      prisma.transaction.findMany({ where: { userId, date: { gte: monthStart } }, include: { category: true } })
+      prisma.transaction.findMany({ 
+        where: { userId, date: { gte: monthStart } }, 
+        include: { category: true } 
+      })
     ]);
 
     const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
@@ -44,7 +49,9 @@ export class PicoClawEngine {
       expensesByCategory[name] = (expensesByCategory[name] || 0) + t.amount;
     });
 
-    const pendingPayments = transactions.filter(t => t.type === "EXPENSE" && t.paymentStatus === "PENDING").reduce((sum, t) => sum + t.amount, 0);
+    const pendingPayments = transactions
+      .filter(t => t.type === "EXPENSE" && t.paymentStatus === "PENDING")
+      .reduce((sum, t) => sum + t.amount, 0);
 
     return {
       userId,
@@ -59,84 +66,67 @@ export class PicoClawEngine {
     };
   }
 
+  /**
+   * Classifies user query into intent and generates contextual response.
+   */
+  async processQuery(userId: string, query: string) {
+    const match = intentEngine.classify(query);
+    const data = await this.fetchData(userId);
+    
+    let response = "";
+    const summary = await this.getQuickSummary(data);
+
+    switch (match.intent) {
+      case "QUERY":
+        response = `Analisando seus dados: ${summary}`;
+        break;
+      case "INSIGHT":
+        const insights = await this.generateInsights(data);
+        response = insights.length > 0 
+          ? `Tenho alguns insights para você. ${insights[0].title}: ${insights[0].message}`
+          : `Suas finanças parecem saudáveis! ${summary}`;
+        break;
+      case "ACTION":
+        response = "Você pode gerenciar seus lançamentos na aba de Movimentações ou usar o botão 'Novo' no topo da página.";
+        break;
+      case "HELP":
+        response = "Eu sou o PicoClaw, sua mini IA financeira. Posso te ajudar a consultar saldos, gerar insights de economia e navegar pelo sistema.";
+        break;
+      default:
+        response = `Não tenho certeza se entendi, mas aqui está um resumo: ${summary}`;
+    }
+
+    return {
+      intent: match.intent,
+      confidence: match.confidence,
+      response,
+      data
+    };
+  }
+
   async generateInsights(data: UserFinancialData): Promise<PicoClawInsight[]> {
-    const { summary, userId } = data;
-    const insights: PicoClawInsight[] = [];
+    const { userId } = data;
+    logger.info("PicoClaw: evaluating reasoning engine", { userId });
 
-    logger.info("PicoClaw: generating evolutive insights", { userId });
-
-    // 0. Fetch user intelligence & recent insights (Evolution)
+    // 0. Fetch user intelligence & recent insights (Memory Engine)
     const [intel, recentInsights] = await Promise.all([
       prisma.userIntelligence.findUnique({ where: { userId } }),
       prisma.insight.findMany({
-        where: { userId, createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } }, // Last 7 days
-        select: { type: true, content: true }
+        where: { 
+          userId, 
+          createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } 
+        },
+        select: { type: true }
       })
     ]);
 
-    const hasSeenInsight = (title: string) => recentInsights.some(i => i.type === title);
-
-    // 1. Immediate Cashflow Risk
-    if (summary.totalBalance < summary.pendingPayments && !hasSeenInsight("Risco de Caixa")) {
-      insights.push({
-        title: "Risco de Caixa",
-        message: `Suas pendências (R$ ${summary.pendingPayments.toFixed(2)}) superam seu saldo disponível.`,
-        priority: "HIGH",
-        actionLabel: "Pagar agora",
-        actionUrl: "/contas-a-pagar"
-      });
-    }
-
-    // 2. Budget Overrun & Concentration
-    const topCat = Object.entries(summary.expensesByCategory)
-      .sort(([, a], [, b]) => b - a)[0];
+    const recentTypes = recentInsights.map(i => i.type);
     
-    if (topCat && topCat[1] > (summary.monthlyIncome * 0.4) && summary.monthlyIncome > 0 && !hasSeenInsight("Alerta de Gastos")) {
-      insights.push({
-        title: "Alerta de Gastos",
-        message: `A categoria ${topCat[0]} está consumindo ${((topCat[1] / summary.monthlyIncome) * 100).toFixed(0)}% da sua renda.`,
-        priority: "MEDIUM",
-        actionLabel: "Ver detalhes",
-        actionUrl: "/relatorios"
-      });
-    }
+    // 1. Core Reasoning Engine Evaluation
+    const insights = await reasoningEngine.evaluate(data, intel, recentTypes);
 
-    // 3. Savings Opportunity
-    if (summary.netFlow > (summary.monthlyIncome * 0.2) && summary.monthlyIncome > 0 && !hasSeenInsight("Oportunidade")) {
-      insights.push({
-        title: "Oportunidade",
-        message: "Você poupou mais de 20% este mês. Que tal investir o excedente?",
-        priority: "LOW",
-        actionLabel: "Investir",
-        actionUrl: "/insights"
-      });
-    }
-
-    // 4. Pattern Shift (Déficit)
-    if (summary.monthlyExpenses > summary.monthlyIncome && summary.monthlyIncome > 0 && !hasSeenInsight("Déficit Mensal")) {
-       insights.push({
-         title: "Déficit Mensal",
-         message: "Seus gastos este mês superaram suas receitas. Revise seus lançamentos.",
-         priority: "HIGH",
-         actionLabel: "Revisar",
-         actionUrl: "/movimentacoes"
-       });
-    }
-
-    // 5. Behavioral Evolution Insight (If intelligence detected drift)
-    if (intel && intel.recentPatternShift && intel.behaviorChangeScore > 40 && !hasSeenInsight("Mudança de Comportamento")) {
-       insights.push({
-         title: "Mudança de Comportamento",
-         message: "Notei um aumento recente na frequência e volume dos seus gastos comparado aos meses anteriores. Cuidado com compras impulsivas.",
-         priority: "HIGH",
-         actionLabel: "Ver Orçamentos",
-         actionUrl: "/orcamentos"
-       });
-    }
-
-    // Persist new insights so they aren't repeated tomorrow
+    // 2. Persist new insights asynchronously
     if (insights.length > 0) {
-      // Run this asynchronously so it doesn't block the return
       void (async () => {
         try {
           await prisma.insight.createMany({
@@ -154,10 +144,7 @@ export class PicoClawEngine {
       })();
     }
 
-    return insights.sort((a, b) => {
-      const p = { HIGH: 3, MEDIUM: 2, LOW: 1 };
-      return p[b.priority] - p[a.priority];
-    });
+    return insights;
   }
 
   /**
@@ -171,3 +158,4 @@ export class PicoClawEngine {
 }
 
 export const picoClaw = new PicoClawEngine();
+

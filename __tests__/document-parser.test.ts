@@ -105,7 +105,7 @@ describe("CategoryClassifier", () => {
       documentType: "NOTA_FISCAL" as const,
       documentNumber: "123",
       emitterName: "Posto Shell",
-      emitterDocument: "12.345.678/0001-90",
+      emitterDocument: "99.999.999/0001-99",
       receiverName: null,
       receiverDocument: null,
       emissionDate: "2026-03-15",

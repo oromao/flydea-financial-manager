@@ -15,7 +15,7 @@ const CATEGORY_RULES: Array<{
   category: string;
   type: CategoryType;
 }> = [
-  { keywords: ["ifood", "restaurante", "lanchonete", "pizzaria", "hamburguer", "delivery", "burger king", "mc donald", "padaria"], category: "Alimentação", type: "EXPENSE" },
+  { keywords: ["ifood", "restaurante", "lanchonete", "pizzaria", "hamburguer", "delivery", "burger king", "mcdonald", "mc donald", "padaria"], category: "Alimentação", type: "EXPENSE" },
   { keywords: ["supermercado", "mercado", "walmart", "carrefour", "extra", "paes", "pão de açucar", "atacado", "atacadão"], category: "Alimentação", type: "EXPENSE" },
   { keywords: ["posto", "combustível", "gasolina", "álcool", "diesel", "s10", "etanol", "shell", "petrobras", "ipiranga"], category: "Combustível", type: "EXPENSE" },
   { keywords: ["farmácia", "drogaria", "medicamento", "remédio", "drugstore"], category: "Saúde", type: "EXPENSE" },
@@ -105,10 +105,11 @@ export async function classifyDocument(
 
   if (emitterDoc) {
     const cnpjDigits = emitterDoc.replace(/\D/g, "");
-    if (CNPJ_EMITTERS[cnpjDigits]) {
-      const knownEmitter = CNPJ_EMITTERS[cnpjDigits];
-      categoryName = knownEmitter.category;
-      transactionType = knownEmitter.type === "TRANSFER" ? "TRANSFER" : knownEmitter.type;
+    // Check both formats to be safe
+    const match = CNPJ_EMITTERS[cnpjDigits] || CNPJ_EMITTERS[emitterDoc];
+    if (match) {
+      categoryName = match.category;
+      transactionType = match.type === "TRANSFER" ? "TRANSFER" : match.type;
       confidence = 0.9;
       reasoning.push("CNPJ conhecido");
     }

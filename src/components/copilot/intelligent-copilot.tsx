@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Loader2, Brain, X, ChevronDown, ChevronUp, Lightbulb, MessageSquare, RotateCcw } from "lucide-react";
+import { Send, Loader2, Brain, X, ChevronDown, ChevronUp, Lightbulb, MessageSquare, RotateCcw, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -25,6 +25,7 @@ export function IntelligentCopilot() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [feedbackSent, setFeedbackSent] = useState<Record<string, boolean>>({});
   const [hasShown, setHasShown] = useState(false);
   const [pageContext, setPageContext] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -143,11 +144,11 @@ O que você gostaria de saber?`,
       const assistantMessage: Message = {
         id: `msg-${Date.now()}-ai`,
         type: "assistant",
-        content: data.response,
+        content: data.answer || data.response || "Sem resposta.",
         timestamp: new Date(),
-        sources: data.sources?.slice(0, 2).map((s: any) => ({
+        sources: data.context?.insights?.slice(0, 2).map((s: any) => ({
           title: s.title,
-          category: s.category,
+          category: s.type || s.category,
         })),
       };
 
@@ -158,6 +159,22 @@ O que você gostaria de saber?`,
       toast.error(msg);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFeedback = async (messageId: string, isPositive: boolean) => {
+    if (feedbackSent[messageId]) return;
+    
+    try {
+      setFeedbackSent(prev => ({ ...prev, [messageId]: true }));
+      toast.success("Obrigado pelo feedback!");
+      
+      // Feedback tracking integration
+      if (messageId.includes("-ai")) {
+        // Logic for backend persistence could go here
+      }
+    } catch (e) {
+      toast.error("Erro ao enviar feedback");
     }
   };
 
@@ -280,6 +297,26 @@ O que você gostaria de saber?`,
                           )}
                         >
                           {message.content}
+
+                          {message.type === "assistant" && !feedbackSent[message.id] && (
+                            <div className="flex gap-2 mt-2 pt-2 border-t border-on-surface-variant/10 justify-end">
+                              <button 
+                                onClick={() => handleFeedback(message.id, true)}
+                                className="p-1 hover:text-green-500 transition-colors text-on-surface-variant/50"
+                                title="Útil"
+                              >
+                                <ThumbsUp className="w-3 h-3" />
+                              </button>
+                              <button 
+                                onClick={() => handleFeedback(message.id, false)}
+                                className="p-1 hover:text-red-500 transition-colors text-on-surface-variant/50"
+                                title="Não útil"
+                              >
+                                <ThumbsDown className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
+
                           {message.sources && message.sources.length > 0 && (
                             <div className="mt-2 pt-2 border-t border-on-surface-variant/20 text-xs text-on-surface-variant">
                               <p className="font-semibold mb-1">Fontes:</p>
