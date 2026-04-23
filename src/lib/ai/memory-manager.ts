@@ -27,7 +27,7 @@ export class MemoryManager {
     });
 
     return logs.map(l => ({
-      role: "user", // Simplified for now
+      role: "user" as const, // Explicitly cast to literal type
       content: l.details || "",
       timestamp: l.createdAt.getTime()
     })).reverse();
