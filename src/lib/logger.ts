@@ -20,22 +20,24 @@ function formatMessage(
   message: string,
   context?: Record<string, unknown>
 ): string {
-  if (isDev) {
-    const ctx = context
-      ? ' | ' + Object.entries(context)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join(' | ')
-      : '';
-    return `[FlyDea ${level}] ${message}${ctx}`;
+  // Always structured JSON in production for better observability
+  if (!isDev) {
+    return JSON.stringify({
+      service: 'flydea-financial-manager',
+      level,
+      message,
+      timestamp: new Date().toISOString(),
+      ...context,
+    });
   }
-  // Production: structured JSON for log aggregation
-  return JSON.stringify({
-    service: 'flydea-financial-manager',
-    level,
-    message,
-    timestamp: new Date().toISOString(),
-    ...context,
-  });
+
+  // Development: readable format
+  const ctx = context
+    ? ' | ' + Object.entries(context)
+        .map(([k, v]) => `${k}: ${typeof v === 'object' ? JSON.stringify(v) : v}`)
+        .join(' | ')
+    : '';
+  return `[FlyDea ${level}] ${message}${ctx}`;
 }
 
 export const logger = {
@@ -48,4 +50,9 @@ export const logger = {
   error(message: string, context?: Record<string, unknown>) {
     console.error(formatMessage('ERROR', message, context));
   },
+  // High-level tracing helper
+  track(event: string, metadata: Record<string, unknown>) {
+    console.log(formatMessage('TRACK', event, metadata));
+  }
 };
+

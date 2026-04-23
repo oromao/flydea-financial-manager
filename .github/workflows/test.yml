@@ -106,7 +106,7 @@ jobs:
           NODE_ENV: production
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/flydea_test
           NEXTAUTH_SECRET: test-secret-key-for-ci
-          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_URL: http://localhost:3010
 
       - name: Run smoke tests
         run: npm run test:smoke
@@ -160,7 +160,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/flydea_test
           NEXTAUTH_SECRET: test-secret-key-for-ci
-          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_URL: http://localhost:3010
 
       - name: Start dev server
         run: |
@@ -170,14 +170,14 @@ jobs:
           NODE_ENV: production
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/flydea_test
           NEXTAUTH_SECRET: test-secret-key-for-ci
-          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_URL: http://localhost:3010
 
       - name: Run Playwright tests
         run: npm run test:e2e
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/flydea_test
           NEXTAUTH_SECRET: test-secret-key-for-ci
-          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_URL: http://localhost:3010
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v3

@@ -3,7 +3,7 @@
 # Smoke Tests - Quick validation that app is working
 # Usage: bash tests/smoke-tests.sh [BASE_URL]
 
-BASE_URL=${1:-"http://localhost:3000"}
+BASE_URL=${1:-"http://localhost:3010"}
 TIMEOUT=10
 RED='\033[0;31m'
 GREEN='\033[0;32m'

@@ -1,0 +1,10 @@
+NOTA FISCAL ELETRÔNICA DE SERVIÇOS - NFSe
+Número da Nota: 2026/456
+Data de Emissão: 15/04/2026
+Prestador de Serviços: CLINICA SAUDE TOTAL LTDA
+CNPJ: 44.555.666/0001-11
+Tomador de Serviços: AUGUSTO AUDITADO
+Valor Total da Nota: R$ 450,00
+Discriminação dos Serviços: Consulta médica e exames laboratoriais.
+Vencimento: 15/04/2026
+PAGO

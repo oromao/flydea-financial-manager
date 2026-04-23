@@ -48,7 +48,7 @@ def get_start_command(root):
         return ["npm", "start"]
     return None
 
-def start_server(port=3000):
+def start_server(port=3010):
     if PID_FILE.exists():
         try:
             pid = int(PID_FILE.read_text().strip())
@@ -116,7 +116,7 @@ def status_server():
             if is_running(pid):
                 running = True
                 # Heuristic for URL, strictly we should save it
-                url = "http://localhost:3000" 
+                url = "http://localhost:3010" 
         except:
             pass
             
@@ -133,7 +133,7 @@ def status_server():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("action", choices=["start", "stop", "status"])
-    parser.add_argument("port", nargs="?", default="3000")
+    parser.add_argument("port", nargs="?", default="3010")
     
     args = parser.parse_args()
     

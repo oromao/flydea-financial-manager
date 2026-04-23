@@ -4,6 +4,8 @@ import { Providers } from "@/components/providers";
 import { Sidebar } from "@/components/sidebar";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { CopilotWrapper } from "@/components/copilot/copilot-wrapper";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Flydea - Seu assistente financeiro",
@@ -23,16 +25,18 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+  
   return (
     <html lang="pt-BR" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-background text-on-background selection:bg-secondary/30 selection:text-secondary">
         <ErrorBoundary>
-          <Providers>
+          <Providers session={session}>
             <Sidebar>{children}</Sidebar>
             <CopilotWrapper />
           </Providers>

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { extractDocumentText, parseDocumentText, computeFileHash } from "@/lib/document-parser";
+import { parseDocumentText, computeFileHash } from "@/lib/document-parser";
 
 describe("DocumentParser", () => {
   describe("parseDocumentText", () => {
@@ -75,14 +75,6 @@ Parcelas: 3x de R$ 1.000,00
       const comprovanteText = "COMPROVANTE DE PAGAMENTO PIX";
       const result4 = parseDocumentText(comprovanteText);
       expect(result4.documentType).toBe("COMPROVANTE");
-    });
-  });
-
-  describe("extractDocumentText", () => {
-    it("should extract text from plain text buffer", async () => {
-      const buffer = Buffer.from("Nota fiscal teste valor R$ 100,00");
-      const result = await extractDocumentText(buffer, "text/plain");
-      expect(result).toContain("Nota fiscal");
     });
   });
 

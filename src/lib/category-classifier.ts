@@ -15,22 +15,22 @@ const CATEGORY_RULES: Array<{
   category: string;
   type: CategoryType;
 }> = [
+  { keywords: ["ifood", "restaurante", "lanchonete", "pizzaria", "hamburguer", "delivery", "burger king", "mc donald", "padaria"], category: "Alimentação", type: "EXPENSE" },
+  { keywords: ["supermercado", "mercado", "walmart", "carrefour", "extra", "paes", "pão de açucar", "atacado", "atacadão"], category: "Alimentação", type: "EXPENSE" },
   { keywords: ["posto", "combustível", "gasolina", "álcool", "diesel", "s10", "etanol", "shell", "petrobras", "ipiranga"], category: "Combustível", type: "EXPENSE" },
+  { keywords: ["farmácia", "drogaria", "medicamento", "remédio", "drugstore"], category: "Saúde", type: "EXPENSE" },
+  { keywords: ["médico", "médica", "hospital", "clínica", "consultório", "saúde", "unimed", "laboratório", "exame"], category: "Saúde", type: "EXPENSE" },
+  { keywords: ["escola", "universidade", "curso", "educação", "faculdade", "colégio", "mensalidade escolar"], category: "Educação", type: "EXPENSE" },
   { keywords: ["aluguel", "locação", "imobiliária", "imovel", "inquilino", "fiador"], category: "Aluguel", type: "EXPENSE" },
   { keywords: ["energia", "elétrica", "cpfl", "enel", "celesc", "copel", "light", "cemig"], category: "Energia", type: "EXPENSE" },
   { keywords: ["água", "saneamento", "sabesp", "corsan", "agua", "esgoto"], category: "Água", type: "EXPENSE" },
-  { keywords: ["internet", "telefonia", "vivo", "claro", "tim", "oi", "teless", "fibra", "banda larga"], category: "Internet/Telefonia", type: "EXPENSE" },
-  { keywords: ["supermercado", "mercado", "walmart", "carrefour", " Extra", "paes", "pão de açucar"], category: "Alimentação", type: "EXPENSE" },
-  { keywords: ["ifood", "restaurante", "lanchonete", "pizzaria", "hamburguer", "delivery", "burger king", "mc donald"], category: "Alimentação", type: "EXPENSE" },
-  { keywords: ["contador", "contabilidade", "escritório contábil", "imposto", "das", "gps"], category: "Impostos/Contabilidade", type: "EXPENSE" },
-  { keywords: ["salário", "folha de pagamento", "holerite", "pro-labore"], category: "Salário", type: "INCOME" },
-  { keywords: ["vendas", "venda", "mercadoria", "comercio"], category: "Vendas", type: "INCOME" },
-  { keywords: ["serviço", "serviços", "prestação", "hora técnica", "consultoria"], category: "Serviços", type: "INCOME" },
-  { keywords: ["frete", "transportadora", "correios", "sedex", "logística"], category: "Transporte", type: "EXPENSE" },
-  { keywords: ["farmácia", "drogaria", "medicamento", "remédio", "drugstore"], category: "Saúde", type: "EXPENSE" },
-  { keywords: ["médico", "hospital", "clínica", "consultório", "saúde", "unimed"], category: "Saúde", type: "EXPENSE" },
-  { keywords: ["escola", "universidade", "curso", "educação", "faculdade", "colégio"], category: "Educação", type: "EXPENSE" },
+  { keywords: ["internet", "telefonia", "telecom", "vivo", "claro", "tim", "oi", "teless", "fibra", "banda larga"], category: "Internet/Telefonia", type: "EXPENSE" },
+  { keywords: ["contador", "contabilidade", "escritório contábil", "imposto", "das", "gps", "darf"], category: "Impostos/Contabilidade", type: "EXPENSE" },
   { keywords: ["netflix", "spotify", "amazon prime", "disney", "streaming", "assinatura"], category: "Lazer", type: "EXPENSE" },
+  { keywords: ["frete", "transportadora", "correios", "sedex", "logística", "uber", "99app", "transporte"], category: "Transporte", type: "EXPENSE" },
+  { keywords: ["salário", "folha de pagamento", "holerite", "pro-labore", "pagamento salarial"], category: "Salário", type: "INCOME" },
+  { keywords: ["vendas", "venda", "mercadoria", "comercio", "faturamento"], category: "Vendas", type: "INCOME" },
+  { keywords: ["serviço", "serviços", "prestação", "hora técnica", "consultoria", "honorários"], category: "Serviços", type: "INCOME" },
   { keywords: ["amazon", "magazine", "lojas american", "casas bahia", "magazine luiza"], category: "Outros", type: "EXPENSE" },
   { keywords: ["pix", "transferencia", "ted", "doc", "depósito"], category: "Outros", type: "TRANSFER" },
   { keywords: ["nota fiscal", "nfe", "nf-e", "emitida contra", "nota eletrônica"], category: "Vendas", type: "INCOME" },
@@ -91,7 +91,10 @@ export async function classifyDocument(
     for (const keyword of rule.keywords) {
       if (emitterName.includes(keyword) || description.includes(keyword) || fullText.includes(keyword)) {
         categoryName = rule.category;
-        transactionType = rule.type === "TRANSFER" ? "TRANSFER" : rule.type;
+        // Só sobrescreve o tipo se for UNKNOWN ou se for TRANSFER
+        if (transactionType === "UNKNOWN" || rule.type === "TRANSFER") {
+          transactionType = rule.type;
+        }
         confidence = 0.7;
         reasoning.push(`Palavra-chave: ${keyword}`);
         break;

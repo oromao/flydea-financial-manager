@@ -41,6 +41,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
   const toast = useToast();
   const [file, setFile] = useState<File | null>(null);
   const [parsing, setParsing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState<{
     id: string;
     fileName: string;
@@ -70,6 +71,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
       const data = await res.json();
       setCategories(Array.isArray(data) ? data : []);
     } catch (e) {
+      console.error("DocumentImporter: failed to fetch categories", e);
     }
   }, []);
 
@@ -140,27 +142,31 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
 
   const confirmImport = async () => {
     if (!preview) return;
+    setSaving(true);
 
     try {
+      const payload = {
+        documentId: preview.id,
+        overrideType: editedData?.type || preview.classification.transactionType,
+        overrideCategoryId: editedData?.categoryId || preview.classification.categoryId,
+        overrideAmount: editedData?.amount ? parseFloat(editedData.amount) : preview.extractedData.totalAmount,
+        overrideDate: editedData?.date || preview.extractedData.emissionDate,
+        overrideDueDate: editedData?.dueDate || preview.extractedData.dueDate,
+        overridePaymentStatus: editedData?.paymentStatus || preview.classification.paymentStatus,
+        overrideDescription: editedData?.description || preview.extractedData.description,
+      };
+
       const res = await fetch("/api/document-import/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          documentId: preview.id,
-          overrideType: editedData?.type,
-          overrideCategoryId: editedData?.categoryId,
-          overrideAmount: editedData?.amount ? parseFloat(editedData.amount) : null,
-          overrideDate: editedData?.date,
-          overrideDueDate: editedData?.dueDate || null,
-          overridePaymentStatus: editedData?.paymentStatus,
-          overrideDescription: editedData?.description,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
         toast.error(data.error || "Erro ao importar");
+        setSaving(false);
         return;
       }
 
@@ -171,6 +177,8 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
       onImportSuccess();
     } catch (e) {
       toast.error("Erro ao importar transação");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -207,11 +215,15 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
         }
       }}
     >
-      <DialogTrigger render={<Button className="h-12 md:h-16 px-3 md:px-8 w-auto rounded-full bg-white/5 hover:bg-white/10 text-on-surface text-xs md:text-base font-black uppercase tracking-widest border border-white/5 transition-colors active:scale-95 whitespace-nowrap flex items-center gap-1 md:gap-3" />}>
-        <Upload className="w-5 md:w-6 h-5 md:h-6 text-primary" />{" "}
-        <span className="hidden sm:inline">IMPORTAR DOCUMENTO</span>
-        <span className="sm:hidden">IMPORTAR</span>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button className="h-10 px-4 rounded-lg bg-white/5 hover:bg-white/10 text-on-surface text-xs font-semibold uppercase border border-white/5 transition-colors whitespace-nowrap flex items-center gap-2">
+            <Upload className="w-4 h-4 text-primary" />
+            <span className="hidden sm:inline">IMPORTAR DOCUMENTO</span>
+            <span className="sm:hidden">IMPORTAR</span>
+          </Button>
+        }
+      />
       <DialogContent className="w-[95vw] md:max-w-2xl bg-surface border-none rounded-[40px] p-0 shadow-[0_32px_80px_rgba(0,0,0,0.8)] backdrop-blur-3xl overflow-hidden ring-1 ring-white/10 max-h-[90vh] overflow-y-auto">
         <div className="bg-white/5 p-8 md:p-12 border-b border-white/5">
           <DialogHeader>
@@ -351,8 +363,9 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                 <Button onClick={startEdit} variant="outline" className="flex-1 h-12">
                   <Edit2 className="w-4 h-4 mr-2" /> Editar
                 </Button>
-                <Button onClick={confirmImport} className="flex-1 h-12 apple-button-primary">
-                  <Check className="w-4 h-4 mr-2" /> Confirmar
+                <Button onClick={confirmImport} disabled={saving} className="flex-1 h-12 apple-button-primary">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
+                  Confirmar
                 </Button>
               </div>
             </div>
@@ -466,8 +479,9 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                 <Button variant="outline" onClick={() => setEditMode(false)} className="flex-1 h-12">
                   Cancelar
                 </Button>
-                <Button onClick={confirmImport} className="flex-1 h-12 apple-button-primary">
-                  <Check className="w-4 h-4 mr-2" /> Salvar
+                <Button onClick={confirmImport} disabled={saving} className="flex-1 h-12 apple-button-primary">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
+                  Salvar
                 </Button>
               </div>
             </div>

@@ -48,8 +48,8 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | List processes | `ps aux` |
 | Find by name | `ps aux \| grep node` |
 | Kill by PID | `kill -9 <PID>` |
-| Find port user | `lsof -i :3000` |
-| Kill port | `kill -9 $(lsof -t -i :3000)` |
+| Find port user | `lsof -i :3010` |
+| Kill port | `kill -9 $(lsof -t -i :3010)` |
 | Background | `npm run dev &` |
 | Jobs | `jobs -l` |
 | Bring to front | `fg %1` |
@@ -91,7 +91,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | Download | `curl -O https://example.com/file` |
 | API request | `curl -X GET https://api.example.com` |
 | POST JSON | `curl -X POST -H "Content-Type: application/json" -d '{"key":"value"}' URL` |
-| Check port | `nc -zv localhost 3000` |
+| Check port | `nc -zv localhost 3010` |
 | Network info | `ifconfig` or `ip addr` |
 
 ---

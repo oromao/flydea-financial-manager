@@ -59,11 +59,20 @@ async function main() {
   ]
 
   for (const cat of systemCategories) {
-    await prisma.category.upsert({
-      where: { name_userId: { name: cat.name, userId: null as unknown as string } },
-      update: { type: cat.type },
-      create: { name: cat.name, type: cat.type, userId: null },
+    const existing = await prisma.category.findFirst({
+      where: { name: cat.name, userId: null }
     })
+
+    if (existing) {
+      await prisma.category.update({
+        where: { id: existing.id },
+        data: { type: cat.type }
+      })
+    } else {
+      await prisma.category.create({
+        data: { name: cat.name, type: cat.type, userId: null }
+      })
+    }
   }
 
   console.log({ admin: admin.email, testUser: testUser.email, luizUser: luizUser.email, systemCategories: systemCategories.length })

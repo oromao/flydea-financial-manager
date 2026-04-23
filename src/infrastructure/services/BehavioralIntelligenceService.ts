@@ -156,30 +156,45 @@ export class BehavioralIntelligenceService {
   }
 
   /**
-   * Visible proof of evolution
+   * Visible proof of evolution with ranking and prioritization
    */
   async getEvolutionHistory(userId: string) {
-    const logs = await prisma.userBehavioralLog.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-      take: 10
-    });
+    const [logs, intel, predictions, insights] = await Promise.all([
+      prisma.userBehavioralLog.findMany({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+        take: 10
+      }),
+      prisma.userIntelligence.findUnique({
+        where: { userId }
+      }),
+      prisma.prediction.findMany({
+        where: { userId, status: "VERIFIED" },
+        orderBy: { verifiedAt: "desc" },
+        take: 5
+      }),
+      prisma.insight.findMany({
+        where: { userId },
+        orderBy: [
+          { priority: "desc" },
+          { createdAt: "desc" }
+        ],
+        take: 20
+      })
+    ]);
 
-    const intel = await prisma.userIntelligence.findUnique({
-      where: { userId }
-    });
-
-    const predictions = await prisma.prediction.findMany({
-      where: { userId, status: "VERIFIED" },
-      orderBy: { verifiedAt: "desc" },
-      take: 5
-    });
+    // Simple ranking/prioritization logic for the UI
+    const rankedInsights = insights.map(insight => ({
+      ...insight,
+      relevanceScore: insight.status === "ACTED" ? 100 : (insight.status === "IGNORED" ? 20 : 50)
+    })).sort((a, b) => b.relevanceScore - a.relevanceScore);
 
     return {
       currentStatus: intel,
       recentChanges: logs,
       accuracy: intel?.predictionAccuracyScore || 0,
-      recentPredictions: predictions
+      recentPredictions: predictions,
+      topInsights: rankedInsights.slice(0, 5)
     };
   }
 }

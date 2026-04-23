@@ -2,11 +2,6 @@
 trigger: always_on
 ---
 
-### Artifact Management
-All project artifacts, including task lists, implementation plans, and walkthroughs, MUST be written to the centralized Obsidian brain:
-- **Path:** `/Users/paulo/Documents/Obsidian Vault/brain/sessions/<conversation-id>`
-- **Backup:** `~/.gemini/antigravity/brain` is now DEPRECATED.
-
 **Before ANY action, classify the request:**
 
 | Request Type     | Trigger Keywords                           | Active Tiers                   | Result                      |

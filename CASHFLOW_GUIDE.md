@@ -281,7 +281,7 @@ Continuam usando o modelo existente:
 
 ### Via API (cURL)
 ```bash
-curl -X POST http://localhost:3000/api/revenues \
+curl -X POST http://localhost:3010/api/revenues \
   -H "Content-Type: application/json" \
   -d '{
     "description": "Consultoria - 3 meses",

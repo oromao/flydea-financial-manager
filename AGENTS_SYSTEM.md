@@ -278,7 +278,7 @@ npx prisma generate
 
 ```bash
 # POST para trigger manual
-curl -X POST http://localhost:3000/api/cron/agent-scheduler
+curl -X POST http://localhost:3010/api/cron/agent-scheduler
 
 # Ou com query param para produção
 curl "https://seu-site.com/api/cron/agent-scheduler?secret=SEU_CRON_SECRET"

@@ -73,7 +73,7 @@ Show current project and agent status.
 
 === Preview ===
 
-🌐 URL: http://localhost:3000
+🌐 URL: http://localhost:3010
 💚 Health: OK
 ```
 

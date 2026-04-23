@@ -75,7 +75,7 @@ DATABASE_URL="postgresql://user:password@localhost:5432/flydea"
 
 # Auth
 NEXTAUTH_SECRET="gere_uma_secret_aleatoria"
-NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="http://localhost:3010"
 
 # Email
 RESEND_API_KEY="sua_chave_resend"
@@ -99,7 +99,7 @@ npx prisma db seed # Opcional: dados de exemplo
 npm run dev
 ```
 
-Abra [http://localhost:3000](http://localhost:3000)
+Abra [http://localhost:3010](http://localhost:3010)
 
 ---
 

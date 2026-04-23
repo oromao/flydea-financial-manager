@@ -60,13 +60,24 @@ export class PicoClawEngine {
   }
 
   async generateInsights(data: UserFinancialData): Promise<PicoClawInsight[]> {
-    const { summary } = data;
+    const { summary, userId } = data;
     const insights: PicoClawInsight[] = [];
 
-    logger.info("PicoClaw: generating insights", { userId: data.userId });
+    logger.info("PicoClaw: generating evolutive insights", { userId });
+
+    // 0. Fetch user intelligence & recent insights (Evolution)
+    const [intel, recentInsights] = await Promise.all([
+      prisma.userIntelligence.findUnique({ where: { userId } }),
+      prisma.insight.findMany({
+        where: { userId, createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } }, // Last 7 days
+        select: { type: true, content: true }
+      })
+    ]);
+
+    const hasSeenInsight = (title: string) => recentInsights.some(i => i.type === title);
 
     // 1. Immediate Cashflow Risk
-    if (summary.totalBalance < summary.pendingPayments) {
+    if (summary.totalBalance < summary.pendingPayments && !hasSeenInsight("Risco de Caixa")) {
       insights.push({
         title: "Risco de Caixa",
         message: `Suas pendências (R$ ${summary.pendingPayments.toFixed(2)}) superam seu saldo disponível.`,
@@ -80,7 +91,7 @@ export class PicoClawEngine {
     const topCat = Object.entries(summary.expensesByCategory)
       .sort(([, a], [, b]) => b - a)[0];
     
-    if (topCat && topCat[1] > (summary.monthlyIncome * 0.4) && summary.monthlyIncome > 0) {
+    if (topCat && topCat[1] > (summary.monthlyIncome * 0.4) && summary.monthlyIncome > 0 && !hasSeenInsight("Alerta de Gastos")) {
       insights.push({
         title: "Alerta de Gastos",
         message: `A categoria ${topCat[0]} está consumindo ${((topCat[1] / summary.monthlyIncome) * 100).toFixed(0)}% da sua renda.`,
@@ -91,7 +102,7 @@ export class PicoClawEngine {
     }
 
     // 3. Savings Opportunity
-    if (summary.netFlow > (summary.monthlyIncome * 0.2) && summary.monthlyIncome > 0) {
+    if (summary.netFlow > (summary.monthlyIncome * 0.2) && summary.monthlyIncome > 0 && !hasSeenInsight("Oportunidade")) {
       insights.push({
         title: "Oportunidade",
         message: "Você poupou mais de 20% este mês. Que tal investir o excedente?",
@@ -101,8 +112,8 @@ export class PicoClawEngine {
       });
     }
 
-    // 4. Pattern Shift (Implicit Tiny AI logic)
-    if (summary.monthlyExpenses > summary.monthlyIncome && summary.monthlyIncome > 0) {
+    // 4. Pattern Shift (Déficit)
+    if (summary.monthlyExpenses > summary.monthlyIncome && summary.monthlyIncome > 0 && !hasSeenInsight("Déficit Mensal")) {
        insights.push({
          title: "Déficit Mensal",
          message: "Seus gastos este mês superaram suas receitas. Revise seus lançamentos.",
@@ -110,6 +121,37 @@ export class PicoClawEngine {
          actionLabel: "Revisar",
          actionUrl: "/movimentacoes"
        });
+    }
+
+    // 5. Behavioral Evolution Insight (If intelligence detected drift)
+    if (intel && intel.recentPatternShift && intel.behaviorChangeScore > 40 && !hasSeenInsight("Mudança de Comportamento")) {
+       insights.push({
+         title: "Mudança de Comportamento",
+         message: "Notei um aumento recente na frequência e volume dos seus gastos comparado aos meses anteriores. Cuidado com compras impulsivas.",
+         priority: "HIGH",
+         actionLabel: "Ver Orçamentos",
+         actionUrl: "/orcamentos"
+       });
+    }
+
+    // Persist new insights so they aren't repeated tomorrow
+    if (insights.length > 0) {
+      // Run this asynchronously so it doesn't block the return
+      void (async () => {
+        try {
+          await prisma.insight.createMany({
+            data: insights.map(i => ({
+              userId,
+              type: i.title,
+              content: i.message,
+              priority: i.priority,
+              status: "SHOWN"
+            }))
+          });
+        } catch (e) {
+          logger.error("Error persisting PicoClaw insights", { error: e });
+        }
+      })();
     }
 
     return insights.sort((a, b) => {

@@ -17,6 +17,7 @@ import { SpendDecisionIndicator } from "@/components/spend-decision-indicator";
 import { DailyInsight } from "@/components/daily-insight";
 import { QuickAdd } from "@/components/quick-add";
 import { EmptyDashboard } from "@/components/ui/empty-states";
+import { DashboardHero } from "@/components/dashboard/dashboard-hero";
 
 const containerVariants: any = {
   hidden: { opacity: 0 },
@@ -80,30 +81,12 @@ export default function Dashboard() {
       className="space-y-6 md:space-y-16 max-w-7xl mx-auto pb-24 px-4 md:px-0"
     >
       {/* Fintech Hero Section: Clear Balance */}
-      <motion.section variants={itemVariants} className="relative">
-        <div className="bg-primary rounded-[24px] p-6 md:p-10 shadow-lg text-white flex flex-col gap-6">
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <h1 className="text-sm md:text-base font-medium text-white/80">Saldo disponível</h1>
-              <p className="text-4xl md:text-5xl font-display font-bold tracking-tight">
-                {loading ? (
-                  <div className="h-10 md:h-12 w-48 bg-white/20 animate-pulse rounded-lg" />
-                ) : formatCurrency(metrics.balance)}
-              </p>
-            </div>
-            <div className="p-2 md:p-3 rounded-full bg-white/10 backdrop-blur-sm">
-              <Wallet className="w-5 h-5 md:w-6 md:h-6 text-white" />
-            </div>
-          </div>
-          
-          <div className="flex flex-wrap items-center gap-3">
-            <QuickAdd categories={categories} onSuccess={() => window.location.reload()} />
-            <Link href="/movimentacoes" className="px-4 py-2.5 rounded-full bg-white/10 hover:bg-white/20 transition text-sm font-medium text-white flex items-center gap-2">
-              <History className="w-4 h-4" />
-              Extrato
-            </Link>
-          </div>
-        </div>
+      <motion.section variants={itemVariants}>
+        <DashboardHero 
+          balance={metrics.balance} 
+          loading={loading} 
+          categories={categories} 
+        />
       </motion.section>
 
       {/* AI Copilot Insight Card */}

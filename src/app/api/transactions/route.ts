@@ -120,23 +120,25 @@ export async function POST(request: NextRequest) {
     include: { category: true, account: true, tags: { include: { tag: true } } }
   });
 
-  // Real-time Intelligence Hook
-  try {
-    const behavioralService = new BehavioralIntelligenceService();
-    await behavioralService.onTransactionCreated(session.user.id, amount, categoryId);
-  } catch (intelError) {
-    console.error("[IntelligenceHook] Error:", intelError);
-  }
+  // Background Intelligence & Audit Hooks (Non-blocking)
+  void (async () => {
+    try {
+      const behavioralService = new BehavioralIntelligenceService();
+      await behavioralService.onTransactionCreated(session.user.id, amount, categoryId);
 
-  await prisma.auditLog.create({
-    data: {
-      action: "CREATE",
-      entity: "TRANSACTION",
-      entityId: transaction.id,
-      details: `Nova transação: ${description}`,
-      userId: session.user.id
+      const auditLog = await prisma.auditLog.create({
+        data: {
+          action: "CREATE",
+          entity: "TRANSACTION",
+          entityId: transaction.id,
+          details: `Nova transação: ${description}`,
+          userId: session.user.id
+        }
+      });
+    } catch (hookError) {
+      console.error("[BackgroundHook] Error:", hookError);
     }
-  });
+  })();
 
   return NextResponse.json(transaction);
 }

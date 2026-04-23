@@ -8,61 +8,97 @@ import { classifyDocument } from "@/lib/category-classifier";
 import { checkForDuplicate } from "@/lib/duplicate-detector";
 import { uploadFileToBlobStorage } from "@/lib/blob-storage";
 import { paddleOCR } from "@/lib/ocr/paddle-ocr";
+import { generateRequestId } from "@/lib/utils";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ["application/pdf", "image/png", "image/jpeg", "image/jpg", "image/webp", "text/plain"];
 
 export async function POST(request: NextRequest) {
+  const requestId = generateRequestId();
+  const startTime = Date.now();
+  
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  logger.info("DocumentImport: processing upload", { userId: session.user.id });
+  const userId = session.user.id;
+
+  logger.info("DocumentImport: starting process", { requestId, userId });
 
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
 
     if (!file) {
+      logger.warn("DocumentImport: no file in request", { requestId, userId });
       return NextResponse.json({ error: "Nenhum arquivo enviado" }, { status: 400 });
     }
 
     if (file.size > MAX_FILE_SIZE) {
+      logger.warn("DocumentImport: file too large", { requestId, userId, size: file.size });
       return NextResponse.json({ error: "Arquivo muito grande (máximo 10MB)" }, { status: 400 });
     }
 
     const mimeType = file.type || "application/octet-stream";
     if (!ALLOWED_TYPES.includes(mimeType)) {
+      logger.warn("DocumentImport: unsupported type", { requestId, userId, mimeType });
       return NextResponse.json({ error: "Tipo de arquivo não suportado" }, { status: 400 });
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const fileHash = computeFileHash(buffer);
 
-    logger.info("DocumentImport: file received", { name: file.name, mimeType, bytes: buffer.length });
+    // Start blob upload in background early
+    const blobUploadPromise = uploadFileToBlobStorage(file.name, buffer, mimeType).catch((blobError) => {
+      logger.error("DocumentImport: blob upload failed", {
+        requestId,
+        userId,
+        error: blobError instanceof Error ? blobError.message : String(blobError),
+      });
+      return "";
+    });
 
-    // 1. PaddleOCR Pipeline
-    const { raw, structured } = await paddleOCR.process(buffer, mimeType);
+    // 1. Extraction Pipeline (Fast-path for text files)
+    let rawText = "";
+    let structured: any = {};
+    const ocrStartTime = Date.now();
+
+    if (mimeType === "text/plain") {
+      rawText = buffer.toString("utf-8");
+      logger.info("DocumentImport: plain text bypass used", { requestId, userId, length: rawText.length });
+    } else {
+      logger.info("DocumentImport: calling OCR/PDF parser", { requestId, userId, mimeType });
+      const ocrResult = await paddleOCR.process(buffer, mimeType);
+      rawText = ocrResult.raw.text;
+      structured = ocrResult.structured;
+      logger.info("DocumentImport: Extraction finished", { 
+        requestId, 
+        userId, 
+        length: rawText.length,
+        duration: Date.now() - ocrStartTime 
+      });
+    }
     
-    if (!raw.text || raw.text.length < 5) {
+    if (!rawText || rawText.length < 5) {
+      logger.warn("DocumentImport: extraction yielded no text", { requestId, userId });
       return NextResponse.json({
-        error: "Não foi possível extrair texto do documento via PaddleOCR",
+        error: "Não foi possível extrair texto do documento",
         warning: "Certifique-se que o arquivo é legível.",
       }, { status: 400 });
     }
 
     // 2. Data Parsing & Normalization
-    const extractedData = parseDocumentText(raw.text);
+    const extractedData = parseDocumentText(rawText);
     
     // Merge heuristic data with PaddleOCR structured data (favoring heuristics if robust)
     if (structured.amount) extractedData.totalAmount = structured.amount;
     if (structured.date) extractedData.emissionDate = structured.date;
     if (structured.merchant) extractedData.emitterName = structured.merchant;
 
-    const duplicateCheck = await checkForDuplicate(session.user.id, extractedData, fileHash);
-
-    const classification = await classifyDocument(
+    // Run classification and duplicate check in parallel
+    const duplicateCheckPromise = checkForDuplicate(session.user.id, extractedData, fileHash);
+    const classificationPromise = classifyDocument(
       extractedData,
       session.user.id,
       async (userId: string) => {
@@ -75,6 +111,12 @@ export async function POST(request: NextRequest) {
       }
     );
 
+    const [classification, duplicateCheck, blobUrl] = await Promise.all([
+      classificationPromise,
+      duplicateCheckPromise,
+      blobUploadPromise
+    ]);
+
     const userCategories = await prisma.category.findMany({
       where: {
         OR: [{ userId: null }, { userId: session.user.id }],
@@ -86,18 +128,6 @@ export async function POST(request: NextRequest) {
       (c) => c.name === classification.categoryName
     ) || userCategories.find((c) => c.name === "Outros");
 
-    // Upload file to Vercel Blob Storage
-    let blobUrl = "";
-    try {
-      blobUrl = await uploadFileToBlobStorage(file.name, buffer, mimeType);
-      logger.info("DocumentImport: file uploaded to blob", { url: blobUrl });
-    } catch (blobError) {
-      logger.warn("DocumentImport: blob upload failed, continuing without file", {
-        error: blobError instanceof Error ? blobError.message : String(blobError),
-      });
-      blobUrl = ""; // Continue without blob URL
-    }
-
     const importedDoc = await prisma.importedDocument.create({
       data: {
         userId: session.user.id,
@@ -108,33 +138,26 @@ export async function POST(request: NextRequest) {
         blobUrl: blobUrl || null,
         status: "PENDING_REVIEW",
         extractedData: extractedData as unknown as object,
-        rawText: raw.text.slice(0, 10000),
+        rawText: rawText.slice(0, 10000),
         confidence: classification.confidence,
       },
     });
 
-    logger.info("DocumentImport: document created", { id: importedDoc.id, hasBlob: !!blobUrl });
+    const totalDuration = Date.now() - startTime;
+    logger.track("DOCUMENT_IMPORTED", { 
+      requestId, 
+      userId, 
+      docId: importedDoc.id, 
+      duration: totalDuration,
+      confidence: classification.confidence,
+      hasBlob: !!blobUrl
+    });
 
     return NextResponse.json({
       id: importedDoc.id,
       fileName: file.name,
       blobUrl: blobUrl || null,
-      extractedData: {
-        documentType: extractedData.documentType,
-        documentNumber: extractedData.documentNumber,
-        emitterName: extractedData.emitterName,
-        emitterDocument: extractedData.emitterDocument,
-        emissionDate: extractedData.emissionDate,
-        dueDate: extractedData.dueDate,
-        paymentDate: extractedData.paymentDate,
-        totalAmount: extractedData.totalAmount,
-        netAmount: extractedData.netAmount,
-        taxAmount: extractedData.taxAmount,
-        installments: extractedData.installments,
-        currentInstallment: extractedData.currentInstallment,
-        description: extractedData.description,
-        lineItems: extractedData.lineItems,
-      },
+      extractedData,
       classification: {
         transactionType: classification.transactionType,
         categoryName: classification.categoryName,
@@ -147,7 +170,11 @@ export async function POST(request: NextRequest) {
       needsReview: classification.confidence < 0.8 || duplicateCheck.isDuplicate,
     }, { status: 201 });
   } catch (error) {
-    logger.error("DocumentImport error", { error: error instanceof Error ? error.message : String(error) });
+    logger.error("DocumentImport: critical error", { 
+      requestId, 
+      userId, 
+      error: error instanceof Error ? error.stack : String(error) 
+    });
     return NextResponse.json(
       { error: "Erro ao processar documento" },
       { status: 500 }

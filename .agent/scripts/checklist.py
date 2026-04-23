@@ -166,7 +166,7 @@ def main():
         epilog="""
 Examples:
   python scripts/checklist.py .                      # Core checks only
-  python scripts/checklist.py . --url http://localhost:3000  # Include performance
+  python scripts/checklist.py . --url http://localhost:3010  # Include performance
         """
     )
     parser.add_argument("project", help="Project path to validate")

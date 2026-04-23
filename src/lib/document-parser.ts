@@ -5,10 +5,8 @@ export interface ExtractedDocumentData {
   documentType: "NOTA_FISCAL" | "RECIBO" | "BOLETO" | "COMPROVANTE" | "EXTRATO" | "OUTRO" | "UNKNOWN";
   documentNumber: string | null;
   emitterName: string | null;
-  emitterDocument: string | null;
-  receiverName: string | null;
-  receiverDocument: string | null;
-  emissionDate: string | null;
+  emitterDocument: string | null; // CPF or CNPJ
+  emissionDate: string | null; // ISO Format YYYY-MM-DD
   dueDate: string | null;
   paymentDate: string | null;
   totalAmount: number | null;
@@ -17,75 +15,58 @@ export interface ExtractedDocumentData {
   installments: number | null;
   currentInstallment: number | null;
   description: string | null;
+  extractedText: string;
+  confidence: number;
   lineItems: Array<{
     description: string;
-    quantity: number | null;
-    unitPrice: number | null;
-    totalPrice: number | null;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
   }>;
-  confidence: number;
-  extractedText: string;
 }
 
-const CNPJ_PATTERN = /\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g;
-const CPF_PATTERN = /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g;
+const CNPJ_PATTERN = /\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}/g;
+const CPF_PATTERN = /\d{3}\.\d{3}\.\d{3}-\d{2}/g;
 const DATA_BR_PATTERN = /\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})\b/g;
-const VALOR_PATTERN = /(?:R\$|VALOR|TOTAL|PAGO)[\s:]*([\d.]+,\d{2})/gi;
-const VALOR_SIMPLES_PATTERN = /(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*,\d{2})/g;
-const NUMERO_DOC_PATTERN = /(?:N[º°]?|N[º°]\s*(?:fe)?|N\.?F\.?e\.?|NFse?|Recibo|Fatura|Boleto)[\s:]*([\d\-\/]+)/i;
-const INSTALMENTES_PATTERN = /(\d+)\s*\/\s*(\d+)|(\d+)º?\s*(?:parcela|parcelas?)|(?:(?:pos|parcelas?|x)\s*(?:de\s*)?(\d+))/i;
-
-// Transfer/PIX specific patterns
-const PIX_ID_PATTERN = /(?:ID|E2E|id|Autenticação)\s*(?:da\s*)?(?:transação|transferência)?[\s:]*([a-z0-9]{32}|[a-z0-9\-]{36}|\d{20,})/gi;
-const TRANSFER_DESTINO_PATTERN = /(?:destino|para|favorecido|recebedor|pago a|crédito para)[\s:]*(.{0,80}?)(?:\n|CNPJ|CPF|Banco|Valor|$)/i;
-const TRANSFER_ORIGEM_PATTERN = /(?:origem|de|remetente|pagador|nome do pagador)[\s:]*(.{0,80}?)(?:\n|CNPJ|CPF|Banco|Valor|$)/i;
-const TRANSFER_BANCO_PATTERN = /(?:banco|instituição|agência|isbp)[\s:]*([^\n]{0,100})/i;
-
-export async function extractDocumentText(buffer: Buffer, mimeType: string): Promise<string> {
-  const result = await paddleOCR.process(buffer, mimeType);
-  return result.raw.text;
-}
+const NUMERO_DOC_PATTERN = /(?:nota|nº|numero|número|id|doc)[\s:]*([\d\w.-]+)/i;
 
 export function parseDocumentText(text: string): ExtractedDocumentData {
-  // We can use the structured output from paddleOCR if we pass it here,
-  // but for backward compatibility with the existing parseDocumentText signature,
-  // we'll keep the heuristic logic but pointed to the new structured fields if needed.
-  
-  // Detect document type
-  const docType = detectDocumentType(text);
-  
-  // Use heuristic extraction (robust and already tested)
-  const emissionDate = extractDate(text);
-  const totalAmount = extractAmount(text, "total");
-  const docNumber = extractDocumentNumber(text);
+  const documentType = extractDocumentType(text);
+  const documentNumber = extractDocumentNumber(text);
+  const emitterDocument = extractDocument(text, CNPJ_PATTERN) || extractDocument(text, CPF_PATTERN);
   const emitterName = extractEmitterName(text);
+  const emissionDate = extractDate(text);
+  const dueDate = extractDueDate(text, emissionDate);
+  const paymentDate = extractPaymentDate(text);
+  const totalAmount = extractAmount(text, "total");
+  const netAmount = extractAmount(text, "net");
+  const taxAmount = totalAmount && netAmount ? Math.max(0, totalAmount - netAmount) : null;
+  const description = extractDescription(text, emitterName, documentNumber);
+  const installmentData = extractInstallments(text);
 
   return {
-    documentType: docType,
-    documentNumber: docNumber,
+    documentType,
+    documentNumber,
     emitterName,
-    emitterDocument: null,
-    receiverName: null,
-    receiverDocument: null,
+    emitterDocument,
     emissionDate,
-    dueDate: extractDueDate(text),
-    paymentDate: extractPaymentDate(text) || emissionDate,
+    dueDate,
+    paymentDate,
     totalAmount,
-    netAmount: totalAmount,
-    taxAmount: 0,
-    installments: extractInstallments(text).total,
-    currentInstallment: extractInstallments(text).current,
-    description: extractDescription(text, emitterName, docNumber),
+    netAmount,
+    taxAmount,
+    installments: installmentData.installments,
+    currentInstallment: installmentData.currentInstallment,
+    description,
+    extractedText: text,
+    confidence: calculateConfidence(totalAmount, emissionDate, emitterName, documentNumber),
     lineItems: [],
-    confidence: calculateConfidence(docType, totalAmount, emissionDate, docNumber),
-    extractedText: text.slice(0, 10000),
   };
 }
 
-function detectDocumentType(text: string): ExtractedDocumentData["documentType"] {
+function extractDocumentType(text: string): ExtractedDocumentData["documentType"] {
   const lower = text.toLowerCase();
-
-  if (lower.includes("nota fiscal") || lower.includes("nfe") || lower.includes("nf-e") || lower.includes("nfse") || lower.includes("cupom fiscal")) {
+  if (lower.includes("nota fiscal") || lower.includes("nfe") || lower.includes("nf-e") || lower.includes("danfe")) {
     return "NOTA_FISCAL";
   }
   if (lower.includes("recibo") || lower.includes("recebemos")) {
@@ -113,7 +94,7 @@ function extractDocumentNumber(text: string): string | null {
 
 function extractDocument(text: string, pattern: RegExp): string | null {
   const matches = text.match(pattern);
-  return matches?.[0] || null;
+  return matches ? matches[0] : null;
 }
 
 function extractEmitterName(text: string): string | null {
@@ -121,7 +102,7 @@ function extractEmitterName(text: string): string | null {
   for (const line of lines) {
     const trimmed = line.trim();
     if (trimmed.length > 3 && trimmed.length < 100 && !trimmed.match(/^\d/) && !trimmed.match(/^[\s\-\/]+$/)) {
-      const cleaned = trimmed.replace(/[^\w\s\.\-]/g, "").trim();
+      const cleaned = trimmed.replace(/[^\w\s\.\-\u00C0-\u017F]/g, "").trim();
       if (cleaned.length > 3) {
         return cleaned.slice(0, 80);
       }
@@ -131,14 +112,19 @@ function extractEmitterName(text: string): string | null {
 }
 
 function extractDate(text: string): string | null {
-  const matches = text.match(DATA_BR_PATTERN);
+  // Normalizar possíveis erros de OCR em datas (O -> 0, I -> 1)
+  const normalized = text.replace(/([0-9])O/g, "$10").replace(/O([0-9])/g, "0$1")
+                         .replace(/([0-9])I/g, "$11").replace(/I([0-9])/g, "1$1");
+                         
+  const matches = normalized.match(DATA_BR_PATTERN);
   if (matches) {
     for (const match of matches) {
       const parts = match.split(/[\/\-]/);
       if (parts.length === 3) {
         const day = parseInt(parts[0]);
         const month = parseInt(parts[1]);
-        const year = parseInt(parts[2]);
+        let year = parseInt(parts[2]);
+        if (year < 100) year += 2000;
         if (day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 2000 && year <= 2100) {
           return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
         }
@@ -148,9 +134,10 @@ function extractDate(text: string): string | null {
   return null;
 }
 
-function extractDueDate(text: string): string | null {
+function extractDueDate(text: string, emissionDate: string | null): string | null {
   const lower = text.toLowerCase();
-  const dateMatch = lower.match(/vencimento[:\s]*(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+  const dateMatch = lower.match(/(?:vencimento|vence|vcto)[:\s]*(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+  
   if (dateMatch) {
     const day = parseInt(dateMatch[1]);
     const month = parseInt(dateMatch[2]);
@@ -161,7 +148,7 @@ function extractDueDate(text: string): string | null {
 
   if (lower.includes("vencimento") || lower.includes("data de vencimento")) {
     if (lower.includes("à vista") || lower.includes("avista") || lower.includes("pagamento imediato")) {
-      return new Date().toISOString().split("T")[0];
+      return emissionDate || new Date().toISOString().split("T")[0];
     }
   }
 
@@ -183,155 +170,78 @@ function extractPaymentDate(text: string): string | null {
   return null;
 }
 
+function extractInstallments(text: string): { installments: number | null; currentInstallment: number | null } {
+  const lower = text.toLowerCase();
+  // e.g. "Parcela: 1/3" or "01/03"
+  const instMatch = lower.match(/(?:parcelas?|parc\.?)[\s:]*(\d+)\s*[\/\-de]\s*(\d+)/i);
+  if (instMatch) {
+    const curr = parseInt(instMatch[1], 10);
+    const total = parseInt(instMatch[2], 10);
+    if (curr > 0 && total >= curr) {
+      return { currentInstallment: curr, installments: total };
+    }
+  }
+  
+  // e.g. "3x de R$ 1.000,00"
+  const multiplierMatch = lower.match(/(\d+)\s*x\s*(?:de\s*)?(?:r\$)?\s*[\d.]+,[\d]{2}/);
+  if (multiplierMatch) {
+    const total = parseInt(multiplierMatch[1], 10);
+    if (total > 1) {
+      return { currentInstallment: 1, installments: total };
+    }
+  }
+
+  return { currentInstallment: null, installments: null };
+}
+
 function extractAmount(text: string, type: "total" | "net"): number | null {
+  // Normalize O -> 0 in potential numbers
+  const normalized = text.replace(/([0-9])O/g, "$10").replace(/O([0-9])/g, "0$1");
   const amounts: number[] = [];
 
   // Pattern 1: R$ 1.234,56
   const pattern1 = /(?:R\$|VALOR|TOTAL|PAGO)[\s:]*([\d.]+),(\d{2})/gi;
-  for (const match of text.matchAll(pattern1)) {
+  for (const match of normalized.matchAll(pattern1)) {
     const value = parseFloat(match[1].replace(/\./g, "") + "." + match[2]);
     if (!isNaN(value) && value > 0) {
       amounts.push(value);
     }
   }
 
-  // Pattern 2: 1234,56 (without R$)
+  // Pattern 2: 1234,56 (sem R$)
   const pattern2 = /\b(\d{1,3}(?:\.\d{3})*),(\d{2})\b/g;
-  for (const match of text.matchAll(pattern2)) {
+  for (const match of normalized.matchAll(pattern2)) {
     const value = parseFloat(match[1].replace(/\./g, "") + "." + match[2]);
-    if (!isNaN(value) && value > 0 && value < 1000000) {
-      // Reasonable upper limit
+    if (!isNaN(value) && value > 0) {
       amounts.push(value);
     }
   }
 
-  // Pattern 3: Valor: number, Valor = number
-  const pattern3 = /(?:valor|amount|total|transferência|pagamento)[\s:=]*[\s]*([\d,.]+)/gi;
-  for (const match of text.matchAll(pattern3)) {
-    const cleanValue = match[1].replace(/\./g, "").replace(",", ".");
-    const value = parseFloat(cleanValue);
-    if (!isNaN(value) && value > 0 && value < 1000000) {
-      amounts.push(value);
-    }
-  }
-
-  // Remove duplicates and sort
-  const uniqueAmounts = Array.from(new Set(amounts.map((a) => parseFloat(a.toFixed(2))))).sort((a, b) => b - a);
-
-  if (uniqueAmounts.length === 0) {
-    return null;
-  }
+  if (amounts.length === 0) return null;
 
   if (type === "total") {
-    // Return the largest amount (most likely the total)
-    return uniqueAmounts[0];
+    return Math.max(...amounts);
   }
-
-  if (uniqueAmounts.length > 1) {
-    // For "net", return sum of all but the largest
-    return uniqueAmounts.slice(1).reduce((a, b) => a + b, 0);
-  }
-
-  return uniqueAmounts[0];
+  return amounts[0];
 }
 
 function extractDescription(text: string, emitterName: string | null, docNumber: string | null): string | null {
   const lines = text.split("\n").filter((l) => l.trim().length > 5);
-
-  for (const line of lines.slice(0, 10)) {
-    if (line.includes(emitterName || "") && line.length > 5) {
-      return line.trim().slice(0, 150);
-    }
+  if (emitterName && emitterName.length > 3 && !emitterName.toLowerCase().includes("nota fiscal") && !emitterName.toLowerCase().includes("comprovante")) {
+    return emitterName;
   }
-
+  
   if (docNumber) {
-    return `${emitterName || "Documento"} ${docNumber}`.trim();
+    return `Documento ${docNumber}`;
   }
 
-  return emitterName || lines[0]?.trim().slice(0, 100) || null;
+  return lines[0]?.trim().slice(0, 100) || null;
 }
 
-function extractInstallments(text: string): { current: number | null; total: number | null } {
-  const match = text.match(INSTALMENTES_PATTERN);
-  if (match) {
-    if (match[1] && match[2]) {
-      return { current: parseInt(match[1]), total: parseInt(match[2]) };
-    }
-    if (match[3]) {
-      return { current: 1, total: parseInt(match[3]) };
-    }
-    if (match[4]) {
-      return { current: 1, total: parseInt(match[4]) };
-    }
-  }
-  return { current: null, total: null };
-}
-
-function extractLineItems(text: string): ExtractedDocumentData["lineItems"] {
-  const lines = text.split("\n").filter((l) => l.trim().length > 10);
-  const items: ExtractedDocumentData["lineItems"] = [];
-
-  for (const line of lines.slice(5, 25)) {
-    const qtyMatch = line.match(/(\d+)\s+x\s+/);
-    const priceMatch = line.match(/R\$\s*([\d.]+,\d{2})/);
-    const descMatch = line.replace(/R\$\s*[\d.,]+/g, "").replace(/\d+x\s+/gi, "").trim();
-
-    if (priceMatch && descMatch.length > 2) {
-      items.push({
-        description: descMatch.slice(0, 100),
-        quantity: qtyMatch ? parseInt(qtyMatch[1]) : 1,
-        unitPrice: null,
-        totalPrice: parseFloat(priceMatch[1].replace(/\./g, "").replace(",", ".")),
-      });
-    }
-  }
-
-  return items.slice(0, 20);
-}
-
-function extractPixId(text: string): string | null {
-  const match = text.match(PIX_ID_PATTERN);
-  return match?.[1] || null;
-}
-
-function extractTransferField(text: string, fieldType: "origem" | "destino"): string | null {
-  const pattern = fieldType === "origem" ? TRANSFER_ORIGEM_PATTERN : TRANSFER_DESTINO_PATTERN;
-  const match = text.match(pattern);
-  if (match?.[1]) {
-    return match[1].trim().replace(/\s+/g, " ").slice(0, 100);
-  }
-  return null;
-}
-
-function extractTransferDescription(
-  text: string,
-  origin: string | null,
-  destination: string | null,
-  amount: number | null
-): string | null {
-  const parts = [];
-
-  if (origin) parts.push(`De: ${origin}`);
-  if (destination) parts.push(`Para: ${destination}`);
-  if (amount) parts.push(`Valor: R$ ${amount.toFixed(2)}`);
-
-  if (parts.length > 0) {
-    return parts.join(" | ");
-  }
-
-  return extractDescription(text, null, null);
-}
-
-function calculateConfidence(
-  docType: ExtractedDocumentData["documentType"],
-  totalAmount: number | null,
-  emissionDate: string | null,
-  docNumber: string | null
-): number {
-  let score = 0;
-
-  if (docType !== "UNKNOWN") score += 0.3;
-  if (totalAmount && totalAmount > 0) score += 0.3;
+function calculateConfidence(totalAmount: number | null, emissionDate: string | null, emitterName: string | null, docNumber: string | null): number {
+  let score = 0.1;
+  if (totalAmount) score += 0.4;
+  if (emitterName) score += 0.2;
   if (emissionDate) score += 0.2;
   if (docNumber) score += 0.2;
 

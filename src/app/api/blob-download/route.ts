@@ -1,6 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 /**
  * Proxy endpoint for downloading files from Vercel Blob
@@ -22,11 +24,27 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // If it's a Vercel Blob URL, add the token
+    // 1. Ownership Check (Crucial for Production Security)
+    const [doc, transaction] = await Promise.all([
+      prisma.importedDocument.findFirst({
+        where: { userId: session.user.id, blobUrl: url }
+      }),
+      prisma.transaction.findFirst({
+        where: { userId: session.user.id, blobUrl: url }
+      })
+    ]);
+
+    if (!doc && !transaction) {
+      logger.warn("Unauthorized blob access attempt", { userId: session.user.id, url });
+      return NextResponse.json({ error: "Forbidden: You don't own this file" }, { status: 403 });
+    }
+
+    // 2. Fetch from Vercel Blob (Injection of token)
     let fetchUrl = url;
     if (url.includes("blob.vercelusercontent.com") || url.includes("vercel-blob.com")) {
-      const token = process.env.BLOB_READ_WRITE_TOKEN;
+      const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.VERCEL_BLOB_READ_WRITE_TOKEN;
       if (token) {
+        // Vercel Blob private access requires token header or param
         fetchUrl = `${url}?token=${token}`;
       }
     }
@@ -52,7 +70,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Blob download error:", error);
+    logger.error("Blob download error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { error: "Failed to download file" },
       { status: 500 }

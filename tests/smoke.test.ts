@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:3010';
 const TEST_EMAIL = 'luiz@flydea.com';
 const TEST_PASSWORD = 'luiz2026';
 

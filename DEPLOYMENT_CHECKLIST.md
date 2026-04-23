@@ -121,7 +121,7 @@ npm run build
 
 # [ ] Preview local
 npm run start
-# Abrir http://localhost:3000
+# Abrir http://localhost:3010
 ```
 
 ### Verificar Funcionalidades

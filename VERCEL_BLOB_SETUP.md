@@ -61,7 +61,7 @@ BLOB_READ_WRITE_TOKEN=seu_token_aqui
 VERCEL_BLOB_READ_WRITE_TOKEN=seu_token_aqui
 DATABASE_URL=sua_url_database
 NEXTAUTH_SECRET=seu_secret
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3010
 ```
 
 Depois rode:

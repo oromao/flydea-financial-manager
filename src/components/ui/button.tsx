@@ -22,14 +22,14 @@ const buttonVariants = cva(
         link: "text-secondary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-10 px-6 gap-2",
+        default: "h-11 px-6 gap-2",
         xs: "h-9 px-3 text-xs gap-1.5",
         sm: "h-10 px-4 text-[0.85rem] gap-2",
-        lg: "h-12 px-8 text-base gap-2.5",
-        icon: "size-10",
+        lg: "h-14 px-8 text-base gap-2.5",
+        icon: "size-11",
         "icon-xs": "size-9",
         "icon-sm": "size-10",
-        "icon-lg": "size-12",
+        "icon-lg": "size-14",
       },
     },
     defaultVariants: {

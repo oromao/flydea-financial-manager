@@ -157,7 +157,7 @@ Headers:
 #### Option 3: Local Testing
 For development, call via GET:
 ```bash
-curl http://localhost:3000/api/cron/rag-retrofeeding
+curl http://localhost:3010/api/cron/rag-retrofeeding
 ```
 
 Responds with:
@@ -285,7 +285,7 @@ Coverage:
 **Solution**: 
 1. Verify CRON_SECRET is set in production
 2. Check logs at `/api/cron/rag-retrofeeding`
-3. Call manually to test: `curl http://localhost:3000/api/cron/rag-retrofeeding`
+3. Call manually to test: `curl http://localhost:3010/api/cron/rag-retrofeeding`
 
 ### Issue: Slow chat responses
 **Solution**:

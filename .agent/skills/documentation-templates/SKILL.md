@@ -44,7 +44,7 @@ Brief one-line description.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| PORT | Server port | 3000 |
+| PORT | Server port | 3010 |
 
 ## Documentation
 

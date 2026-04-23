@@ -210,7 +210,7 @@ Depois: gap-5
 ```bash
 cd /Users/paulo/Documents/flydea-financial-manager
 npm run dev
-# Acesse: http://localhost:3000
+# Acesse: http://localhost:3010
 ```
 
 ### Build de Produção

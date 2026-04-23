@@ -43,6 +43,8 @@ export async function GET(request: NextRequest) {
 
   let generatedCount = 0;
 
+  const recurrencePromises: Promise<any>[] = [];
+
   for (const rec of recurrences) {
     let nextDate = rec.nextDate ? new Date(rec.nextDate) : new Date(rec.startDate);
 
@@ -86,15 +88,17 @@ export async function GET(request: NextRequest) {
           }
         });
 
-        // Send email notification
+        // Send email notification (Fire and forget or collect)
         if (rec.user?.email) {
-          await sendRecurrenceNotification({
-            to: rec.user.email,
-            userName: rec.user.name || "Usuário",
-            description: rec.description,
-            amount: rec.amount,
-            date: nextDate,
-          }).catch(() => {}); // non-blocking
+          recurrencePromises.push(
+            sendRecurrenceNotification({
+              to: rec.user.email,
+              userName: rec.user.name || "Usuário",
+              description: rec.description,
+              amount: rec.amount,
+              date: nextDate,
+            }).catch((e) => console.error("[CronRecurrence] Email error:", e))
+          );
         }
 
         generatedCount++;
@@ -115,6 +119,12 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  // Wait for all emails to be dispatched (non-blocking for the loop, but ensures completion before route ends)
+  if (recurrencePromises.length > 0) {
+    await Promise.allSettled(recurrencePromises);
+  }
+
+  const dueSoonPromises: Promise<any>[] = [];
   for (const tx of dueSoonTransactions) {
     if (tx.user?.email) {
       const notificationExists = await prisma.notification.findFirst({
@@ -139,15 +149,21 @@ export async function GET(request: NextRequest) {
           }
         });
 
-        await sendDueSoonAlert({
-          to: tx.user.email,
-          userName: tx.user.name || "Usuário",
-          description: tx.description,
-          amount: tx.amount,
-          dueDate: tx.dueDate || now,
-        }).catch(() => {});
+        dueSoonPromises.push(
+          sendDueSoonAlert({
+            to: tx.user.email,
+            userName: tx.user.name || "Usuário",
+            description: tx.description,
+            amount: tx.amount,
+            dueDate: tx.dueDate || now,
+          }).catch((e) => console.error("[CronDueSoon] Email error:", e))
+        );
       }
     }
+  }
+
+  if (dueSoonPromises.length > 0) {
+    await Promise.allSettled(dueSoonPromises);
   }
 
   return NextResponse.json({ success: true, generated: generatedCount });

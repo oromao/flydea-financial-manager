@@ -104,15 +104,22 @@ export async function POST(request: NextRequest) {
       return newTransaction;
     });
 
-    await prisma.auditLog.create({
-      data: {
-        action: "IMPORT",
-        entity: "TRANSACTION",
-        entityId: transaction.id,
-        details: `Importado de ${importedDoc.fileName}`,
-        userId: session.user.id,
-      },
-    });
+    // Background Audit (Non-blocking)
+    void (async () => {
+      try {
+        const auditLog = await prisma.auditLog.create({
+          data: {
+            action: "IMPORT",
+            entity: "TRANSACTION",
+            entityId: transaction.id,
+            details: `Importado de ${importedDoc.fileName}`,
+            userId: session.user.id,
+          },
+        });
+      } catch (e) {
+        console.error("[AuditHook] Error:", e);
+      }
+    })();
 
     logger.info("DocumentImportConfirm: transaction created", { transactionId: transaction.id });
 

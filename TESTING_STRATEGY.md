@@ -195,7 +195,7 @@ describe('Agent API Integration', () => {
 
 describe('Agent API - Smoke Tests', () => {
   it('POST /api/agents should create agent', async () => {
-    const response = await fetch('http://localhost:3000/api/agents', {
+    const response = await fetch('http://localhost:3010/api/agents', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -211,7 +211,7 @@ describe('Agent API - Smoke Tests', () => {
   });
 
   it('GET /api/agents should list agents', async () => {
-    const response = await fetch('http://localhost:3000/api/agents');
+    const response = await fetch('http://localhost:3010/api/agents');
     expect(response.status).toBe(200);
     const data = await response.json();
     expect(Array.isArray(data)).toBe(true);
@@ -219,14 +219,14 @@ describe('Agent API - Smoke Tests', () => {
 
   it('GET /api/agents/:id should return agent', async () => {
     // Create agent first
-    const create = await fetch('http://localhost:3000/api/agents', {
+    const create = await fetch('http://localhost:3010/api/agents', {
       method: 'POST',
       body: JSON.stringify({ ... }),
     });
     const { id } = await create.json();
 
     // Get it
-    const response = await fetch(`http://localhost:3000/api/agents/${id}`);
+    const response = await fetch(`http://localhost:3010/api/agents/${id}`);
     expect(response.status).toBe(200);
   });
 });
@@ -243,13 +243,13 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Agent Creation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3010');
     // Login if needed
   });
 
   test('should create agent from UI', async ({ page }) => {
     // Navigate to agents page
-    await page.goto('http://localhost:3000/agents');
+    await page.goto('http://localhost:3010/agents');
 
     // Click create button
     await page.click('button:has-text("Novo Agente")');
@@ -270,7 +270,7 @@ test.describe('Agent Creation', () => {
   });
 
   test('should show agent in list', async ({ page }) => {
-    await page.goto('http://localhost:3000/agents');
+    await page.goto('http://localhost:3010/agents');
     // Verify agent appears in list
   });
 });

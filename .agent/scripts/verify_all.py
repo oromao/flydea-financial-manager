@@ -266,7 +266,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python scripts/verify_all.py . --url http://localhost:3000
+  python scripts/verify_all.py . --url http://localhost:3010
   python scripts/verify_all.py . --url https://staging.example.com --no-e2e
         """
     )

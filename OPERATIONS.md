@@ -10,7 +10,7 @@ npm install
 npx prisma db push --force-reset && npx prisma db seed
 
 # Development
-npm run dev          # http://localhost:3000
+npm run dev          # http://localhost:3010
 
 # Production build
 npm run build && npm start
@@ -106,7 +106,7 @@ The summary totals in exports match the UI cards because both compute from the s
 | `DATABASE_URL` | PostgreSQL connection (Neon recommended) |
 | `DIRECT_URL` | Direct PostgreSQL connection (for migrations) |
 | `NEXTAUTH_SECRET` | Session encryption key |
-| `NEXTAUTH_URL` | Base URL (http://localhost:3000 for dev) |
+| `NEXTAUTH_URL` | Base URL (http://localhost:3010 for dev) |
 | `CRON_SECRET` | Protects `/api/cron/*` endpoints |
 
 See `.env.example` for template.

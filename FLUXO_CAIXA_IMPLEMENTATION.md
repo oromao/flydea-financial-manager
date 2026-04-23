@@ -422,20 +422,20 @@ prisma/
 
 ```bash
 # 1. Criar invoice
-curl -X POST http://localhost:3000/api/invoices \
+curl -X POST http://localhost:3010/api/invoices \
   -H "Content-Type: application/json" \
   -d '{ "invoiceNumber": "NF-001", "clientName": "Test", ... }'
 
 # 2. Buscar fluxo
-curl http://localhost:3000/api/cashflow/weekly
+curl http://localhost:3010/api/cashflow/weekly
 
 # 3. Marcar como recebida
-curl -X PUT http://localhost:3000/api/invoices/[id] \
+curl -X PUT http://localhost:3010/api/invoices/[id] \
   -H "Content-Type: application/json" \
   -d '{ "installmentId": "[id]", "status": "RECEIVED" }'
 
 # 4. Enviar cobrança
-curl -X POST http://localhost:3000/api/cobranca/whatsapp \
+curl -X POST http://localhost:3010/api/cobranca/whatsapp \
   -H "Content-Type: application/json" \
   -d '{ "installmentId": "[id]", "phoneNumber": "+55..." }'
 ```

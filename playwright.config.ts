@@ -9,7 +9,7 @@ export default defineConfig({
   reporter: 'list',
   timeout: 90000,
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.BASE_URL || 'http://localhost:3010',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -21,6 +21,10 @@ export default defineConfig({
     {
       name: 'Mobile Chrome',
       use: { ...devices['Pixel 5'] },
+    },
+    {
+      name: 'Mobile Safari',
+      use: { ...devices['iPhone 16'] },
     },
   ],
 });

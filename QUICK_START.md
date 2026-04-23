@@ -7,7 +7,7 @@
 ## 📍 **ONDE ENCONTRAR CADA RECURSO**
 
 ### 1️⃣ **Dashboard Principal** (Home Page)
-**URL**: `http://localhost:3000`
+**URL**: `http://localhost:3010`
 
 ✅ **4 Novos Cards Integrados:**
 - **🤖 Agentes IA** - Card roxo (quick access para criar/gerenciar agentes)
@@ -18,7 +18,7 @@
 ---
 
 ### 2️⃣ **Página de Agentes IA**
-**URL**: `http://localhost:3000/agents`
+**URL**: `http://localhost:3010/agents`
 
 ✅ **O que fazer:**
 1. Clique no card roxo "🤖 Agentes IA" no dashboard
@@ -52,7 +52,7 @@
 ---
 
 ### 4️⃣ **AI Chat Completo (Insights)**
-**URL**: `http://localhost:3000/insights`
+**URL**: `http://localhost:3010/insights`
 
 ✅ **Como acessar:**
 1. Clique no card azul "IA Insights" no dashboard
@@ -68,7 +68,7 @@
 ---
 
 ### 5️⃣ **Importação de Comprovantes (OCR)**
-**URL**: `http://localhost:3000/movimentacoes`
+**URL**: `http://localhost:3010/movimentacoes`
 
 ✅ **Como usar:**
 1. Clique no card verde "📄 Importar Comprovante" no dashboard
@@ -191,7 +191,7 @@ npm run dev
 
 2. Abra no navegador:
 ```
-http://localhost:3000
+http://localhost:3010
 ```
 
 3. Teste na ordem:

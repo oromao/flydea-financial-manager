@@ -54,15 +54,22 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     include: { category: true, account: true, tags: { include: { tag: true } } }
   });
 
-  await prisma.auditLog.create({
-    data: {
-      action: "UPDATE",
-      entity: "TRANSACTION",
-      entityId: id,
-      details: `Editada transação: ${transaction.description}`,
-      userId: session.user.id
+  // Background Audit (Non-blocking)
+  void (async () => {
+    try {
+      const auditLog = await prisma.auditLog.create({
+        data: {
+          action: "UPDATE",
+          entity: "TRANSACTION",
+          entityId: id,
+          details: `Editada transação: ${transaction.description}`,
+          userId: session.user.id
+        }
+      });
+    } catch (e) {
+      console.error("[AuditHook] Error:", e);
     }
-  });
+  })();
 
   return NextResponse.json(transaction);
 }
@@ -84,15 +91,24 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
   try {
     await prisma.transaction.delete({ where: { id } });
-    await prisma.auditLog.create({
-      data: {
-        action: "DELETE",
-        entity: "TRANSACTION",
-        entityId: id,
-        details: `Removida transação: ${existing.description}`,
-        userId: session.user.id
+    
+    // Background Audit (Non-blocking)
+    void (async () => {
+      try {
+        const auditLog = await prisma.auditLog.create({
+          data: {
+            action: "DELETE",
+            entity: "TRANSACTION",
+            entityId: id,
+            details: `Removida transação: ${existing.description}`,
+            userId: session.user.id
+          }
+        });
+      } catch (e) {
+        console.error("[AuditHook] Error:", e);
       }
-    });
+    })();
+    
     return NextResponse.json({ success: true });
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "Erro ao excluir";
