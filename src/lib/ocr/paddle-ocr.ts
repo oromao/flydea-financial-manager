@@ -63,7 +63,7 @@ export class PaddleOCRService {
   private async executePDFParse(buffer: Buffer): Promise<string> {
     try {
       // Dynamic import to handle CommonJS/ESM interop in Next.js build
-      const pdfParseModule = await import("pdf-parse");
+      const pdfParseModule = await import("pdf-parse") as any;
       const pdfParse = pdfParseModule.default || pdfParseModule;
       const data = await pdfParse(buffer);
       return data.text;
