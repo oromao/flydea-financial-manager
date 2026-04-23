@@ -21,6 +21,7 @@ import { toLocalDateInput } from "@/lib/date-utils";
 import { MoneyInput } from "@/components/ui/money-input";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TransactionCard } from "@/components/movimentacoes/transaction-card";
+import { PageHeader } from "@/components/ui/page-header";
 
 function MovimentacoesContent() {
   const router = useRouter();
@@ -316,22 +317,10 @@ function MovimentacoesContent() {
   return (
     <div className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-primary text-on-primary shadow-lg shadow-primary/20">
-            <LayoutList className="w-7 h-7" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight text-on-background">Movimentações</h1>
-            <p className="text-on-surface-variant font-medium text-sm">Gerencie seu fluxo financeiro real</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button variant="outline" className="w-full md:w-auto h-11 px-6 font-bold text-sm rounded-xl border-outline/20 hover:bg-surface-variant transition-all">
+      <PageHeader icon={LayoutList} title="Movimentações" subtitle="Gerencie seu fluxo financeiro real">
+          <Button variant="outline" className="h-10 px-5 font-bold text-sm rounded-xl border-outline/20 hover:bg-surface-variant transition-all">
             <FileSpreadsheet className="w-4 h-4 mr-2" /> Exportar
           </Button>
-
           <Dialog open={open} onOpenChange={async (val) => {
             if (!val && !saving && (description || amount)) {
               const confirmed = await confirm({
@@ -345,7 +334,7 @@ function MovimentacoesContent() {
             setOpen(val);
             if (!val) resetForm();
           }}>
-            <DialogTrigger render={<Button className="apple-button-primary h-11 px-8 rounded-xl shadow-lg shadow-secondary/20"><Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVO</Button>} />
+            <DialogTrigger render={<Button className="apple-button-primary h-11 px-6 rounded-xl shadow-lg shadow-secondary/20 whitespace-nowrap"><Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVO</Button>} />
             
             <DialogContent className="sm:max-w-[550px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-[32px] bg-surface sm:shadow-2xl max-h-[90vh]">
               <div className="p-8 border-b border-outline/10 bg-surface sticky top-0 z-20">
@@ -466,11 +455,10 @@ function MovimentacoesContent() {
               </form>
             </DialogContent>
           </Dialog>
-        </div>
-      </div>
+      </PageHeader>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-4 md:px-0">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="premium-card p-4 min-h-[110px] flex flex-col justify-between">
           <p className="text-[9px] uppercase tracking-widest font-black text-on-surface-variant/50">Saldo Geral</p>
           <h2 className={cn("text-xl md:text-2xl font-black mt-2 tracking-tighter truncate", stats.balance >= 0 ? "text-on-background" : "text-red-500")}>{formatCurrency(stats.balance)}</h2>
@@ -519,26 +507,26 @@ function MovimentacoesContent() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 lg:flex gap-4 p-4 bg-surface-variant/20 rounded-2xl border border-outline/5 items-end">
+        <div className="flex flex-col sm:grid sm:grid-cols-2 lg:flex gap-3 p-4 bg-surface-variant/20 rounded-2xl border border-outline/5 lg:items-end">
           <div className="space-y-1 flex-1">
             <Label className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/50 ml-2">Período De</Label>
-            <Input type="date" value={startDateFilter} onChange={e => setStartDateFilter(e.target.value)} className="h-10 bg-white border-transparent rounded-xl text-xs font-black" />
+            <Input type="date" value={startDateFilter} onChange={e => setStartDateFilter(e.target.value)} className="h-10 bg-surface-container-lowest border-outline/10 rounded-xl text-xs font-black" />
           </div>
           <div className="space-y-1 flex-1">
             <Label className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/50 ml-2">Período Até</Label>
-            <Input type="date" value={endDateFilter} onChange={e => setEndDateFilter(e.target.value)} className="h-10 bg-white border-transparent rounded-xl text-xs font-black" />
+            <Input type="date" value={endDateFilter} onChange={e => setEndDateFilter(e.target.value)} className="h-10 bg-surface-container-lowest border-outline/10 rounded-xl text-xs font-black" />
           </div>
           
-          <div className="flex bg-white rounded-xl p-0.5 border border-outline/5 h-10">
-            <Button variant="ghost" className={cn("h-full px-4 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all", !filterType ? "bg-surface-variant/30 text-on-surface shadow-sm" : "text-on-surface-variant/40")} onClick={() => setFilterType(null)}>Todos</Button>
-            <Button variant="ghost" className={cn("h-full px-4 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all", filterType === "INCOME" ? "bg-emerald-500 text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
-            <Button variant="ghost" className={cn("h-full px-4 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all", filterType === "EXPENSE" ? "bg-red-500 text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
+          <div className="flex bg-surface-container-lowest rounded-xl p-0.5 border border-outline/10 h-10 overflow-hidden">
+            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", !filterType ? "bg-surface-variant/30 text-on-surface shadow-sm" : "text-on-surface-variant/40")} onClick={() => setFilterType(null)}>Todos</Button>
+            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterType === "INCOME" ? "bg-emerald-500 text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
+            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterType === "EXPENSE" ? "bg-red-500 text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
           </div>
 
-          <div className="flex bg-white rounded-xl p-0.5 border border-outline/5 h-10">
-            <Button variant="ghost" className={cn("h-full px-4 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all", filterPaymentStatus === "ALL" ? "bg-surface-variant/30 text-on-surface shadow-sm" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("ALL")}>Todos Status</Button>
-            <Button variant="ghost" className={cn("h-full px-4 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all", filterPaymentStatus === "PAID" ? "bg-secondary text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("PAID")}>Pagas</Button>
-            <Button variant="ghost" className={cn("h-full px-4 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all", filterPaymentStatus === "PENDING" ? "bg-amber-50 text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("PENDING")}>Pendentes</Button>
+          <div className="flex bg-surface-container-lowest rounded-xl p-0.5 border border-outline/10 h-10 overflow-hidden">
+            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterPaymentStatus === "ALL" ? "bg-surface-variant/30 text-on-surface shadow-sm" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("ALL")}>Status</Button>
+            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterPaymentStatus === "PAID" ? "bg-secondary text-on-secondary shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("PAID")}>Pagas</Button>
+            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterPaymentStatus === "PENDING" ? "bg-amber-500 text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("PENDING")}>Pendentes</Button>
           </div>
 
           {(searchTerm || filterCategory !== "Todos" || filterType || filterPaymentStatus !== "ALL" || startDateFilter || endDateFilter) && (
@@ -616,7 +604,7 @@ function MovimentacoesContent() {
       )}
 
       {/* Mobile FAB */}
-      <div className="md:hidden fixed z-[50]" style={{ bottom: 'calc(5.5rem + env(safe-area-inset-bottom))', right: '1.5rem' }}>
+      <div className="md:hidden fixed z-[50]" style={{ bottom: 'calc(6rem + env(safe-area-inset-bottom))', right: '1.5rem' }}>
         <button onClick={() => { resetForm(); setOpen(true); }} className="h-16 w-16 rounded-[24px] bg-secondary text-on-secondary shadow-2xl shadow-secondary/40 flex items-center justify-center border-none active:scale-95 transition-all">
           <Plus className="w-8 h-8" strokeWidth={3.5} />
         </button>

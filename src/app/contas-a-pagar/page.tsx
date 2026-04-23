@@ -97,25 +97,25 @@ export default function ContasAPagar() {
           </div>
         </div>
 
-        <div className="flex bg-surface-variant/40 rounded-2xl p-1 border border-outline/5 self-start md:self-center">
-            <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-black uppercase tracking-widest transition-all", filter === "all" ? "bg-white text-on-surface shadow-md" : "text-on-surface-variant")} onClick={() => setFilter("all")}>Todas</Button>
-            <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-black uppercase tracking-widest transition-all", filter === "overdue" ? "bg-red-500 text-white shadow-lg shadow-red-500/20" : "text-on-surface-variant")} onClick={() => setFilter("overdue")}>Atrasadas</Button>
-            <Button variant="ghost" className={cn("h-10 px-6 rounded-xl text-xs font-black uppercase tracking-widest transition-all", filter === "upcoming" ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20" : "text-on-surface-variant")} onClick={() => setFilter("upcoming")}>Próximos 7d</Button>
+        <div className="flex bg-surface-variant/40 rounded-2xl p-1 border border-outline/5 self-start md:self-center overflow-x-auto">
+            <Button variant="ghost" className={cn("h-10 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap", filter === "all" ? "bg-white text-on-surface shadow-md" : "text-on-surface-variant")} onClick={() => setFilter("all")}>Todas</Button>
+            <Button variant="ghost" className={cn("h-10 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap", filter === "overdue" ? "bg-red-500 text-white shadow-lg shadow-red-500/20" : "text-on-surface-variant")} onClick={() => setFilter("overdue")}>Atrasadas</Button>
+            <Button variant="ghost" className={cn("h-10 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap", filter === "upcoming" ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20" : "text-on-surface-variant")} onClick={() => setFilter("upcoming")}>Próximos 7d</Button>
         </div>
       </motion.header>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 px-4 md:px-0">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
          <Card className="premium-card p-5 bg-surface border-outline/10">
             <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Total Pendente</p>
-            <h2 className="text-2xl md:text-4xl font-black mt-2 tracking-tighter">{formatCurrency(totals.total)}</h2>
+            <h2 className="text-xl md:text-3xl font-black mt-2 tracking-tighter truncate">{formatCurrency(totals.total)}</h2>
          </Card>
          <Card className="premium-card p-5 bg-red-50/30 border-red-100">
             <p className="text-[10px] font-black uppercase tracking-widest text-red-600/60">Atrasadas</p>
-            <h2 className="text-2xl md:text-4xl font-black mt-2 text-red-600 tracking-tighter">{formatCurrency(totals.overdue)}</h2>
+            <h2 className="text-xl md:text-3xl font-black mt-2 text-red-600 tracking-tighter truncate">{formatCurrency(totals.overdue)}</h2>
          </Card>
          <Card className="premium-card p-5 bg-amber-50/30 border-amber-100">
             <p className="text-[10px] font-black uppercase tracking-widest text-amber-600/60">Próximos 7 dias</p>
-            <h2 className="text-2xl md:text-4xl font-black mt-2 text-amber-600 tracking-tighter">{formatCurrency(totals.upcoming)}</h2>
+            <h2 className="text-xl md:text-3xl font-black mt-2 text-amber-600 tracking-tighter truncate">{formatCurrency(totals.upcoming)}</h2>
          </Card>
       </div>
 

@@ -168,6 +168,17 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
         </div>
         <div className="flex items-center gap-2">
           <DarkModeToggleClient />
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className="w-10 h-10 rounded-full overflow-hidden bg-surface-container-low border-2 border-surface-container-high flex items-center justify-center transition-all hover:border-primary/30"
+            aria-label="Abrir menu do usuário"
+          >
+            {session?.user?.image ? (
+              <img src={session.user.image as string} alt="Perfil" className="w-full h-full object-cover" />
+            ) : (
+              <UserCircle className="w-6 h-6 text-on-surface-variant" />
+            )}
+          </button>
         </div>
       </header>
 

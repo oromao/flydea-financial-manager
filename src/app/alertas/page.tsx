@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Bell, CheckCheck, Trash2, MailWarning, Info, AlertTriangle } from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -71,15 +72,7 @@ export default function Alertas() {
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-lg bg-secondary text-on-secondary">
-            <Bell className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-on-background">Alertas</h1>
-            <p className="text-on-surface-variant text-sm mt-1">Notificações in-app do sistema</p>
-          </div>
-        </div>
+        <PageHeader icon={Bell} title="Alertas" subtitle="Notificações in-app do sistema" iconClassName="bg-secondary text-on-secondary shadow-secondary/20" />
         <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
           <Input
             value={query}

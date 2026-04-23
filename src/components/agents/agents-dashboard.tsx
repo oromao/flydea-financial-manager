@@ -29,7 +29,7 @@ export function AgentsDashboard() {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [executing, setExecuting] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
+  const [creatingId, setCreatingId] = useState<string | null>(null);
 
   useEffect(() => {
     loadAgents();
@@ -84,7 +84,7 @@ export function AgentsDashboard() {
   ];
 
   const handleQuickCreate = async (template: typeof QUICK_TEMPLATES[0]) => {
-    setCreating(true);
+    setCreatingId(template.id);
     try {
       const res = await fetch("/api/agents", {
         method: "POST",
@@ -108,7 +108,7 @@ export function AgentsDashboard() {
     } catch (e) {
       toast.error("Erro ao conectar com servidor");
     } finally {
-      setCreating(false);
+      setCreatingId(null);
     }
   };
 
@@ -161,49 +161,52 @@ export function AgentsDashboard() {
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center justify-between"
       >
-        <div>
-          <h1 className="text-3xl font-black text-on-background tracking-tight uppercase italic flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500">
-              <Brain className="w-6 h-6" />
-            </div>
-            Agentes IA
-          </h1>
-          <p className="text-on-surface-variant text-sm mt-1 font-medium">
-            Ative assistentes que cuidam do seu dinheiro automaticamente
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-2xl bg-blue-500/10 text-blue-500 shadow-lg shadow-blue-500/10 flex-shrink-0">
+            <Brain className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-black text-on-background tracking-tight">Agentes IA</h1>
+            <p className="text-on-surface-variant text-sm mt-0.5 font-medium">
+              Ative assistentes que cuidam do seu dinheiro automaticamente
+            </p>
+          </div>
         </div>
         <Button
           onClick={() => setShowForm(true)}
-          className="gap-2 rounded-full font-bold uppercase tracking-widest text-xs px-6 bg-white/5 border-white/10 hover:bg-white/10 text-on-surface"
+          variant="outline"
+          className="gap-2 rounded-xl font-bold text-xs px-4 h-9 border-outline/20 text-on-surface-variant hover:text-on-surface hover:border-outline/40"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-3.5 h-3.5" />
           Personalizado
         </Button>
       </motion.div>
 
       {/* Quick Templates */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+      <div className="flex flex-col gap-3 pt-2">
         {QUICK_TEMPLATES.map((template) => (
-          <motion.div
+          <motion.button
             key={template.id}
-            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => !creating && handleQuickCreate(template)}
-            className="p-6 rounded-[32px] bg-white/[0.03] border border-white/[0.05] cursor-pointer hover:bg-white/[0.06] hover:border-white/10 transition-all group relative overflow-hidden backdrop-blur-xl"
-          >
-            <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110", template.color)}>
-              <template.icon className="w-6 h-6" />
-            </div>
-            <h3 className="font-black text-sm uppercase tracking-tight text-on-background">{template.name}</h3>
-            <p className="text-[10px] text-on-surface-variant mt-1 font-black uppercase opacity-40 tracking-[0.15em]">
-              {template.description}
-            </p>
-            {creating && (
-              <div className="absolute inset-0 bg-surface/60 backdrop-blur-sm flex items-center justify-center">
-                <Loader2 className="w-6 h-6 animate-spin text-secondary" />
-              </div>
+            onClick={() => !creatingId && handleQuickCreate(template)}
+            disabled={!!creatingId}
+            className={cn(
+              "w-full flex items-center gap-4 p-4 rounded-2xl bg-surface-container-low border border-outline/10 cursor-pointer hover:bg-surface-container hover:border-outline/20 transition-all text-left relative overflow-hidden",
+              creatingId === template.id && "opacity-70"
             )}
-          </motion.div>
+          >
+            <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center shrink-0", template.color)}>
+              {creatingId === template.id
+                ? <Loader2 className="w-5 h-5 animate-spin" />
+                : <template.icon className="w-5 h-5" />
+              }
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-sm text-on-background">{template.name}</p>
+              <p className="text-xs text-on-surface-variant mt-0.5 truncate">{template.description}</p>
+            </div>
+            <Plus className={cn("w-5 h-5 shrink-0 text-on-surface-variant/40 transition-all", creatingId === template.id && "opacity-0")} />
+          </motion.button>
         ))}
       </div>
 

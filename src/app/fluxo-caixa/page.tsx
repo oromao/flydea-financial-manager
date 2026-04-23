@@ -5,6 +5,7 @@ import { WeeklyCashflow } from "@/components/weekly-cashflow";
 import { InvoiceManager } from "@/components/invoice-manager";
 import { BarChart3, ReceiptText, Brain } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = {
   title: "Fluxo de Caixa",
@@ -20,20 +21,9 @@ export default async function CashflowPage() {
 
   return (
     <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-secondary text-on-secondary shadow-lg shadow-secondary/20">
-            <BarChart3 className="w-8 h-8" />
-          </div>
-          <div>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-on-background">Fluxo de Caixa</h1>
-            <p className="text-on-surface-variant font-medium text-sm mt-1">Previsão e controle de liquidez</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader icon={BarChart3} title="Fluxo de Caixa" subtitle="Previsão e controle de liquidez" iconClassName="bg-secondary text-on-secondary shadow-secondary/20" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] lg:grid-cols-12 gap-8 items-start">
         {/* Coluna principal: Fluxo semanal */}
         <div className="lg:col-span-8">
           <WeeklyCashflow />

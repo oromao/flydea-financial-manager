@@ -2,35 +2,14 @@
 
 import { Brain, TrendingUp, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageHeader } from "@/components/ui/page-header";
 import { FinancialAIChat } from "@/components/financial-ai-chat";
 
 export default function InsightsPage() {
   return (
     <div className="space-y-8 md:space-y-12 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col md:flex-row md:items-center justify-between gap-6"
-      >
-        <div className="flex items-center gap-4">
-          <motion.div
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            whileTap={{ scale: 0.95 }}
-            className="p-3 rounded-2xl bg-gradient-to-br from-secondary/20 to-secondary/5 text-secondary"
-          >
-            <Brain className="w-7 h-7 md:w-8 md:h-8" />
-          </motion.div>
-          <div className="flex-1">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-background">
-              Insights Financeiros
-            </h1>
-            <p className="text-on-surface-variant font-medium text-sm mt-1">
-              IA analisando seus padrões de gastos com precisão
-            </p>
-          </div>
-        </div>
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <PageHeader icon={Brain} title="Insights Financeiros" subtitle="IA analisando seus padrões de gastos com precisão" iconClassName="bg-gradient-to-br from-secondary/20 to-secondary/5 text-secondary shadow-secondary/10" />
       </motion.div>
 
       {/* Info Cards */}

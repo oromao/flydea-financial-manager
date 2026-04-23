@@ -248,7 +248,7 @@ export default function Orcamentos() {
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-24 gap-6 opacity-30"
+          className="flex flex-col items-center justify-center py-16 gap-4 opacity-30"
         >
             <Target className="w-16 h-16 text-on-surface-variant" />
             <div className="text-center">
@@ -257,7 +257,7 @@ export default function Orcamentos() {
             </div>
         </motion.div>
       ) : (
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 gap-4">
           {budgets.map((budget, idx) => {
             const pct = Math.min(budget.percentage || 0, 100);
             const isAlert = (budget.percentage || 0) >= budget.alertAt;
@@ -277,11 +277,11 @@ export default function Orcamentos() {
                 transition={{ delay: idx * 0.05 + 0.2 }}
               >
                 <Card className={cn(
-                  "premium-card p-7 group transition-colors",
+                  "premium-card p-5 md:p-7 group transition-colors",
                   isOver && "border-red-100 bg-red-50/10",
                   isAlert && !isOver && "border-amber-100 bg-amber-50/10"
                 )}>
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 md:mb-8">
                     <div className="space-y-1.5 text-left">
                       <div className="flex items-center gap-3">
                         <h3 className="font-bold text-xl text-on-background tracking-tight">{budget.category?.name}</h3>
