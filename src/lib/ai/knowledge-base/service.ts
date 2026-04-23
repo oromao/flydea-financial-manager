@@ -61,46 +61,46 @@ export class KnowledgeService {
   /**
    * Performs a weighted keyword search to find relevant knowledge nodes.
    */
-  async getRelevantNodes(query: string, limit = 2): Promise<KnowledgeNode[]> {
+  async getRelevantNodes(query: string, limit = 3): Promise<KnowledgeNode[]> {
     const normalized = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const words = normalized.split(/\s+/);
-const scoredNodes = initialKnowledge.map(node => {
-  let score = 0;
+    const words = normalized.split(/\s+/).filter(w => w.length > 2);
 
-  const normalizedTitle = node.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const normalizedKeywords = node.keywords.map(k => k.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
-  const normalizedContent = node.content.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const scoredNodes = initialKnowledge.map(node => {
+      let score = 0;
+      
+      const normalizedTitle = node.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const normalizedKeywords = node.keywords.map(k => k.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+      const normalizedContent = node.content.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-  // 1. Full Query Matches
-  if (normalizedTitle.includes(normalized)) score += 10;
-  if (normalizedContent.includes(normalized)) score += 2;
+      // 1. Exact Phrases (Very High weight)
+      if (normalizedTitle.includes(normalized)) score += 20;
+      if (normalizedContent.includes(normalized)) score += 10;
+      
+      // 2. Keyword/Word Matches
+      for (const keyword of normalizedKeywords) {
+        if (words.includes(keyword)) {
+          score += 15; // Exact word match
+        } else if (normalized.includes(keyword)) {
+          score += 5; // Substring match
+        }
+      }
 
-  // 2. Keyword Matches
-  for (const keyword of normalizedKeywords) {
-    // Exact keyword match
-    if (words.includes(keyword)) {
-      score += 10;
-    } else if (normalized.includes(keyword)) {
-      score += 5;
-    }
-  }
+      // 3. Theme Relevance
+      if (normalized.includes(node.theme.toLowerCase())) score += 5;
 
-  // 3. Individual Word Matches (Stricter)
-  for (const word of words) {
-    if (word.length <= 3) continue; // Skip short words like "qual", "com", "uma"
+      // 4. Term Frequency across content
+      for (const word of words) {
+        if (normalizedTitle.includes(word)) score += 2;
+        if (normalizedContent.includes(word)) score += 0.5;
+      }
 
-    if (normalizedTitle.includes(word)) score += 2;
-    if (normalizedKeywords.some(k => k.includes(word))) score += 1;
-  }
+      return { node, score };
+    });
 
-  return { node, score };
-});
+    const MIN_THRESHOLD = 8;
 
-// Use a minimum score threshold to avoid noise
-const MIN_SCORE = 5;
-
-return scoredNodes
-  .filter(sn => sn.score >= MIN_SCORE)
+    return scoredNodes
+      .filter(sn => sn.score >= MIN_THRESHOLD)
       .sort((a, b) => b.score - a.score)
       .slice(0, limit)
       .map(sn => sn.node);

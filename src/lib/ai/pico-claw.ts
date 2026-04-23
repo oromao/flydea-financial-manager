@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
 import { intentEngine, UserIntent } from "./intent-engine";
 import { reasoningEngine } from "./reasoning-engine";
+import { memoryManager } from "./memory-manager";
 
 export interface UserFinancialData {
   userId: string;
@@ -106,10 +107,10 @@ export class PicoClawEngine {
 
   async generateInsights(data: UserFinancialData): Promise<PicoClawInsight[]> {
     const { userId } = data;
-    logger.info("PicoClaw: evaluating reasoning engine", { userId });
+    logger.info("PicoClaw: evaluating reasoning engine with context", { userId });
 
-    // 0. Fetch user intelligence & recent insights (Memory Engine)
-    const [intel, recentInsights] = await Promise.all([
+    // 0. Fetch user intelligence, recent insights & preferences (Memory Engine)
+    const [intel, recentInsights, prefs] = await Promise.all([
       prisma.userIntelligence.findUnique({ where: { userId } }),
       prisma.insight.findMany({
         where: { 
@@ -117,13 +118,20 @@ export class PicoClawEngine {
           createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } 
         },
         select: { type: true }
-      })
+      }),
+      memoryManager.getUserPreferences(userId)
     ]);
 
     const recentTypes = recentInsights.map(i => i.type);
     
+    // Combine native intel with derived prefs for the reasoning engine
+    const augmentedIntel = {
+      ...intel,
+      ...prefs
+    };
+    
     // 1. Core Reasoning Engine Evaluation
-    const insights = await reasoningEngine.evaluate(data, intel, recentTypes);
+    const insights = await reasoningEngine.evaluate(data, augmentedIntel, recentTypes);
 
     // 2. Persist new insights asynchronously
     if (insights.length > 0) {

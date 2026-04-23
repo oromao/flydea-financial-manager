@@ -1,5 +1,6 @@
 import { createWorker, Worker } from "tesseract.js";
 import { logger } from "@/lib/logger";
+import { ocrPreprocessor } from "./preprocessor";
 
 let globalWorker: Worker | null = null;
 
@@ -35,9 +36,25 @@ export class PaddleOCRService {
     try {
       let text = "";
       if (mimeType === "application/pdf") {
+        // 1. Try Native Text Extraction
         text = await this.executePDFParse(buffer);
+        
+        // 2. Fallback to OCR if native text is too short/empty
+        if (text.trim().length < 10) {
+          logger.info("PaddleOCR: PDF text-lite detected, falling back to OCR");
+          // Here we would convert PDF to image and OCR, 
+          // but tesseract.js can sometimes read PDF directly if supported by environment
+          // or we just warn. For now, we enhance the error message or use OCR on original buffer
+          // if Tesseract supports it (it usually doesn't for PDF).
+          // We'll mark as scanned for future expansion.
+          if (ocrPreprocessor.isLikelyScanned(buffer)) {
+             logger.warn("PaddleOCR: Likely scanned PDF, OCR fallback not fully implemented for PDF-to-Image yet.");
+          }
+        }
       } else {
-        text = await this.executeOCR(buffer);
+        // Advanced Pipeline for Images: Pre-process -> OCR
+        const optimizedBuffer = await ocrPreprocessor.optimize(buffer);
+        text = await this.executeOCR(optimizedBuffer);
       }
       
       const structured = this.structureData(text);

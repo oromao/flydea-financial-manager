@@ -8,6 +8,8 @@ vi.mock("@/lib/prisma", () => ({
     transaction: { findMany: vi.fn() },
     userIntelligence: { findUnique: vi.fn() },
     insight: { findMany: vi.fn(), createMany: vi.fn() },
+    insightInteraction: { findMany: vi.fn() },
+    auditLog: { findMany: vi.fn() },
   },
 }));
 
@@ -16,6 +18,7 @@ describe("PicoClaw v2 Integration", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(prisma.insightInteraction.findMany).mockResolvedValue([]);
   });
 
   it("should process a complex help query by combining HIE and Knowledge Base", async () => {

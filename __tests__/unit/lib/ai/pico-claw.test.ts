@@ -6,6 +6,8 @@ vi.mock("@/lib/prisma", () => ({
   prisma: {
     userIntelligence: { findUnique: vi.fn() },
     insight: { findMany: vi.fn(), createMany: vi.fn() },
+    insightInteraction: { findMany: vi.fn() },
+    auditLog: { findMany: vi.fn() },
   },
 }));
 
@@ -19,6 +21,7 @@ describe("PicoClawEngine", () => {
     
     vi.mocked(prisma.userIntelligence.findUnique).mockResolvedValue(null);
     vi.mocked(prisma.insight.findMany).mockResolvedValue([]);
+    vi.mocked(prisma.insightInteraction.findMany).mockResolvedValue([]);
   });
 
   const mockData = (overrides: Partial<UserFinancialData["summary"]> = {}): UserFinancialData => ({
