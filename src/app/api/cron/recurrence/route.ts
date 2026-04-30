@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { isBefore, isSameDay, addMonths, addWeeks, addDays, startOfDay, format } from "date-fns";
+import { isBefore, isSameDay, addMonths, addWeeks, addDays, addYears, startOfDay, format } from "date-fns";
 import { sendRecurrenceNotification, sendDueSoonAlert } from "@/lib/email";
 
 /**
@@ -108,6 +108,10 @@ export async function GET(request: NextRequest) {
         nextDate = addMonths(nextDate, 1);
       } else if (rec.frequency === "WEEKLY") {
         nextDate = addWeeks(nextDate, 1);
+      } else if (rec.frequency === "BIWEEKLY") {
+        nextDate = addWeeks(nextDate, 2);
+      } else if (rec.frequency === "YEARLY") {
+        nextDate = addYears(nextDate, 1);
       } else {
         break;
       }

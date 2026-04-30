@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Trash2, Target, AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
+import { Plus, Trash2, Target, AlertTriangle, CheckCircle2, Loader2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -36,6 +36,7 @@ export default function Orcamentos() {
   const [amount, setAmount] = useState("");
   const [period, setPeriod] = useState("MONTHLY");
   const [alertAt, setAlertAt] = useState("80");
+  const [selectedPeriod, setSelectedPeriod] = useState<string>(new Date().toISOString().slice(0, 7));
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -132,84 +133,18 @@ export default function Orcamentos() {
           </motion.div>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-background">Orçamentos</h1>
-            <p className="text-on-surface-variant font-medium text-sm mt-1">Planejamento e controle de limites</p>
+<p className="text-on-surface-variant font-medium text-sm mt-1">Planejamento e controle de limites</p>
           </div>
-        </div>
 
-        <Dialog open={isOpen} onOpenChange={(v) => { setIsOpen(v); if (!v) resetForm(); }}>
-          <DialogTrigger render={<Button className="apple-button-primary h-11 px-8" />}>
-            <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVO ORÇAMENTO
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-3xl bg-surface sm:shadow-2xl">
-            <div className="p-8 border-b border-outline/10 bg-surface">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-bold tracking-tight text-on-background">
-                  Definir Orçamento
-                </DialogTitle>
-                <p className="text-on-surface-variant text-sm font-medium mt-1">Estabeleça limites inteligentes por categoria</p>
-              </DialogHeader>
-            </div>
-            <form onSubmit={handleSubmit} className="p-8 space-y-6">
-              <div className="space-y-2">
-                <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Categoria</Label>
-                <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
-                  <SelectTrigger className="h-11 font-medium text-foreground">
-                    {categories.find(c => c.id === categoryId)?.name || <span className="text-muted-foreground">Selecione...</span>}
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    {categories.map((c) => (
-                      <SelectItem key={c.id} value={c.id} className="rounded-lg">{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Limite (BRL)</Label>
-                  <Input type="number" step="0.01" required value={amount} onChange={(e) => setAmount(e.target.value)}
-                    className="h-11 font-bold text-lg"
-                    placeholder="0,00" />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-on-surface-variant font-bold ml-1">Período</Label>
-                  <Select value={period} onValueChange={(v: string | null) => setPeriod(v || "MONTHLY")}>
-                    <SelectTrigger className="h-11 font-medium text-foreground">
-                      {period === "MONTHLY" ? "Mensal" : period === "YEARLY" ? "Anual" : <span className="text-muted-foreground">Selecione...</span>}
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="MONTHLY" className="rounded-lg">Mensal</SelectItem>
-                      <SelectItem value="YEARLY" className="rounded-lg">Anual</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex justify-between items-center px-1">
-                  <Label className="text-xs font-semibold text-on-surface-variant font-bold">
-                    Alerta de Proximidade
-                  </Label>
-                  <span className="text-xs font-bold text-secondary">{alertAt}%</span>
-                </div>
-                <Input type="range" min="10" max="100" step="5" value={alertAt}
-                  onChange={(e) => setAlertAt(e.target.value)}
-                  className="h-1.5 w-full accent-secondary" />
-                <div className="flex justify-between text-[10px] text-on-surface-variant/30 font-bold uppercase tracking-wider">
-                  <span>Mínimo</span><span>Crítico</span>
-                </div>
-              </div>
-
-              <Button type="submit" disabled={saving} className="apple-button-primary w-full h-12 text-base mt-2">
-                {saving ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Salvando...
-                  </>
-                ) : "Confirmar Configuração"}
-              </Button>
-            </form>
-          </DialogContent>
+          <div className="flex items-center gap-3">
+            <Calendar className="w-5 h-5 text-on-surface-variant" />
+            <input
+              type="month"
+              value={selectedPeriod}
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+              className="h-10 px-4 rounded-xl bg-surface-variant/30 border border-outline/10 font-bold text-sm focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
         </Dialog>
       </motion.div>
 

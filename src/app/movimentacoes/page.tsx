@@ -176,6 +176,7 @@ function MovimentacoesContent() {
   const [paymentStatus, setPaymentStatus] = useState("PAID");
   const [dueDate, setDueDate] = useState("");
   const [paidAt, setPaidAt] = useState("");
+  const [amountPaid, setAmountPaid] = useState("");
   const [attachmentUrl, setAttachmentUrl] = useState("");
   const [blobUrl, setBlobUrl] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -189,7 +190,7 @@ function MovimentacoesContent() {
     if (!categoryId) return toast.error("Categoria é obrigatória");
 
     setSaving(true);
-    const payload = {
+    const payload: any = {
       type,
       description: description.trim(),
       categoryId,
@@ -202,6 +203,9 @@ function MovimentacoesContent() {
       attachmentUrl: attachmentUrl || null,
       blobUrl: blobUrl || null,
     };
+    if (amountPaid && parseFloat(amountPaid) > 0) {
+      payload.amountPaid = parseFloat(amountPaid);
+    }
 
     try {
       const url = editingId ? `/api/transactions/${editingId}` : "/api/transactions";
@@ -280,6 +284,7 @@ function MovimentacoesContent() {
     setPaymentStatus(t.paymentStatus || "PAID");
     setDueDate(t.dueDate ? toLocalDateInput(t.dueDate) : "");
     setPaidAt(t.paidAt ? toLocalDateInput(t.paidAt) : "");
+    setAmountPaid(t.amountPaid?.toString() || "");
     setAttachmentUrl(t.attachmentUrl || "");
     setBlobUrl(t.blobUrl || "");
     setOpen(true);
@@ -295,6 +300,7 @@ function MovimentacoesContent() {
     setPaymentStatus("PAID");
     setDueDate("");
     setPaidAt("");
+    setAmountPaid("");
     setAttachmentUrl("");
     setBlobUrl("");
     setCategoryId(categories.find((c: any) => c.name === "Outros")?.id || (categories.length > 0 ? categories[0].id : ""));
@@ -352,62 +358,81 @@ function MovimentacoesContent() {
                   <Button type="button" variant="ghost" className={cn("flex-1 h-10 rounded-xl text-xs font-black uppercase tracking-widest transition-all", type === "EXPENSE" ? "bg-white text-red-600 shadow-md scale-[1.02]" : "text-on-surface-variant")} onClick={() => setType("EXPENSE")}><ArrowDown className="w-4 h-4 mr-2" /> Despesa</Button>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Descrição</Label>
-                  <Input required value={description} onChange={e => setDescription(e.target.value)} className="h-12 font-bold text-lg rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" placeholder="O que você pagou ou recebeu?" />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Dados Principais</h3>
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Valor (BRL)</Label>
-                    <MoneyInput value={amount} onChange={setAmount} className="h-12 font-black text-2xl rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Data</Label>
-                    <Input required type="date" value={date} onChange={e => setDate(e.target.value)} className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" />
+                    <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Descrição</Label>
+                    <Input required value={description} onChange={e => setDescription(e.target.value)} className="h-12 font-bold text-lg rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" placeholder="O que você pagou ou recebeu?" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Valores e Datas</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Valor (BRL)</Label>
+                      <MoneyInput value={amount} onChange={setAmount} className="h-12 font-black text-2xl rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Data</Label>
+                      <Input required type="date" value={date} onChange={e => setDate(e.target.value)} className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Classificação</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Categoria</Label>
+                      <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
+                        <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
+                          {categories.find(c => c.id === categoryId)?.name || "Selecione..."}
+                        </SelectTrigger>
+                        <SelectContent className="rounded-2xl border-outline/10">
+                          {categories.map(c => (
+                            <SelectItem key={c.id} value={c.id} className="rounded-xl font-bold">{c.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Recorrência</Label>
+                      <Select value={frequency} onValueChange={(v: string | null) => setFrequency(v || "")}>
+                        <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
+                          {frequency === "MONTHLY" ? "Mensal" : "Nenhuma"}
+                        </SelectTrigger>
+                        <SelectContent className="rounded-2xl border-outline/10">
+                          <SelectItem value="NONE" className="rounded-xl font-bold">Nenhuma</SelectItem>
+                          <SelectItem value="MONTHLY" className="rounded-xl font-bold">Mensal</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Status</h3>
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Categoria</Label>
-                    <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
+                    <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Status de Pagamento</Label>
+                    <Select value={paymentStatus} onValueChange={(v: string | null) => setPaymentStatus(v || "")}>
                       <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
-                        {categories.find(c => c.id === categoryId)?.name || "Selecione..."}
+                        {paymentStatus === "PAID" ? "Pago" : "Pendente"}
                       </SelectTrigger>
                       <SelectContent className="rounded-2xl border-outline/10">
-                        {categories.map(c => (
-                          <SelectItem key={c.id} value={c.id} className="rounded-xl font-bold">{c.name}</SelectItem>
-                        ))}
+                        <SelectItem value="PAID" className="rounded-xl font-bold">Confirmado / Pago</SelectItem>
+                        <SelectItem value="PENDING" className="rounded-xl font-bold">Pendente / Agendado</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Recorrência</Label>
-                    <Select value={frequency} onValueChange={(v: string | null) => setFrequency(v || "")}>
-                      <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
-                        {frequency === "MONTHLY" ? "Mensal" : "Nenhuma"}
-                      </SelectTrigger>
-                      <SelectContent className="rounded-2xl border-outline/10">
-                        <SelectItem value="NONE" className="rounded-xl font-bold">Nenhuma</SelectItem>
-                        <SelectItem value="MONTHLY" className="rounded-xl font-bold">Mensal</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Status de Pagamento</Label>
-                  <Select value={paymentStatus} onValueChange={(v: string | null) => setPaymentStatus(v || "")}>
-                    <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
-                      {paymentStatus === "PAID" ? "Pago" : "Pendente"}
-                    </SelectTrigger>
-                    <SelectContent className="rounded-2xl border-outline/10">
-                      <SelectItem value="PAID" className="rounded-xl font-bold">Confirmado / Pago</SelectItem>
-                      <SelectItem value="PENDING" className="rounded-xl font-bold">Pendente / Agendado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {paymentStatus === "PENDING" && (
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Valor já Pago (parcial)</Label>
+                    <MoneyInput value={amountPaid} onChange={setAmountPaid} className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" placeholder="0,00" />
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Comprovante</Label>
@@ -596,9 +621,28 @@ function MovimentacoesContent() {
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 md:px-0 mt-8 pb-10">
           <p className="text-[10px] font-black uppercase text-on-surface-variant/50">{total} registros · Página {page} de {totalPages}</p>
-          <div className="flex gap-2">
-            <Button variant="outline" disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="h-11 px-6 rounded-2xl font-black text-[10px] uppercase">Anterior</Button>
-            <Button variant="outline" disabled={page >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))} className="h-11 px-6 rounded-2xl font-black text-[10px] uppercase">Próxima</Button>
+          <div className="flex gap-2 items-center">
+            <Button variant="outline" disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="h-11 px-4 rounded-2xl font-black text-[10px] uppercase">Anterior</Button>
+            <div className="flex gap-1">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={page === pageNum ? "default" : "ghost"}
+                    size="icon"
+                    onClick={() => setPage(pageNum)}
+                    className="w-9 h-9 rounded-xl text-xs font-bold"
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+              {totalPages > 5 && (
+                <span className="flex items-center px-2 text-on-surface-variant/50">...</span>
+              )}
+            </div>
+            <Button variant="outline" disabled={page >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))} className="h-11 px-4 rounded-2xl font-black text-[10px] uppercase">Próxima</Button>
           </div>
         </div>
       )}

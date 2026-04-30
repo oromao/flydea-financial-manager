@@ -85,25 +85,34 @@ export default function ContasPage() {
   };
 
   const handleDelete = async (id: string) => {
+    const account = accounts.find(a => a.id === id);
+    const isActive = account?.isActive !== false;
+
     const ok = await confirm({
-      title: "Excluir conta",
-      message: "Tem certeza? Isso pode afetar o histórico de transações vinculadas.",
-      confirmLabel: "Excluir",
-      variant: "danger",
+      title: isActive ? "Desativar conta" : "Reativar conta",
+      message: isActive 
+        ? "A conta será arquivada mas o histórico de transações será preservado. Você pode reativar a qualquer momento."
+        : "Esta conta voltará a aparecer normalmente.",
+      confirmLabel: isActive ? "Desativar" : "Reativar",
+      variant: isActive ? "danger" : "info",
     });
     if (!ok) return;
 
     try {
-      const res = await fetch(`/api/accounts/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/accounts/${id}`, { 
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: !isActive })
+      });
       if (res.ok) {
-        toast.success("Conta removida!");
+        toast.success(isActive ? "Conta arquivada!" : "Conta reativada!");
         fetchAccounts();
       } else {
         const err = await res.json();
-        toast.error(err.error || "Não foi possível excluir esta conta.");
+        toast.error(err.error || "Erro ao atualizar conta.");
       }
     } catch (e) {
-      toast.error("Erro ao excluir");
+      toast.error("Erro ao processar");
     }
   };
 
@@ -239,7 +248,7 @@ export default function ContasPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: idx * 0.05 }}
               >
-                <Card className="premium-card p-0 overflow-hidden group border-none shadow-lg hover:shadow-2xl transition-all duration-500 bg-surface min-h-[180px] flex flex-col">
+                <Card className={cn("premium-card p-0 overflow-hidden group border-none shadow-lg hover:shadow-2xl transition-all duration-500 bg-surface min-h-[180px] flex flex-col", acc.isActive === false && "opacity-50")}>
                   <div className="p-6 flex-1 flex flex-col justify-between">
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex items-center gap-4">
@@ -248,13 +257,20 @@ export default function ContasPage() {
                         </div>
                         <div className="min-w-0">
                           <h2 className="text-xl font-black text-on-background tracking-tight truncate group-hover:text-secondary transition-colors">{acc.name}</h2>
-                          <span className="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-widest mt-1 block">{cfg.label}</span>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-widest">{cfg.label}</span>
+                            {acc.isActive === false && (
+                              <span className="text-[8px] font-black uppercase tracking-widest bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">ARQUIVADA</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                       
                       <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Button variant="ghost" size="icon" onClick={() => handleEdit(acc)} className="h-9 w-9 rounded-xl bg-surface-variant text-on-surface-variant hover:bg-secondary hover:text-white transition-all"><Edit2 className="w-4 h-4" /></Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(acc.id)} className="h-9 w-9 rounded-xl bg-surface-variant text-on-surface-variant hover:bg-red-500 hover:text-white transition-all"><Trash2 className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(acc.id)} className={cn("h-9 w-9 rounded-xl bg-surface-variant text-on-surface-variant hover:bg-red-500 hover:text-white transition-all", acc.isActive === false && "hover:bg-emerald-500")}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </div>
                     </div>
 

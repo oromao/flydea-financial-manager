@@ -198,11 +198,13 @@ export default function Recorrencias() {
                   <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Frequência</Label>
                   <Select value={frequency} onValueChange={(v: string | null) => setFrequency(v || "MONTHLY")}>
                     <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
-                      {frequency === "MONTHLY" ? "Mensal" : "Semanal"}
+                      {frequency === "MONTHLY" ? "Mensal" : frequency === "WEEKLY" ? "Semanal" : frequency === "BIWEEKLY" ? "Quinzenal" : "Anual"}
                     </SelectTrigger>
                     <SelectContent className="rounded-2xl border-outline/10">
-                      <SelectItem value="MONTHLY" className="rounded-xl font-bold">Mensal</SelectItem>
                       <SelectItem value="WEEKLY" className="rounded-xl font-bold">Semanal</SelectItem>
+                      <SelectItem value="BIWEEKLY" className="rounded-xl font-bold">Quinzenal</SelectItem>
+                      <SelectItem value="MONTHLY" className="rounded-xl font-bold">Mensal</SelectItem>
+                      <SelectItem value="YEARLY" className="rounded-xl font-bold">Anual</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -270,7 +272,7 @@ export default function Recorrencias() {
                   </div>
                   <div className="flex flex-col items-end gap-2 shrink-0">
                     <span className="px-3 py-1 rounded-full bg-surface text-secondary text-[10px] font-black uppercase tracking-widest border border-outline/10 shadow-sm whitespace-nowrap">
-                      {rec.frequency === 'MONTHLY' ? 'Mensal' : 'Semanal'}
+                      {rec.frequency === 'MONTHLY' ? 'Mensal' : rec.frequency === 'WEEKLY' ? 'Semanal' : rec.frequency === 'BIWEEKLY' ? 'Quinzenal' : 'Anual'}
                     </span>
                     <span className={cn(
                       "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm whitespace-nowrap",

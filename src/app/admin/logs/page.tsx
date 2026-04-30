@@ -24,6 +24,8 @@ export default function AuditLogs() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [uniqueEntities, setUniqueEntities] = useState<string[]>([]);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   
   const { data: session, status } = useSession();
 
@@ -35,7 +37,9 @@ export default function AuditLogs() {
         limit: String(LOGS_PER_PAGE),
         action,
         entity,
-        query
+        query,
+        ...(dateFrom && { dateFrom }),
+        ...(dateTo && { dateTo }),
       });
       const res = await fetch(`/api/logs?${params.toString()}`);
       const data = await res.json();
@@ -106,7 +110,7 @@ export default function AuditLogs() {
       </div>
 
       <Card className="premium-card bg-surface rounded-[32px] border-outline-variant shadow-sm">
-        <CardContent className="p-5 grid gap-4 md:grid-cols-[1.6fr_0.8fr_0.8fr]">
+        <CardContent className="p-5 grid gap-4 md:grid-cols-[1.6fr_0.8fr_0.8fr_1fr]">
           <label className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />
             <Input
@@ -126,6 +130,7 @@ export default function AuditLogs() {
               <SelectItem value="UPDATE">UPDATE</SelectItem>
               <SelectItem value="DELETE">DELETE</SelectItem>
               <SelectItem value="IMPORT">IMPORT</SelectItem>
+              <SelectItem value="RECURRENCE">RECURRENCE</SelectItem>
             </SelectContent>
           </Select>
           <Select value={entity} onValueChange={(value) => handleFilterChange(setEntity, value ?? "ALL")}>
@@ -139,6 +144,22 @@ export default function AuditLogs() {
               ))}
             </SelectContent>
           </Select>
+          <div className="flex gap-2">
+            <Input 
+              type="date" 
+              value={dateFrom} 
+              onChange={(e) => handleFilterChange(setDateFrom, e.target.value)}
+              className="h-10 text-xs"
+              placeholder="De"
+            />
+            <Input 
+              type="date" 
+              value={dateTo} 
+              onChange={(e) => handleFilterChange(setDateTo, e.target.value)}
+              className="h-10 text-xs"
+              placeholder="Até"
+            />
+          </div>
         </CardContent>
       </Card>
 

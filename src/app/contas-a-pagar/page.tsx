@@ -10,10 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 
 export default function ContasAPagar() {
   const toast = useToast();
+  const confirm = useConfirm();
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
@@ -42,6 +44,15 @@ export default function ContasAPagar() {
   }, [fetchTransactions]);
 
   const updatePaymentStatus = async (id: string, nextStatus: "PAID" | "PENDING") => {
+    if (nextStatus === "PAID") {
+      const ok = await confirm({
+        title: "Marcar como pago",
+        message: "Deseja confirmar este pagamento? O valor será deductdo do saldo.",
+        confirmLabel: "Sim, pagar",
+        variant: "warning",
+      });
+      if (!ok) return;
+    }
     try {
       await fetch(`/api/transactions/${id}`, {
         method: "PUT",

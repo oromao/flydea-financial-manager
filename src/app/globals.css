@@ -180,6 +180,10 @@
     @apply bg-surface-container-lowest shadow-md rounded-xl transition-all duration-500 hover:shadow-lg;
     border: none;
   }
+
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg;
+  }
 }
 
 .nav-link {
@@ -197,4 +201,15 @@
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+@media print {
+  body { background: white; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  .page-break { page-break-after: always; }
+  .premium-card, .card { box-shadow: none; border: 1px solid #e5e5e5; }
+  nav, .bottom-nav, .fab, [data-hide-print] { display: none !important; }
+  .text-on-background { color: #1D1D1F !important; }
+  .text-on-surface-variant { color: #6e6e73 !important; }
 }
