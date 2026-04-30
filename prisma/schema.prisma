@@ -37,6 +37,7 @@ model User {
   insights              Insight[]
   predictions           Prediction[]
   behavioralLogs        UserBehavioralLog[]
+  webhooks              Webhook[]
 }
 
 model Category {
