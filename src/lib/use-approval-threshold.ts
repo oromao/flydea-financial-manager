@@ -31,8 +31,8 @@ export function useApprovalThreshold(config?: ApprovalConfig) {
 
   const checkAndRequestApproval = useCallback(async (
     action: string,
-    amount?: number,
-    onExecute: () => Promise<boolean>
+    onExecute: () => Promise<boolean>,
+    amount?: number
   ) => {
     const isAdmin = session?.user?.role === "ADMIN";
     if (isAdmin) {

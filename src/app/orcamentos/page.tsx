@@ -144,8 +144,8 @@ export default function Orcamentos() {
               onChange={(e) => setSelectedPeriod(e.target.value)}
               className="h-10 px-4 rounded-xl bg-surface-variant/30 border border-outline/10 font-bold text-sm focus:ring-2 focus:ring-primary/20"
             />
-          </div>
-        </Dialog>
+</div>
+        </div>
       </motion.div>
 
       {/* Summary Cards */}

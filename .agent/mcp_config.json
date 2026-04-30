@@ -1,5 +1,15 @@
 {
     "mcpServers": {
+        "vercel": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@vercel/mcp"
+            ],
+            "env": {
+                "VERCEL_API_TOKEN": "YOUR_TOKEN_HERE"
+            }
+        },
         "context7": {
             "command": "npx",
             "args": [
@@ -16,7 +26,6 @@
                 "mcp"
             ]
         }
-        //other mcp servers
     }
 }
 

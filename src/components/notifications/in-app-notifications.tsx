@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, X, AlertCircle, CheckCircle, Info, Warning } from "lucide-react";
+import { Bell, X, AlertCircle, CheckCircle, Info, TriangleAlert } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +22,7 @@ interface InAppNotificationsProps {
 const iconMap = {
   success: CheckCircle,
   error: AlertCircle,
-  warning: Warning,
+  warning: TriangleAlert,
   info: Info,
 };
 

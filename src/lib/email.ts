@@ -55,9 +55,39 @@ export async function sendRecurrenceNotification({
           <p style="margin:0;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.15em">Valor</p>
           <p style="margin:4px 0 16px;font-size:24px;font-weight:900;color:#3B82F6">${formatted}</p>
           <p style="margin:0;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.15em">Data</p>
-          <p style="margin:4px 0 0;font-size:16px;font-weight:700">${dateStr}</p>
+<p style="margin:4px 0 0;font-size:16px;font-weight:700">${dateStr}</p>
         </div>
-        <p style="color:#666;font-size:12px">Acesse o FLY DEA para verificar suas finanças.</p>
+    `,
+  });
+}
+
+export async function sendPasswordResetEmail({
+  to,
+  name,
+  token,
+}: {
+  to: string;
+  name: string;
+  token: string;
+}) {
+  const resend = await getResend();
+  if (!resend) return;
+
+  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://flydea.com.br'}/redefinir-senha?token=${token}`;
+
+  await resend.emails.send({
+    from: "FLY DEA <noreply@flydea.com.br>",
+    to,
+    subject: "FLY DEA — Recuperação de senha",
+    html: `
+      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;background:#09090B;color:#fff;padding:32px;border-radius:16px">
+        <h1 style="font-size:24px;font-weight:900;margin-bottom:8px">FLY DEA</h1>
+        <p style="color:#888;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:32px">Recuperação de Senha</p>
+        <p>Olá, <strong>${name}</strong>!</p>
+        <p>Você solicitou a recuperação de sua senha. Clique no botão abaixo para criar uma nova senha:</p>
+        <a href="${resetUrl}" style="display:inline-block;background:#0071E3;color:#fff;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:700;margin:24px 0">Redefinir Senha</a>
+        <p style="color:#666;font-size:12px">Este link expira em 1 hora.</p>
+        <p style="color:#444;font-size:12px;margin-top:32px">Se você não solicitou isso, ignore este email.</p>
       </div>
     `,
   });
