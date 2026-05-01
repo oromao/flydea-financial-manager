@@ -6,13 +6,14 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
-import { Wallet, ShieldCheck, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -29,108 +30,215 @@ export default function LoginPage() {
     });
 
     if (res?.error) {
-      // Map NextAuth errors to user-friendly messages
       const errorMessages: Record<string, string> = {
-        CredentialsSignin: "E-mail ou senha incorretos. Tente novamente.",
-        default: "Erro ao autenticar. Verifique suas credenciais.",
+        CredentialsSignin: "E-mail ou senha incorretos.",
+        default: "Erro ao autenticar. Tente novamente.",
       };
       setError(errorMessages[res.error] || errorMessages.default);
       setLoading(false);
     } else {
-      // Reset loading state before redirecting
       setLoading(false);
       router.push("/");
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-6 selection:bg-secondary selection:text-on-secondary relative overflow-hidden">
-      {/* Dynamic Background Noise/Gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(0,0,0,0.03)_0%,transparent_70%)] pointer-events-none" />
-      
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
+    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#FAFAFA] px-5 py-8">
+      {/* Ambient background gradients */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-[30%] -left-[20%] h-[600px] w-[600px] rounded-full bg-[#8A05BE]/[0.04] blur-[100px]" />
+        <div className="absolute -bottom-[20%] -right-[10%] h-[500px] w-[500px] rounded-full bg-[#8A05BE]/[0.03] blur-[80px]" />
+      </div>
+
+      {/* Subtle grid pattern */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.015]"
+        style={{
+          backgroundImage: `linear-gradient(#8A05BE 1px, transparent 1px), linear-gradient(90deg, #8A05BE 1px, transparent 1px)`,
+          backgroundSize: "60px 60px",
+        }}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-[440px] space-y-10 relative z-10"
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 w-full max-w-[380px]"
       >
-        <div className="text-center space-y-6">
-          <motion.div 
-            initial={{ scale: 0.95 }}
-            animate={{ scale: 1 }}
-            className="mx-auto flex h-20 w-20 items-center justify-center rounded-[28px] bg-secondary text-white shadow-sm"
+        {/* Logo & Brand */}
+        <div className="mb-10 text-center">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.5, ease: "backOut" }}
+            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#8A05BE] shadow-lg shadow-[#8A05BE]/20"
           >
-            <Wallet className="h-9 w-9" />
+            <Sparkles className="h-7 w-7 text-white" />
           </motion.div>
-          <div className="space-y-1.5">
-            <h1 className="text-3xl font-bold tracking-tight text-on-background">
-              Flydea
-            </h1>
-            <p className="text-on-surface-variant font-medium text-xs tracking-wide">
-              Seu assistente financeiro pessoal
-            </p>
-          </div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-[28px] font-bold tracking-tight text-[#111827]"
+            style={{ fontFamily: "Manrope, system-ui, sans-serif" }}
+          >
+            Flydea
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="mt-2 text-[15px] font-medium text-[#6B7280]"
+            style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+          >
+            Seu assistente financeiro pessoal
+          </motion.p>
         </div>
 
-        <Card className="premium-card p-8 md:p-12 relative overflow-hidden">
-          {error && (
-            <motion.div 
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-red-50 border border-red-100 text-red-600 px-5 py-4 rounded-2xl mb-8 text-xs text-center font-bold tracking-tight"
-            >
-              {error}
+        {/* Login Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35, duration: 0.5 }}
+          className="rounded-3xl bg-white/80 p-7 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_8px_32px_rgba(0,0,0,0.04)] backdrop-blur-xl ring-1 ring-black/[0.04]"
+        >
+          <AnimatePresence mode="wait">
+            {error && (
+              <motion.div
+                key="error"
+                initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                animate={{ opacity: 1, height: "auto", marginBottom: 20 }}
+                exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                transition={{ duration: 0.25 }}
+                className="overflow-hidden"
+              >
+                <div className="flex items-center gap-2.5 rounded-xl bg-red-50 px-4 py-3 text-[13px] font-medium text-red-600 ring-1 ring-red-100">
+                  <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-red-500" />
+                  {error}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email Field */}
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="email"
+                className="ml-0.5 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]"
+              >
+                E-mail
+              </Label>
+              <div className="relative">
+                <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="voce@email.com"
+                  required
+                  className="h-12 rounded-xl border-[#E5E7EB] bg-[#F9FAFB] pl-11 pr-4 text-[15px] text-[#111827] placeholder:text-[#9CA3AF] transition-all focus:border-[#8A05BE]/30 focus:bg-white focus:ring-2 focus:ring-[#8A05BE]/10"
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="password"
+                className="ml-0.5 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]"
+              >
+                Senha
+              </Label>
+              <div className="relative">
+                <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className="h-12 rounded-xl border-[#E5E7EB] bg-[#F9FAFB] pl-11 pr-11 text-[15px] text-[#111827] placeholder:text-[#9CA3AF] transition-all focus:border-[#8A05BE]/30 focus:bg-white focus:ring-2 focus:ring-[#8A05BE]/10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-[#9CA3AF] transition-colors hover:bg-[#F3F4F6] hover:text-[#6B7280]"
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Forgot Password */}
+            <div className="flex justify-end">
+              <Link
+                href="/esqueci-senha"
+                className="text-[13px] font-medium text-[#8A05BE] transition-colors hover:text-[#6B03A0]"
+              >
+                Esqueci minha senha
+              </Link>
+            </div>
+
+            {/* Submit Button */}
+            <motion.div whileTap={{ scale: 0.98 }}>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="h-12 w-full rounded-xl bg-[#8A05BE] text-[15px] font-semibold text-white shadow-md shadow-[#8A05BE]/20 transition-all hover:bg-[#7A04A8] hover:shadow-lg hover:shadow-[#8A05BE]/25 disabled:opacity-60"
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <svg
+                      className="h-4 w-4 animate-spin"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      />
+                    </svg>
+                    Entrando...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    Entrar
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                )}
+              </Button>
             </motion.div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="space-y-3.5">
-              <Label htmlFor="email" className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.2em] ml-1">E-mail</Label>
-              <Input 
-                id="email"
-                type="email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="nome@empresa.com"
-                required 
-                className="h-14 rounded-2xl bg-surface-variant/40 border-outline/20 text-on-surface placeholder:text-on-surface-variant/60 focus:bg-surface-variant/60 transition-colors text-sm px-6"
-              />
-            </div>
-            
-            <div className="space-y-3.5">
-              <Label htmlFor="password" className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.2em] ml-1">Senha</Label>
-              <Input 
-                id="password"
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required 
-                className="h-14 rounded-2xl bg-surface-variant/40 border-outline/20 text-on-surface focus:bg-surface-variant/60 transition-colors text-sm px-6"
-              />
-            </div>
-
-            <Button 
-              type="submit" 
-              disabled={loading} 
-              variant="default"
-              className="w-full h-14 text-sm font-bold tracking-tight rounded-2xl group flex items-center justify-center gap-2"
-            >
-              {loading ? "Entrando..." : "Entrar"}
-              {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
-            </Button>
           </form>
+        </motion.div>
 
-          <div className="mt-12 pt-8 border-t border-outline/10 flex items-center justify-center gap-3 text-on-surface-variant/60 text-[9px] font-bold tracking-widest uppercase">
-            <ShieldCheck className="w-4 h-4" />
-            <span>Infraestrutura Segura</span>
-          </div>
-        </Card>
-        
-        <div className="text-center space-y-4">
-          <p className="text-on-surface-variant/50 text-[8px] font-bold uppercase tracking-[0.3em]">
-            Copyright © 2026 Flydea • Todos os direitos reservados
-          </p>
-        </div>
+        {/* Footer */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="mt-8 text-center text-[12px] font-medium text-[#9CA3AF]"
+        >
+          © 2026 Flydea. Todos os direitos reservados.
+        </motion.p>
       </motion.div>
     </div>
   );
