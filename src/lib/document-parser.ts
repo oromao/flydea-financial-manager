@@ -228,21 +228,31 @@ function extractPaymentDate(text: string): string | null {
 
 function extractInstallments(text: string): { installments: number | null; currentInstallment: number | null } {
   const lower = text.toLowerCase();
-  // e.g. "Parcela: 1/3" or "01/03"
-  const instMatch = lower.match(/(?:parcelas?|parc\.?)[\s:]*(\d+)\s*[\/\-de]\s*(\d+)/i);
+
+  // "Parcela 1/3", "Parc. 1 de 3", "01/03"
+  const instMatch = lower.match(/(?:parcelas?|parc\.?|presta[cç][aã]o)\s*[:\s]*(?:n?[º°]?\s*)?(\d+)\s*(?:\/|\\|\s+de\s+|\s+e\s+|\s+x\s+)?\s*(\d+)/i);
   if (instMatch) {
     const curr = parseInt(instMatch[1], 10);
     const total = parseInt(instMatch[2], 10);
-    if (curr > 0 && total >= curr) {
+    if (curr > 0 && total >= curr && total <= 120) {
       return { currentInstallment: curr, installments: total };
     }
   }
-  
-  // e.g. "3x de R$ 1.000,00"
-  const multiplierMatch = lower.match(/(\d+)\s*x\s*(?:de\s*)?(?:r\$)?\s*[\d.]+,[\d]{2}/);
+
+  // "3x de R$ 1.000,00", "3 x R$ 1.000,00", "em 3x R$", "3x 1.000,00"
+  const multiplierMatch = lower.match(/(?:em\s+|parcelado\s+em\s+)?(\d+)\s*x\s*(?:de\s*)?(?:r\$)?\s*[\d.]+,[\d]{2}/);
   if (multiplierMatch) {
     const total = parseInt(multiplierMatch[1], 10);
-    if (total > 1) {
+    if (total > 0 && total <= 120) {
+      return { currentInstallment: 1, installments: total };
+    }
+  }
+
+  // "em 3 parcelas", "parcelado em 3x" (without amount)
+  const parcelasMatch = lower.match(/(?:em|parcelado\s+em|dividido\s+em)\s*(\d+)\s*(?:x|parcelas?|vezes?)/i);
+  if (parcelasMatch) {
+    const total = parseInt(parcelasMatch[1], 10);
+    if (total > 1 && total <= 120) {
       return { currentInstallment: 1, installments: total };
     }
   }
