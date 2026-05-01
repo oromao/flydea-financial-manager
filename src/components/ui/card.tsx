@@ -9,6 +9,7 @@ function Card({
 }: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
   return (
     <div
+      role="region"
       data-slot="card"
       data-size={size}
       className={cn(
@@ -36,6 +37,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
 function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
+      role="heading"
       data-slot="card-title"
       className={cn(
         "text-lg font-semibold tracking-tight text-on-background group-data-[size=sm]/card:text-base",

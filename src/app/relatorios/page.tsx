@@ -8,7 +8,7 @@ import {
   PieChart, TrendingDown, LayoutPanelLeft, BarChart3, Presentation,
   Download, Calendar, Filter, Target, RotateCcw, TrendingUp
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart as RechartsPie, Pie, Cell
@@ -22,7 +22,16 @@ const COLORS = ["#09090b", "#18181b", "#27272a", "#3f3f46", "#52525b", "#71717a"
 export default function Relatorios() {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [period, setPeriod] = useState("0"); // months ago (0 = current)
+  const [period, setPeriod] = useState("0");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
 
   useEffect(() => {
     async function fetchTransactions() {
@@ -73,17 +82,15 @@ export default function Relatorios() {
       return acc;
     }, { FIXED: 0, VARIABLE: 0 } as Record<string, number>);
 
-  // Pie chart data
   const pieData = Object.entries(expensesByCategory)
     .sort(([, a], [, b]) => Number(b) - Number(a))
     .slice(0, 7)
     .map(([name, value]) => ({ name, value: Number(value) }));
 
-  // Bar chart data (income vs expense by category)
   const barData = Object.keys({ ...expensesByCategory, ...incomeByCategory })
     .slice(0, 8)
     .map((name) => ({
-      name: name.length > 15 ? name.slice(0, 15) + "…" : name,
+      name: name.length > 15 ? name.slice(0, 15) + "\u2026" : name,
       Despesa: expensesByCategory[name] || 0,
       Receita: incomeByCategory[name] || 0,
     }));
@@ -103,17 +110,18 @@ export default function Relatorios() {
 
   const refDate = subMonths(new Date(), parseInt(period, 10));
   const periodLabel = format(refDate, "MMMM yyyy", { locale: ptBR });
+  const chartHeight = isMobile ? 250 : 350;
 
   return (
     <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0 relative no-print">
       {/* Header */}
-      <motion.header 
+      <motion.header
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8"
       >
         <div className="flex flex-row items-center gap-5">
-          <motion.div 
+          <motion.div
             whileHover={{ scale: 1.02 }}
             className="p-3.5 rounded-2xl bg-secondary text-on-secondary shadow-sm"
           >
@@ -121,7 +129,7 @@ export default function Relatorios() {
           </motion.div>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-background">Relatórios</h1>
-            <p className="text-on-surface-variant font-medium text-xs sm:text-[10px] mt-1 uppercase tracking-widest">Estatísticas & Insights</p>
+            <p className="text-on-surface-variant font-medium text-xs sm:text-[10px] mt-1 uppercase tracking-widest">Estatísticas &amp; Insights</p>
           </div>
         </div>
 
@@ -132,15 +140,15 @@ export default function Relatorios() {
             <span className="text-xs sm:text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/80 hidden md:block">Período:</span>
           </div>
           <Select value={period} onValueChange={(v) => setPeriod(v || "0")}>
-            <SelectTrigger className="w-44 h-9 rounded-xl border-none bg-surface/80 font-bold text-xs ring-1 ring-outline/20">
+            <SelectTrigger className="w-44 min-h-[44px] h-auto rounded-xl border-none bg-surface/80 font-bold text-xs ring-1 ring-outline/20">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value="0" className="rounded-lg">Mês Atual</SelectItem>
-              <SelectItem value="1" className="rounded-lg">Mês Passado</SelectItem>
-              <SelectItem value="2" className="rounded-lg">2 Meses Atrás</SelectItem>
-              <SelectItem value="3" className="rounded-lg">3 Meses Atrás</SelectItem>
-              <SelectItem value="5" className="rounded-lg">5 Meses Atrás</SelectItem>
+              <SelectItem value="0" className="rounded-lg min-h-[44px]">Mês Atual</SelectItem>
+              <SelectItem value="1" className="rounded-lg min-h-[44px]">Mês Passado</SelectItem>
+              <SelectItem value="2" className="rounded-lg min-h-[44px]">2 Meses Atrás</SelectItem>
+              <SelectItem value="3" className="rounded-lg min-h-[44px]">3 Meses Atrás</SelectItem>
+              <SelectItem value="5" className="rounded-lg min-h-[44px]">5 Meses Atrás</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -148,7 +156,7 @@ export default function Relatorios() {
 
       {/* Content */}
       {loading ? (
-        <div className="py-32 text-center">
+        <div role="status" className="py-32 text-center">
           <div className="w-10 h-10 animate-spin mx-auto border-2 border-secondary/20 border-t-secondary rounded-full" />
           <p className="mt-4 text-on-surface-variant/40 font-black text-xs uppercase tracking-widest">Carregando relatórios...</p>
         </div>
@@ -163,19 +171,19 @@ export default function Relatorios() {
       ) : (
       <>
       {/* Summary Cards */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
         className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 lg:gap-8"
       >
         {[
-          { label: "Receitas", value: totalIncome, color: "text-secondary" },
-          { label: "Despesas", value: totalExpenses, color: "text-red-600" },
-          { label: "Resultado", value: netBalance, color: netBalance >= 0 ? "text-secondary" : "text-red-600" },
-          { label: "Poupança", value: null, color: savingsRate >= 20 ? "text-secondary" : "text-amber-600", label2: `${savingsRate.toFixed(1)}%` },
+          { label: "Receitas", value: totalIncome, color: "text-success" },
+          { label: "Despesas", value: totalExpenses, color: "text-destructive" },
+          { label: "Resultado", value: netBalance, color: netBalance >= 0 ? "text-success" : "text-destructive" },
+          { label: "Poupança", value: null, color: savingsRate >= 20 ? "text-success" : "text-warning", label2: `${savingsRate.toFixed(1)}%` },
         ].map((card, i) => (
-          <Card key={i} className="premium-card p-4 sm:p-6 flex flex-col justify-between">
+          <Card key={i} size="sm" className="premium-card p-4 sm:p-6 flex flex-col justify-between">
             <p className="text-xs sm:text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/80">{card.label}</p>
             <p className={cn("text-2xl md:text-3xl font-bold mt-1 tracking-tight", card.color)}>
               {card.value !== null ? formatCurrency(card.value) : card.label2}
@@ -185,7 +193,7 @@ export default function Relatorios() {
       </motion.div>
 
       {/* Charts Row */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
@@ -193,7 +201,7 @@ export default function Relatorios() {
       >
         {/* Pie Chart - Expenses by Category */}
         <Card className="premium-card p-4 sm:p-8">
-          <div className="flex items-center gap-4 mb-10">
+          <div className="flex items-center gap-4 mb-6">
             <div className="p-2.5 rounded-xl bg-surface-variant text-on-surface-variant border border-outline/5">
               <PieChart className="w-5 h-5 opacity-70" />
             </div>
@@ -212,28 +220,60 @@ export default function Relatorios() {
               <p className="text-xs text-on-surface-variant/40">Registre movimentações neste período para ver os gráficos.</p>
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height={220}>
-              <RechartsPie>
-                <Pie data={pieData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} stroke="none"
-                  paddingAngle={4} dataKey="value" label={({ percent }) => `${((percent || 0) * 100).toFixed(0)}%`}
-                  labelLine={false}>
-                  {pieData.map((_, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value: any) => formatCurrency(Number(value || 0))}
-                  contentStyle={{ backgroundColor: "#fff", border: "none", borderRadius: "16px", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
-                  itemStyle={{ color: "#000", fontSize: "12px", fontWeight: "bold" }}
-                />
-              </RechartsPie>
-            </ResponsiveContainer>
+            <div className="flex flex-col items-center">
+              <ResponsiveContainer width="100%" height={chartHeight}>
+                <RechartsPie>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={isMobile ? 55 : 70}
+                    outerRadius={isMobile ? 80 : 100}
+                    stroke="none"
+                    paddingAngle={4}
+                    dataKey="value"
+                    label={false}
+                  >
+                    {pieData.map((_, index) => (
+                      <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value: any) => formatCurrency(Number(value || 0))}
+                    contentStyle={{ backgroundColor: "#fff", border: "none", borderRadius: "16px", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
+                    itemStyle={{ color: "#000", fontSize: "12px", fontWeight: "bold" }}
+                  />
+                </RechartsPie>
+              </ResponsiveContainer>
+
+              {/* Legend below chart */}
+              <div className={cn(
+                "flex gap-3 mt-4",
+                isMobile ? "flex-col w-full px-2" : "flex-row flex-wrap justify-center"
+              )}>
+                {pieData.map((entry, i) => {
+                  const pct = totalExpenses > 0 ? (entry.value / totalExpenses) * 100 : 0;
+                  return (
+                    <div key={entry.name} className={cn(
+                      "flex items-center gap-2",
+                      isMobile ? "justify-between py-2 border-b border-outline/10" : ""
+                    )}>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                        <span className="text-xs text-on-surface-variant font-medium truncate max-w-[140px]">{entry.name}</span>
+                      </div>
+                      <span className="text-xs font-bold text-on-surface">{pct.toFixed(0)}%</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           )}
         </Card>
 
         {/* Bar Chart - Income vs Expense by Category */}
         <Card className="premium-card p-4 sm:p-8">
-          <div className="flex items-center gap-4 mb-10">
+          <div className="flex items-center gap-4 mb-6">
             <div className="p-2.5 rounded-xl bg-surface-variant text-on-surface-variant border border-outline/5">
               <BarChart3 className="w-5 h-5 opacity-70" />
             </div>
@@ -245,19 +285,19 @@ export default function Relatorios() {
           {loading ? (
             <div className="h-72 flex items-center justify-center text-on-surface-variant/20 font-bold text-xs uppercase tracking-[0.2em] italic">Processando...</div>
           ) : (
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={barData} barCategoryGap="25%">
+            <ResponsiveContainer width="100%" height={chartHeight}>
+              <BarChart data={barData} barCategoryGap="30%" margin={isMobile ? { left: -10, right: 4 } : {}}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
-                <XAxis dataKey="name" stroke="rgba(0,0,0,0.3)" fontSize={9} fontWeight="bold" tickLine={false} axisLine={false} dy={10} />
-                <YAxis stroke="rgba(0,0,0,0.3)" fontSize={9} fontWeight="bold" tickLine={false} axisLine={false}
+                <XAxis dataKey="name" stroke="rgba(0,0,0,0.3)" fontSize={isMobile ? 8 : 9} fontWeight="bold" tickLine={false} axisLine={false} dy={10} />
+                <YAxis stroke="rgba(0,0,0,0.3)" fontSize={isMobile ? 8 : 9} fontWeight="bold" tickLine={false} axisLine={false}
                   tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                 <Tooltip
                   formatter={(value: any) => formatCurrency(Number(value || 0))}
                   contentStyle={{ backgroundColor: "#fff", border: "none", borderRadius: "16px", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
                   itemStyle={{ color: "#000", fontSize: "12px", fontWeight: "bold" }}
                 />
-                <Bar dataKey="Receita" fill="#10b981" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Despesa" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Receita" fill="#10B981" radius={[4, 4, 0, 0]} barSize={isMobile ? 12 : 20} />
+                <Bar dataKey="Despesa" fill="#EF4444" radius={[4, 4, 0, 0]} barSize={isMobile ? 12 : 20} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -265,7 +305,7 @@ export default function Relatorios() {
       </motion.div>
 
       {/* Breakdown & Export Row */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
@@ -296,17 +336,17 @@ export default function Relatorios() {
                     const pct = totalExpenses > 0 ? (Number(amount) / totalExpenses) * 100 : 0;
                     return (
                       <div key={category}
-                        className="flex items-center justify-between p-4 rounded-2xl bg-surface group hover:bg-surface-variant/10 transition-colors border border-outline/5">
+                        className="flex items-center justify-between p-4 rounded-2xl bg-surface group hover:bg-surface-variant/10 transition-colors border border-outline/5 min-h-[44px]">
                         <div className="flex items-center gap-4 flex-1">
                           <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
                           <div className="flex-1">
                             <span className="font-bold text-sm text-on-background tracking-tight">{category}</span>
                             <div className="w-full h-1 bg-surface-variant/50 rounded-full mt-2 overflow-hidden max-w-[120px]">
-                              <motion.div 
+                              <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${pct}%` }}
-                                className="h-full rounded-full" 
-                                style={{ backgroundColor: COLORS[i % COLORS.length] }} 
+                                className="h-full rounded-full"
+                                style={{ backgroundColor: COLORS[i % COLORS.length] }}
                               />
                             </div>
                           </div>
@@ -330,11 +370,11 @@ export default function Relatorios() {
             <h3 className="text-xl font-bold text-on-background tracking-tight mb-8 uppercase tracking-wider text-sm">Composição de Gastos</h3>
             <div className="space-y-4">
               {[
-                { label: "Despesas Fixas", value: budgetBreakdown.FIXED, color: "text-red-500", icon: RotateCcw },
-                { label: "Despesas Variáveis", value: budgetBreakdown.VARIABLE, color: "text-secondary", icon: TrendingUp },
-                { label: "Taxa de Poupança", value: null, label2: `${savingsRate.toFixed(1)}%`, color: savingsRate >= 20 ? "text-secondary" : "text-amber-500", icon: Target }
+                { label: "Despesas Fixas", value: budgetBreakdown.FIXED, color: "text-destructive", icon: RotateCcw },
+                { label: "Despesas Variáveis", value: budgetBreakdown.VARIABLE, color: "text-success", icon: TrendingUp },
+                { label: "Taxa de Poupança", value: null, label2: `${savingsRate.toFixed(1)}%`, color: savingsRate >= 20 ? "text-success" : "text-warning", icon: Target }
               ].map((item, i) => (
-                <div key={i} className="flex justify-between items-center p-5 rounded-2xl bg-surface border border-outline/5 group hover:border-secondary/20 transition-colors">
+                <div key={i} className="flex justify-between items-center p-5 rounded-2xl bg-surface border border-outline/5 group hover:border-secondary/20 transition-colors min-h-[44px]">
                   <div className="flex items-center gap-3">
                     <item.icon className="w-4 h-4 text-on-surface-variant/60" strokeWidth={2.5} />
                     <span className="text-on-surface-variant/80 font-bold uppercase text-[10px] tracking-widest">{item.label}</span>
@@ -353,7 +393,8 @@ export default function Relatorios() {
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleExportCSV}
-              className="premium-card p-6 flex items-center justify-between text-left group border-none bg-surface"
+              className="premium-card p-6 flex items-center justify-between text-left group border-none bg-surface min-h-[44px]"
+              aria-label="Exportar dados como CSV"
             >
               <div className="space-y-1">
                 <h4 className="text-sm font-bold tracking-tight uppercase">Excel (CSV)</h4>
@@ -361,7 +402,7 @@ export default function Relatorios() {
                   Dados estruturados
                 </p>
               </div>
-              <div className="w-10 h-10 bg-secondary/10 text-secondary rounded-xl flex items-center justify-center group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
+              <div className="w-11 h-11 min-w-11 min-h-11 bg-success/10 text-success rounded-xl flex items-center justify-center group-hover:bg-success group-hover:text-on-primary transition-colors">
                 <Download className="w-5 h-5" />
               </div>
             </motion.button>
@@ -370,13 +411,14 @@ export default function Relatorios() {
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={handlePrint}
-              className="premium-card p-6 flex items-center justify-between text-left group border-none bg-surface"
+              className="premium-card p-6 flex items-center justify-between text-left group border-none bg-surface min-h-[44px]"
+              aria-label="Exportar como documento PDF"
             >
               <div className="space-y-1">
                 <h4 className="text-sm font-bold tracking-tight uppercase">Documento PDF</h4>
                 <p className="text-[10px] font-medium text-on-surface-variant/80">Versão impressa</p>
               </div>
-              <div className="w-10 h-10 bg-surface-variant text-on-surface-variant rounded-xl flex items-center justify-center group-hover:bg-on-surface group-hover:text-surface transition-colors">
+              <div className="w-11 h-11 min-w-11 min-h-11 bg-surface-variant text-on-surface-variant rounded-xl flex items-center justify-center group-hover:bg-on-surface group-hover:text-surface transition-colors">
                 <LayoutPanelLeft className="w-5 h-5" />
               </div>
             </motion.button>

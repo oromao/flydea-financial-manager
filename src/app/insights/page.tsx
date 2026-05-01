@@ -4,9 +4,11 @@ import { Brain, TrendingUp, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { FinancialAIChat } from "@/components/financial-ai-chat";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 export default function InsightsPage() {
   return (
+    <PageErrorBoundary>
     <div className="space-y-8 md:space-y-12 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <PageHeader icon={Brain} title="Insights Financeiros" subtitle="IA analisando seus padrões de gastos com precisão" iconClassName="bg-gradient-to-br from-secondary/20 to-secondary/5 text-secondary shadow-secondary/10" />
@@ -144,5 +146,6 @@ export default function InsightsPage() {
         </motion.div>
       </motion.div>
     </div>
+    </PageErrorBoundary>
   );
 }

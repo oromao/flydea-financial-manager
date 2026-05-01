@@ -22,6 +22,44 @@ import { MoneyInput } from "@/components/ui/money-input";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TransactionCard } from "@/components/movimentacoes/transaction-card";
 import { PageHeader } from "@/components/ui/page-header";
+import { z } from "zod";
+import { useZodForm } from "@/hooks/use-zod-form";
+
+const transactionSchema = z.object({
+  description: z.string().min(1, "Descrição é obrigatória"),
+  amount: z.number().min(0.01, "Valor deve ser maior que zero"),
+  type: z.enum(["INCOME", "EXPENSE"]),
+  date: z.string().min(1, "Data é obrigatória"),
+  categoryId: z.string().min(1, "Categoria é obrigatória"),
+  accountId: z.string().optional(),
+  dueDate: z.string().optional(),
+  paymentStatus: z.enum(["PENDING", "PAID"]).optional(),
+  observations: z.string().optional(),
+});
+
+interface Transaction {
+  id: string;
+  type: string;
+  amount: number;
+  date: string;
+  description: string;
+  paymentStatus: string;
+  category?: { id: string; name: string };
+  categoryId?: string;
+  frequency?: string;
+  dueDate?: string;
+  paidAt?: string;
+  amountPaid?: number;
+  attachmentUrl?: string;
+  blobUrl?: string;
+  accountId?: string;
+  [key: string]: unknown;
+}
+
+interface Category {
+  id: string;
+  name: string;
+}
 
 function MovimentacoesContent() {
   const router = useRouter();
@@ -30,7 +68,7 @@ function MovimentacoesContent() {
   const toast = useToast();
   const confirm = useConfirm();
 
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -50,7 +88,7 @@ function MovimentacoesContent() {
   const [startDateFilter, setStartDateFilter] = useState(searchParams.get("startDate") || "");
   const [endDateFilter, setEndDateFilter] = useState(searchParams.get("endDate") || "");
   const [sortField, setSortField] = useState<string>(searchParams.get("sort") || "date");
-  const [sortOrder, setSortDirection] = useState<"asc" | "desc">((searchParams.get("order") as any) || "desc");
+  const [sortOrder, setSortDirection] = useState<"asc" | "desc">((searchParams.get("order") as "asc" | "desc") || "desc");
 
   // Sync state to URL
   useEffect(() => {
@@ -137,15 +175,15 @@ function MovimentacoesContent() {
       const res = await fetch("/api/transactions?all=true");
       const data = await res.json();
       const allTx = Array.isArray(data.data) ? data.data : [];
-      const balance = allTx.reduce((acc: number, t: any) => t.type === "INCOME" ? acc + t.amount : acc - t.amount, 0);
-      const income = allTx.filter((t: any) => t.type === "INCOME").reduce((acc: number, t: any) => acc + t.amount, 0);
-      const expenses = allTx.filter((t: any) => t.type === "EXPENSE").reduce((acc: number, t: any) => acc + t.amount, 0);
-      const pending = allTx.filter((t: any) => t.type === "EXPENSE" && t.paymentStatus === "PENDING").reduce((acc: number, t: any) => acc + t.amount, 0);
+      const balance = allTx.reduce((acc: number, t: Transaction) => t.type === "INCOME" ? acc + t.amount : acc - t.amount, 0);
+      const income = allTx.filter((t: Transaction) => t.type === "INCOME").reduce((acc: number, t: Transaction) => acc + t.amount, 0);
+      const expenses = allTx.filter((t: Transaction) => t.type === "EXPENSE").reduce((acc: number, t: Transaction) => acc + t.amount, 0);
+      const pending = allTx.filter((t: Transaction) => t.type === "EXPENSE" && t.paymentStatus === "PENDING").reduce((acc: number, t: Transaction) => acc + t.amount, 0);
       setStats({ balance, income, expenses, pending });
     } catch (e) {}
   }, []);
 
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const fetchCategories = useCallback(async () => {
     try {
       const res = await fetch("/api/categories");
@@ -180,17 +218,41 @@ function MovimentacoesContent() {
   const [attachmentUrl, setAttachmentUrl] = useState("");
   const [blobUrl, setBlobUrl] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [accountId, setAccountId] = useState("");
+
+  const { errors, validate } = useZodForm(transactionSchema);
+
+  const [accounts, setAccounts] = useState<{ id: string; name: string }[]>([]);
+  const fetchAccounts = useCallback(async () => {
+    try {
+      const res = await fetch("/api/accounts");
+      const data = await res.json();
+      setAccounts(Array.isArray(data) ? data : []);
+    } catch (e) {}
+  }, []);
+
+  useEffect(() => {
+    fetchAccounts();
+  }, [fetchAccounts]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!description.trim()) return toast.error("Descrição é obrigatória");
-    const parsedAmount = parseFloat(amount);
-    if (isNaN(parsedAmount) || parsedAmount <= 0) return toast.error("Valor inválido");
-    if (!date) return toast.error("Data é obrigatória");
-    if (!categoryId) return toast.error("Categoria é obrigatória");
+    const parsedAmount = parseFloat(amount) || 0;
+    const formData = {
+      description: description.trim(),
+      amount: parsedAmount,
+      type: type as "INCOME" | "EXPENSE",
+      date,
+      categoryId,
+      accountId: accountId || undefined,
+      dueDate: dueDate || undefined,
+      paymentStatus: (paymentStatus || undefined) as "PENDING" | "PAID" | undefined,
+      observations: undefined,
+    };
+    if (!validate(formData)) return;
 
     setSaving(true);
-    const payload: any = {
+    const payload: Record<string, unknown> = {
       type,
       description: description.trim(),
       categoryId,
@@ -202,6 +264,7 @@ function MovimentacoesContent() {
       paidAt: paidAt || null,
       attachmentUrl: attachmentUrl || null,
       blobUrl: blobUrl || null,
+      accountId: accountId || null,
     };
     if (amountPaid && parseFloat(amountPaid) > 0) {
       payload.amountPaid = parseFloat(amountPaid);
@@ -273,7 +336,7 @@ function MovimentacoesContent() {
     }
   };
 
-  const handleEdit = (t: any) => {
+  const handleEdit = (t: Transaction) => {
     setEditingId(t.id);
     setType(t.type);
     setDescription(t.description);
@@ -287,6 +350,7 @@ function MovimentacoesContent() {
     setAmountPaid(t.amountPaid?.toString() || "");
     setAttachmentUrl(t.attachmentUrl || "");
     setBlobUrl(t.blobUrl || "");
+    setAccountId(t.accountId || "");
     setOpen(true);
   };
 
@@ -303,7 +367,8 @@ function MovimentacoesContent() {
     setAmountPaid("");
     setAttachmentUrl("");
     setBlobUrl("");
-    setCategoryId(categories.find((c: any) => c.name === "Outros")?.id || (categories.length > 0 ? categories[0].id : ""));
+    setCategoryId(categories.find((c: Category) => c.name === "Outros")?.id || (categories.length > 0 ? categories[0].id : ""));
+    setAccountId("");
   };
 
   const clearFilters = () => {
@@ -353,70 +418,99 @@ function MovimentacoesContent() {
               </div>
 
               <form onSubmit={handleSubmit} className="p-8 space-y-6">
-                <div className="flex p-1 bg-surface-variant/30 rounded-2xl border border-outline/5">
-                  <Button type="button" variant="ghost" className={cn("flex-1 h-10 rounded-xl text-xs font-black uppercase tracking-widest transition-all", type === "INCOME" ? "bg-white text-emerald-600 shadow-md scale-[1.02]" : "text-on-surface-variant")} onClick={() => setType("INCOME")}><ArrowUp className="w-4 h-4 mr-2" /> Receita</Button>
-                  <Button type="button" variant="ghost" className={cn("flex-1 h-10 rounded-xl text-xs font-black uppercase tracking-widest transition-all", type === "EXPENSE" ? "bg-white text-red-600 shadow-md scale-[1.02]" : "text-on-surface-variant")} onClick={() => setType("EXPENSE")}><ArrowDown className="w-4 h-4 mr-2" /> Despesa</Button>
-                </div>
-
+                {/* Dados Básicos */}
                 <div className="space-y-4">
-                  <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Dados Principais</h3>
+                  <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Dados Básicos</h3>
+
+                  <div className="flex p-1 bg-surface-variant/30 rounded-2xl border border-outline/5">
+                    <Button type="button" variant="ghost" className={cn("flex-1 h-10 rounded-xl text-xs font-black uppercase tracking-widest transition-all", type === "INCOME" ? "bg-surface-container-lowest text-success shadow-md scale-[1.02]" : "text-on-surface-variant")} onClick={() => setType("INCOME")}><ArrowUp className="w-4 h-4 mr-2" /> Receita</Button>
+                    <Button type="button" variant="ghost" className={cn("flex-1 h-10 rounded-xl text-xs font-black uppercase tracking-widest transition-all", type === "EXPENSE" ? "bg-surface-container-lowest text-destructive shadow-md scale-[1.02]" : "text-on-surface-variant")} onClick={() => setType("EXPENSE")}><ArrowDown className="w-4 h-4 mr-2" /> Despesa</Button>
+                  </div>
+
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Descrição</Label>
-                    <Input required value={description} onChange={e => setDescription(e.target.value)} className="h-12 font-bold text-lg rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" placeholder="O que você pagou ou recebeu?" />
+                    <Label htmlFor="description" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Descrição</Label>
+                    <Input id="description" name="description" required value={description} onChange={e => setDescription(e.target.value)} className="h-12 font-bold text-lg rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" placeholder="O que você pagou ou recebeu?" aria-label="Descrição da transação" aria-describedby="description-error" />
+                    {errors.description && <p id="description-error" className="text-xs text-destructive mt-1">{errors.description}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="amount" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Valor (BRL)</Label>
+                    <MoneyInput id="amount" name="amount" value={amount} onChange={setAmount} className="h-12 font-black text-2xl rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" required aria-label="Valor da transação" aria-describedby="amount-error" />
+                    {errors.amount && <p id="amount-error" className="text-xs text-destructive mt-1">{errors.amount}</p>}
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Valores e Datas</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Valor (BRL)</Label>
-                      <MoneyInput value={amount} onChange={setAmount} className="h-12 font-black text-2xl rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" required />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Data</Label>
-                      <Input required type="date" value={date} onChange={e => setDate(e.target.value)} className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" />
-                    </div>
-                  </div>
-                </div>
+                <hr className="border-outline/10" />
 
+                {/* Classificação */}
                 <div className="space-y-4">
                   <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Classificação</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Categoria</Label>
-                      <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
-                        <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
-                          {categories.find(c => c.id === categoryId)?.name || "Selecione..."}
-                        </SelectTrigger>
-                        <SelectContent className="rounded-2xl border-outline/10">
-                          {categories.map(c => (
-                            <SelectItem key={c.id} value={c.id} className="rounded-xl font-bold">{c.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Recorrência</Label>
-                      <Select value={frequency} onValueChange={(v: string | null) => setFrequency(v || "")}>
-                        <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
-                          {frequency === "MONTHLY" ? "Mensal" : "Nenhuma"}
-                        </SelectTrigger>
-                        <SelectContent className="rounded-2xl border-outline/10">
-                          <SelectItem value="NONE" className="rounded-xl font-bold">Nenhuma</SelectItem>
-                          <SelectItem value="MONTHLY" className="rounded-xl font-bold">Mensal</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="categoryId" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Categoria</Label>
+                    <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
+                      <SelectTrigger id="categoryId" className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" aria-label="Categoria da transação" aria-describedby="categoryId-error">
+                        {categories.find(c => c.id === categoryId)?.name || "Selecione..."}
+                      </SelectTrigger>
+                      <SelectContent className="rounded-2xl border-outline/10">
+                        {categories.map(c => (
+                          <SelectItem key={c.id} value={c.id} className="rounded-xl font-bold">{c.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.categoryId && <p id="categoryId-error" className="text-xs text-destructive mt-1">{errors.categoryId}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="accountId" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Conta</Label>
+                    <Select value={accountId} onValueChange={(v: string | null) => setAccountId(v || "")}>
+                      <SelectTrigger id="accountId" className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" aria-label="Conta da transação">
+                        {accounts.find(a => a.id === accountId)?.name || "Selecione..."}
+                      </SelectTrigger>
+                      <SelectContent className="rounded-2xl border-outline/10">
+                        {accounts.map(a => (
+                          <SelectItem key={a.id} value={a.id} className="rounded-xl font-bold">{a.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="frequency" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Recorrência</Label>
+                    <Select value={frequency} onValueChange={(v: string | null) => setFrequency(v || "")}>
+                      <SelectTrigger id="frequency" className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" aria-label="Recorrência da transação">
+                        {frequency === "MONTHLY" ? "Mensal" : "Nenhuma"}
+                      </SelectTrigger>
+                      <SelectContent className="rounded-2xl border-outline/10">
+                        <SelectItem value="NONE" className="rounded-xl font-bold">Nenhuma</SelectItem>
+                        <SelectItem value="MONTHLY" className="rounded-xl font-bold">Mensal</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
+                <hr className="border-outline/10" />
+
+                {/* Datas e Status */}
                 <div className="space-y-4">
-                  <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Status</h3>
+                  <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Datas e Status</h3>
+
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Status de Pagamento</Label>
+                    <Label htmlFor="date" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Data</Label>
+                    <Input id="date" name="date" required type="date" value={date} onChange={e => setDate(e.target.value)} className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" aria-label="Data da transação" aria-describedby="date-error" />
+                    {errors.date && <p id="date-error" className="text-xs text-destructive mt-1">{errors.date}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="dueDate" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Vencimento</Label>
+                    <Input id="dueDate" name="dueDate" type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" aria-label="Data de vencimento" aria-describedby="dueDate-error" />
+                    {errors.dueDate && <p id="dueDate-error" className="text-xs text-destructive mt-1">{errors.dueDate}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="paymentStatus" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Status de Pagamento</Label>
                     <Select value={paymentStatus} onValueChange={(v: string | null) => setPaymentStatus(v || "")}>
-                      <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
+                      <SelectTrigger id="paymentStatus" className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" aria-label="Status de pagamento" aria-describedby="paymentStatus-error">
                         {paymentStatus === "PAID" ? "Pago" : "Pendente"}
                       </SelectTrigger>
                       <SelectContent className="rounded-2xl border-outline/10">
@@ -424,13 +518,14 @@ function MovimentacoesContent() {
                         <SelectItem value="PENDING" className="rounded-xl font-bold">Pendente / Agendado</SelectItem>
                       </SelectContent>
                     </Select>
+                    {errors.paymentStatus && <p id="paymentStatus-error" className="text-xs text-destructive mt-1">{errors.paymentStatus}</p>}
                   </div>
                 </div>
 
                 {paymentStatus === "PENDING" && (
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Valor já Pago (parcial)</Label>
-                    <MoneyInput value={amountPaid} onChange={setAmountPaid} className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" placeholder="0,00" />
+                    <Label htmlFor="amountPaid" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Valor já Pago (parcial)</Label>
+                    <MoneyInput id="amountPaid" name="amountPaid" value={amountPaid} onChange={setAmountPaid} className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" placeholder="0,00" aria-label="Valor parcial já pago" />
                   </div>
                 )}
 
@@ -454,7 +549,7 @@ function MovimentacoesContent() {
                             const newBlob = await res.json();
                             setBlobUrl(newBlob.url);
                             toast.success("Anexado!");
-                          } catch (error: any) {
+                          } catch (error: unknown) {
                             toast.error("Erro no upload");
                           } finally {
                             setUploading(false);
@@ -463,17 +558,17 @@ function MovimentacoesContent() {
                       />
                       <div className={cn(
                         "h-12 rounded-2xl border-2 border-dashed flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-widest",
-                        blobUrl ? "border-emerald-500 bg-emerald-50 text-emerald-600" : "border-outline/20 bg-surface-variant/30 text-on-surface-variant/60"
+                        blobUrl ? "border-success bg-success/10 text-success" : "border-outline/20 bg-surface-variant/30 text-on-surface-variant/60"
                       )}>
                         {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : blobUrl ? "PRONTO" : "ANEXAR"}
                       </div>
                     </div>
-                    <Input placeholder="Link externo..." value={attachmentUrl} onChange={e => setAttachmentUrl(e.target.value)} className="flex-[1.5] h-12 rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface font-medium" />
+                    <Input placeholder="Link externo..." value={attachmentUrl} onChange={e => setAttachmentUrl(e.target.value)} className="flex-[1.5] h-12 rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface font-medium" aria-label="Link externo do comprovante" />
                   </div>
                 </div>
 
                 <div className="pt-4 sticky bottom-0 bg-surface pb-2">
-                  <Button type="submit" disabled={saving || !description.trim() || !amount || !date || !categoryId} className="apple-button-primary w-full h-14 text-lg font-black rounded-2xl shadow-xl shadow-secondary/20">
+                  <Button type="submit" disabled={saving} className="apple-button-primary w-full h-14 text-lg font-black rounded-2xl shadow-xl shadow-secondary/20">
                     {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : editingId ? "SALVAR ALTERAÇÕES" : "CONFIRMAR LANÇAMENTO"}
                   </Button>
                 </div>
@@ -486,23 +581,23 @@ function MovimentacoesContent() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="premium-card p-4 min-h-[110px] flex flex-col justify-between">
           <p className="text-[9px] uppercase tracking-widest font-black text-on-surface-variant/50">Saldo Geral</p>
-          <h2 className={cn("text-xl md:text-2xl font-black mt-2 tracking-tighter truncate", stats.balance >= 0 ? "text-on-background" : "text-red-500")}>{formatCurrency(stats.balance)}</h2>
+          <h2 className={cn("text-xl md:text-2xl font-black mt-2 tracking-tighter truncate", stats.balance >= 0 ? "text-on-background" : "text-destructive")}>{formatCurrency(stats.balance)}</h2>
           <div className="flex items-center gap-1.5 mt-2 opacity-40">
             <Wallet className="w-3 h-3 text-secondary" />
             <span className="text-[8px] font-black uppercase tracking-widest">Total Líquido</span>
           </div>
         </Card>
-        <Card className="premium-card p-4 min-h-[110px] flex flex-col justify-between bg-emerald-50/20 border-emerald-100">
-          <p className="text-[9px] uppercase tracking-widest font-black text-emerald-600/70">Receitas</p>
-          <h2 className="text-xl md:text-2xl font-black mt-2 text-emerald-600 tracking-tighter truncate">{formatCurrency(stats.income)}</h2>
+        <Card className="premium-card p-4 min-h-[110px] flex flex-col justify-between bg-success/10 border-success/20">
+          <p className="text-[9px] uppercase tracking-widest font-black text-success/70">Receitas</p>
+          <h2 className="text-xl md:text-2xl font-black mt-2 text-success tracking-tighter truncate">{formatCurrency(stats.income)}</h2>
         </Card>
-        <Card className="premium-card p-4 min-h-[110px] flex flex-col justify-between bg-red-50/20 border-red-100">
-          <p className="text-[9px] uppercase tracking-widest font-black text-red-600/70">Despesas</p>
-          <h2 className="text-xl md:text-2xl font-black mt-2 text-red-600 tracking-tighter truncate">{formatCurrency(stats.expenses)}</h2>
+        <Card className="premium-card p-4 min-h-[110px] flex flex-col justify-between bg-destructive/10 border-destructive/20">
+          <p className="text-[9px] uppercase tracking-widest font-black text-destructive/70">Despesas</p>
+          <h2 className="text-xl md:text-2xl font-black mt-2 text-destructive tracking-tighter truncate">{formatCurrency(stats.expenses)}</h2>
         </Card>
-        <Card className="premium-card p-4 min-h-[110px] flex flex-col justify-between bg-amber-50/20 border-amber-100">
-          <p className="text-[9px] uppercase tracking-widest font-black text-amber-600/70">Pendências</p>
-          <h2 className="text-xl md:text-2xl font-black mt-2 text-amber-600 tracking-tighter truncate">{formatCurrency(stats.pending)}</h2>
+        <Card className="premium-card p-4 min-h-[110px] flex flex-col justify-between bg-warning/10 border-warning/20">
+          <p className="text-[9px] uppercase tracking-widest font-black text-warning/70">Pendências</p>
+          <h2 className="text-xl md:text-2xl font-black mt-2 text-warning tracking-tighter truncate">{formatCurrency(stats.pending)}</h2>
         </Card>
       </div>
 
@@ -544,18 +639,18 @@ function MovimentacoesContent() {
           
           <div className="flex bg-surface-container-lowest rounded-xl p-0.5 border border-outline/10 h-10 overflow-hidden">
             <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", !filterType ? "bg-surface-variant/30 text-on-surface shadow-sm" : "text-on-surface-variant/40")} onClick={() => setFilterType(null)}>Todos</Button>
-            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterType === "INCOME" ? "bg-emerald-500 text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
-            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterType === "EXPENSE" ? "bg-red-500 text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
+            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterType === "INCOME" ? "bg-success text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
+            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterType === "EXPENSE" ? "bg-destructive text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
           </div>
 
           <div className="flex bg-surface-container-lowest rounded-xl p-0.5 border border-outline/10 h-10 overflow-hidden">
             <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterPaymentStatus === "ALL" ? "bg-surface-variant/30 text-on-surface shadow-sm" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("ALL")}>Status</Button>
             <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterPaymentStatus === "PAID" ? "bg-secondary text-on-secondary shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("PAID")}>Pagas</Button>
-            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterPaymentStatus === "PENDING" ? "bg-amber-500 text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("PENDING")}>Pendentes</Button>
+            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterPaymentStatus === "PENDING" ? "bg-warning text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("PENDING")}>Pendentes</Button>
           </div>
 
           {(searchTerm || filterCategory !== "Todos" || filterType || filterPaymentStatus !== "ALL" || startDateFilter || endDateFilter) && (
-            <Button variant="outline" onClick={clearFilters} className="h-10 px-4 rounded-xl font-black text-[9px] uppercase border-red-200 text-red-500 hover:bg-red-50">
+            <Button variant="outline" onClick={clearFilters} className="h-10 px-4 rounded-xl font-black text-[9px] uppercase border-destructive/30 text-destructive hover:bg-destructive/10">
               <X className="w-3 h-3 mr-2" /> Limpar
             </Button>
           )}
@@ -586,15 +681,15 @@ function MovimentacoesContent() {
                   <TableCell className="py-5 font-bold text-sm">
                     {t.description}
                     <div className="flex gap-2 mt-2">
-                      <span className={cn("px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border", t.paymentStatus === "PENDING" ? "bg-amber-50 text-amber-600 border-amber-200" : "bg-emerald-50 text-emerald-600 border-emerald-200")}>{t.paymentStatus === "PENDING" ? "Pendente" : "Confirmado"}</span>
+                      <span className={cn("px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border", t.paymentStatus === "PENDING" ? "bg-warning/10 text-warning border-warning/30" : "bg-success/10 text-success border-success/30")}>{t.paymentStatus === "PENDING" ? "Pendente" : "Confirmado"}</span>
                     </div>
                   </TableCell>
                   <TableCell className="py-5 text-center"><span className="px-3 py-1 rounded-full text-[9px] font-black uppercase bg-surface-variant text-on-surface-variant/60">{t.category?.name || "Outros"}</span></TableCell>
-                  <TableCell className={cn("px-6 py-5 text-right font-black text-base", t.type === 'INCOME' ? 'text-emerald-600' : 'text-on-background')}>{t.type === 'EXPENSE' && "- "}{formatCurrency(t.amount)}</TableCell>
+                  <TableCell className={cn("px-6 py-5 text-right font-black text-base", t.type === 'INCOME' ? 'text-success' : 'text-on-background')}>{t.type === 'EXPENSE' && "- "}{formatCurrency(t.amount)}</TableCell>
                   <TableCell className="pr-6 text-right">
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-9 w-9 rounded-xl bg-secondary/5 text-secondary"><Edit2 className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-9 w-9 rounded-xl bg-red-50 text-red-600"><Trash2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-9 w-9 rounded-xl bg-destructive/10 text-destructive"><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>

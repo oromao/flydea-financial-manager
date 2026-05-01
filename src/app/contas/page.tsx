@@ -15,6 +15,15 @@ import { MoneyInput } from "@/components/ui/money-input";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 
+interface Account {
+  id: string;
+  name: string;
+  type: string;
+  balance: number;
+  color: string;
+  isActive: boolean;
+}
+
 const accountTypes = [
   { value: "CHECKING", label: "Conta Corrente", icon: Wallet, color: "#0071E3" },
   { value: "SAVINGS", label: "Poupança", icon: PiggyBank, color: "#10b981" },
@@ -24,7 +33,7 @@ const accountTypes = [
 ];
 
 export default function ContasPage() {
-  const [accounts, setAccounts] = useState<any[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [open, setOpen] = useState(false);
@@ -117,7 +126,7 @@ export default function ContasPage() {
     }
   };
 
-  const handleEdit = (acc: any) => {
+  const handleEdit = (acc: Account) => {
     setEditingId(acc.id);
     setName(acc.name);
     setType(acc.type);
@@ -263,7 +272,7 @@ export default function ContasPage() {
                           <div className="flex items-center gap-2 mt-1">
                             <span className="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-widest">{cfg.label}</span>
                             {acc.isActive === false && (
-                              <span className="text-[8px] font-black uppercase tracking-widest bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">ARQUIVADA</span>
+                              <span className="text-[8px] font-black uppercase tracking-widest bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-full">ARQUIVADA</span>
                             )}
                           </div>
                         </div>
@@ -271,7 +280,7 @@ export default function ContasPage() {
                       
                       <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Button variant="ghost" size="icon" onClick={() => handleEdit(acc)} className="h-9 w-9 rounded-xl bg-surface-variant text-on-surface-variant hover:bg-secondary hover:text-white transition-all"><Edit2 className="w-4 h-4" /></Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(acc.id)} className={cn("h-9 w-9 rounded-xl bg-surface-variant text-on-surface-variant hover:bg-red-500 hover:text-white transition-all", acc.isActive === false && "hover:bg-emerald-500")}>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(acc.id)} className={cn("h-9 w-9 rounded-xl bg-surface-variant text-on-surface-variant hover:bg-destructive hover:text-white transition-all", acc.isActive === false && "hover:bg-success")}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -279,7 +288,7 @@ export default function ContasPage() {
 
                     <div className="mt-8">
                       <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">Saldo Líquido</p>
-                      <h3 className={cn("text-3xl font-black tracking-tighter mt-1", acc.balance >= 0 ? "text-on-background" : "text-red-500")}>
+                      <h3 className={cn("text-3xl font-black tracking-tighter mt-1", acc.balance >= 0 ? "text-on-background" : "text-destructive")}>
                         {formatCurrency(acc.balance)}
                       </h3>
                     </div>

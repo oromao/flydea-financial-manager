@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Bell, CheckCheck, Trash2, MailWarning, Info, AlertTriangle } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,6 +71,7 @@ export default function Alertas() {
   const readCount = notifications.filter((n) => n.read).length;
 
   return (
+    <PageErrorBoundary>
     <div className="space-y-8 max-w-5xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <PageHeader icon={Bell} title="Alertas" subtitle="Notificações in-app do sistema" iconClassName="bg-secondary text-on-secondary shadow-secondary/20" />
@@ -127,5 +129,6 @@ export default function Alertas() {
         )}
       </Card>
     </div>
+    </PageErrorBoundary>
   );
 }

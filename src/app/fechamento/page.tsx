@@ -10,9 +10,17 @@ import { PageHeader } from "@/components/ui/page-header";
 import { motion } from "framer-motion";
 import { useToast } from "@/components/ui/toast";
 
+interface TransactionSummary {
+  id: string;
+  type: string;
+  amount: number;
+  paymentStatus: string;
+  dueDate?: string;
+}
+
 export default function Fechamento() {
   const toast = useToast();
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<TransactionSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState("0");
 
@@ -101,17 +109,17 @@ export default function Fechamento() {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
         <Card className="premium-card p-4 sm:p-5">
           <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Receitas</p>
-          <p className="text-xl md:text-2xl font-bold mt-2 text-emerald-600">{formatCurrency(summary.income)}</p>
+          <p className="text-xl md:text-2xl font-bold mt-2 text-success">{formatCurrency(summary.income)}</p>
           <p className="text-[9px] text-on-surface-variant/50 mt-1">Previstas no mês</p>
         </Card>
         <Card className="premium-card p-4 sm:p-5">
           <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Despesas</p>
-          <p className="text-xl md:text-2xl font-bold mt-2 text-red-600">{formatCurrency(summary.expenses)}</p>
+          <p className="text-xl md:text-2xl font-bold mt-2 text-destructive">{formatCurrency(summary.expenses)}</p>
           <p className="text-[9px] text-on-surface-variant/50 mt-1">Previstas no mês</p>
         </Card>
         <Card className="premium-card p-4 sm:p-5">
           <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Saldo</p>
-          <p className={`text-xl md:text-2xl font-bold mt-2 ${summary.balance >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+          <p className={`text-xl md:text-2xl font-bold mt-2 ${summary.balance >= 0 ? "text-success" : "text-destructive"}`}>
             {formatCurrency(summary.balance)}
           </p>
           <p className="text-[9px] text-on-surface-variant/50 mt-1">Receitas - Despesas</p>
@@ -123,27 +131,27 @@ export default function Fechamento() {
         </Card>
         <Card className="premium-card p-4 sm:p-5">
           <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Desp. Pagas</p>
-          <p className="text-xl md:text-2xl font-bold mt-2 text-emerald-600">{formatCurrency(summary.paid)}</p>
+          <p className="text-xl md:text-2xl font-bold mt-2 text-success">{formatCurrency(summary.paid)}</p>
           <p className="text-[9px] text-on-surface-variant/50 mt-1">Já quitadas</p>
         </Card>
       </div>
 
       {/* Status cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="premium-card p-4 sm:p-6 border-emerald-100 bg-emerald-50/20">
+        <Card className="premium-card p-4 sm:p-6 border-success/10 bg-success/10">
           <div className="flex items-center gap-2 mb-3">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <CheckCircle2 className="w-4 h-4 text-success" />
             <h2 className="font-bold">Pagas</h2>
           </div>
-          <div className="text-3xl font-bold text-emerald-700">{formatCurrency(summary.paid)}</div>
+          <div className="text-3xl font-bold text-success">{formatCurrency(summary.paid)}</div>
           <p className="text-xs text-on-surface-variant/60 mt-1">Despesas já quitadas neste mês</p>
         </Card>
-        <Card className="premium-card p-4 sm:p-6 border-red-100 bg-red-50/20">
+        <Card className="premium-card p-4 sm:p-6 border-destructive/10 bg-destructive/10">
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="w-4 h-4 text-red-600" />
+            <AlertTriangle className="w-4 h-4 text-destructive" />
             <h2 className="font-bold">Atrasadas</h2>
           </div>
-          <div className="text-3xl font-bold text-red-700">{formatCurrency(summary.overdue)}</div>
+          <div className="text-3xl font-bold text-destructive">{formatCurrency(summary.overdue)}</div>
           <p className="text-xs text-on-surface-variant/60 mt-1">Despesas pendentes com vencimento passado</p>
         </Card>
         <Card className="premium-card p-4 sm:p-6">
@@ -151,7 +159,7 @@ export default function Fechamento() {
             <Wallet className="w-4 h-4 text-secondary" />
             <h2 className="font-bold">Estado do Fechamento</h2>
           </div>
-          <div className={`text-lg font-semibold ${summary.balance >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+          <div className={`text-lg font-semibold ${summary.balance >= 0 ? "text-success" : "text-destructive"}`}>
             {summary.balance >= 0 ? "Fechamento positivo ✓" : "Fechamento negativo ⚠"}
           </div>
           <p className="text-sm text-on-surface-variant mt-2">

@@ -6,6 +6,7 @@ import { InvoiceManager } from "@/components/invoice-manager";
 import { BarChart3, ReceiptText, Brain } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 export const metadata = {
   title: "Fluxo de Caixa",
@@ -20,6 +21,7 @@ export default async function CashflowPage() {
   }
 
   return (
+    <PageErrorBoundary>
     <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
       <PageHeader icon={BarChart3} title="Fluxo de Caixa" subtitle="Previsão e controle de liquidez" iconClassName="bg-secondary text-on-secondary shadow-secondary/20" />
 
@@ -51,5 +53,6 @@ export default async function CashflowPage() {
         </div>
       </div>
     </div>
+    </PageErrorBoundary>
   );
 }

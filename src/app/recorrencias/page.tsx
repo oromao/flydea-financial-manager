@@ -20,9 +20,25 @@ import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import { MoneyInput } from "@/components/ui/money-input";
 
+interface Recurrence {
+  id: string;
+  description: string;
+  amount: number;
+  frequency: string;
+  startDate: string;
+  nextDate: string;
+  isActive: boolean;
+  category?: Category;
+}
+
+interface Category {
+  id: string;
+  name: string;
+}
+
 export default function Recorrencias() {
-  const [recurrences, setRecurrences] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [recurrences, setRecurrences] = useState<Recurrence[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -279,7 +295,7 @@ export default function Recorrencias() {
                     </span>
                     <span className={cn(
                       "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm whitespace-nowrap",
-                      rec.isActive ? "bg-emerald-500 text-white border-emerald-500" : "bg-slate-200 text-slate-600 border-slate-200"
+                      rec.isActive ? "bg-success text-white border-success" : "bg-surface-container-high text-on-surface-variant border-outline"
                     )}>
                       {rec.isActive ? "Ativa" : "Pausada"}
                     </span>
@@ -298,7 +314,7 @@ export default function Recorrencias() {
 
                   <div className="pt-6 border-t border-outline/5 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-secondary/60">
-                      <div className={cn("w-2 h-2 rounded-full", rec.isActive ? "bg-emerald-500 animate-pulse" : "bg-slate-300")} />
+                      <div className={cn("w-2 h-2 rounded-full", rec.isActive ? "bg-success animate-pulse" : "bg-surface-container-high")} />
                       {rec.isActive ? "Rodando" : "Pausada"}
                     </div>
                     <div className="flex items-center gap-2">
@@ -309,8 +325,8 @@ export default function Recorrencias() {
                         className={cn(
                           "w-11 h-11 rounded-xl transition-all",
                           rec.isActive
-                            ? "bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white"
-                            : "bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white"
+                            ? "bg-warning/10 text-warning hover:bg-warning hover:text-white"
+                            : "bg-success/10 text-success hover:bg-success hover:text-white"
                         )}
                         title={rec.isActive ? "Pausar" : "Retomar"}
                       >
@@ -319,7 +335,7 @@ export default function Recorrencias() {
                       <Button variant="ghost" size="icon"
                         onClick={() => handleDelete(rec.id)}
                         aria-label="Excluir"
-                        className="w-11 h-11 rounded-xl bg-red-50 text-red-600 hover:bg-red-500 hover:text-white transition-all">
+                        className="w-11 h-11 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all">
                         <Trash2 className="w-5 h-5" />
                       </Button>
                     </div>

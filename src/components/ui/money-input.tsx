@@ -9,9 +9,13 @@ interface MoneyInputProps {
   className?: string;
   placeholder?: string;
   required?: boolean;
+  id?: string;
+  name?: string;
+  "aria-label"?: string;
+  "aria-describedby"?: string;
 }
 
-export function MoneyInput({ value, onChange, className, placeholder, required }: MoneyInputProps) {
+export function MoneyInput({ value, onChange, className, placeholder, required, id, name, "aria-label": ariaLabel, "aria-describedby": ariaDescribedby }: MoneyInputProps) {
   const formatCurrency = (val: string) => {
     const numericValue = val.replace(/\D/g, "");
     if (!numericValue) return "";
@@ -46,12 +50,16 @@ export function MoneyInput({ value, onChange, className, placeholder, required }
   return (
     <Input
       type="text"
+      id={id}
+      name={name}
       value={localValue}
       onChange={handleChange}
       className={className}
       placeholder={placeholder || "R$ 0,00"}
       required={required}
       inputMode="numeric"
+      aria-label={ariaLabel}
+      aria-describedby={ariaDescribedby}
     />
   );
 }

@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 export default function ContasAPagar() {
   const toast = useToast();
@@ -96,6 +97,7 @@ export default function ContasAPagar() {
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
 
   return (
+    <PageErrorBoundary>
     <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
@@ -194,5 +196,6 @@ export default function ContasAPagar() {
         </div>
       </div>
     </div>
+    </PageErrorBoundary>
   );
 }

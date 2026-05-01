@@ -9,23 +9,40 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 
-const containerVariants: any = {
+interface Budget {
+  id: string;
+  categoryId: string;
+  amount: number;
+  period: string;
+  alertAt: number;
+  spent: number;
+  percentage: number;
+  category?: Category;
+}
+
+interface Category {
+  id: string;
+  name: string;
+  type: string;
+}
+
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
 };
-const itemVariants: any = {
+const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } }
 };
 
 export default function Orcamentos() {
-  const [budgets, setBudgets] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -48,7 +65,7 @@ export default function Orcamentos() {
       ]);
       const [budgetsData, catsData] = await Promise.all([budgetsRes.json(), catsRes.json()]);
       setBudgets(Array.isArray(budgetsData) ? budgetsData : []);
-      const expenseCats = Array.isArray(catsData) ? catsData.filter((c: any) => c.type === "EXPENSE") : [];
+      const expenseCats = Array.isArray(catsData) ? catsData.filter((c: Category) => c.type === "EXPENSE") : [];
       setCategories(expenseCats);
       if (expenseCats.length > 0) setCategoryId(expenseCats[0].id);
     } catch { } finally { setLoading(false); }
@@ -111,22 +128,23 @@ export default function Orcamentos() {
   const totalSpent = budgets.reduce((s, b) => s + (b.spent || 0), 0);
   const alertCount = budgets.filter((b) => b.percentage >= b.alertAt).length;
 
-  const getBarColor = (pct: number, alertAt: number) => {
-    if (pct >= 100) return "#f43f5e";
-    if (pct >= alertAt) return "#f59e0b";
-    return "#10b981";
+  const getBarVariant = (pct: number): string => {
+    if (pct > 95) return "critical";
+    if (pct >= 80) return "danger";
+    if (pct >= 50) return "warning";
+    return "success";
   };
 
   return (
     <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0 relative">
       {/* Header */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row md:items-center justify-between gap-8"
+        className="flex flex-col gap-6"
       >
         <div className="flex items-center gap-5">
-          <motion.div 
+          <motion.div
             whileHover={{ scale: 1.02 }}
             className="p-3.5 rounded-2xl bg-secondary text-on-secondary shadow-sm"
           >
@@ -134,41 +152,50 @@ export default function Orcamentos() {
           </motion.div>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-background">Orçamentos</h1>
-<p className="text-on-surface-variant font-medium text-sm mt-1">Planejamento e controle de limites</p>
+            <p className="text-on-surface-variant font-medium text-sm mt-1">Planejamento e controle de limites</p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-3">
-            <Calendar className="w-5 h-5 text-on-surface-variant" />
+        {/* Period Selector — prominent, mobile-first */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="inline-flex items-center gap-3 bg-surface-container-lowest rounded-2xl shadow-sm px-5 py-3.5 border border-outline/10 w-full md:w-auto"
+        >
+          <Calendar className="w-5 h-5 text-primary shrink-0" />
+          <div className="flex flex-col items-start gap-0.5 min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/50">Período</span>
             <input
               type="month"
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="h-12 px-4 rounded-xl bg-surface-variant/30 border border-outline/10 font-bold text-sm focus:ring-2 focus:ring-primary/20"
+              className="h-12 min-h-[44px] px-0 py-0 bg-transparent border-0 font-bold text-base text-on-background focus:ring-0 focus:outline-none w-full"
             />
-</div>
-        </div>
+          </div>
+        </motion.div>
       </motion.div>
 
       {/* Summary Cards */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8"
+        className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6"
       >
         <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between">
-          <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Total Orçado</p>
-          <p className="text-3xl font-bold text-on-background tracking-tight mt-1">{formatCurrency(totalBudget)}</p>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Total Orçado</p>
+          <p className="text-2xl sm:text-3xl font-bold text-on-background tracking-tight mt-1">{formatCurrency(totalBudget)}</p>
         </Card>
         <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between">
-          <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Total Consumido</p>
-          <p className="text-3xl font-bold text-red-600 tracking-tight mt-1">{formatCurrency(totalSpent)}</p>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Total Consumido</p>
+          <p className="text-2xl sm:text-3xl font-bold text-destructive tracking-tight mt-1">{formatCurrency(totalSpent)}</p>
         </Card>
-        <Card className={cn("premium-card p-4 sm:p-6 flex flex-col justify-between transition-colors", alertCount > 0 ? "border-amber-100 bg-amber-50/20" : "")}>
-          <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Alertas Críticos</p>
+        <Card className={cn("premium-card p-4 sm:p-6 flex flex-col justify-between transition-colors", alertCount > 0 ? "border-warning/30 bg-warning/5" : "")}>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Alertas Críticos</p>
           <div className="flex items-center gap-3 mt-1">
-            {alertCount > 0 ? <AlertTriangle className="w-6 h-6 text-amber-500" /> : <CheckCircle2 className="w-6 h-6 text-secondary" />}
-            <p className={cn("text-3xl font-bold tracking-tight", alertCount > 0 ? "text-amber-600" : "text-secondary")}>
+            {alertCount > 0 ? <AlertTriangle className="w-6 h-6 text-warning" /> : <CheckCircle2 className="w-6 h-6 text-success" />}
+            <p className={cn("text-2xl sm:text-3xl font-bold tracking-tight", alertCount > 0 ? "text-warning" : "text-success")}>
               {alertCount}
             </p>
           </div>
@@ -191,69 +218,89 @@ export default function Orcamentos() {
           />
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {budgets.map((budget, idx) => {
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 gap-4"
+        >
+          {budgets.map((budget) => {
             const pct = Math.min(budget.percentage || 0, 100);
             const isAlert = (budget.percentage || 0) >= budget.alertAt;
             const isOver = (budget.percentage || 0) >= 100;
+            const barVariant = getBarVariant(budget.percentage || 0);
 
-            const barColorClass = isOver 
-              ? "bg-red-500" 
-              : isAlert 
-                ? "bg-amber-500" 
-                : "bg-secondary";
+            const barFillClass = 
+              barVariant === "critical" ? "bg-destructive animate-pulse" :
+              barVariant === "danger" ? "bg-destructive" :
+              barVariant === "warning" ? "bg-warning" :
+              "bg-success";
+
+            const pctChipClass =
+              barVariant === "critical" ? "bg-destructive/15 text-destructive" :
+              barVariant === "danger" ? "bg-destructive/15 text-destructive" :
+              barVariant === "warning" ? "bg-warning/15 text-warning" :
+              "bg-success/15 text-success";
 
             return (
-              <motion.div 
+              <motion.div
                 key={budget.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.05 + 0.2 }}
+                variants={itemVariants}
               >
                 <Card className={cn(
-                  "premium-card p-5 md:p-7 group transition-colors",
-                  isOver && "border-red-100 bg-red-50/10",
-                  isAlert && !isOver && "border-amber-100 bg-amber-50/10"
+                  "premium-card p-4 sm:p-6 group transition-all duration-300 hover:scale-[1.01] hover:shadow-lg",
+                  isOver && "border-destructive/20 bg-destructive/5",
+                  isAlert && !isOver && "border-warning/20 bg-warning/5"
                 )}>
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 md:mb-8">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 md:mb-6">
                     <div className="space-y-1.5 text-left">
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-bold text-xl text-on-background tracking-tight">{budget.category?.name}</h3>
-                        {isOver && <span className="px-2.5 py-0.5 rounded-full bg-red-100 text-red-600 text-[9px] font-bold uppercase tracking-wider">Limite Excedido</span>}
-                        {isAlert && !isOver && <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-600 text-[9px] font-bold uppercase tracking-wider">Atenção</span>}
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <h3 className="font-bold text-lg sm:text-xl text-on-background tracking-tight">{budget.category?.name}</h3>
+                        <span className={cn(
+                          "px-2.5 py-1 rounded-full text-[11px] font-extrabold tracking-tight min-h-[44px] md:min-h-0 flex items-center",
+                          pctChipClass
+                        )}>
+                          {(budget.percentage || 0).toFixed(1)}% usado
+                        </span>
+                        {isOver && <span className="px-2.5 py-1 rounded-full bg-destructive/10 text-destructive text-[10px] font-bold uppercase tracking-wider min-h-[44px] md:min-h-0 flex items-center">Limite Excedido</span>}
+                        {isAlert && !isOver && <span className="px-2.5 py-1 rounded-full bg-warning/10 text-warning text-[10px] font-bold uppercase tracking-wider min-h-[44px] md:min-h-0 flex items-center">Atenção</span>}
                       </div>
-                      <span className="text-xs sm:text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
                         Fluxo {budget.period === "MONTHLY" ? "Mensal" : "Anual"} de Gastos
                       </span>
                     </div>
-                    <div className="flex items-center gap-6 self-end md:self-auto">
+                    <div className="flex items-center gap-5 self-end md:self-auto">
                       <div className="text-right">
-                        <p className="font-bold text-on-background text-2xl tracking-tight">{formatCurrency(budget.spent || 0)}</p>
-                        <p className="text-xs sm:text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-tighter">de {formatCurrency(budget.amount)} total</p>
+                        <p className="font-bold text-on-background text-xl sm:text-2xl tracking-tight">{formatCurrency(budget.spent || 0)}</p>
+                        <p className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-tighter">de {formatCurrency(budget.amount)} total</p>
                       </div>
                       <Button variant="ghost" size="icon"
-                        className="w-10 h-10 rounded-lg bg-red-100/60 hover:bg-red-100 text-red-600 hover:text-red-700 transition-colors"
+                        className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-destructive/10 hover:bg-destructive/20 text-destructive hover:text-destructive transition-colors"
                         onClick={() => handleDelete(budget.id)}>
                         <Trash2 className="w-4.5 h-4.5" />
                       </Button>
                     </div>
                   </div>
 
-                  <div className="space-y-2.5">
-                    <div className="h-2 bg-surface-variant/50 rounded-full overflow-hidden border border-outline/5">
-                      <motion.div 
+                  <div className="space-y-3">
+                    {/* Apple-style thin progress bar */}
+                    <div className="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+                      <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${pct}%` }}
                         transition={{ duration: 1, ease: "easeOut" }}
-                        className={cn("h-full rounded-full", barColorClass)} 
+                        className={cn("h-full rounded-full", barFillClass)}
                       />
                     </div>
-                    <div className="flex justify-between items-center font-bold gap-2">
-                      <span className={cn("text-xs sm:text-[10px] uppercase tracking-wider", isOver ? "text-red-600" : isAlert ? "text-amber-600" : "text-secondary")}>
+                    <div className="flex justify-between items-center">
+                      <span className={cn(
+                        "text-[10px] font-bold uppercase tracking-wider",
+                        isOver ? "text-destructive" : isAlert ? "text-warning" : "text-success"
+                      )}>
                         {(budget.percentage || 0).toFixed(1)}% utilizado do total
                       </span>
-                      <span className="text-xs sm:text-[10px] text-on-surface-variant/40 uppercase tracking-widest">
-                        Alerta configurado para {budget.alertAt}%
+                      <span className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest">
+                        Alerta em {budget.alertAt}%
                       </span>
                     </div>
                   </div>
@@ -261,8 +308,68 @@ export default function Orcamentos() {
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       )}
+
+      {/* FAB / CTA — Novo Orçamento */}
+      <Dialog open={isOpen} onOpenChange={(v) => { setIsOpen(v); if (!v) resetForm(); }}>
+        <DialogTrigger
+          render={
+            <Button
+              size="lg"
+              className="fixed bottom-[12rem] right-6 z-30 md:relative md:bottom-auto md:right-auto md:mt-8 apple-button-primary rounded-2xl shadow-lg px-6 py-3.5 min-h-[44px]"
+            />
+          }
+        >
+          <Plus className="w-5 h-5 mr-2" /> Novo Orçamento
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md max-w-[calc(100vw-2rem)] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Novo Orçamento</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-5 mt-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="category">Categoria</Label>
+              <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
+                <SelectTrigger id="category" className="min-h-[44px] rounded-xl">
+                  <SelectValue placeholder="Selecione uma categoria" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat: Category) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="amount">Valor (R$)</Label>
+              <Input id="amount" type="number" step="0.01" min="0.01" placeholder="0,00" value={amount} onChange={(e) => setAmount(e.target.value)} className="min-h-[44px] rounded-xl" />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="period">Periodicidade</Label>
+              <Select value={period} onValueChange={(v: string | null) => setPeriod(v || "MONTHLY")}>
+                <SelectTrigger id="period" className="min-h-[44px] rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="MONTHLY">Mensal</SelectItem>
+                  <SelectItem value="ANNUAL">Anual</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="alertAt">Alerta em (%)</Label>
+              <Input id="alertAt" type="number" min="1" max="100" placeholder="80" value={alertAt} onChange={(e) => setAlertAt(e.target.value)} className="min-h-[44px] rounded-xl" />
+            </div>
+            <Button type="submit" size="lg" disabled={saving} className="w-full apple-button-primary min-h-[44px] rounded-xl">
+              {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Plus className="w-5 h-5 mr-2" />}
+              Criar Orçamento
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

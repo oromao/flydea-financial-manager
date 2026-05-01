@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 export default function PerfilPage() {
   const router = useRouter();
@@ -83,6 +84,7 @@ export default function PerfilPage() {
   };
 
   return (
+    <PageErrorBoundary>
     <div className="max-w-4xl mx-auto pb-20 md:pb-0 space-y-8">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
         <p className="text-xs sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] font-bold text-on-surface-variant/80">Perfil</p>
@@ -170,5 +172,6 @@ export default function PerfilPage() {
         </Card>
       </div>
     </div>
+    </PageErrorBoundary>
   );
 }
