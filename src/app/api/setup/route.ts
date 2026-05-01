@@ -4,21 +4,14 @@ import bcrypt from "bcryptjs";
 
 export async function GET() {
   try {
-    const existingUsers = await prisma.user.count();
-
-    if (existingUsers > 0) {
-      return NextResponse.json({
-        message: "Usuários já existem no banco. Setup já foi executado.",
-        userCount: existingUsers,
-      });
-    }
-
     const hashedPassword = await bcrypt.hash("flydea2026", 10);
     const e2ePassword = await bcrypt.hash("password123", 10);
     const luizPassword = await bcrypt.hash("luiz2026", 10);
 
-    const admin = await prisma.user.create({
-      data: {
+    const admin = await prisma.user.upsert({
+      where: { email: "admin@flydea.com" },
+      update: { password: hashedPassword, name: "Administrador FLY DEA", role: "ADMIN" },
+      create: {
         email: "admin@flydea.com",
         name: "Administrador FLY DEA",
         password: hashedPassword,
@@ -26,8 +19,10 @@ export async function GET() {
       },
     });
 
-    await prisma.user.create({
-      data: {
+    await prisma.user.upsert({
+      where: { email: "augusto@flydea.com" },
+      update: { password: e2ePassword, name: "Augusto Flydea", role: "MEMBER" },
+      create: {
         email: "augusto@flydea.com",
         name: "Augusto Flydea",
         password: e2ePassword,
@@ -35,8 +30,10 @@ export async function GET() {
       },
     });
 
-    await prisma.user.create({
-      data: {
+    await prisma.user.upsert({
+      where: { email: "luiz@flydea.com" },
+      update: { password: luizPassword, name: "Luiz", role: "MEMBER" },
+      create: {
         email: "luiz@flydea.com",
         name: "Luiz",
         password: luizPassword,
@@ -71,7 +68,7 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      message: "Setup concluído! Usuários e categorias criados.",
+      message: "Setup concluído! Usuários e categorias criados/atualizados.",
       users: [
         { email: "admin@flydea.com", password: "flydea2026", role: "ADMIN" },
         { email: "augusto@flydea.com", password: "password123", role: "MEMBER" },
