@@ -4,6 +4,30 @@ import bcrypt from "bcryptjs";
 
 export async function GET() {
   try {
+    // Ensure schema is up to date (add missing columns if not present)
+    try {
+      await prisma.$executeRawUnsafe(`
+        DO $$
+        BEGIN
+          IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'User' AND column_name = 'resetToken'
+          ) THEN
+            ALTER TABLE "User" ADD COLUMN "resetToken" TEXT;
+          END IF;
+
+          IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'User' AND column_name = 'resetTokenExpires'
+          ) THEN
+            ALTER TABLE "User" ADD COLUMN "resetTokenExpires" TIMESTAMP(3);
+          END IF;
+        END $$;
+      `);
+    } catch (schemaError) {
+      console.warn("Schema update warning (may already be correct):", schemaError);
+    }
+
     const hashedPassword = await bcrypt.hash("flydea2026", 10);
     const e2ePassword = await bcrypt.hash("password123", 10);
     const luizPassword = await bcrypt.hash("luiz2026", 10);
@@ -58,13 +82,17 @@ export async function GET() {
     ];
 
     for (const cat of systemCategories) {
-      await prisma.category.create({
-        data: {
-          name: cat.name,
-          type: cat.type as any,
-          userId: admin.id,
-        },
-      });
+      try {
+        await prisma.category.create({
+          data: {
+            name: cat.name,
+            type: cat.type as any,
+            userId: admin.id,
+          },
+        });
+      } catch {
+        // Ignore duplicate category errors
+      }
     }
 
     return NextResponse.json({
