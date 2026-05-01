@@ -4,8 +4,9 @@ import { authOptions } from "@/lib/auth";
 import { PrismaAgentRepository } from "@/infrastructure/repositories/PrismaAgentRepository";
 import { CreateAgentUseCase } from "@/application/agent/use-cases/CreateAgentUseCase";
 import { ListAgentsUseCase } from "@/application/agent/use-cases/ListAgentsUseCase";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function POST(request: NextRequest) {
+export const POST = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
     const message = error instanceof Error ? error.message : "Error creating agent";
     return NextResponse.json({ error: message }, { status: 400 });
   }
-}
+});
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);

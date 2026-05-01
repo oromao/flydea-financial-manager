@@ -15,6 +15,7 @@ import {
 } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const COLORS = ["#09090b", "#18181b", "#27272a", "#3f3f46", "#52525b", "#71717a", "#a1a1aa", "#d4d4d8"];
 
@@ -145,6 +146,22 @@ export default function Relatorios() {
         </div>
       </motion.header>
 
+      {/* Content */}
+      {loading ? (
+        <div className="py-32 text-center">
+          <div className="w-10 h-10 animate-spin mx-auto border-2 border-secondary/20 border-t-secondary rounded-full" />
+          <p className="mt-4 text-on-surface-variant/40 font-black text-xs uppercase tracking-widest">Carregando relatórios...</p>
+        </div>
+      ) : transactions.length === 0 ? (
+        <div className="py-16">
+          <EmptyState
+            icon={BarChart3}
+            title="Nenhum dado disponível"
+            description="Registre movimentações neste período para gerar relatórios e análises."
+          />
+        </div>
+      ) : (
+      <>
       {/* Summary Cards */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
@@ -366,6 +383,8 @@ export default function Relatorios() {
           </div>
         </div>
       </motion.div>
+      </>
+      )}
     </div>
   );
 }

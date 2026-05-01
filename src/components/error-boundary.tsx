@@ -1,7 +1,17 @@
 "use client";
 
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+
+function RetryButton() {
+  const router = useRouter();
+  return (
+    <Button onClick={() => router.refresh()} className="mx-auto">
+      Recarregar página
+    </Button>
+  );
+}
 
 interface Props {
   children: ReactNode;
@@ -36,12 +46,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <p className="text-on-surface-variant text-sm">
               Ocorreu um erro inesperado. Tente recarregar a página.
             </p>
-            <Button
-              onClick={() => window.location.reload()}
-              className="mx-auto"
-            >
-              Recarregar página
-            </Button>
+            <RetryButton />
           </div>
         </div>
       );

@@ -2,6 +2,7 @@
 
 import { Wallet, History, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { QuickAdd } from "@/components/quick-add";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,7 @@ interface DashboardHeroProps {
 }
 
 export function DashboardHero({ balance, loading, categories }: DashboardHeroProps) {
+  const router = useRouter();
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
@@ -48,7 +50,7 @@ export function DashboardHero({ balance, loading, categories }: DashboardHeroPro
           <div className="flex flex-wrap items-center gap-3 md:gap-4">
             <QuickAdd 
               categories={categories} 
-              onSuccess={() => window.location.reload()} 
+              onSuccess={() => router.refresh()} 
             />
             <Link 
               href="/movimentacoes" 

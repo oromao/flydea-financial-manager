@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { z } from "zod";
+import { withValidation } from "@/lib/api-helpers";
+import { withRateLimit } from "@/lib/rate-limit";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -19,14 +22,22 @@ export async function GET() {
   return NextResponse.json(approvals);
 }
 
-export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (session.user.role !== "ADMIN") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+const postSchema = z.object({
+  action: z.string(),
+  entity: z.string(),
+  entityId: z.string(),
+  reason: z.string().optional(),
+  amount: z.number().optional(),
+});
 
-  const body = await request.json().catch(() => ({}));
-  const approvalId = typeof body.approvalId === "string" ? body.approvalId : "";
-  const action = typeof body.action === "string" ? body.action : "";
+export const POST = withRateLimit(
+  withValidation(postSchema, async (body, request) => {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (session.user.role !== "ADMIN") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+    const approvalId = body.entityId;
+    const action = body.action;
 
   if (!approvalId || !["APPROVE", "REJECT"].includes(action)) {
     return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
@@ -67,4 +78,5 @@ export async function POST(request: NextRequest) {
   });
 
   return NextResponse.json(updated);
-}
+  })
+);

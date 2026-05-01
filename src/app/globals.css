@@ -44,15 +44,32 @@
   --color-error: #EF4444;
   --color-on-error: #ffffff;
 
-  --radius-xl: 24px;
-  --radius-lg: 16px;
-  --radius-md: 12px;
-  --radius-sm: 8px;
+  /* shadcn/ui compat + missing tokens */
+  --color-popover: #ffffff;
+  --color-popover-foreground: #111827;
+  --color-ring: #8A05BE;
+  --color-input: #E5E7EB;
+  --color-border: #E5E7EB;
+  --color-destructive: #EF4444;
+  --color-destructive-foreground: #ffffff;
+  --color-accent: #F9FAFB;
+  --color-accent-foreground: #111827;
+  --color-success: #10B981;
+  --color-success-foreground: #ffffff;
+  --color-warning: #F59E0B;
+  --color-warning-foreground: #ffffff;
 
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.02);
-  --shadow-md: 0 4px 20px rgba(0,0,0,0.03);
-  --shadow-lg: 0 10px 40px rgba(0,0,0,0.04);
-  --shadow-xl: 0 20px 60px rgba(0,0,0,0.05);
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.10);
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -84,24 +101,39 @@
     --color-tertiary-container: #7F1010;
     --color-on-tertiary-container: #FFD9D9;
 
-    --color-surface: #151218;
+    --color-surface: #121214;
     --color-on-surface: #E7E1E9;
     --color-surface-variant: #4A4551;
     --color-on-surface-variant: #CCC4D4;
 
-    --color-surface-container-lowest: #100D13;
-    --color-surface-container-low: #1D1A21;
-    --color-surface-container: #221F26;
-    --color-surface-container-high: #2C2930;
-    --color-surface-container-highest: #38353C;
+    --color-surface-container-lowest: #0C0C0E;
+    --color-surface-container-low: #121214;
+    --color-surface-container: #1A1A1D;
+    --color-surface-container-high: #222226;
+    --color-surface-container-highest: #2C2C30;
 
-    --color-outline: #958E9E;
+    --color-outline: #3A3A3D;
     --color-outline-variant: rgba(74, 69, 81, 0.6);
-    --color-background: #151218;
+    --color-background: #0A0A0B;
     --color-on-background: #E7E1E9;
-    --color-muted: #2C2930;
+    --color-muted: #222226;
     --color-error: #FF8080;
     --color-on-error: #4E0000;
+
+    /* shadcn/ui compat — dark mode */
+    --color-popover: #1A1A1D;
+    --color-popover-foreground: #F5F5F7;
+    --color-ring: #D585FA;
+    --color-input: #222226;
+    --color-border: #222226;
+    --color-destructive: #F48080;
+    --color-destructive-foreground: #4E0000;
+    --color-accent: #1D1A21;
+    --color-accent-foreground: #E7E1E9;
+    --color-success: #34D399;
+    --color-success-foreground: #064E3B;
+    --color-warning: #FBBF24;
+    --color-warning-foreground: #78350F;
   }
 }
 
@@ -121,24 +153,39 @@
   --color-tertiary-container: #7F1010;
   --color-on-tertiary-container: #FFD9D9;
 
-  --color-surface: #151218;
+  --color-surface: #121214;
   --color-on-surface: #E7E1E9;
   --color-surface-variant: #4A4551;
   --color-on-surface-variant: #CCC4D4;
 
-  --color-surface-container-lowest: #100D13;
-  --color-surface-container-low: #1D1A21;
-  --color-surface-container: #221F26;
-  --color-surface-container-high: #2C2930;
-  --color-surface-container-highest: #38353C;
+  --color-surface-container-lowest: #0C0C0E;
+  --color-surface-container-low: #121214;
+  --color-surface-container: #1A1A1D;
+  --color-surface-container-high: #222226;
+  --color-surface-container-highest: #2C2C30;
 
-  --color-outline: #958E9E;
+  --color-outline: #3A3A3D;
   --color-outline-variant: rgba(74, 69, 81, 0.6);
-  --color-background: #151218;
+  --color-background: #0A0A0B;
   --color-on-background: #E7E1E9;
-  --color-muted: #2C2930;
+  --color-muted: #222226;
   --color-error: #FF8080;
   --color-on-error: #4E0000;
+
+  /* shadcn/ui compat — dark mode (class) */
+  --color-popover: #1A1A1D;
+  --color-popover-foreground: #F5F5F7;
+  --color-ring: #D585FA;
+  --color-input: #222226;
+  --color-border: #222226;
+  --color-destructive: #F48080;
+  --color-destructive-foreground: #4E0000;
+  --color-accent: #1D1A21;
+  --color-accent-foreground: #E7E1E9;
+  --color-success: #34D399;
+  --color-success-foreground: #064E3B;
+  --color-warning: #FBBF24;
+  --color-warning-foreground: #78350F;
 }
 
 @layer base {
@@ -176,13 +223,21 @@
   h2 { @apply font-display font-bold tracking-tight text-xl sm:text-2xl md:text-3xl leading-[1.2]; }
   h3 { @apply font-display font-bold tracking-tight text-lg sm:text-xl md:text-2xl; }
 
+  .apple-button-primary {
+    @apply bg-primary text-on-primary rounded-xl font-semibold inline-flex items-center justify-center gap-2 transition-all duration-300 hover:brightness-110 active:scale-[0.98];
+  }
+
+  .apple-button-outline {
+    @apply bg-transparent text-on-surface-variant border border-outline rounded-xl font-semibold inline-flex items-center justify-center gap-2 transition-all duration-300 hover:bg-surface-container-low;
+  }
+
   .premium-card {
     @apply bg-surface-container-lowest shadow-md rounded-xl transition-all duration-500 hover:shadow-lg;
     border: none;
   }
 
   .glass-card {
-    @apply bg-white/80 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg;
+    @apply bg-white/80 dark:bg-white/10 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-2xl shadow-lg;
   }
 }
 

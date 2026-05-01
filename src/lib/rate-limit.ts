@@ -36,3 +36,22 @@ export async function checkRateLimit(identifier: string): Promise<{ success: boo
   const result = await limiter.limit(identifier);
   return { success: result.success, remaining: result.remaining };
 }
+
+export function withRateLimit(handler: Function, opts?: { limit?: number; window?: string }) {
+  return async (req: Request, ...args: any[]) => {
+    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+    const identifier = `${ip}:${req.url}`;
+    const limiter = await getRateLimiter();
+    if (!limiter) return handler(req, ...args);
+
+    const result = await limiter.limit(identifier);
+    if (!result.success) {
+      return new Response(JSON.stringify({ error: "Muitas requisições. Tente novamente em alguns segundos." }), {
+        status: 429,
+        headers: { "Content-Type": "application/json", "Retry-After": "60", "X-RateLimit-Remaining": String(result.remaining) },
+      });
+    }
+
+    return handler(req, ...args);
+  };
+}

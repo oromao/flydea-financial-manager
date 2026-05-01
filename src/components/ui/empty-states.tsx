@@ -48,7 +48,7 @@ export function EmptyDashboard() {
         Sua jornada financeira começa aqui. Importe seu primeiro extrato ou adicione uma transação.
       </p>
       <div className="flex gap-3">
-        <Link href="/import" className="apple-button-primary h-11">
+        <Link href="/movimentacoes" className="apple-button-primary h-11">
           <FileUp className="w-4 h-4 mr-2" />
           Importar extrato
         </Link>

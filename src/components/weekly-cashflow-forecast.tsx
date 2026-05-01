@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, AlertCircle, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ interface Metrics {
 }
 
 export function WeeklyCashflowForecast() {
+  const router = useRouter();
   const [data, setData] = useState<WeeklyCashflow[] | null>(null);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [loading, setLoading] = useState(true);
@@ -75,7 +77,7 @@ export function WeeklyCashflowForecast() {
             {error || "Sem dados disponíveis"}
           </p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => router.refresh()}
             className="mt-3 px-3 py-1.5 bg-amber-600 text-white rounded text-xs font-semibold hover:bg-amber-700"
           >
             Tentar novamente

@@ -5,6 +5,7 @@ import { PrismaAgentRepository } from "@/infrastructure/repositories/PrismaAgent
 import { PrismaAgentExecutionRepository } from "@/infrastructure/repositories/PrismaAgentExecutionRepository";
 import { ExecuteAgentUseCase } from "@/application/agent/use-cases/ExecuteAgentUseCase";
 import { DeleteAgentUseCase } from "@/application/agent/use-cases/DeleteAgentUseCase";
+import { withRateLimit } from "@/lib/rate-limit";
 
 export async function GET(
   request: NextRequest,
@@ -54,10 +55,10 @@ export async function POST(
   }
 }
 
-export async function DELETE(
+export const DELETE = withRateLimit(async (
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -78,4 +79,4 @@ export async function DELETE(
     const message = error instanceof Error ? error.message : "Error deleting agent";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});

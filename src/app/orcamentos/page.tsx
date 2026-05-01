@@ -12,6 +12,7 @@ import { useConfirm } from "@/components/ui/confirm-dialog";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const containerVariants: any = {
   hidden: { opacity: 0 },
@@ -142,7 +143,7 @@ export default function Orcamentos() {
               type="month"
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="h-10 px-4 rounded-xl bg-surface-variant/30 border border-outline/10 font-bold text-sm focus:ring-2 focus:ring-primary/20"
+              className="h-12 px-4 rounded-xl bg-surface-variant/30 border border-outline/10 font-bold text-sm focus:ring-2 focus:ring-primary/20"
             />
 </div>
         </div>
@@ -180,17 +181,15 @@ export default function Orcamentos() {
           Analisando orçamentos...
         </div>
       ) : budgets.length === 0 ? (
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-16 gap-4 opacity-30"
-        >
-            <Target className="w-16 h-16 text-on-surface-variant" />
-            <div className="text-center">
-              <h2 className="text-xl font-bold text-on-background">Nenhum orçamento definido</h2>
-              <p className="font-medium text-sm mt-1">Crie metas para ter um controle financeiro preciso</p>
-            </div>
-        </motion.div>
+        <div className="py-16">
+          <EmptyState
+            icon={Target}
+            title="Nenhum orçamento definido"
+            description="Crie metas para ter um controle financeiro preciso"
+            ctaLabel="Novo Orçamento"
+            onCta={() => setIsOpen(true)}
+          />
+        </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {budgets.map((budget, idx) => {

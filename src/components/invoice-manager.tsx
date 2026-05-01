@@ -221,11 +221,11 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
                     </div>
                     <div className="flex-1 w-full sm:w-auto">
                       <Label className="text-[8px] font-black uppercase tracking-widest opacity-40 ml-1">Vencimento</Label>
-                      <Input type="date" value={inst.dueDate} onChange={e => handleInstallmentChange(idx, "dueDate", e.target.value)} className="h-10 bg-white border-transparent rounded-xl font-bold text-xs" />
+                      <Input type="date" value={inst.dueDate} onChange={e => handleInstallmentChange(idx, "dueDate", e.target.value)} className="h-12 bg-white border-transparent rounded-xl font-bold text-xs" />
                     </div>
                     <div className="w-full sm:w-32">
                        <Label className="text-[8px] font-black uppercase tracking-widest opacity-40 ml-1">Valor</Label>
-                       <MoneyInput value={inst.amount.toString()} onChange={v => handleInstallmentChange(idx, "amount", parseFloat(v) || 0)} className="h-10 bg-white border-transparent rounded-xl font-bold text-xs" />
+                       <MoneyInput value={inst.amount.toString()} onChange={v => handleInstallmentChange(idx, "amount", parseFloat(v) || 0)} className="h-12 bg-white border-transparent rounded-xl font-bold text-xs" />
                     </div>
                     <div className="w-full sm:w-32">
                        <Label className="text-[8px] font-black uppercase tracking-widest opacity-40 ml-1">Status</Label>

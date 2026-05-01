@@ -2,6 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { z } from "zod";
+import { withValidation } from "@/lib/api-helpers";
 
 const VALID_EVENTS = [
   "transaction.created",
@@ -23,12 +25,16 @@ export async function GET() {
   return NextResponse.json(webhooks);
 }
 
-export async function POST(request: NextRequest) {
+const postSchema = z.object({
+  url: z.string().url(),
+  events: z.array(z.string()),
+});
+
+export const POST = withValidation(postSchema, async (body, request) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await request.json();
-  const { url, events, name, secret } = body;
+  const { url, events, name, secret } = body as any;
 
   if (!url || !Array.isArray(events) || events.length === 0 || !name) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
@@ -51,9 +57,11 @@ export async function POST(request: NextRequest) {
   });
 
   return NextResponse.json(webhook);
-}
+});
 
-export async function DELETE(request: NextRequest) {
+const deleteSchema = z.object({ id: z.string() });
+
+export const DELETE = withValidation(deleteSchema, async (body, request) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -70,4 +78,4 @@ export async function DELETE(request: NextRequest) {
   await prisma.webhook.delete({ where: { id } });
 
   return NextResponse.json({ ok: true });
-}
+});

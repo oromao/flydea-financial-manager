@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Camera, User as UserIcon, Trash2, Save, ShieldCheck, RefreshCw, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -9,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 
 export default function PerfilPage() {
+  const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [name, setName] = useState("");
@@ -160,7 +162,7 @@ export default function PerfilPage() {
               )}
               {saving ? "Salvando…" : "Salvar perfil"}
             </Button>
-            <Button variant="outline" className="rounded-xl" onClick={() => window.location.reload()}>
+            <Button variant="outline" className="rounded-xl" onClick={() => router.refresh()}>
               <RefreshCw className="w-4 h-4 mr-2" />
               Recarregar
             </Button>

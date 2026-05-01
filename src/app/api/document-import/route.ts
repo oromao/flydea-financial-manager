@@ -9,11 +9,12 @@ import { checkForDuplicate } from "@/lib/duplicate-detector";
 import { uploadFileToBlobStorage } from "@/lib/blob-storage";
 import { paddleOCR } from "@/lib/ocr/paddle-ocr";
 import { generateRequestId } from "@/lib/utils";
+import { withRateLimit } from "@/lib/rate-limit";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ["application/pdf", "image/png", "image/jpeg", "image/jpg", "image/webp", "text/plain"];
 
-export async function POST(request: NextRequest) {
+export const POST = withRateLimit(async (request: NextRequest) => {
   const requestId = generateRequestId();
   const startTime = Date.now();
   
@@ -180,7 +181,7 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);

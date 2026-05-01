@@ -1,77 +1,58 @@
-# FlyDea Financial Manager — Problemas Conhecidos
+# FlyDea — Problemas Conhecidos
 
-## Visão Geral
-
-Este documento lista todos os problemas conhecidos no projeto, seu impacto, status eworkarounds quando aplicável.
+> **Atualizado:** 2026-04-30 — Sincronizado com auditoria completa
 
 ---
 
-## Bugs Críticos (P0)
+## Bugs Confirmados (não corrigidos)
 
-| ID | Módulo | Problema | Impacto | Status | Workaround |
-|----|--------|----------|---------|--------|------------|
-| E1-T1 | Recorrências | Delete não funciona (R-01, R-02) | Usuário não consegue deletar recorrências | pending | N/A |
-| E1-T2 | Contas a Pagar | Filtro fake (P-01) | Filtros não mostram dados corretos | pending | N/A |
-| E1-T3 | UI | glass-card CSS undefined (DS-05) | EmptyState sem estilo | pending | N/A |
-| E1-T4 | UI | --color-muted undefined (DS-08) | Skeletons invisíveis | pending | N/A |
-| E1-T5 | Admin Logs | Sem paginação (L-01) | Performance ruim com muitos logs | pending | N/A |
-| E1-T6 | Admin Aprovações | Sem role check (A-05) | Segurança comprometida | pending | N/A |
+| ID | Módulo | Problema | Impacto | Severidade |
+|----|--------|----------|---------|------------|
+| AN1-T1 | CSS | 5 tokens ausentes (popover, ring, input, border, destructive) | Dialog sem fundo, select sem ring | 🔴 Crítico |
+| AN1-T2 | CSS | glass-card quebra em dark mode | Card branco sobre fundo escuro | 🔴 Crítico |
+| AN1-T3 | CSS | apple-button-primary não definida | Botões podem estar sem estilo | 🔴 Crítico |
+| AN1-T4 | Agents | confirm() nativo em agents-dashboard.tsx:133 | Quebra design system | 🟡 Alto |
+| AN1-T5 | Global | 5 window.location.reload() no código | Perda de estado | 🟡 Alto |
+| AN1-T6 | UI | Link quebrado para /import em empty-states.tsx | 404 ao clicar | 🟡 Alto |
+| AN2-T1 | API | 34/44 APIs sem validação Zod | Payloads maliciosos alcançam DB | 🔴 Crítico |
+| AN2-T2 | API | 43/44 APIs sem rate limiting | Sem proteção contra brute force | 🔴 Crítico |
+| AN3-T1 | TS | 104+ `any` types no código | Type safety perdido | 🟡 Alto |
+| AN3-T2 | CSS | 77+ cores Tailwind hardcoded | Não adaptam dark mode | 🟡 Alto |
+| AN3-T3 | Global | 18 páginas sem error boundary | Erro de fetch sem feedback | 🟡 Alto |
+| AN4-T6 | A11y | 15/21 componentes sem ARIA | Inacessível para leitores de tela | 🟡 Alto |
+| AN5-T4 | Mobile | Touch targets < 44px | Dificuldade de toque | 🟡 Alto |
+| AN6-T1 | Testes | Sem coverage config no Vitest | Cobertura não verificável | 🟡 Alto |
 
 ---
 
-## Bugs Alto (P1)
+## Bugs Corrigidos (Épico 1-2 do backlog original)
 
-| ID | Módulo | Problema | Impacto | Status | Workaround |
-|----|--------|----------|---------|--------|------------|
-| E1-T7 | Movimentações | Dialog mobile sem header sticky (M-01) | Usuário não consegue fechar após scroll | pending | N/A |
-| E1-T8 | Movimentações | Tabela duplicada no mobile (M-06) | UI confusa | pending | N/A |
-| E1-T9 | Movimentações | FAB sobrepõe bottom nav (M-09) | Toques acidentais | pending | N/A |
-| E1-T10 | Mobile | Navegação 2+ taps (MB-01) | Descoberta ruim | pending | N/A |
-| E1-T11 | Mobile | Dialog sem swipe-to-close (DS-02) | Gesto ausente | pending | N/A |
-| E2-T1 | Global | confirm() nativo em 3 páginas | UX inconsistente | pending | N/A |
-| E2-T2 | Global | Toast local em 3 páginas | UI duplicada | pending | N/A |
-| E2-T3 | Global | Sem error boundary | App quebra inteiro | pending | N/A |
+| Bug | Status |
+|-----|--------|
+| E1-T1 Delete recorrências | ✅ Corrigido |
+| E1-T2 Filtro fake Contas a Pagar | ✅ Corrigido |
+| E1-T3 glass-card CSS | ✅ Definido (mas quebra dark mode → AN1-T2) |
+| E1-T4 --color-muted CSS | ✅ Definido |
+| E1-T5 Paginação logs | ✅ Implementado |
+| E1-T6 Role check aprovações | ✅ Implementado |
+| E1-T7 Header sticky dialog mobile | ✅ Implementado |
+| E1-T8 Tabela escondida mobile | ✅ Implementado |
+| E1-T9 FAB safe-area | ✅ Implementado |
+| E1-T10 Bottom sheet navegação | ✅ Implementado |
+| E1-T11 Swipe-to-close dialog | ✅ Implementado |
+| E2-T1 useConfirm nas páginas | ✅ 2/3 feito (1 confirm() restante → AN1-T4) |
+| E2-T2 Toast global | ✅ Substituído |
+| E2-T3 Error boundary | ✅ App-level (falta page-level → AN3-T3) |
 
 ---
 
 ## Limitações Conhecidas (Accepted)
 
-| ID | Módulo | Problema | Impacto | Status | Notas |
-|----|--------|----------|---------|--------|-------|
-| L-01 | Fluxo de Caixa | InvoiceInstallments não no forecast | Receitas de fatura não consideradas | known | "By design" em financial-architecture.md |
-| L-02 | OCR | extractInstallments() não processa "3x de R$" | Parcelas não extraídas | known | PRIORIDADE: implementar (E4-T1) |
-| L-03 | Copiloto | Heurística local, não LLM | Respostas limitadas | known | PRIORIDADE: LLM integration (E5-T7) |
-| L-04 | CashflowWeekly | Tabela órfã no schema | Nenhum | known | Remover em futura migração |
-| L-05 | Timezone | Display pode variar ±1 dia | Datas específicas podem errar | known | Negligível para agregação mensal |
+| L-01 | Fluxo de Caixa | InvoiceInstallments não no forecast | By design |
+| L-02 | OCR | extractInstallments() não processa parcelas | Ver E4-T1 |
+| L-03 | Copiloto | Heurística local, não LLM | Ver E5-T7 |
+| L-05 | Timezone | Display pode variar ±1 dia | Negligível |
 
 ---
 
-## Issues Não-Bugs (Wont Fix)
-
-| ID | Módulo | Problema | Decisão | Razão |
-|----|--------|----------|----------|-------|
-| W-01 | Login | Sem "esqueci senha" | Won't fix (por agora) | Requer infraestrutura de email |
-| W-02 | Login | Sem "lembrar-me" | Won't fix (por agora) | Sessão atual é suficiente |
-| W-03 | Recorrências | Sem BIWEEKLY/YEARLY | Won't fix (por agora) | R-05: baixa prioridade |
-
----
-
-## Como Usar Este Documento
-
-1. **Antes de reporta bug:** Verificar se já está nesta lista
-2. **Antes de implementar feature:** Verificar se não contradiz uma limitação conhecida
-3. **QA:** Cross-reference com checklist de validação
-
----
-
-## Atualização
-
-Este documento deve ser atualizado quando:
-- Novo bug for descoberto
-- Bug for corrigido (mover para "resolvido" ou remover)
-- Workaround for adicionado
-- Decisão de won't fix for tomada
-
----
-
-*Última atualização: 2026-04-30*
+*Sincronizado com auditoria de 2026-04-30. Substitui versão anterior.*

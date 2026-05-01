@@ -149,14 +149,14 @@ export default function AuditLogs() {
               type="date" 
               value={dateFrom} 
               onChange={(e) => handleFilterChange(setDateFrom, e.target.value)}
-              className="h-10 text-xs"
+              className="h-12 text-xs"
               placeholder="De"
             />
             <Input 
               type="date" 
               value={dateTo} 
               onChange={(e) => handleFilterChange(setDateTo, e.target.value)}
-              className="h-10 text-xs"
+              className="h-12 text-xs"
               placeholder="Até"
             />
           </div>

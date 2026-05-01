@@ -535,11 +535,11 @@ function MovimentacoesContent() {
         <div className="flex flex-col sm:grid sm:grid-cols-2 lg:flex gap-3 p-4 bg-surface-variant/20 rounded-2xl border border-outline/5 lg:items-end">
           <div className="space-y-1 flex-1">
             <Label className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/50 ml-2">Período De</Label>
-            <Input type="date" value={startDateFilter} onChange={e => setStartDateFilter(e.target.value)} className="h-10 bg-surface-container-lowest border-outline/10 rounded-xl text-xs font-black" />
+            <Input type="date" value={startDateFilter} onChange={e => setStartDateFilter(e.target.value)} className="h-12 bg-surface-container-lowest border-outline/10 rounded-xl text-xs font-black" />
           </div>
           <div className="space-y-1 flex-1">
             <Label className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/50 ml-2">Período Até</Label>
-            <Input type="date" value={endDateFilter} onChange={e => setEndDateFilter(e.target.value)} className="h-10 bg-surface-container-lowest border-outline/10 rounded-xl text-xs font-black" />
+            <Input type="date" value={endDateFilter} onChange={e => setEndDateFilter(e.target.value)} className="h-12 bg-surface-container-lowest border-outline/10 rounded-xl text-xs font-black" />
           </div>
           
           <div className="flex bg-surface-container-lowest rounded-xl p-0.5 border border-outline/10 h-10 overflow-hidden">
@@ -632,7 +632,7 @@ function MovimentacoesContent() {
                     variant={page === pageNum ? "default" : "ghost"}
                     size="icon"
                     onClick={() => setPage(pageNum)}
-                    className="w-9 h-9 rounded-xl text-xs font-bold"
+                    className="min-w-[44px] min-h-[44px] rounded-xl text-xs font-bold"
                   >
                     {pageNum}
                   </Button>

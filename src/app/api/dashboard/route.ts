@@ -5,8 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { startOfMonth, endOfMonth, addMonths } from "date-fns";
 import { computeMonthlySummary } from "@/lib/financial-engine";
 import { picoClaw } from "@/lib/ai/pico-claw";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function GET(request: NextRequest) {
+export const GET = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -173,4 +174,4 @@ export async function GET(request: NextRequest) {
       }
     },
   });
-}
+});

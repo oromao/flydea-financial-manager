@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import { MoneyInput } from "@/components/ui/money-input";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const accountTypes = [
   { value: "CHECKING", label: "Conta Corrente", icon: Wallet, color: "#0071E3" },
@@ -228,12 +229,14 @@ export default function ContasPage() {
            <Loader2 className="w-10 h-10 animate-spin mx-auto text-secondary/30" />
         </div>
       ) : accounts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-30">
-            <Wallet className="w-20 h-20 text-on-surface-variant" />
-            <div className="text-center">
-              <h2 className="text-xl font-bold text-on-background">Nenhuma conta cadastrada</h2>
-              <p className="font-medium text-sm mt-1">Adicione seus bancos para começar a gestão</p>
-            </div>
+        <div className="py-16">
+          <EmptyState
+            icon={Wallet}
+            title="Nenhuma conta cadastrada"
+            description="Adicione seus bancos para começar a gestão"
+            ctaLabel="Nova Conta"
+            onCta={() => setOpen(true)}
+          />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

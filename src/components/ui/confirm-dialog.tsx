@@ -40,18 +40,18 @@ export function ConfirmDialogProvider({ children }: { children: ReactNode }) {
   const variantStyles = {
     danger: {
       icon: "text-rose-400",
-      iconBg: "bg-rose-500/10",
-      confirmClass: "bg-rose-500 hover:bg-rose-600 text-white border-rose-500",
+      iconBg: "bg-destructive/10",
+      confirmClass: "bg-destructive hover:bg-destructive/90 text-destructive-foreground",
     },
     warning: {
       icon: "text-amber-400",
-      iconBg: "bg-amber-500/10",
-      confirmClass: "bg-amber-500 hover:bg-amber-600 text-white border-amber-500",
+      iconBg: "bg-warning/10",
+      confirmClass: "bg-warning hover:bg-warning/90 text-warning-foreground",
     },
     info: {
       icon: "text-blue-400",
-      iconBg: "bg-blue-500/10",
-      confirmClass: "bg-blue-500 hover:bg-blue-600 text-white border-blue-500",
+      iconBg: "bg-primary/10",
+      confirmClass: "bg-primary hover:bg-primary/90 text-on-primary",
     },
   };
 

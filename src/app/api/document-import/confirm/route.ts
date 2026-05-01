@@ -3,25 +3,39 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
+import { withValidation } from "@/lib/api-helpers";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+const postSchema = z.object({
+  documentId: z.string(),
+  transactions: z.array(z.object({
+    description: z.string(),
+    amount: z.number(),
+    type: z.enum(["INCOME", "EXPENSE"]),
+    categoryId: z.string(),
+    date: z.string(),
+  })),
+});
 
-  const body = await request.json();
-  const {
-    documentId,
-    overrideType,
-    overrideCategoryId,
-    overrideAmount,
-    overrideDate,
-    overrideDueDate,
-    overridePaymentStatus,
-    overrideDescription,
-    confirmAnyway,
-  } = body;
+export const POST = withRateLimit(
+  withValidation(postSchema, async (body, request) => {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const {
+      documentId,
+      overrideType,
+      overrideCategoryId,
+      overrideAmount,
+      overrideDate,
+      overrideDueDate,
+      overridePaymentStatus,
+      overrideDescription,
+      confirmAnyway,
+    } = body as any;
 
   logger.info("DocumentImportConfirm: confirming", { userId: session.user.id, documentId });
 
@@ -141,7 +155,8 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+  })
+);
 
 export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);

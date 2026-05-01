@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { AgentForm } from "./agent-form";
 import { AgentExecutionHistory } from "./agent-execution-history";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 
 interface Agent {
@@ -23,6 +24,7 @@ interface Agent {
 
 export function AgentsDashboard() {
   const toast = useToast();
+  const confirm = useConfirm();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -130,7 +132,8 @@ export function AgentsDashboard() {
   };
 
   const handleDelete = async (agentId: string) => {
-    if (!confirm("Tem certeza que deseja deletar este agente?")) return;
+    const ok = await confirm({ title: "Deletar Agente", message: "Tem certeza que deseja deletar este agente?", variant: "danger" });
+    if (!ok) return;
 
     try {
       const res = await fetch(`/api/agents/${agentId}`, { method: "DELETE" });

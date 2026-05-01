@@ -62,7 +62,7 @@ export function BottomNav() {
                   onClick={() => setSheetOpen(true)}
                   className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
                 >
-                  <div className="flex items-center justify-center w-11 h-8 rounded-2xl transition-all duration-200 group-active:bg-surface-container">
+                  <div className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-2xl transition-all duration-200 group-active:bg-surface-container">
                     <Icon className="w-5 h-5 text-on-surface-variant/50 stroke-[1.5px]" />
                   </div>
                   <span className="text-[10px] font-bold tracking-wide transition-all duration-200 text-on-surface-variant/50">
@@ -82,7 +82,7 @@ export function BottomNav() {
                   <span className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-primary" />
                 )}
                 <div className={cn(
-                  "flex items-center justify-center w-11 h-8 rounded-2xl transition-all duration-200",
+                  "flex items-center justify-center min-w-[44px] min-h-[44px] rounded-2xl transition-all duration-200",
                   isActive ? "bg-primary/10" : "group-active:bg-surface-container"
                 )}>
                   <Icon className={cn(

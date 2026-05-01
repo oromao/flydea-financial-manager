@@ -1,33 +1,30 @@
 {
-    "mcpServers": {
-        "vercel": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "@vercel/mcp"
-            ],
-            "env": {
-                "VERCEL_API_TOKEN": "YOUR_TOKEN_HERE"
-            }
-        },
-        "context7": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "@upstash/context7-mcp",
-                "--api-key",
-                "YOUR_API_KEY"
-            ]
-        },
-        "shadcn": {
-            "command": "npx",
-            "args": [
-                "shadcn@latest",
-                "mcp"
-            ]
-        }
+  "mcpServers": {
+    "vercel": {
+      "description": "Vercel deployments, logs, env vars, domains, projects — 50+ tools",
+      "command": "npx",
+      "args": ["-y", "@robinsonai/vercel-mcp"],
+      "env": {
+        "VERCEL_API_TOKEN": "YOUR_VERCEL_TOKEN"
+      }
+    },
+    "shadcn": {
+      "description": "Adiciona, lista e gerencia componentes shadcn/ui via IA",
+      "command": "npx",
+      "args": ["-y", "shadcn@4.6.0", "mcp"]
+    },
+    "playwright": {
+      "description": "Debug visual, screenshots, inspeção de frontend mobile (iPhone 16)",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp"]
+    },
+    "github": {
+      "description": "Gerenciamento de PRs, issues, branches, releases, code review",
+      "command": "npx",
+      "args": ["-y", "@fre4x/github"],
+      "env": {
+        "GITHUB_TOKEN": "YOUR_GITHUB_TOKEN"
+      }
     }
+  }
 }
-
-// setup mcp server in  ~/.gemini\antigravity\mcp_config.json
-

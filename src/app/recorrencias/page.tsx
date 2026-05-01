@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import { MoneyInput } from "@/components/ui/money-input";
@@ -245,12 +246,14 @@ export default function Recorrencias() {
            <p className="mt-4 text-on-surface-variant/40 font-black text-xs uppercase tracking-widest">Sincronizando automações...</p>
         </div>
       ) : recurrences.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-30">
-            <RotateCcw className="w-20 h-20 text-on-surface-variant" />
-            <div className="text-center">
-              <h2 className="text-xl font-bold text-on-background">Nenhuma recorrência ativa</h2>
-              <p className="font-medium text-sm mt-1">Agende suas despesas fixas para maior praticidade</p>
-            </div>
+        <div className="py-16">
+          <EmptyState
+            icon={RotateCcw}
+            title="Nenhuma recorrência ativa"
+            description="Agende suas despesas fixas para maior praticidade"
+            ctaLabel="Nova Recorrência"
+            onCta={() => setIsDialogOpen(true)}
+          />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
