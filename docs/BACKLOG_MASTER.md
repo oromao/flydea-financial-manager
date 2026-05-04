@@ -116,33 +116,166 @@
 
 ---
 
+## ÉPICO 7: DESIGN OVERHAUL — BUGS CRÍTICOS (P0) — 🔴 PENDING
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E7-T1 | Bug 🔴 | Contas e Cartões | Corrigir loop infinito de erros "Erro ao carregar contas" | P0 | Baixa | pending |
+| E7-T2 | Bug 🔴 | Admin Aprovações | Corrigir loop infinito de erros "Não foi possível carregar aprovações" | P0 | Baixa | pending |
+| E7-T3 | Bug 🔴 | Transações | Adicionar validação de conta obrigatória no formulário | P0 | Baixa | pending |
+| E7-T4 | Bug 🔴 | Transações | Corrigir campo valor vazio no formulário de edição | P0 | Baixa | pending |
+| E7-T5 | UX 🔴 | Toast System | Limitar toasts a 3 simultâneos com auto-dismiss 5s | P0 | Baixa | pending |
+
+---
+
+## ÉPICO 8: DESIGN SYSTEM & FOUNDATION (P1) — 🔴 PENDING
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E8-T1 | Design | Global | Audit de cores hardcoded → tokens do design system | P1 | Média | pending |
+| E8-T2 | Design | Global | Implementar gradientes premium (--gradient-primary, etc) | P1 | Baixa | pending |
+| E8-T3 | Design | Global | Implementar sombras premium (--shadow-premium, --shadow-float, --shadow-glow) | P1 | Baixa | pending |
+| E8-T4 | Design | Typography | Criar sistema tipográfico completo (Display, H1-H6, Body, Caption, Overline) | P1 | Baixa | pending |
+| E8-T5 | Design | Layout | Definir grid system (4px increments, padding lateral por breakpoint) | P1 | Baixa | pending |
+| E8-T6 | UI | Components | Melhorar Button com variantes (primary, secondary, ghost, destructive) | P1 | Média | pending |
+| E8-T7 | UI | Components | Criar Card premium com glass effect | P1 | Média | pending |
+| E8-T8 | UI | Components | Melhorar Input com floating label | P1 | Média | pending |
+| E8-T9 | UI | Components | Criar Badge/Tag component | P1 | Baixa | pending |
+| E8-T10 | UI | Components | Criar Progress Ring component | P1 | Baixa | pending |
+
+---
+
+## ÉPICO 9: MOBILE-FIRST REVOLUTION (P0-P1) — 🔴 PENDING
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E9-T1 | UX 🔴 | Mobile | Criar Bottom Navigation Bar (5 itens: Home, Mov., Add, Alert, Mais) | P0 | Média | pending |
+| E9-T2 | UX 🔴 | Mobile | Esconder sidebar no mobile, usar bottom nav | P0 | Média | pending |
+| E9-T3 | UX 🔴 | Mobile | Criar FAB (Floating Action Button) para adicionar transação | P0 | Baixa | pending |
+| E9-T4 | UX | Mobile | Implementar FormWizard para formulários (steps com progress) | P1 | Alta | pending |
+| E9-T5 | UX | Mobile | Keyboard-aware: botão fixo acima do teclado em formulários | P1 | Média | pending |
+| E9-T6 | UX | Mobile | Garantir touch targets mínimos 44x44px em todos os elementos | P1 | Baixa | pending |
+| E9-T7 | UX | Mobile | Criar TransactionCard component para layout mobile | P1 | Média | pending |
+| E9-T8 | UX | Mobile | Esconder tabela no mobile, mostrar cards | P1 | Baixa | pending |
+| E9-T9 | UX | Mobile | Implementar swipe actions em cards (editar, excluir) | P2 | Média | pending |
+| E9-T10 | UX | Mobile | Implementar pull-to-refresh em listas | P2 | Média | pending |
+
+---
+
+## ÉPICO 10: DESKTOP POLISH (P1) — 🔴 PENDING
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E10-T1 | Design | Sidebar | Redesign sidebar com seções, ícones, badges, collapse/expand | P1 | Média | pending |
+| E10-T2 | Design | Dashboard | Criar DashboardHero com saudação personalizada | P1 | Média | pending |
+| E10-T3 | Design | Dashboard | Criar mini-cards de resumo com ícones e tendências | P1 | Média | pending |
+| E10-T4 | UX | Tables | Adicionar sorting, filtros visuais, seleção múltipla em tabelas | P1 | Alta | pending |
+| E10-T5 | UX | Tables | Bulk actions (excluir selecionados) | P2 | Média | pending |
+| E10-T6 | Design | Empty States | Criar EmptyState premium com ilustração e ações claras | P2 | Baixa | pending |
+
+---
+
+## ÉPICO 11: MICRO-INTERACTIONS & MOTION (P2) — 🔴 PENDING
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E11-T1 | UX | Global | Adicionar page transitions (fade-in/slide-up) | P2 | Média | pending |
+| E11-T2 | UX | Global | Skeleton loading durante transições de página | P2 | Média | pending |
+| E11-T3 | Design | Cards | Hover: scale(1.02) + shadow increase em cards | P2 | Baixa | pending |
+| E11-T4 | Design | Cards | Entry stagger animation em listas | P2 | Média | pending |
+| E11-T5 | UX | Loading | Skeleton screens premium com shimmer animation | P2 | Média | pending |
+| E11-T6 | UX | Feedback | Checkmark animation ao salvar | P2 | Baixa | pending |
+| E11-T7 | UX | Feedback | Shake animation em erro de validação | P2 | Baixa | pending |
+| E11-T8 | UX | Feedback | Pulse animation em badges novos | P2 | Baixa | pending |
+
+---
+
+## ÉPICO 12: PAGES COMPLETION (P0) — 🔴 PENDING
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E12-T1 | Feature 🔴 | Fluxo de Caixa | Criar página /fluxo-de-caixa com gráfico diário e heatmap | P0 | Alta | pending |
+| E12-T2 | Feature 🔴 | Fluxo de Caixa | Criar API route /api/cashflow | P0 | Alta | pending |
+| E12-T3 | Feature 🔴 | Planejamento | Criar página /planejamento com metas e projeções | P0 | Alta | pending |
+| E12-T4 | Feature 🔴 | Planejamento | Criar API route /api/planning | P0 | Alta | pending |
+| E12-T5 | Feature 🔴 | Inteligência IA | Criar página /inteligencia-ia com chat interface | P0 | Alta | pending |
+| E12-T6 | Feature 🔴 | Inteligência IA | Criar API route /api/ai | P0 | Alta | pending |
+| E12-T7 | Feature 🔴 | Análises | Criar página /analises com tendências e comparativos | P0 | Alta | pending |
+| E12-T8 | Feature 🔴 | Análises | Criar API route /api/analytics | P0 | Alta | pending |
+
+---
+
+## ÉPICO 13: FINAL QA & POLISH (P1) — 🔴 PENDING
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E13-T1 | QA | Cross-Browser | Testar em Chrome, Safari, Firefox, iOS Safari, Android Chrome | P1 | Média | pending |
+| E13-T2 | A11y | Accessibility | Verificar contraste WCAG AA em todas as cores | P1 | Média | pending |
+| E13-T3 | A11y | Accessibility | Testar com leitor de tela e navegação por teclado | P1 | Média | pending |
+| E13-T4 | A11y | Accessibility | Adicionar ARIA labels onde necessário | P1 | Baixa | pending |
+| E13-T5 | Performance | Global | Otimizar bundle size e lazy loading | P1 | Média | pending |
+| E13-T6 | Performance | Global | Implementar service worker para cache | P2 | Alta | pending |
+| E13-T7 | Performance | Global | Meta: Lighthouse Mobile > 90, Desktop > 95 | P1 | Alta | pending |
+| E13-T8 | Design | Global | Revisão final visual de todas as páginas | P1 | Média | pending |
+| E13-T9 | Design | Dark Mode | Revisar e garantir consistência do dark mode | P2 | Média | pending |
+
+---
+
 ## Resumo por Prioridade
 
 | Prioridade | Qtd Items | Items |
 |------------|-----------|-------|
-| P0 | 11 | E1-T1 a E1-T11 |
-| P1 | 17 | E2-T1 a E2-T10, E3-T1 a E3-T7 |
-| P2 | 15 | E4-T1 a E4-T8, E5-T1, E5-T2, E5-T5, E5-T8, E6-T1 a E6-T10 |
+| P0 | 24 | E1-T1 a E1-T11, E7-T1 a E7-T5, E9-T1 a E9-T3, E12-T1 a E12-T8 |
+| P1 | 34 | E2-T1 a E2-T10, E3-T1 a E3-T7, E8-T1 a E8-T10, E9-T4 a E9-T8, E10-T1 a E10-T4, E13-T1 a E13-T5, E13-T7, E13-T8 |
+| P2 | 23 | E4-T1 a E4-T8, E5-T1, E5-T2, E5-T5, E5-T8, E6-T1 a E6-T10, E9-T9, E9-T10, E10-T5, E10-T6, E11-T1 a E11-T8, E13-T6, E13-T9 |
 | P3 | 4 | E5-T3, E5-T4, E5-T6, E5-T7 |
 
 ---
 
-## Próximos Passos Recomendados
+## Próximos Passos Recomendados (Design Overhaul)
 
-1. **E1-T1** — Delete de recorrências (mais crítico)
-2. **E1-T2** — Filtro fake de Contas a Pagar
-3. **E1-T3** — CSS glass-card
-4. **E1-T4** — CSS --color-muted
-5. **E1-T5** — Paginação em logs
+### Semana 1: Fundação
+1. **E7-T1** — Corrigir loop infinito em Contas e Cartões
+2. **E7-T2** — Corrigir loop infinito em Admin Aprovações
+3. **E7-T3** — Validação de conta obrigatória
+4. **E7-T4** — Campo valor na edição
+5. **E7-T5** — Toast system improvements
+6. **E8-T1** — Audit de cores hardcoded
+
+### Semana 2: Mobile-First
+1. **E9-T1** — Bottom Navigation Bar
+2. **E9-T2** — Esconder sidebar no mobile
+3. **E9-T3** — FAB para adicionar transação
+4. **E9-T6** — Touch targets 44px
+5. **E9-T7** — TransactionCard component
+6. **E9-T8** — Cards no mobile
+
+### Semana 3: Pages & Desktop
+1. **E12-T1** — Página Fluxo de Caixa
+2. **E12-T3** — Página Planejamento
+3. **E12-T5** — Página Inteligência IA
+4. **E12-T7** — Página Análises
+5. **E10-T1** — Sidebar redesign
+6. **E10-T2** — Dashboard hero
+
+### Semana 4: Polish
+1. **E11-T1** — Page transitions
+2. **E11-T5** — Skeleton screens premium
+3. **E13-T1** — Cross-browser testing
+4. **E13-T2** — Accessibility audit
+5. **E13-T7** — Performance optimization
+6. **E13-T8** — Final visual review
 
 ---
 
 ## Como Ler Este Backlog
 
 - **ID estruturado:** E{Épico}-{Tarefa}
-- **Primeiro dígito:** Épico (1-6)
+- **Primeiro dígito:** Épico (1-13)
 - **Segundo dígito:** Tarefa sequencial
 - **Ordem de execução:** P0 → P1 → P2 → P3, dentro de cada prioridade, respeitar dependências
+- **Épicos 1-6:** Históricos (completados)
+- **Épicos 7-13:** Design Overhaul (novos, pending)
 
 ---
 
@@ -158,4 +291,4 @@ Este arquivo deve ser atualizado sempre que:
 
 ---
 
-*Última atualização: 2026-04-30 — Versão 1.0*
+*Última atualização: 2026-05-04 — Versão 2.0 (Design Overhaul)*

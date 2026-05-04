@@ -31,7 +31,7 @@ const transactionSchema = z.object({
   type: z.enum(["INCOME", "EXPENSE"]),
   date: z.string().min(1, "Data é obrigatória"),
   categoryId: z.string().min(1, "Categoria é obrigatória"),
-  accountId: z.string().optional(),
+  accountId: z.string().min(1, "Conta é obrigatória"),
   dueDate: z.string().optional(),
   paymentStatus: z.enum(["PENDING", "PAID"]).optional(),
   observations: z.string().optional(),
@@ -447,7 +447,7 @@ function MovimentacoesContent() {
                   <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Classificação</h3>
 
                   <div className="space-y-2">
-                    <Label htmlFor="categoryId" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Categoria</Label>
+                    <Label htmlFor="categoryId" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Categoria <span className="text-destructive">*</span></Label>
                     <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
                       <SelectTrigger id="categoryId" className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" aria-label="Categoria da transação" aria-describedby="categoryId-error">
                         {categories.find(c => c.id === categoryId)?.name || "Selecione..."}
@@ -462,7 +462,7 @@ function MovimentacoesContent() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="accountId" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Conta</Label>
+                    <Label htmlFor="accountId" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Conta <span className="text-destructive">*</span></Label>
                     <Select value={accountId} onValueChange={(v: string | null) => setAccountId(v || "")}>
                       <SelectTrigger id="accountId" className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" aria-label="Conta da transação">
                         {accounts.find(a => a.id === accountId)?.name || "Selecione..."}
@@ -473,6 +473,7 @@ function MovimentacoesContent() {
                         ))}
                       </SelectContent>
                     </Select>
+                    {errors.accountId && <p id="accountId-error" className="text-xs text-destructive mt-1">{errors.accountId}</p>}
                   </div>
 
                   <div className="space-y-2">

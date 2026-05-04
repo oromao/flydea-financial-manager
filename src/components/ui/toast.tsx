@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, createContext, useContext, useCallback, ReactNode } from "react";
+import { useEffect, useRef, useState, createContext, useContext, useCallback, useMemo, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle2, AlertCircle, Info, Trash2 } from "lucide-react";
 
@@ -34,20 +34,27 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const show = useCallback(
     (message: string, type: ToastType = "info", options?: { duration?: number; onUndo?: () => void }) => {
       const id = Math.random().toString(36).slice(2);
-      setToasts((prev) => [...prev, { id, message, type, ...options }]);
+      setToasts((prev) => {
+        const next = [...prev, { id, message, type, ...options }];
+        if (next.length > 3) return next.slice(-3);
+        return next;
+      });
       const duration = options?.duration ?? (type === "undo" ? 5000 : 3500);
       setTimeout(() => dismiss(id), duration);
     },
     [dismiss]
   );
 
-  const value: ToastContextValue = {
-    show,
-    success: (msg) => show(msg, "success"),
-    error: (msg) => show(msg, "error"),
-    info: (msg) => show(msg, "info"),
-    undo: (msg, onUndo, duration = 5000) => show(msg, "undo", { onUndo, duration }),
-  };
+  const value: ToastContextValue = useMemo(
+    () => ({
+      show,
+      success: (msg) => show(msg, "success"),
+      error: (msg) => show(msg, "error"),
+      info: (msg) => show(msg, "info"),
+      undo: (msg, onUndo, duration = 5000) => show(msg, "undo", { onUndo, duration }),
+    }),
+    [show]
+  );
 
   return (
     <ToastContext.Provider value={value}>

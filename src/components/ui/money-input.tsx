@@ -26,7 +26,9 @@ export function MoneyInput({ value, onChange, className, placeholder, required, 
     }).format(floatValue);
   };
 
-  const [localValue, setLocalValue] = useState("");
+  const [localValue, setLocalValue] = useState(() =>
+    value ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(parseFloat(value)) : ""
+  );
   const [prevValue, setPrevValue] = useState(value);
 
   // Synchronize state with props during render (React recommended pattern)
