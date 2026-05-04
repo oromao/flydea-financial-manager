@@ -14,9 +14,9 @@
       "args": ["-y", "shadcn@4.6.0", "mcp"]
     },
     "playwright": {
-      "description": "Debug visual, screenshots, inspeção de frontend mobile (iPhone 16)",
+      "description": "Navegação, screenshots, testes visuais e interação com páginas web via Playwright",
       "command": "npx",
-      "args": ["-y", "@playwright/mcp"]
+      "args": ["-y", "@playwright/mcp@latest"]
     },
     "github": {
       "description": "Gerenciamento de PRs, issues, branches, releases, code review",

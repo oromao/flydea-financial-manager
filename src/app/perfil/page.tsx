@@ -109,7 +109,7 @@ export default function PerfilPage() {
             <div className="min-w-0">
               <h2 className="font-semibold text-on-background truncate">{name || "Usuário"}</h2>
               <p className="text-sm text-on-surface-variant truncate">{email}</p>
-              <div className="mt-2 inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full">
+              <div className="mt-2 inline-flex items-center gap-2 text-xs font-semibold text-success bg-success/10 px-3 py-1.5 rounded-full">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 Conta ativa
               </div>

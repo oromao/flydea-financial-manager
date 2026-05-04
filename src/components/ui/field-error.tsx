@@ -15,7 +15,7 @@ export function FieldError({ message }: FieldErrorProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.15 }}
-          className="flex items-center gap-1.5 text-rose-400 text-xs font-medium mt-1.5 ml-2"
+          className="flex items-center gap-1.5 text-destructive text-xs font-medium mt-1.5 ml-2"
         >
           <AlertCircle className="w-3 h-3 shrink-0" aria-hidden="true" />
           {message}

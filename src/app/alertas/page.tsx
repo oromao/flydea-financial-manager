@@ -54,8 +54,8 @@ export default function Alertas() {
   };
 
   const icon = (type: string) => {
-    if (type === "warning") return <AlertTriangle className="w-4 h-4 text-amber-600" />;
-    if (type === "error") return <MailWarning className="w-4 h-4 text-red-600" />;
+    if (type === "warning") return <AlertTriangle className="w-4 h-4 text-warning" />;
+    if (type === "error") return <MailWarning className="w-4 h-4 text-destructive" />;
     return <Info className="w-4 h-4 text-secondary" />;
   };
 

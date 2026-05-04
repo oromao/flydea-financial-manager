@@ -275,6 +275,7 @@ export default function Orcamentos() {
                         <p className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-tighter">de {formatCurrency(budget.amount)} total</p>
                       </div>
                       <Button variant="ghost" size="icon"
+                        aria-label="Excluir orçamento"
                         className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-destructive/10 hover:bg-destructive/20 text-destructive hover:text-destructive transition-colors"
                         onClick={() => handleDelete(budget.id)}>
                         <Trash2 className="w-4.5 h-4.5" />

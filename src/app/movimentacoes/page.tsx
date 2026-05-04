@@ -688,8 +688,8 @@ function MovimentacoesContent() {
                   <TableCell className={cn("px-6 py-5 text-right font-black text-base", t.type === 'INCOME' ? 'text-success' : 'text-on-background')}>{t.type === 'EXPENSE' && "- "}{formatCurrency(t.amount)}</TableCell>
                   <TableCell className="pr-6 text-right">
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} className="h-9 w-9 rounded-xl bg-secondary/5 text-secondary"><Edit2 className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-9 w-9 rounded-xl bg-destructive/10 text-destructive"><Trash2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} aria-label="Editar transação" className="h-9 w-9 rounded-xl bg-secondary/5 text-secondary"><Edit2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} aria-label="Excluir transação" className="h-9 w-9 rounded-xl bg-destructive/10 text-destructive"><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>

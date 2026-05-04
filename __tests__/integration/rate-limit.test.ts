@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 // Mock the rate limit module
 vi.mock('@/lib/rate-limit', () => ({
   checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 9 }),
-  withRateLimit: (handler: Function) => handler,
+  withRateLimit: (handler: (req: Request, ...args: any[]) => Promise<Response>) => handler,
 }));
 
 describe('Rate Limit', () => {

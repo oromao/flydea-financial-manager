@@ -7,12 +7,12 @@ import { Bell, CalendarRange, ChartColumn, ShieldAlert, Target, ArrowRight, Came
 
 const shortcuts = [
   { title: "Fechamento", desc: "Resumo mensal com exportação CSV e PDF.", href: "/fechamento", icon: CalendarRange, color: "bg-secondary/10 text-secondary" },
-  { title: "Alertas", desc: "Central de notificações in-app e ações em lote.", href: "/alertas", icon: Bell, color: "bg-amber-50 text-amber-600" },
-  { title: "Relatórios", desc: "Visão analítica do que está acontecendo.", href: "/relatorios", icon: ChartColumn, color: "bg-emerald-50 text-emerald-600" },
-  { title: "Orçamentos", desc: "Metas e acompanhamento por categoria.", href: "/orcamentos", icon: Target, color: "bg-violet-50 text-violet-600" },
-  { title: "Logs", desc: "Auditoria operacional para administradores.", href: "/admin/logs", icon: ShieldAlert, color: "bg-slate-50 text-slate-600" },
-  { title: "Aprovações", desc: "Fila de ações críticas aguardando decisão.", href: "/admin/aprovacoes", icon: ShieldCheck, color: "bg-teal-50 text-teal-600" },
-  { title: "Perfil", desc: "Atualize sua foto e dados do usuário logado.", href: "/perfil", icon: Camera, color: "bg-pink-50 text-pink-600" },
+  { title: "Alertas", desc: "Central de notificações in-app e ações em lote.", href: "/alertas", icon: Bell, color: "bg-warning/10 text-warning" },
+  { title: "Relatórios", desc: "Visão analítica do que está acontecendo.", href: "/relatorios", icon: ChartColumn, color: "bg-success/10 text-success" },
+  { title: "Orçamentos", desc: "Metas e acompanhamento por categoria.", href: "/orcamentos", icon: Target, color: "bg-primary/10 text-primary" },
+  { title: "Logs", desc: "Auditoria operacional para administradores.", href: "/admin/logs", icon: ShieldAlert, color: "bg-surface-variant text-on-surface-variant" },
+  { title: "Aprovações", desc: "Fila de ações críticas aguardando decisão.", href: "/admin/aprovacoes", icon: ShieldCheck, color: "bg-success/10 text-success" },
+  { title: "Perfil", desc: "Atualize sua foto e dados do usuário logado.", href: "/perfil", icon: Camera, color: "bg-secondary/10 text-secondary" },
 ];
 
 export default function MaisPage() {

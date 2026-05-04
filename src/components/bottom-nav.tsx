@@ -125,6 +125,7 @@ export function BottomNav() {
                 <button
                   onClick={() => setSheetOpen(false)}
                   className="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center"
+                  aria-label="Fechar painel"
                 >
                   <X className="w-5 h-5 text-on-surface-variant" />
                 </button>

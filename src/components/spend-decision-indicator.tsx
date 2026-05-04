@@ -45,11 +45,11 @@ export function SpendDecisionIndicator() {
   if (loading || error || !data) {
     if (loading) return null;
     return (
-      <Card className="premium-card p-4 sm:p-5 border-amber-100 bg-amber-50/20">
+      <Card className="premium-card p-4 sm:p-5 border-warning/30 bg-warning/10">
         <div className="flex items-center gap-3">
-          <AlertCircle className="w-6 h-6 text-amber-500 shrink-0" />
+          <AlertCircle className="w-6 h-6 text-warning shrink-0" />
           <div>
-            <p className="text-sm font-semibold text-amber-700">
+            <p className="text-sm font-semibold text-warning">
               Não foi possível calcular a decisão de gastos
             </p>
             <p className="text-xs text-on-surface-variant/70 mt-0.5">
@@ -67,24 +67,24 @@ export function SpendDecisionIndicator() {
   const config = {
     PODE_GASTAR: {
       icon: CheckCircle2,
-      bg: "bg-emerald-50/30 border-emerald-100",
-      text: "text-emerald-700",
+      bg: "bg-success/10 border-success/30",
+      text: "text-success",
       label: "Pode gastar",
       emoji: "✅",
       tip: "Você tem folga esta semana. Continue assim!",
     },
     ALERTA: {
       icon: AlertTriangle,
-      bg: "bg-amber-50/30 border-amber-100",
-      text: "text-amber-700",
+      bg: "bg-warning/10 border-warning/30",
+      text: "text-warning",
       label: "Atenção",
       emoji: "⚠️",
       tip: "Fique de olho nos próximos dias. Evite gastos não essenciais.",
     },
     NAO_PODE_GASTAR: {
       icon: AlertCircle,
-      bg: "bg-red-50/30 border-red-100",
-      text: "text-red-700",
+      bg: "bg-destructive/10 border-destructive/30",
+      text: "text-destructive",
       label: "Melhor evitar",
       emoji: "⛔",
       tip: "Priorize apenas despesas essenciais esta semana.",

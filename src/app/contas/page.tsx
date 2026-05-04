@@ -279,8 +279,8 @@ export default function ContasPage() {
                       </div>
                       
                       <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="icon" onClick={() => handleEdit(acc)} className="h-9 w-9 rounded-xl bg-surface-variant text-on-surface-variant hover:bg-secondary hover:text-white transition-all"><Edit2 className="w-4 h-4" /></Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(acc.id)} className={cn("h-9 w-9 rounded-xl bg-surface-variant text-on-surface-variant hover:bg-destructive hover:text-white transition-all", acc.isActive === false && "hover:bg-success")}>
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(acc)} aria-label="Editar conta" className="h-9 w-9 rounded-xl bg-surface-variant text-on-surface-variant hover:bg-secondary hover:text-white transition-all"><Edit2 className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(acc.id)} aria-label={acc.isActive === false ? "Reativar conta" : "Excluir conta"} className={cn("h-9 w-9 rounded-xl bg-surface-variant text-on-surface-variant hover:bg-destructive hover:text-white transition-all", acc.isActive === false && "hover:bg-success")}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>

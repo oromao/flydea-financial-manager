@@ -27,17 +27,17 @@ const iconMap = {
 };
 
 const colorMap = {
-  success: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
-  error: "text-red-500 bg-red-500/10 border-red-500/20",
-  warning: "text-amber-500 bg-amber-500/10 border-amber-500/20",
-  info: "text-blue-500 bg-blue-500/10 border-blue-500/20",
+  success: "text-success bg-success/10 border-success/20",
+  error: "text-destructive bg-destructive/10 border-destructive/20",
+  warning: "text-warning bg-warning/10 border-warning/20",
+  info: "text-primary bg-primary/10 border-primary/20",
 };
 
 export function InAppNotifications({ notifications = [] }: InAppNotificationsProps) {
   const [visible, setVisible] = useState<Notification[]>([]);
 
   useEffect(() => {
-    setVisible(notifications);
+    const timer = setTimeout(() => setVisible(notifications), 0);
     
     notifications.forEach((n) => {
       if (n.duration !== 0) {
@@ -47,6 +47,8 @@ export function InAppNotifications({ notifications = [] }: InAppNotificationsPro
         }, duration);
       }
     });
+
+    return () => clearTimeout(timer);
   }, [notifications]);
 
   const dismiss = (id: string) => {
@@ -95,7 +97,7 @@ export function NotificationBell({ count }: { count: number }) {
     <div className="relative">
       <Bell className="w-5 h-5" />
       {count > 0 && (
-        <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+        <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-white text-[10px] font-bold rounded-full flex items-center justify-center">
           {count > 9 ? "9+" : count}
         </span>
       )}

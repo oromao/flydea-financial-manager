@@ -88,6 +88,7 @@ export function QuickAdd({ categories, onSuccess }: QuickAddProps) {
       {!open && (
         <Button
           onClick={() => setOpen(true)}
+          aria-label="Novo lançamento"
           className="fixed bottom-24 right-6 h-14 w-14 rounded-full bg-primary shadow-lg hover:bg-primary/90 transition-all hover:scale-110 z-40 md:hidden"
         >
           <Plus className="w-6 h-6" />
@@ -120,7 +121,7 @@ export function QuickAdd({ categories, onSuccess }: QuickAddProps) {
                 className={cn(
                   "flex-1 h-10 rounded-full flex items-center justify-center gap-2 text-sm font-bold transition-all",
                   type === "EXPENSE" 
-                    ? "bg-red-100 text-red-700" 
+                    ? "bg-destructive/10 text-destructive" 
                     : "text-on-surface-variant hover:bg-surface"
                 )}
               >
@@ -132,7 +133,7 @@ export function QuickAdd({ categories, onSuccess }: QuickAddProps) {
                 className={cn(
                   "flex-1 h-10 rounded-full flex items-center justify-center gap-2 text-sm font-bold transition-all",
                   type === "INCOME" 
-                    ? "bg-emerald-100 text-emerald-700" 
+                    ? "bg-success/10 text-success" 
                     : "text-on-surface-variant hover:bg-surface"
                 )}
               >

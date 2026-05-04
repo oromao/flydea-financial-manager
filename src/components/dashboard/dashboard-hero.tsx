@@ -1,6 +1,7 @@
 "use client";
 
-import { Wallet, History, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Wallet, History, Sparkles, ArrowUpRight, Plus, TrendingUp, TrendingDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -10,51 +11,134 @@ import { cn } from "@/lib/utils";
 interface DashboardHeroProps {
   balance: number;
   loading: boolean;
+  income: number;
+  expenses: number;
+  lastUpdated: Date | null;
   categories: any[];
 }
 
-export function DashboardHero({ balance, loading, categories }: DashboardHeroProps) {
+export function DashboardHero({ balance, loading, income, expenses, lastUpdated, categories }: DashboardHeroProps) {
   const router = useRouter();
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
+  const netMonth = income - expenses;
+  const [timeAgo, setTimeAgo] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (lastUpdated) {
+      setTimeAgo(
+        new Intl.RelativeTimeFormat("pt-BR", { numeric: "auto" }).format(
+          -Math.round((Date.now() - lastUpdated.getTime()) / 60000),
+          "minute"
+        )
+      );
+    }
+  }, [lastUpdated]);
+
   return (
     <section className="relative">
-      <div className="bg-primary overflow-hidden rounded-[28px] md:rounded-[40px] p-6 md:p-12 shadow-2xl text-white relative">
-        {/* Background Decorative Elements */}
-        <div className="absolute top-[-10%] right-[-5%] w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-[-20%] left-[-10%] w-48 h-48 bg-secondary/20 rounded-full blur-2xl" />
-        
-        <div className="relative z-10 flex flex-col gap-8 md:gap-12">
-          <div className="flex justify-between items-start">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-white/60">
-                <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em]">Saldo Disponível</span>
-                <div className="w-1 h-1 rounded-full bg-secondary animate-pulse" />
-              </div>
-              <div className="flex items-baseline gap-1">
-                <p className="text-4xl md:text-7xl font-black tracking-tighter">
-                  {loading ? (
-                    <span className="inline-block h-10 md:h-16 w-32 md:w-64 bg-white/10 animate-pulse rounded-2xl" />
-                  ) : (
-                    formatCurrency(balance)
-                  )}
-                </p>
-              </div>
+      {/* Hero Card */}
+      <div className="bg-primary overflow-hidden rounded-[32px] md:rounded-[40px] p-6 md:p-10 shadow-2xl text-white relative">
+        {/* Ambient glow effects */}
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-56 h-56 bg-black/10 rounded-full blur-2xl" />
+
+        <div className="relative z-10 space-y-8">
+          {/* Top row: Label + Icon */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5 text-white/50">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">Saldo Geral</span>
+              {!loading && timeAgo && (
+                <>
+                  <div className="w-1 h-1 rounded-full bg-white/20" />
+                  <span className="text-[10px] md:text-xs text-white/30">atualizado {timeAgo}</span>
+                </>
+              )}
             </div>
-            <div className="p-3 md:p-5 rounded-2xl md:rounded-[24px] bg-white/10 backdrop-blur-md border border-white/10 shadow-inner group transition-all hover:bg-white/20">
-              <Wallet className="w-5 h-5 md:w-8 md:h-8 text-white transition-transform group-hover:scale-110" />
+            <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10">
+              <Wallet className="w-5 h-5 md:w-6 md:h-6 text-white" />
             </div>
           </div>
-          
-          <div className="flex flex-wrap items-center gap-3 md:gap-4">
-            <QuickAdd 
-              categories={categories} 
-              onSuccess={() => router.refresh()} 
-            />
-            <Link 
-              href="/movimentacoes" 
-              className="h-11 md:h-14 px-5 md:px-8 rounded-2xl bg-white/10 hover:bg-white/20 transition-all text-sm md:text-base font-bold text-white flex items-center gap-2 backdrop-blur-sm border border-white/5 shadow-lg active:scale-95"
+
+          {/* Balance - Hero display */}
+          <div>
+            <motion.p
+              key={balance}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="text-[42px] md:text-[56px] font-display font-extrabold tracking-tight leading-none"
+            >
+              {loading ? (
+                <span className="inline-block h-12 md:h-16 w-48 md:w-72 bg-white/10 animate-pulse rounded-2xl" />
+              ) : (
+                formatCurrency(balance)
+              )}
+            </motion.p>
+          </div>
+
+          {/* Mini cards: Entradas / Saídas / Saldo do Mês */}
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-4 border border-white/5">
+              <div className="flex items-center gap-1.5 mb-1">
+                <ArrowUpRight className="w-3 h-3 text-white/60" />
+                <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-white/50">Entradas</p>
+              </div>
+              <p className="text-sm md:text-base font-display font-bold">
+                {loading ? (
+                  <span className="inline-block h-4 w-16 bg-white/10 animate-pulse rounded" />
+                ) : (
+                  formatCurrency(income)
+                )}
+              </p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-4 border border-white/5">
+              <div className="flex items-center gap-1.5 mb-1">
+                <ArrowUpRight className="w-3 h-3 rotate-180 text-white/60" />
+                <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-white/50">Saídas</p>
+              </div>
+              <p className="text-sm md:text-base font-display font-bold">
+                {loading ? (
+                  <span className="inline-block h-4 w-16 bg-white/10 animate-pulse rounded" />
+                ) : (
+                  formatCurrency(expenses)
+                )}
+              </p>
+            </div>
+
+            <div className={cn(
+              "backdrop-blur-sm rounded-2xl p-3 md:p-4 border",
+              netMonth >= 0
+                ? "bg-white/10 border-white/5"
+                : "bg-white/5 border-white/10"
+            )}>
+              <div className="flex items-center gap-1.5 mb-1">
+                {netMonth >= 0 ? (
+                  <TrendingUp className="w-3 h-3 text-white/60" />
+                ) : (
+                  <TrendingDown className="w-3 h-3 text-white/60" />
+                )}
+                <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-white/50">Saldo Mês</p>
+              </div>
+              <p className="text-sm md:text-base font-display font-bold">
+                {loading ? (
+                  <span className="inline-block h-4 w-16 bg-white/10 animate-pulse rounded" />
+                ) : (
+                  formatCurrency(netMonth)
+                )}
+              </p>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-wrap items-center gap-3">
+            <QuickAdd categories={categories} onSuccess={() => router.refresh()} />
+            <Link
+              href="/movimentacoes"
+              className="h-11 md:h-12 px-5 md:px-8 rounded-2xl bg-white/10 hover:bg-white/20 transition-all text-sm md:text-base font-semibold text-white flex items-center gap-2 backdrop-blur-sm border border-white/5 shadow-lg active:scale-95"
             >
               <History className="w-4 h-4 md:w-5 md:h-5" />
               Extrato

@@ -227,7 +227,7 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
                 className={cn(
                   "relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors",
                   file
-                    ? "border-emerald-500/50 bg-emerald-50/20"
+                    ? "border-success/50 bg-success/10"
                     : "border-outline/30 hover:border-outline/50"
                 )}
                 onClick={() => fileInputRef.current?.click()}
@@ -250,7 +250,7 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
                   </>
                 ) : file ? (
                   <>
-                    <Check className="w-10 h-10 mx-auto text-emerald-600 mb-2" />
+                    <Check className="w-10 h-10 mx-auto text-success mb-2" />
                     <p className="text-sm font-semibold text-on-background">
                       {file.name}
                     </p>
@@ -497,9 +497,9 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
               </div>
 
               {preview.amount === 0 && (
-                <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 flex gap-3">
-                  <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-xs text-amber-700">
+                <div className="p-3 rounded-lg bg-warning/10 border border-warning/30 flex gap-3">
+                  <AlertCircle className="w-4 h-4 text-warning flex-shrink-0 mt-0.5" />
+                  <div className="text-xs text-warning">
                     <p className="font-semibold">Aviso: Valor não foi extraído</p>
                     <p className="mt-0.5">Edite o valor manualmente antes de importar</p>
                   </div>

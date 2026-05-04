@@ -114,8 +114,8 @@ export default function LoginPage() {
                 transition={{ duration: 0.25 }}
                 className="overflow-hidden"
               >
-                <div className="flex items-center gap-2.5 rounded-xl bg-red-50 px-4 py-3 text-[13px] font-medium text-red-600 ring-1 ring-red-100">
-                  <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-red-500" />
+                <div className="flex items-center gap-2.5 rounded-xl bg-destructive/10 px-4 py-3 text-[13px] font-medium text-destructive ring-1 ring-destructive/20">
+                  <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-destructive" />
                   {error}
                 </div>
               </motion.div>

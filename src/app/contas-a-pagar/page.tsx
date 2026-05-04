@@ -101,7 +101,7 @@ export default function ContasAPagar() {
     <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-amber-500 text-white shadow-lg shadow-amber-500/30">
+          <div className="p-3 rounded-2xl bg-warning text-white shadow-lg shadow-warning/30">
             <Clock3 className="w-8 h-8" />
           </div>
           <div>
@@ -112,8 +112,8 @@ export default function ContasAPagar() {
 
         <div className="flex bg-surface-variant/40 rounded-2xl p-1 border border-outline/5 self-start md:self-center overflow-x-auto">
             <Button variant="ghost" className={cn("h-10 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap", filter === "all" ? "bg-white text-on-surface shadow-md" : "text-on-surface-variant")} onClick={() => setFilter("all")}>Todas</Button>
-            <Button variant="ghost" className={cn("h-10 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap", filter === "overdue" ? "bg-red-500 text-white shadow-lg shadow-red-500/20" : "text-on-surface-variant")} onClick={() => setFilter("overdue")}>Atrasadas</Button>
-            <Button variant="ghost" className={cn("h-10 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap", filter === "upcoming" ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20" : "text-on-surface-variant")} onClick={() => setFilter("upcoming")}>Próximos 7d</Button>
+            <Button variant="ghost" className={cn("h-10 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap", filter === "overdue" ? "bg-destructive text-white shadow-lg shadow-destructive/20" : "text-on-surface-variant")} onClick={() => setFilter("overdue")}>Atrasadas</Button>
+            <Button variant="ghost" className={cn("h-10 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap", filter === "upcoming" ? "bg-warning text-white shadow-lg shadow-warning/20" : "text-on-surface-variant")} onClick={() => setFilter("upcoming")}>Próximos 7d</Button>
         </div>
       </motion.header>
 
@@ -122,13 +122,13 @@ export default function ContasAPagar() {
             <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Total Pendente</p>
             <h2 className="text-xl md:text-3xl font-black mt-2 tracking-tighter truncate">{formatCurrency(totals.total)}</h2>
          </Card>
-         <Card className="premium-card p-5 bg-red-50/30 border-red-100">
-            <p className="text-[10px] font-black uppercase tracking-widest text-red-600/60">Atrasadas</p>
-            <h2 className="text-xl md:text-3xl font-black mt-2 text-red-600 tracking-tighter truncate">{formatCurrency(totals.overdue)}</h2>
+         <Card className="premium-card p-5 bg-destructive/10 border-destructive/30">
+            <p className="text-[10px] font-black uppercase tracking-widest text-destructive/60">Atrasadas</p>
+            <h2 className="text-xl md:text-3xl font-black mt-2 text-destructive tracking-tighter truncate">{formatCurrency(totals.overdue)}</h2>
          </Card>
-         <Card className="premium-card p-5 bg-amber-50/30 border-amber-100">
-            <p className="text-[10px] font-black uppercase tracking-widest text-amber-600/60">Próximos 7 dias</p>
-            <h2 className="text-xl md:text-3xl font-black mt-2 text-amber-600 tracking-tighter truncate">{formatCurrency(totals.upcoming)}</h2>
+         <Card className="premium-card p-5 bg-warning/10 border-warning/30">
+            <p className="text-[10px] font-black uppercase tracking-widest text-warning/60">Próximos 7 dias</p>
+            <h2 className="text-xl md:text-3xl font-black mt-2 text-warning tracking-tighter truncate">{formatCurrency(totals.upcoming)}</h2>
          </Card>
       </div>
 
@@ -165,7 +165,7 @@ export default function ContasAPagar() {
                    <div className="flex items-center gap-5">
                       <div className={cn(
                         "w-14 h-14 rounded-[20px] flex items-center justify-center shadow-inner",
-                        t.dueDate && isBefore(new Date(t.dueDate), now) ? "bg-red-50 text-red-500" : "bg-surface-variant/50 text-on-surface-variant/40"
+                        t.dueDate && isBefore(new Date(t.dueDate), now) ? "bg-destructive/10 text-destructive" : "bg-surface-variant/50 text-on-surface-variant/40"
                       )}>
                         {t.dueDate && isBefore(new Date(t.dueDate), now) ? <AlertTriangle className="w-7 h-7" /> : <CalendarDays className="w-7 h-7" />}
                       </div>
@@ -180,7 +180,7 @@ export default function ContasAPagar() {
                    <div className="flex items-center justify-between sm:justify-end gap-8 border-t sm:border-t-0 pt-4 sm:pt-0">
                       <div className="text-right">
                          <p className="text-2xl font-black tracking-tighter text-on-background">{formatCurrency(t.amount)}</p>
-                         <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">Pendente</span>
+                         <span className="text-[10px] font-black uppercase tracking-widest text-warning bg-warning/10 px-2 py-0.5 rounded-full border border-warning/30">Pendente</span>
                       </div>
                       <Button 
                         onClick={() => updatePaymentStatus(t.id, "PAID")}

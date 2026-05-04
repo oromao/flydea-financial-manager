@@ -80,8 +80,8 @@ export default function AprovacoesPage() {
     return (
       <div className="max-w-3xl mx-auto py-32 px-4">
         <Card className="premium-card p-12 text-center border-none shadow-2xl">
-          <div className="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-            <ShieldCheck className="w-10 h-10 text-red-500" />
+          <div className="w-20 h-20 bg-destructive/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
+            <ShieldCheck className="w-10 h-10 text-destructive" />
           </div>
           <h1 className="text-2xl font-black text-on-background tracking-tight">Acesso Restrito</h1>
           <p className="text-on-surface-variant/70 mt-3 max-w-sm mx-auto">Esta área é exclusiva para administradores do sistema.</p>
@@ -172,7 +172,7 @@ export default function AprovacoesPage() {
                         <Button
                           onClick={() => handle(item.id, "APPROVE")}
                           disabled={!!actionLoading}
-                          className="w-full h-11 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-emerald-500/20"
+                          className="w-full h-11 rounded-xl bg-success hover:bg-success/90 text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-success/20"
                         >
                           {actionLoading === item.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
                           Aprovar
@@ -181,7 +181,7 @@ export default function AprovacoesPage() {
                           variant="ghost"
                           onClick={() => handle(item.id, "REJECT")}
                           disabled={!!actionLoading}
-                          className="w-full h-11 rounded-xl bg-red-50 text-red-600 hover:bg-red-500 hover:text-white font-black text-[11px] uppercase tracking-widest transition-all"
+                          className="w-full h-11 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive hover:text-white font-black text-[11px] uppercase tracking-widest transition-all"
                         >
                           {actionLoading === item.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4 mr-2" />}
                           Rejeitar

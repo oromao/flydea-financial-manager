@@ -152,7 +152,7 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
                </div>
                <h3 className="text-xl font-black text-on-background tracking-tight">Criar Nota de Receita</h3>
              </div>
-             <Button variant="ghost" size="icon" onClick={() => setShowForm(false)} className="rounded-full hover:bg-red-50 hover:text-red-500 transition-colors">
+              <Button variant="ghost" size="icon" onClick={() => setShowForm(false)} aria-label="Fechar formulário" className="rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors">
                <X className="w-5 h-5" />
              </Button>
           </div>
@@ -234,9 +234,9 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
                              <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="rounded-xl font-bold">
-                             <SelectItem value="PENDING" className="text-amber-500">Pendente</SelectItem>
-                             <SelectItem value="RECEIVED" className="text-emerald-500">Recebido</SelectItem>
-                             <SelectItem value="OVERDUE" className="text-red-500">Atrasado</SelectItem>
+                             <SelectItem value="PENDING" className="text-warning">Pendente</SelectItem>
+                             <SelectItem value="RECEIVED" className="text-success">Recebido</SelectItem>
+                             <SelectItem value="OVERDUE" className="text-destructive">Atrasado</SelectItem>
                           </SelectContent>
                        </Select>
                     </div>

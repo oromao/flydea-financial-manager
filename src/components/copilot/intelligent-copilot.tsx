@@ -200,14 +200,14 @@ O que você gostaria de saber?`,
         className={cn(
           "fixed bottom-6 right-6 z-40 h-14 rounded-full flex items-center gap-3 px-4 transition-all shadow-2xl group",
           isOpen
-            ? "bg-white text-blue-600 border border-blue-500/20"
-            : "bg-gradient-to-br from-blue-500 to-blue-700 text-white"
+            ? "bg-white text-primary border border-primary/20"
+            : "bg-gradient-to-br from-primary to-primary/80 text-white"
         )}
       >
         <div className="relative">
           <Brain className="w-6 h-6" />
           {!isOpen && (
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full animate-bounce" />
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-destructive border-2 border-white rounded-full animate-bounce" />
           )}
         </div>
         <span className="font-bold text-sm tracking-tight pr-2">
@@ -223,19 +223,19 @@ O que você gostaria de saber?`,
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 400 }}
             transition={{ duration: 0.3 }}
-            className="fixed bottom-0 right-0 top-0 z-50 w-full sm:w-96 bg-gradient-to-br from-surface via-surface to-surface/95 border-l border-blue-500/20 shadow-2xl flex flex-col"
+            className="fixed bottom-0 right-0 top-0 z-50 w-full sm:w-96 bg-gradient-to-br from-surface via-surface to-surface/95 border-l border-primary/20 shadow-2xl flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-blue-500/10 bg-gradient-to-r from-blue-500/10 via-blue-400/5 to-transparent">
+            <div className="flex items-center justify-between p-4 border-b border-primary/10 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/30 to-blue-600/20">
-                  <Brain className="w-5 h-5 text-blue-500" />
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary/30 to-primary/20">
+                  <Brain className="w-5 h-5 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-bold text-on-background text-sm">
                     Copiloto IA
                   </h3>
-                  <p className="text-xs text-blue-400">
+                  <p className="text-xs text-primary/60">
                     {pageContext} • Contexto ativo
                   </p>
                 </div>
@@ -243,7 +243,7 @@ O que você gostaria de saber?`,
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsMinimized(!isMinimized)}
-                  className="p-1 hover:bg-blue-500/10 rounded transition-colors"
+                  className="p-1 hover:bg-primary/10 rounded transition-colors"
                   title={isMinimized ? "Expandir" : "Minimizar"}
                 >
                   {isMinimized ? (
@@ -254,7 +254,7 @@ O que você gostaria de saber?`,
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1 hover:bg-red-500/10 rounded transition-colors"
+                  className="p-1 hover:bg-destructive/10 rounded transition-colors"
                 >
                   <X className="w-4 h-4 text-on-surface-variant" />
                 </button>
@@ -282,9 +282,9 @@ O que você gostaria de saber?`,
                         {message.type !== "user" && (
                           <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500/30 to-blue-600/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                             {message.type === "system" ? (
-                              <Lightbulb className="w-4 h-4 text-blue-500" />
+                              <Lightbulb className="w-4 h-4 text-primary" />
                             ) : (
-                              <Brain className="w-4 h-4 text-blue-500" />
+                              <Brain className="w-4 h-4 text-primary" />
                             )}
                           </div>
                         )}
@@ -292,8 +292,8 @@ O que você gostaria de saber?`,
                           className={cn(
                             "max-w-xs px-3 py-2 rounded-lg text-sm leading-relaxed",
                             message.type === "user"
-                              ? "bg-blue-500 text-white rounded-br-none"
-                              : "bg-surface-variant/60 text-on-background rounded-bl-none border border-blue-500/20"
+                              ? "bg-primary text-white rounded-br-none"
+                              : "bg-surface-variant/60 text-on-background rounded-bl-none border border-primary/20"
                           )}
                         >
                           {message.content}
@@ -302,14 +302,14 @@ O que você gostaria de saber?`,
                             <div className="flex gap-2 mt-2 pt-2 border-t border-on-surface-variant/10 justify-end">
                               <button 
                                 onClick={() => handleFeedback(message.id, true)}
-                                className="p-1 hover:text-green-500 transition-colors text-on-surface-variant/50"
+                                className="p-1 hover:text-success transition-colors text-on-surface-variant/50"
                                 title="Útil"
                               >
                                 <ThumbsUp className="w-3 h-3" />
                               </button>
                               <button 
                                 onClick={() => handleFeedback(message.id, false)}
-                                className="p-1 hover:text-red-500 transition-colors text-on-surface-variant/50"
+                                className="p-1 hover:text-destructive transition-colors text-on-surface-variant/50"
                                 title="Não útil"
                               >
                                 <ThumbsDown className="w-3 h-3" />
@@ -336,10 +336,10 @@ O que você gostaria de saber?`,
                       animate={{ opacity: 1, y: 0 }}
                       className="flex gap-3"
                     >
-                      <div className="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />
+                      <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Loader2 className="w-4 h-4 text-primary animate-spin" />
                       </div>
-                      <div className="bg-surface-variant/60 text-on-background px-3 py-2 rounded-lg rounded-bl-none border border-blue-500/20">
+                      <div className="bg-surface-variant/60 text-on-background px-3 py-2 rounded-lg rounded-bl-none border border-primary/20">
                         <span className="text-sm">Pensando...</span>
                       </div>
                     </motion.div>
@@ -350,7 +350,7 @@ O que você gostaria de saber?`,
 
                 {/* Suggested Questions */}
                 {messages.length <= 1 && !loading && (
-                  <div className="px-4 py-3 border-t border-blue-500/10">
+                    <div className="px-4 py-3 border-t border-primary/10">
                     <p className="text-xs font-semibold text-on-surface-variant mb-2">
                       💡 Sugestões:
                     </p>
@@ -359,7 +359,7 @@ O que você gostaria de saber?`,
                         <button
                           key={i}
                           onClick={() => handleSuggestedQuestion(question)}
-                          className="w-full text-left text-xs p-2 rounded border border-blue-500/20 hover:bg-blue-500/10 transition-colors text-on-background"
+                          className="w-full text-left text-xs p-2 rounded border border-primary/20 hover:bg-primary/10 transition-colors text-on-background"
                         >
                           {question}
                         </button>
@@ -369,20 +369,21 @@ O que você gostaria de saber?`,
                 )}
 
                 {/* Input Area */}
-                <div className="p-4 border-t border-blue-500/10 bg-gradient-to-t from-surface to-surface/80 space-y-2">
+                <div className="p-4 border-t border-primary/10 bg-gradient-to-t from-surface to-surface/80 space-y-2">
                   <form onSubmit={handleSendMessage} className="flex gap-2">
                     <Input
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       placeholder="Pergunte sobre suas finanças..."
                       disabled={loading}
-                      className="text-sm bg-surface-variant/40 border-blue-500/20"
+                      className="text-sm bg-surface-variant/40 border-primary/20"
                     />
                     <Button
                       type="submit"
                       size="icon"
+                      aria-label="Enviar mensagem"
                       disabled={loading || !input.trim()}
-                      className="flex-shrink-0 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                      className="flex-shrink-0 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
                     >
                       {loading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />

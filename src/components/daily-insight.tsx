@@ -283,20 +283,20 @@ export function DailyInsight({ metrics }: DailyInsightProps) {
 
   const getColors = (type: string) => {
     switch (type) {
-      case "success": return "bg-emerald-50 border-emerald-200 text-emerald-900";
-      case "warning": return "bg-amber-50 border-amber-200 text-amber-900";
-      case "action": return "bg-blue-50 border-blue-200 text-blue-900";
-      case "error": return "bg-rose-50 border-rose-200 text-rose-900";
+      case "success": return "bg-success/10 border-success/30 text-success";
+      case "warning": return "bg-warning/10 border-warning/30 text-warning";
+      case "action": return "bg-primary/10 border-primary/30 text-primary";
+      case "error": return "bg-destructive/10 border-destructive/30 text-destructive";
       default: return "bg-surface-variant/50 border-outline/20 text-on-surface";
     }
   };
 
   const getIconColors = (type: string) => {
     switch (type) {
-      case "success": return "text-emerald-600 bg-emerald-100";
-      case "warning": return "text-amber-600 bg-amber-100";
-      case "action": return "text-blue-600 bg-blue-100";
-      case "error": return "text-rose-600 bg-rose-100";
+      case "success": return "text-success bg-success/20";
+      case "warning": return "text-warning bg-warning/20";
+      case "action": return "text-primary bg-primary/20";
+      case "error": return "text-destructive bg-destructive/20";
       default: return "text-secondary bg-surface";
     }
   };
@@ -331,7 +331,7 @@ export function DailyInsight({ metrics }: DailyInsightProps) {
             </button>
           )}
           {checkinToday && (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-success/10 text-success rounded-full text-xs font-semibold">
               <Flame className="w-4 h-4" />
               {habitData.streak} dias
             </div>
@@ -340,17 +340,17 @@ export function DailyInsight({ metrics }: DailyInsightProps) {
       </div>
       
       {habitData.streak > 0 && (
-        <div className="flex items-center gap-4 p-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg">
-          <Flame className="w-6 h-6 text-orange-500" />
+        <div className="flex items-center gap-4 p-3 bg-gradient-to-r from-warning/10 to-warning/5 border border-warning/30 rounded-lg">
+          <Flame className="w-6 h-6 text-warning" />
           <div>
-            <p className="text-sm font-bold text-amber-900">
+            <p className="text-sm font-bold text-warning">
               Sequência: {habitData.streak} dias
             </p>
-            <p className="text-xs text-amber-700">
+            <p className="text-xs text-warning/70">
               Recorde: {habitData.longestStreak} dias
             </p>
           </div>
-          <Target className="w-5 h-5 text-amber-600 ml-auto" />
+          <Target className="w-5 h-5 text-warning ml-auto" />
         </div>
       )}
 

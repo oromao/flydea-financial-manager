@@ -80,7 +80,7 @@ export function AttachmentPreview({ url, filename, className }: AttachmentPrevie
         <DialogContent className="max-w-3xl p-0 overflow-hidden">
           <div className="flex items-center justify-between p-4 border-b border-outline/10">
             <h3 className="font-bold text-lg">{filename || "Preview"}</h3>
-            <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
+                  <Button variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Fechar visualização">
               <X className="w-5 h-5" />
             </Button>
           </div>

@@ -89,11 +89,11 @@ export default function AuditLogs() {
 
   const getActionColor = (action: string) => {
     switch(action) {
-      case "CREATE": return "text-emerald-400 bg-emerald-400/10";
-      case "UPDATE": return "text-amber-400 bg-amber-400/10";
-      case "DELETE": return "text-rose-400 bg-rose-400/10";
-      case "IMPORT": return "text-blue-400 bg-blue-400/10";
-      default: return "text-slate-400 bg-slate-400/10";
+      case "CREATE": return "text-success bg-success/10";
+      case "UPDATE": return "text-warning bg-warning/10";
+      case "DELETE": return "text-destructive bg-destructive/10";
+      case "IMPORT": return "text-primary bg-primary/10";
+      default: return "text-surface-variant bg-surface-variant/10";
     }
   };
 

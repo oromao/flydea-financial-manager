@@ -70,15 +70,15 @@ export function WeeklyCashflowForecast() {
 
   if (error || !data || !metrics) {
     return (
-      <Card className="premium-card p-6 col-span-full border-amber-100 bg-amber-50/20">
+      <Card className="premium-card p-6 col-span-full border-warning/30 bg-warning/10">
         <div className="text-center">
-          <AlertCircle className="w-8 h-8 text-amber-500 mx-auto mb-2" />
-          <p className="text-amber-700 font-semibold">
+          <AlertCircle className="w-8 h-8 text-warning mx-auto mb-2" />
+          <p className="text-warning font-semibold">
             {error || "Sem dados disponíveis"}
           </p>
           <button
             onClick={() => router.refresh()}
-            className="mt-3 px-3 py-1.5 bg-amber-600 text-white rounded text-xs font-semibold hover:bg-amber-700"
+            className="mt-3 px-3 py-1.5 bg-warning text-white rounded text-xs font-semibold hover:bg-warning/90"
           >
             Tentar novamente
           </button>
@@ -130,7 +130,7 @@ export function WeeklyCashflowForecast() {
           <p className="text-[10px] font-bold uppercase text-on-surface-variant/70">
             A Receber
           </p>
-          <p className="text-xl font-bold text-amber-600 mt-1">
+          <p className="text-xl font-bold text-warning mt-1">
             {formatCurrency(metrics.aReceber)}
           </p>
           <p className="text-[9px] text-on-surface-variant/50 mt-1">
@@ -142,8 +142,8 @@ export function WeeklyCashflowForecast() {
           className={cn(
             "premium-card p-4",
             metrics.monthBalance >= 0
-              ? "border-emerald-100 bg-emerald-50/20"
-              : "border-red-100 bg-red-50/20"
+              ? "border-success/30 bg-success/10"
+              : "border-destructive/30 bg-destructive/10"
           )}
         >
           <p className="text-[10px] font-bold uppercase text-on-surface-variant/70">
@@ -152,7 +152,7 @@ export function WeeklyCashflowForecast() {
           <p
             className={cn(
               "text-xl font-bold",
-              metrics.monthBalance >= 0 ? "text-emerald-600" : "text-red-600"
+              metrics.monthBalance >= 0 ? "text-success" : "text-destructive"
             )}
           >
             {formatCurrency(metrics.monthBalance)}
@@ -176,15 +176,15 @@ export function WeeklyCashflowForecast() {
               className={cn(
                 "premium-card p-4 relative overflow-hidden group",
                 week.balance >= 0
-                  ? "border-emerald-100/40 hover:border-emerald-100/70"
-                  : "border-red-100/40 hover:border-red-100/70"
+                  ? "border-success/40 hover:border-success/70"
+                  : "border-destructive/40 hover:border-destructive/70"
               )}
             >
               {/* Background indicator */}
               <div
                 className={cn(
                   "absolute inset-0 opacity-5 transition-opacity group-hover:opacity-10",
-                  week.balance >= 0 ? "bg-emerald-500" : "bg-red-500"
+                  week.balance >= 0 ? "bg-success" : "bg-destructive"
                 )}
               />
 
@@ -220,7 +220,7 @@ export function WeeklyCashflowForecast() {
                     <span className="text-[10px] font-semibold text-on-surface-variant/70">
                       Entradas
                     </span>
-                    <span className="text-xs font-bold text-emerald-600">
+                    <span className="text-xs font-bold text-success">
                       +{formatValue(week.totalIncome)}
                     </span>
                   </div>
@@ -230,7 +230,7 @@ export function WeeklyCashflowForecast() {
                     <span className="text-[10px] font-semibold text-on-surface-variant/70">
                       Saídas
                     </span>
-                    <span className="text-xs font-bold text-red-600">
+                    <span className="text-xs font-bold text-destructive">
                       -{formatValue(week.totalExpenses)}
                     </span>
                   </div>
@@ -243,7 +243,7 @@ export function WeeklyCashflowForecast() {
                     <span
                       className={cn(
                         "text-sm font-black",
-                        week.balance >= 0 ? "text-emerald-600" : "text-red-600"
+                        week.balance >= 0 ? "text-success" : "text-destructive"
                       )}
                     >
                       {formatValue(week.balance)}
@@ -256,8 +256,8 @@ export function WeeklyCashflowForecast() {
                   className={cn(
                     "flex items-center gap-1.5 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider",
                     week.canSpend
-                      ? "bg-emerald-100/50 text-emerald-700"
-                      : "bg-red-100/50 text-red-700"
+                      ? "bg-success/20 text-success"
+                      : "bg-destructive/20 text-destructive"
                   )}
                 >
                   {week.canSpend ? "Pode gastar" : "Atenção"}
@@ -265,7 +265,7 @@ export function WeeklyCashflowForecast() {
 
                 {/* Projeção */}
                 {week.projectedIncome > 0 && (
-                  <p className="text-[9px] text-amber-600 font-semibold px-2 py-0.5 bg-amber-50/50 rounded">
+                  <p className="text-[9px] text-warning font-semibold px-2 py-0.5 bg-warning/10 rounded">
                     💡 {formatCurrency(week.projectedIncome)} a receber
                   </p>
                 )}

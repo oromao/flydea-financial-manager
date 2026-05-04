@@ -113,7 +113,7 @@ export function Importer({ onImportSuccess }: ImporterProps) {
                   <div className="p-3 rounded-2xl bg-primary/20 text-primary shadow-xl"><FileText className="w-6 h-6" /></div>
                   <span className="text-on-background font-black text-sm truncate max-w-[200px] tracking-tight">{file.name}</span>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setFile(null)} className="h-12 w-12 rounded-full text-on-surface-variant/40 hover:bg-rose-500/10 hover:text-rose-400 transition-colors"><X className="w-5 h-5" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => setFile(null)} aria-label="Remover arquivo" className="h-12 w-12 rounded-full text-on-surface-variant/40 hover:bg-destructive/10 hover:text-destructive transition-colors"><X className="w-5 h-5" /></Button>
               </div>
 
               {parsing ? (
@@ -131,7 +131,7 @@ export function Importer({ onImportSuccess }: ImporterProps) {
                           <span className="text-[#E2E2E6] font-bold">{t.description}</span>
                           <span className="text-[#8D9199] text-[10px]">{t.date}</span>
                         </div>
-                        <span className={cn("font-black", t.amount > 0 ? "text-emerald-400" : "text-rose-400")}>
+                        <span className={cn("font-black", t.amount > 0 ? "text-success" : "text-destructive")}>
                           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(t.amount)}
                         </span>
                       </div>
@@ -143,7 +143,7 @@ export function Importer({ onImportSuccess }: ImporterProps) {
                   </Button>
                 </div>
               ) : (
-                <div className="flex items-center gap-3 p-4 bg-rose-500/10 text-rose-400 rounded-2xl border border-rose-500/20">
+                <div className="flex items-center gap-3 p-4 bg-destructive/10 text-destructive rounded-2xl border border-destructive/20">
                   <AlertCircle className="w-5 h-5" />
                   <p className="text-xs font-bold">Nenhuma transação válida encontrada no arquivo.</p>
                 </div>

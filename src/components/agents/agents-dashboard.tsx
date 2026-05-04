@@ -57,7 +57,7 @@ export function AgentsDashboard() {
       description: "Avisa se gastos superarem receitas",
       icon: TrendingDown,
       type: "CASHFLOW_FORECAST",
-      color: "text-red-500 bg-red-500/10"
+      color: "text-destructive bg-destructive/10"
     },
     {
       id: "gastos-limite",
@@ -65,7 +65,7 @@ export function AgentsDashboard() {
       description: "Monitora categorias críticas",
       icon: ShieldAlert,
       type: "EXPENSE_ALERT",
-      color: "text-amber-500 bg-amber-500/10"
+      color: "text-warning bg-warning/10"
     },
     {
       id: "contas-altas",
@@ -73,7 +73,7 @@ export function AgentsDashboard() {
       description: "Alerta sobre boletos altos",
       icon: Receipt,
       type: "BUDGET_REVIEW",
-      color: "text-blue-500 bg-blue-500/10"
+      color: "text-primary bg-primary/10"
     },
     {
       id: "meta-poupanca",
@@ -81,7 +81,7 @@ export function AgentsDashboard() {
       description: "Ações para atingir meta",
       icon: Target,
       type: "SAVINGS_GOAL",
-      color: "text-emerald-500 bg-emerald-500/10"
+      color: "text-success bg-success/10"
     }
   ];
 
@@ -165,7 +165,7 @@ export function AgentsDashboard() {
         className="flex items-center justify-between"
       >
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-2xl bg-blue-500/10 text-blue-500 shadow-lg shadow-blue-500/10 flex-shrink-0">
+          <div className="p-2.5 rounded-2xl bg-primary/10 text-primary shadow-lg shadow-primary/10 flex-shrink-0">
             <Brain className="w-6 h-6" />
           </div>
           <div>
@@ -257,7 +257,7 @@ export function AgentsDashboard() {
                         {agent.name}
                       </h3>
                       <div className="flex items-center gap-3 mt-1.5">
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 font-bold uppercase tracking-wider">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold uppercase tracking-wider">
                           {agent.type}
                         </span>
                         <span className="text-[10px] text-on-surface-variant font-bold uppercase opacity-40 flex items-center gap-1">
@@ -276,6 +276,7 @@ export function AgentsDashboard() {
                           setShowHistory(true);
                         }}
                         disabled={executing === agent.id}
+                        aria-label="Histórico de execuções"
                         className="rounded-full h-10 w-10 p-0 hover:bg-white/5 text-on-surface-variant"
                       >
                         <History className="w-4.5 h-4.5" />
@@ -285,7 +286,8 @@ export function AgentsDashboard() {
                         size="sm"
                         onClick={() => handleExecute(agent.id)}
                         disabled={executing === agent.id}
-                        className="rounded-full h-10 w-10 p-0 bg-blue-500 hover:bg-blue-600 text-white shadow-lg shadow-blue-500/20"
+                        aria-label="Executar agente"
+                        className="rounded-full h-10 w-10 p-0 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
                       >
                         {executing === agent.id ? (
                           <Loader2 className="w-4.5 h-4.5 animate-spin" />
@@ -298,7 +300,8 @@ export function AgentsDashboard() {
                         size="sm"
                         variant="ghost"
                         onClick={() => handleDelete(agent.id)}
-                        className="rounded-full h-10 w-10 p-0 hover:bg-rose-500/10 text-on-surface-variant hover:text-rose-500"
+                        aria-label="Excluir agente"
+                        className="rounded-full h-10 w-10 p-0 hover:bg-destructive/10 text-on-surface-variant hover:text-destructive"
                       >
                         <Trash2 className="w-4.5 h-4.5" />
                       </Button>

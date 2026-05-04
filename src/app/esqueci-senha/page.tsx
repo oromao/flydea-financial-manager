@@ -46,8 +46,8 @@ export default function ForgotPasswordPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-surface">
         <Card className="max-w-md w-full p-8 text-center space-y-6">
-          <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto">
-            <CheckCircle className="w-8 h-8 text-emerald-500" />
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+            <CheckCircle className="w-8 h-8 text-success" />
           </div>
           <h1 className="text-2xl font-bold text-on-background">Email enviado!</h1>
           <p className="text-on-surface-variant">
@@ -98,7 +98,7 @@ export default function ForgotPasswordPage() {
           </div>
 
           {error && (
-            <p className="text-red-500 text-sm font-medium">{error}</p>
+            <p className="text-destructive text-sm font-medium">{error}</p>
           )}
 
           <Button 

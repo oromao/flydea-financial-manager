@@ -71,8 +71,8 @@ export function WeeklyCashflow() {
   if (error || !data) {
     return (
       <div className="text-center py-12">
-        <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-3" />
-        <p className="text-red-500 font-semibold">Erro ao carregar dados</p>
+        <AlertCircle className="w-10 h-10 text-destructive mx-auto mb-3" />
+        <p className="text-destructive font-semibold">Erro ao carregar dados</p>
         <p className="text-on-surface-variant text-sm mt-1">{error || "Tente novamente mais tarde."}</p>
         <button
           onClick={() => router.refresh()}
@@ -110,11 +110,11 @@ export function WeeklyCashflow() {
           className={`p-4 rounded-lg border ${
             metrics.monthBalance >= 0
               ? "border-secondary/20 bg-secondary/5"
-              : "border-red-500/20 bg-red-500/5"
+              : "border-destructive/20 bg-destructive/5"
           }`}
         >
           <p className="text-xs font-bold uppercase text-on-surface-variant/70">Saldo do Mês</p>
-          <p className={`text-2xl font-bold mt-1 ${metrics.monthBalance >= 0 ? "text-secondary" : "text-red-500"}`}>
+          <p className={`text-2xl font-bold mt-1 ${metrics.monthBalance >= 0 ? "text-secondary" : "text-destructive"}`}>
             {formatCurrency(metrics.monthBalance)}
           </p>
           <p className="text-[10px] text-on-surface-variant/50 mt-1">Receitas - Despesas</p>
@@ -129,7 +129,7 @@ export function WeeklyCashflow() {
             className={`p-4 rounded-lg border-2 ${
               week.balance >= 0
                 ? "border-secondary/20 bg-secondary/5"
-                : "border-red-500/20 bg-red-500/5"
+                : "border-destructive/20 bg-destructive/5"
             }`}
           >
             <h3 className="text-sm font-semibold text-on-background mb-3">
@@ -148,7 +148,7 @@ export function WeeklyCashflow() {
                   <TrendingUp size={16} />
                   Entradas
                 </span>
-                <span className="text-green-700 font-semibold text-right">
+                <span className="text-success font-semibold text-right">
                   +{formatCurrency(week.totalIncome)}
                 </span>
               </div>
@@ -167,7 +167,7 @@ export function WeeklyCashflow() {
                   <TrendingDown size={16} />
                   Saídas
                 </span>
-                <span className="text-red-500 font-semibold text-right">
+                <span className="text-destructive font-semibold text-right">
                   -{formatCurrency(week.totalExpenses)}
                 </span>
               </div>
@@ -177,7 +177,7 @@ export function WeeklyCashflow() {
               {/* Saldo */}
               <div className="flex items-center justify-between font-bold text-sm">
                 <span>Saldo</span>
-                <span className={week.balance >= 0 ? "text-secondary" : "text-red-500"}>
+                <span className={week.balance >= 0 ? "text-secondary" : "text-destructive"}>
                   {formatCurrency(week.balance)}
                 </span>
               </div>
@@ -185,12 +185,12 @@ export function WeeklyCashflow() {
               {/* Status */}
               <div className="mt-3 pt-2 border-t border-outline/30">
                 {week.canSpend ? (
-                  <span className="text-[10px] font-semibold px-2 py-1 rounded bg-green-200 text-green-800 inline-block">
+                  <span className="text-[10px] font-semibold px-2 py-1 rounded bg-success/20 text-success inline-block">
                     <CheckCircle size={12} className="inline mr-1 -mt-0.5" />
                     Pode Gastar
                   </span>
                 ) : (
-                  <span className="text-[10px] font-semibold px-2 py-1 rounded bg-red-500/10 text-red-500 inline-block">
+                  <span className="text-[10px] font-semibold px-2 py-1 rounded bg-destructive/10 text-destructive inline-block">
                     <AlertCircle size={12} className="inline mr-1 -mt-0.5" />
                     Atenção
                   </span>
@@ -216,19 +216,19 @@ export function WeeklyCashflow() {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
           <div>
             <p className="text-[10px] text-on-surface-variant mb-1">Total Receitas</p>
-            <p className="text-lg font-bold text-green-700">
+            <p className="text-lg font-bold text-success">
               {formatCurrency(metrics.totalIncome)}
             </p>
           </div>
           <div>
             <p className="text-[10px] text-on-surface-variant mb-1">Total Despesas</p>
-            <p className="text-lg font-bold text-red-500">
+            <p className="text-lg font-bold text-destructive">
               {formatCurrency(metrics.totalExpenses)}
             </p>
           </div>
           <div>
             <p className="text-[10px] text-on-surface-variant mb-1">Saldo do Mês</p>
-            <p className={`text-lg font-bold ${metrics.monthBalance >= 0 ? "text-secondary" : "text-red-500"}`}>
+            <p className={`text-lg font-bold ${metrics.monthBalance >= 0 ? "text-secondary" : "text-destructive"}`}>
               {formatCurrency(metrics.monthBalance)}
             </p>
           </div>

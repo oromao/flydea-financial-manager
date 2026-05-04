@@ -53,12 +53,12 @@ export function AgentExecutionHistory({
     switch (status) {
       case "SUCCESS":
         return (
-          <CheckCircle2 className="w-5 h-5 text-green-500" />
+          <CheckCircle2 className="w-5 h-5 text-success" />
         );
       case "FAILED":
-        return <AlertCircle className="w-5 h-5 text-red-500" />;
+        return <AlertCircle className="w-5 h-5 text-destructive" />;
       case "RUNNING":
-        return <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />;
+        return <Loader2 className="w-5 h-5 text-primary animate-spin" />;
       default:
         return <Clock className="w-5 h-5 text-yellow-500" />;
     }
@@ -249,11 +249,9 @@ export function AgentExecutionHistory({
 
                 {selectedExecution.error && (
                   <div>
-                    <h3 className="text-sm font-semibold text-red-500 mb-2">
-                      Erro
-                    </h3>
-                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 max-h-48 overflow-y-auto">
-                      <p className="text-sm text-red-500 whitespace-pre-wrap font-mono">
+                    <h3 className="text-sm font-semibold text-destructive mb-2">Erro</h3>
+                    <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 max-h-48 overflow-y-auto">
+                      <p className="text-sm text-destructive whitespace-pre-wrap font-mono">
                         {selectedExecution.error}
                       </p>
                     </div>

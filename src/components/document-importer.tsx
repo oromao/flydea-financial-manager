@@ -198,9 +198,9 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
   };
 
   const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return "text-emerald-600";
-    if (confidence >= 0.5) return "text-amber-600";
-    return "text-red-600";
+    if (confidence >= 0.8) return "text-success";
+    if (confidence >= 0.5) return "text-warning";
+    return "text-destructive";
   };
 
   return (
@@ -282,13 +282,13 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                     </span>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => { setPreview(null); setFile(null); }} className="h-12 w-12 rounded-full text-on-surface-variant/40 hover:bg-rose-500/10 hover:text-rose-400">
+                <Button variant="ghost" size="icon" onClick={() => { setPreview(null); setFile(null); }} aria-label="Cancelar importação" className="h-12 w-12 rounded-full text-on-surface-variant/40 hover:bg-destructive/10 hover:text-destructive">
                   <X className="w-5 h-5" />
                 </Button>
               </div>
 
               {preview.duplicateCheck.isDuplicate && (
-                <div className="flex items-center gap-3 p-4 bg-amber-500/10 text-amber-400 rounded-2xl border border-amber-500/20">
+                <div className="flex items-center gap-3 p-4 bg-warning/10 text-warning rounded-2xl border border-warning/20">
                   <AlertCircle className="w-5 h-5 shrink-0" />
                   <div>
                     <p className="text-xs font-bold">Duplicata detectada</p>
@@ -384,7 +384,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                 <Button
                   type="button"
                   variant="ghost"
-                  className={cn("flex-1 h-9 rounded-full text-xs font-bold", editedData.type === "INCOME" ? "bg-surface text-emerald-600" : "text-on-surface-variant")}
+                   className={cn("flex-1 h-9 rounded-full text-xs font-bold", editedData.type === "INCOME" ? "bg-surface text-success" : "text-on-surface-variant")}
                   onClick={() => setEditedData({ ...editedData, type: "INCOME" })}
                 >
                   <ArrowUp className="w-3.5 h-3.5 mr-2" /> Receita
@@ -392,7 +392,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                 <Button
                   type="button"
                   variant="ghost"
-                  className={cn("flex-1 h-9 rounded-full text-xs font-bold", editedData.type === "EXPENSE" ? "bg-surface text-red-600" : "text-on-surface-variant")}
+                   className={cn("flex-1 h-9 rounded-full text-xs font-bold", editedData.type === "EXPENSE" ? "bg-surface text-destructive" : "text-on-surface-variant")}
                   onClick={() => setEditedData({ ...editedData, type: "EXPENSE" })}
                 >
                   <ArrowDown className="w-3.5 h-3.5 mr-2" /> Despesa

@@ -156,6 +156,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
       <header className="h-20 flex items-center justify-between px-6 bg-surface/80 backdrop-blur-xl md:hidden sticky top-0 z-50 shrink-0 border-none shadow-[0_1px_10px_rgba(0,0,0,0.02)]">
         <button
           onClick={() => setDrawerOpen(true)}
+          aria-label="Abrir menu"
           className="w-12 h-12 flex items-center justify-center rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all"
         >
           <Menu className="w-6 h-6 text-on-surface-variant" />
@@ -231,7 +232,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
               </p>
               <p className="text-[10px] text-on-surface-variant truncate">{session?.user?.email}</p>
             </div>
-            <Link href="/perfil" className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+            <Link href="/perfil" aria-label="Ver perfil" className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
                <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
@@ -252,7 +253,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 md:ml-[320px] min-h-screen pb-24 md:pb-0 bg-background">
+      <main id="main-content" tabIndex={-1} className="flex-1 md:ml-[320px] min-h-screen pb-24 md:pb-0 bg-background">
         <div className="w-full max-w-7xl mx-auto p-6 md:p-12 lg:p-16 animate-in fade-in slide-in-from-bottom-4 duration-1000 ease-out">
           {children}
         </div>

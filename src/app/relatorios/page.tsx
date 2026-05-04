@@ -90,7 +90,7 @@ export default function Relatorios() {
   const barData = Object.keys({ ...expensesByCategory, ...incomeByCategory })
     .slice(0, 8)
     .map((name) => ({
-      name: name.length > 15 ? name.slice(0, 15) + "\u2026" : name,
+      name: name.length > 20 ? name.slice(0, 20) + "\u2026" : name,
       Despesa: expensesByCategory[name] || 0,
       Receita: incomeByCategory[name] || 0,
     }));
@@ -287,17 +287,17 @@ export default function Relatorios() {
           ) : (
             <ResponsiveContainer width="100%" height={chartHeight}>
               <BarChart data={barData} barCategoryGap="30%" margin={isMobile ? { left: -10, right: 4 } : {}}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
-                <XAxis dataKey="name" stroke="rgba(0,0,0,0.3)" fontSize={isMobile ? 8 : 9} fontWeight="bold" tickLine={false} axisLine={false} dy={10} />
-                <YAxis stroke="rgba(0,0,0,0.3)" fontSize={isMobile ? 8 : 9} fontWeight="bold" tickLine={false} axisLine={false}
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-outline)" strokeOpacity={0.3} />
+                <XAxis dataKey="name" stroke="var(--color-on-surface-variant)" fontSize={isMobile ? 8 : 9} fontWeight="bold" tickLine={false} axisLine={false} dy={10} angle={isMobile ? -30 : 0} textAnchor={isMobile ? "end" : "middle"} height={isMobile ? 50 : 30} />
+                <YAxis stroke="var(--color-on-surface-variant)" fontSize={isMobile ? 8 : 9} fontWeight="bold" tickLine={false} axisLine={false}
                   tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                 <Tooltip
                   formatter={(value: any) => formatCurrency(Number(value || 0))}
                   contentStyle={{ backgroundColor: "#fff", border: "none", borderRadius: "16px", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
                   itemStyle={{ color: "#000", fontSize: "12px", fontWeight: "bold" }}
                 />
-                <Bar dataKey="Receita" fill="#10B981" radius={[4, 4, 0, 0]} barSize={isMobile ? 12 : 20} />
-                <Bar dataKey="Despesa" fill="#EF4444" radius={[4, 4, 0, 0]} barSize={isMobile ? 12 : 20} />
+                <Bar dataKey="Receita" fill="var(--color-success)" radius={[4, 4, 0, 0]} barSize={isMobile ? 12 : 20} />
+                <Bar dataKey="Despesa" fill="var(--color-destructive)" radius={[4, 4, 0, 0]} barSize={isMobile ? 12 : 20} />
               </BarChart>
             </ResponsiveContainer>
           )}

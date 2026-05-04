@@ -23,14 +23,14 @@ export default function InsightsPage() {
       >
         <motion.div
           whileHover={{ translateY: -4 }}
-          className="p-4 md:p-5 rounded-xl md:rounded-2xl bg-gradient-to-br from-blue-50/50 to-blue-50/20 border border-blue-100/40 flex gap-3 cursor-pointer transition-all"
+          className="p-4 md:p-5 rounded-xl md:rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/30 flex gap-3 cursor-pointer transition-all"
         >
           <motion.div
             animate={{ y: [0, -3, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
             className="flex-shrink-0"
           >
-            <Brain className="w-5 h-5 text-blue-600 mt-0.5" />
+            <Brain className="w-5 h-5 text-primary mt-0.5" />
           </motion.div>
           <div>
             <p className="font-semibold text-sm text-on-background">
@@ -44,14 +44,14 @@ export default function InsightsPage() {
 
         <motion.div
           whileHover={{ translateY: -4 }}
-          className="p-4 md:p-5 rounded-xl md:rounded-2xl bg-gradient-to-br from-emerald-50/50 to-emerald-50/20 border border-emerald-100/40 flex gap-3 cursor-pointer transition-all"
+          className="p-4 md:p-5 rounded-xl md:rounded-2xl bg-gradient-to-br from-success/10 to-success/5 border border-success/30 flex gap-3 cursor-pointer transition-all"
         >
           <motion.div
             animate={{ y: [0, -3, 0] }}
             transition={{ repeat: Infinity, duration: 2, delay: 0.2 }}
             className="flex-shrink-0"
           >
-            <TrendingUp className="w-5 h-5 text-emerald-600 mt-0.5" />
+            <TrendingUp className="w-5 h-5 text-success mt-0.5" />
           </motion.div>
           <div>
             <p className="font-semibold text-sm text-on-background">
@@ -65,14 +65,14 @@ export default function InsightsPage() {
 
         <motion.div
           whileHover={{ translateY: -4 }}
-          className="p-4 md:p-5 rounded-xl md:rounded-2xl bg-gradient-to-br from-amber-50/50 to-amber-50/20 border border-amber-100/40 flex gap-3 cursor-pointer transition-all"
+          className="p-4 md:p-5 rounded-xl md:rounded-2xl bg-gradient-to-br from-warning/10 to-warning/5 border border-warning/30 flex gap-3 cursor-pointer transition-all"
         >
           <motion.div
             animate={{ y: [0, -3, 0] }}
             transition={{ repeat: Infinity, duration: 2, delay: 0.4 }}
             className="flex-shrink-0"
           >
-            <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-warning mt-0.5" />
           </motion.div>
           <div>
             <p className="font-semibold text-sm text-on-background">

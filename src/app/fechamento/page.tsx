@@ -126,7 +126,7 @@ export default function Fechamento() {
         </Card>
         <Card className="premium-card p-4 sm:p-5">
           <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Desp. Pendentes</p>
-          <p className="text-xl md:text-2xl font-bold mt-2 text-amber-600">{formatCurrency(summary.pending)}</p>
+          <p className="text-xl md:text-2xl font-bold mt-2 text-warning">{formatCurrency(summary.pending)}</p>
           <p className="text-[9px] text-on-surface-variant/50 mt-1">Despesas não pagas</p>
         </Card>
         <Card className="premium-card p-4 sm:p-5">

@@ -37,6 +37,7 @@ export async function checkRateLimit(identifier: string): Promise<{ success: boo
   return { success: result.success, remaining: result.remaining };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function withRateLimit(handler: Function, opts?: { limit?: number; window?: string }) {
   return async (req: Request, ...args: any[]) => {
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";

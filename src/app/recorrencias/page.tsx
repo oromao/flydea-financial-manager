@@ -65,16 +65,18 @@ export default function Recorrencias() {
     }
   }, []);
 
-  const toggleRecurrence = async (id: string, isActive: boolean) => {
+  const toggleRecurrence = async (id: string, currentIsActive: boolean) => {
     try {
       const res = await fetch(`/api/recurrences/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive }),
+        body: JSON.stringify({ isActive: !currentIsActive }),
       });
       if (res.ok) {
-        toast.success(isActive ? "Recorrência reativada" : "Recorrência pausada");
+        toast.success(currentIsActive ? "Recorrência pausada" : "Recorrência ativada");
         fetchRecurrences();
+      } else {
+        toast.error("Erro ao atualizar recorrência");
       }
     } catch (e) {
       toast.error("Erro ao atualizar recorrência");
@@ -184,7 +186,7 @@ export default function Recorrencias() {
           </div>
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={(v) => { setIsDialogOpen(v); if (v) resetForm(); }}>
+        <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (open) resetForm(); }}>
           <DialogTrigger render={<Button className="apple-button-primary h-11 px-8 rounded-xl shadow-lg shadow-secondary/20" />}>
             <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA RECORRÊNCIA
           </DialogTrigger>
@@ -272,7 +274,7 @@ export default function Recorrencias() {
           />
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {recurrences.map((rec, idx) => (
             <motion.div 
               key={rec.id}
@@ -295,7 +297,7 @@ export default function Recorrencias() {
                     </span>
                     <span className={cn(
                       "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm whitespace-nowrap",
-                      rec.isActive ? "bg-success text-white border-success" : "bg-surface-container-high text-on-surface-variant border-outline"
+                       rec.isActive ? "bg-success text-white border-success" : "bg-warning text-white border-warning"
                     )}>
                       {rec.isActive ? "Ativa" : "Pausada"}
                     </span>
@@ -314,14 +316,14 @@ export default function Recorrencias() {
 
                   <div className="pt-6 border-t border-outline/5 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-secondary/60">
-                      <div className={cn("w-2 h-2 rounded-full", rec.isActive ? "bg-success animate-pulse" : "bg-surface-container-high")} />
+                      <div className={cn("w-2 h-2 rounded-full", rec.isActive ? "bg-success animate-pulse" : "bg-warning")} />
                       {rec.isActive ? "Rodando" : "Pausada"}
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => toggleRecurrence(rec.id, !rec.isActive)}
+                        onClick={() => toggleRecurrence(rec.id, rec.isActive)}
                         className={cn(
                           "w-11 h-11 rounded-xl transition-all",
                           rec.isActive

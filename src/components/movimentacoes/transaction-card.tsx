@@ -37,14 +37,14 @@ export function TransactionCard({
         {/* Type Indicator */}
         <div className={cn(
           "absolute top-0 left-0 w-1.5 h-full",
-          isIncome ? "bg-emerald-500" : "bg-red-500/40"
+          isIncome ? "bg-success" : "bg-destructive/40"
         )} />
 
         <div className="flex items-center gap-4">
           {/* Icon Circle */}
           <div className={cn(
             "w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner shrink-0",
-            isIncome ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
+            isIncome ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
           )}>
             {isIncome ? <ArrowUp className="w-6 h-6" strokeWidth={3} /> : <ArrowDown className="w-6 h-6" strokeWidth={3} />}
           </div>
@@ -56,7 +56,7 @@ export function TransactionCard({
                 {t.description}
               </h3>
               {t.blobUrl && (
-                <Cloud className="w-3 h-3 text-emerald-500" />
+                <Cloud className="w-3 h-3 text-success" />
               )}
             </div>
             
@@ -75,7 +75,7 @@ export function TransactionCard({
           <div className="text-right shrink-0">
             <p className={cn(
               "text-base font-black tracking-tighter",
-              isIncome ? "text-emerald-600" : "text-on-background"
+              isIncome ? "text-success" : "text-on-background"
             )}>
               {!isIncome && "- "}{formatCurrency(t.amount)}
             </p>
@@ -83,7 +83,7 @@ export function TransactionCard({
               {t.frequency === "MONTHLY" && <RotateCcw className="w-2.5 h-2.5 text-secondary/60" />}
               <span className={cn(
                 "text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md",
-                t.paymentStatus === "PENDING" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"
+                t.paymentStatus === "PENDING" ? "bg-warning/20 text-warning" : "bg-success/20 text-success"
               )}>
                 {t.paymentStatus === "PENDING" ? "Pendente" : "Pago"}
               </span>
@@ -98,7 +98,8 @@ export function TransactionCard({
               variant="ghost" 
               size="icon" 
               onClick={() => onUpdateStatus(t.id, "PAID")} 
-              className="h-9 w-9 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+              className="h-9 w-9 rounded-xl bg-success/10 text-success hover:bg-success/20"
+              aria-label="Marcar como pago"
             >
               <CheckCircle2 className="w-4 h-4" />
             </Button>
@@ -108,6 +109,7 @@ export function TransactionCard({
             size="icon" 
             onClick={() => onEdit(t)} 
             className="h-9 w-9 rounded-xl bg-secondary/10 text-secondary hover:bg-secondary/20"
+            aria-label="Editar transação"
           >
             <Edit2 className="w-4 h-4" />
           </Button>
@@ -115,7 +117,8 @@ export function TransactionCard({
             variant="ghost" 
             size="icon" 
             onClick={() => onDelete(t.id)} 
-            className="h-9 w-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100"
+              className="h-9 w-9 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20"
+            aria-label="Excluir transação"
           >
             <Trash2 className="w-4 h-4" />
           </Button>

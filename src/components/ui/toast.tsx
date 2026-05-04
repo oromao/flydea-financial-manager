@@ -86,17 +86,17 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
   }, [duration]);
 
   const icons = {
-    success: <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />,
-    error: <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />,
+    success: <CheckCircle2 className="w-4 h-4 text-success shrink-0" />,
+    error: <AlertCircle className="w-4 h-4 text-destructive shrink-0" />,
     info: <Info className="w-4 h-4 text-secondary shrink-0" />,
-    undo: <Trash2 className="w-4 h-4 text-amber-600 shrink-0" />,
+    undo: <Trash2 className="w-4 h-4 text-warning shrink-0" />,
   };
 
   const barColors = {
-    success: "bg-emerald-600",
-    error: "bg-red-600",
+    success: "bg-success",
+    error: "bg-destructive",
     info: "bg-secondary",
-    undo: "bg-amber-600",
+    undo: "bg-warning",
   };
 
   return (
