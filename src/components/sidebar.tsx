@@ -6,8 +6,9 @@ import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, ReceiptText, BarChart3, LogOut, Wallet, 
   UserCircle, RotateCcw, History, Target, CreditCard, 
-  BadgeDollarSign, CalendarRange, Camera, ShieldCheck, 
-  TrendingUp, Menu, X, Brain, Clock, Plus, Sparkles, ChevronRight
+  BadgeDollarSign, CalendarRange, ShieldCheck, 
+  TrendingUp, Menu, X, Brain, Plus, ChevronRight,
+  PieChart, Bell
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -16,53 +17,85 @@ import dynamic from "next/dynamic";
 
 const DarkModeToggleClient = dynamic(() => import("./dark-mode-toggle").then(mod => ({ default: mod.DarkModeToggle })), { ssr: false });
 
-const navItems = [
-  { name: "Painel Geral", href: "/", icon: LayoutDashboard },
-  { name: "Movimentações", href: "/movimentacoes", icon: ReceiptText },
-  { name: "Contas e Cartões", href: "/contas", icon: CreditCard },
-  { name: "Fluxo de Caixa", href: "/fluxo-caixa", icon: TrendingUp },
-  { name: "Contas a Pagar", href: "/contas-a-pagar", icon: BadgeDollarSign },
-  { name: "Planejamento", href: "/orcamentos", icon: Target },
-  { name: "Recorrências", href: "/recorrencias", icon: RotateCcw },
-  { name: "Fechamento", href: "/fechamento", icon: CalendarRange },
-  { name: "Inteligência IA", href: "/agents", icon: Brain },
-  { name: "Análises", href: "/relatorios", icon: BarChart3 },
+// Navigation sections for better organization
+const navSections = [
+  {
+    title: "Principal",
+    items: [
+      { name: "Painel Geral", href: "/", icon: LayoutDashboard },
+      { name: "Movimentações", href: "/movimentacoes", icon: ReceiptText },
+      { name: "Contas e Cartões", href: "/contas", icon: CreditCard },
+    ]
+  },
+  {
+    title: "Gestão",
+    items: [
+      { name: "Fluxo de Caixa", href: "/fluxo-caixa", icon: TrendingUp },
+      { name: "Contas a Pagar", href: "/contas-a-pagar", icon: BadgeDollarSign },
+      { name: "Planejamento", href: "/orcamentos", icon: Target },
+      { name: "Recorrências", href: "/recorrencias", icon: RotateCcw },
+      { name: "Fechamento", href: "/fechamento", icon: CalendarRange },
+    ]
+  },
+  {
+    title: "Inteligência",
+    items: [
+      { name: "Agentes IA", href: "/agents", icon: Brain },
+      { name: "Relatórios", href: "/relatorios", icon: BarChart3 },
+      { name: "Insights", href: "/insights", icon: PieChart },
+    ]
+  }
 ];
 
-const adminItems = [
-  { name: "Logs de Sistema", href: "/admin/logs", icon: History },
-  { name: "Aprovações", href: "/admin/aprovacoes", icon: ShieldCheck },
-];
+const adminSection = {
+  title: "Administração",
+  items: [
+    { name: "Logs de Sistema", href: "/admin/logs", icon: History },
+    { name: "Aprovações", href: "/admin/aprovacoes", icon: ShieldCheck },
+  ]
+};
 
 function NavLinks({ pathname, isAdmin, onItemClick }: { pathname: string; isAdmin: boolean; onItemClick?: () => void }) {
-  const allItems = isAdmin ? [...navItems, ...adminItems] : navItems;
+  const sections = isAdmin ? [...navSections, adminSection] : navSections;
 
   return (
-    <nav className="space-y-1">
-      {allItems.map((item) => {
-        const isActive = pathname === item.href;
-        const Icon = item.icon;
+    <nav className="space-y-6">
+      {sections.map((section, sectionIdx) => (
+        <div key={sectionIdx}>
+          <p className="px-4 mb-2 text-[11px] font-semibold uppercase tracking-wider text-outline">
+            {section.title}
+          </p>
+          <div className="space-y-0.5">
+            {section.items.map((item) => {
+              const isActive = pathname === item.href;
+              const Icon = item.icon;
 
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onItemClick}
-            className={cn(
-              "flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group relative text-sm font-medium",
-              isActive
-                ? "bg-surface-container-lowest shadow-sm text-primary"
-                : "text-on-surface-variant hover:bg-surface-container-low hover:text-primary"
-            )}
-          >
-            <div className="flex items-center gap-3">
-              <Icon className={cn("w-5 h-5 shrink-0", isActive ? "text-primary" : "text-outline group-hover:text-primary transition-colors")} />
-              <span className="truncate font-sans tracking-tight">{item.name}</span>
-            </div>
-            {isActive && <div className="w-1 h-4 rounded-full bg-primary" />}
-          </Link>
-        );
-      })}
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={onItemClick}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 group relative text-[13px] font-medium",
+                    isActive
+                      ? "bg-primary/5 text-primary font-semibold"
+                      : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
+                  )}
+                >
+                  {isActive && (
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-primary" />
+                  )}
+                  <Icon className={cn(
+                    "w-[18px] h-[18px] shrink-0 transition-colors",
+                    isActive ? "text-primary" : "text-outline group-hover:text-on-surface-variant"
+                  )} />
+                  <span className="truncate">{item.name}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </nav>
   );
 }
@@ -81,7 +114,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
       {/* Mobile Drawer Overlay */}
       <div
         className={cn(
-          "fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm transition-opacity duration-500 md:hidden",
+          "fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm transition-all duration-300 md:hidden",
           drawerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
         onClick={() => setDrawerOpen(false)}
@@ -91,170 +124,162 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
       {/* Mobile Drawer Panel */}
       <nav
         className={cn(
-          "fixed inset-y-0 left-0 z-[70] w-80 bg-surface flex flex-col p-6 overflow-y-auto transform transition-transform duration-500 ease-in-out md:hidden border-none shadow-2xl",
+          "fixed inset-y-0 left-0 z-[70] w-[280px] bg-surface-container-lowest flex flex-col overflow-y-auto transform transition-transform duration-300 ease-out md:hidden shadow-2xl",
           drawerOpen ? "translate-x-0" : "-translate-x-full"
         )}
         aria-hidden={!drawerOpen}
       >
         {/* Drawer Header */}
-        <div className="flex items-center justify-between mb-10 px-2">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary shadow-lg shadow-primary/20">
-              <Wallet className="w-6 h-6" />
+        <div className="p-5 border-b border-outline-variant/30">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-on-primary">
+                <Wallet className="w-5 h-5" />
+              </div>
+              <div>
+                <h1 className="text-base font-display font-bold text-on-background leading-none">FlyDea</h1>
+                <p className="text-[10px] uppercase tracking-widest font-semibold text-outline mt-0.5">Finance Manager</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-display font-bold tracking-tight text-on-background leading-none">FlyDea</h1>
-              <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-primary/60 mt-1.5">Sovereign</p>
-            </div>
+            <button
+              onClick={() => setDrawerOpen(false)}
+              aria-label="Fechar menu"
+              className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-surface-container transition-all"
+            >
+              <X className="w-5 h-5 text-on-surface-variant" />
+            </button>
           </div>
-          <button
-            onClick={() => setDrawerOpen(false)}
-            aria-label="Fechar menu"
-            className="w-11 h-11 flex items-center justify-center rounded-xl bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto no-scrollbar">
+        {/* Navigation */}
+        <div className="flex-1 p-4 overflow-y-auto no-scrollbar">
           <NavLinks pathname={pathname} isAdmin={isAdmin} onItemClick={() => setDrawerOpen(false)} />
         </div>
 
-        <div className="mt-8 pt-8 border-t border-surface-container-high space-y-6">
-          <div className="p-4 rounded-2xl bg-surface-container-low flex items-center gap-4 transition-all hover:bg-surface-container">
-            <div className="w-11 h-11 rounded-full overflow-hidden bg-surface-variant shrink-0 relative border-2 border-surface-container-lowest shadow-sm">
+        {/* User Section */}
+        <div className="p-4 border-t border-outline-variant/30">
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container">
+            <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
               {session?.user?.image ? (
-                <img src={(session.user.image) as string} alt="Foto do perfil" className="h-full w-full object-cover" />
+                <img src={session.user.image as string} alt="Foto do perfil" className="h-full w-full object-cover rounded-full" />
               ) : (
-                <UserCircle className="w-11 h-11 text-on-surface-variant" />
+                <UserCircle className="w-5 h-5 text-primary" />
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-on-background truncate">
+              <p className="text-sm font-semibold text-on-background truncate">
                 {session?.user?.name || "Usuário"}
               </p>
-              <Link href="/perfil" className="text-xs font-semibold text-primary hover:underline flex items-center gap-1 mt-0.5">
-                Ver perfil <ChevronRight className="w-3 h-3" />
-              </Link>
+              <p className="text-[11px] text-outline truncate">{session?.user?.email}</p>
             </div>
+            <Link href="/perfil" aria-label="Ver perfil" className="p-1.5 rounded-lg hover:bg-surface-container-high transition-all">
+              <ChevronRight className="w-4 h-4 text-outline" />
+            </Link>
           </div>
-
+          
           <button
             onClick={() => {
               setDrawerOpen(false);
               signOut({ callbackUrl: '/login' });
             }}
-            className="flex items-center justify-center gap-2 px-4 py-4 w-full rounded-2xl text-sm font-bold text-on-surface-variant bg-surface-container-low hover:bg-error/5 hover:text-error transition-all"
+            className="flex items-center justify-center gap-2 mt-3 px-4 py-2.5 w-full rounded-lg text-sm font-medium text-on-surface-variant hover:bg-error/5 hover:text-error transition-all"
           >
             <LogOut className="w-4 h-4" />
-            Encerrar Sessão
+            Sair
           </button>
         </div>
       </nav>
 
       {/* Mobile Top Header */}
-      <header className="h-20 flex items-center justify-between px-6 bg-surface/80 backdrop-blur-xl md:hidden sticky top-0 z-50 shrink-0 border-none shadow-[0_1px_10px_rgba(0,0,0,0.02)]">
+      <header className="h-14 flex items-center justify-between px-4 bg-surface-container-lowest/95 backdrop-blur-xl md:hidden sticky top-0 z-50 shrink-0 border-b border-outline-variant/30">
         <button
           onClick={() => setDrawerOpen(true)}
           aria-label="Abrir menu"
-          className="w-12 h-12 flex items-center justify-center rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all"
+          className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container transition-all"
         >
-          <Menu className="w-6 h-6 text-on-surface-variant" />
+          <Menu className="w-5 h-5 text-on-surface-variant" />
         </button>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary shadow-md">
-            <Wallet className="w-5 h-5" />
-          </div>
-          <span className="text-lg font-display font-bold text-on-background tracking-tight">FlyDea</span>
-        </div>
+        
         <div className="flex items-center gap-2">
-          <DarkModeToggleClient />
-          <button
-            onClick={() => setDrawerOpen(true)}
-            className="w-10 h-10 rounded-full overflow-hidden bg-surface-container-low border-2 border-surface-container-high flex items-center justify-center transition-all hover:border-primary/30"
-            aria-label="Abrir menu do usuário"
-          >
-            {session?.user?.image ? (
-              <img src={session.user.image as string} alt="Perfil" className="w-full h-full object-cover" />
-            ) : (
-              <UserCircle className="w-6 h-6 text-on-surface-variant" />
-            )}
+          <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center text-on-primary">
+            <Wallet className="w-4 h-4" />
+          </div>
+          <span className="text-base font-display font-bold text-on-background tracking-tight">FlyDea</span>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <button className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container transition-all relative">
+            <Bell className="w-5 h-5 text-on-surface-variant" />
+            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-error" />
           </button>
         </div>
       </header>
 
       {/* Sidebar - Desktop Only */}
-      <aside className="w-[320px] bg-surface hidden md:flex flex-col fixed inset-y-0 z-50 p-8 overflow-y-auto border-none shadow-[1px_0_20px_rgba(0,0,0,0.02)]">
-        <div className="h-20 flex items-center px-2 mb-12">
-          <div className="flex items-center gap-4 w-full">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary shrink-0 shadow-xl shadow-primary/10">
-              <Wallet className="w-7 h-7" />
+      <aside className="w-[260px] bg-surface-container-lowest hidden md:flex flex-col fixed inset-y-0 z-50 border-r border-outline-variant/30">
+        {/* Logo */}
+        <div className="p-5 border-b border-outline-variant/30">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-on-primary shadow-sm">
+              <Wallet className="w-5 h-5" />
             </div>
-            <div className="min-w-0">
-              <h1 className="text-2xl font-display font-bold tracking-tight text-on-background leading-none">
+            <div>
+              <h1 className="text-lg font-display font-bold text-on-background leading-none">
                 FlyDea
               </h1>
-              <p className="text-[10px] uppercase tracking-[0.4em] font-bold text-primary/60 mt-2">Premium Access</p>
+              <p className="text-[10px] uppercase tracking-widest font-semibold text-outline mt-0.5">Finance Manager</p>
             </div>
           </div>
         </div>
 
-        <div className="flex-1 space-y-1 no-scrollbar overflow-y-auto pr-2">
+        {/* Navigation */}
+        <div className="flex-1 p-4 overflow-y-auto no-scrollbar">
           <NavLinks pathname={pathname} isAdmin={isAdmin} />
         </div>
 
-        <div className="mt-12 space-y-6">
-          {/* Advice Card */}
-          <div className="p-5 rounded-3xl bg-primary/5 border border-primary/10 space-y-3">
-            <div className="flex items-center gap-2 text-primary">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Consultoria</span>
-            </div>
-            <p className="text-[11px] font-medium text-on-surface-variant leading-relaxed">
-              Deseja otimizar sua carteira de investimentos? Fale com um especialista.
-            </p>
-            <button className="w-full py-2 rounded-xl bg-primary text-white text-[11px] font-bold hover:bg-primary-container transition-all">
-              Agendar Conversa
-            </button>
-          </div>
+        {/* Bottom Section */}
+        <div className="p-4 border-t border-outline-variant/30 space-y-3">
+          {/* Quick Action */}
+          <Link
+            href="/movimentacoes?action=new"
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg gradient-primary text-on-primary text-sm font-semibold hover:brightness-110 transition-all shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Nova Transação
+          </Link>
 
-          <div className="p-4 flex items-center gap-4 rounded-3xl bg-surface-container-low transition-all hover:bg-surface-container group">
-            <div className="w-12 h-12 rounded-full overflow-hidden bg-surface-variant shrink-0 relative border-2 border-surface-container-lowest shadow-sm">
+          {/* User Card */}
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container">
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
               {session?.user?.image ? (
-                <img src={(session.user.image) as string} alt="Foto do perfil" className="h-full w-full object-cover" />
+                <img src={session.user.image as string} alt="Foto do perfil" className="h-full w-full object-cover rounded-full" />
               ) : (
-                <UserCircle className="w-12 h-12 text-on-surface-variant" />
+                <UserCircle className="w-5 h-5 text-primary" />
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-on-background truncate">
+              <p className="text-[13px] font-semibold text-on-background truncate">
                 {session?.user?.name || "Usuário"}
               </p>
-              <p className="text-[10px] text-on-surface-variant truncate">{session?.user?.email}</p>
+              <p className="text-[11px] text-outline truncate">{session?.user?.email}</p>
             </div>
-            <Link href="/perfil" aria-label="Ver perfil" className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
-               <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => signOut({ callbackUrl: '/login' })}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-xs font-bold text-on-surface-variant hover:bg-error/5 hover:text-error transition-all"
-            >
-              <LogOut className="w-4 h-4" />
-              Sair
-            </button>
-            <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all">
+            <div className="flex items-center gap-1">
               <DarkModeToggleClient />
+              <button
+                onClick={() => signOut({ callbackUrl: '/login' })}
+                className="p-1.5 rounded-lg hover:bg-error/5 hover:text-error transition-all"
+                aria-label="Sair"
+              >
+                <LogOut className="w-4 h-4 text-outline" />
+              </button>
             </div>
           </div>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <main id="main-content" tabIndex={-1} className="flex-1 md:ml-[320px] min-h-screen pb-24 md:pb-0 bg-background">
-        <div className="w-full max-w-7xl mx-auto p-6 md:p-12 lg:p-16 animate-in fade-in slide-in-from-bottom-4 duration-1000 ease-out">
+      <main id="main-content" tabIndex={-1} className="flex-1 md:ml-[260px] min-h-screen pb-20 md:pb-0 bg-background">
+        <div className="w-full max-w-[1400px] mx-auto p-4 md:p-8 lg:p-10">
           {children}
         </div>
       </main>
@@ -263,13 +288,13 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
       <BottomNav />
 
       {/* Mobile FAB */}
-      <div className="fixed bottom-28 right-6 z-[45] md:hidden">
+      <div className="fixed bottom-20 right-4 z-[45] md:hidden">
         <Link
           href="/movimentacoes?action=new"
-          className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-2xl shadow-2xl shadow-primary/30 active:scale-95 transition-all animate-in zoom-in duration-500"
+          className="flex items-center justify-center w-14 h-14 gradient-primary text-on-primary rounded-xl shadow-lg shadow-primary/25 active:scale-95 transition-all"
           aria-label="Nova transação"
         >
-          <Plus className="w-9 h-9 stroke-[3px]" />
+          <Plus className="w-7 h-7 stroke-[2.5px]" />
         </Link>
       </div>
     </div>
