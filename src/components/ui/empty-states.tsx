@@ -12,13 +12,13 @@ export function EmptyTransactions({ onImportClick }: EmptyTransactionsProps) {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
       <div className="w-20 h-20 bg-surface rounded-3xl flex items-center justify-center mb-6">
-        <Receipt className="w-10 h-10 text-on-surface-variant/30" />
+        <Receipt className="w-10 h-10 text-on-surface-variant/30" aria-hidden="true" />
       </div>
       <h3 className="text-lg font-bold text-on-background mb-2">
         Nenhuma movimentação ainda
       </h3>
       <p className="text-sm text-on-surface-variant/70 max-w-xs mb-6">
-        Comece imports suas transações bancárias ou adicione manualmente para ter o controle financeiro completo.
+        Importe suas transacoes bancarias ou adicione manualmente para ter o controle financeiro completo.
       </p>
       <div className="flex gap-3">
         {onImportClick && (
@@ -28,7 +28,7 @@ export function EmptyTransactions({ onImportClick }: EmptyTransactionsProps) {
           </Button>
         )}
         <Link href="/movimentacoes" className="apple-button-primary h-11">
-          Adicionar manually
+          Adicionar manualmente
         </Link>
       </div>
     </div>
@@ -39,7 +39,7 @@ export function EmptyDashboard() {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
       <div className="w-20 h-20 bg-surface rounded-3xl flex items-center justify-center mb-6">
-        <TrendingUp className="w-10 h-10 text-on-surface-variant/30" />
+        <TrendingUp className="w-10 h-10 text-on-surface-variant/30" aria-hidden="true" />
       </div>
       <h3 className="text-lg font-bold text-on-background mb-2">
         Bem-vindo ao FlyDea!

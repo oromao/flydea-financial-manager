@@ -63,7 +63,7 @@ function SwipeableContent({ children, onClose }: { children: React.ReactNode; on
       drag="y"
       dragConstraints={{ top: 0, bottom: 0 }}
       dragElastic={0.2}
-      style={{ y }}
+      style={{ y, touchAction: "none", userSelect: "none" as any }}
       onDragEnd={handleDragEnd}
       onScroll={handleScroll}
       className="h-full overflow-y-auto"
@@ -211,7 +211,7 @@ function DialogContent({
               }
             >
               <XIcon />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">Fechar</span>
             </DialogPrimitive.Close>
           )}
         </div>

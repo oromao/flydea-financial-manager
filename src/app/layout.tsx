@@ -9,7 +9,7 @@ import { authOptions } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Flydea - Seu assistente financeiro",
-  description: "Assistente financeiro pessoal que ajuda você a decidir melhor",
+  description: "Assistente financeiro pessoal que ajuda voce a decidir melhor",
   appleWebApp: {
     capable: true,
     title: "Flydea",
@@ -30,15 +30,23 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
-  
+
   return (
     <html lang="pt-BR" className="h-full antialiased">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-on-background selection:bg-secondary/30 selection:text-secondary">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-xl focus:font-bold focus:shadow-lg"
         >
-          Pular para o conteúdo
+          Pular para o conteudo
         </a>
         <ErrorBoundary>
           <Providers session={session}>

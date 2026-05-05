@@ -183,7 +183,7 @@ export default function Relatorios() {
           { label: "Resultado", value: netBalance, color: netBalance >= 0 ? "text-success" : "text-destructive" },
           { label: "Poupança", value: null, color: savingsRate >= 20 ? "text-success" : "text-warning", label2: `${savingsRate.toFixed(1)}%` },
         ].map((card, i) => (
-          <Card key={i} size="sm" className="premium-card p-4 sm:p-6 flex flex-col justify-between">
+          <Card key={i} className="premium-card p-4 sm:p-6 flex flex-col justify-between">
             <p className="text-xs sm:text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/80">{card.label}</p>
             <p className={cn("text-2xl md:text-3xl font-bold mt-1 tracking-tight", card.color)}>
               {card.value !== null ? formatCurrency(card.value) : card.label2}

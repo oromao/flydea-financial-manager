@@ -242,6 +242,47 @@ Se você acabou de entrar no projeto e não sabe por onde começar:
 
 ---
 
+## 🎨 UX/UI Agent Skills
+
+O projeto possui skills globais de UI/UX instaladas via OpenCode em `~/.config/opencode/skills/`. Use-as obrigatoriamente em tarefas visuais.
+
+### Instrucoes para IA
+
+- **Sempre** usar as skills instaladas quando a tarefa envolver UI, UX, design system, acessibilidade, mobile-first, React, Next.js, shadcn/ui, dashboard, landing page ou componentes visuais.
+- **Para UI criativa e visual diferenciado:** usar `frontend-design` e `ui-ux-pro-max`.
+- **Para auditoria de interface, acessibilidade e boas praticas web:** usar `web-design-guidelines` e `accesslint-audit`.
+- **Para performance React/Next.js:** usar `react-best-practices`.
+- **Para arquitetura de componentes:** usar `composition-patterns`.
+- **Para UX controlada/sistematica:** usar `bencium-controlled-ux-designer`.
+- **Para UX mais criativa/inovadora:** usar `bencium-innovative-ux-designer`.
+- **Para React Native/Expo:** usar `react-native-skills`.
+- **Sempre** pensar mobile-first (iPhone 16, 390x844).
+- **Sempre** preservar funcionalidades existentes.
+- **Sempre** auditar antes de alterar.
+- **Sempre** gerar backlog com prioridade, impacto, arquivos afetados e criterio de aceite.
+- **Sempre** testar no navegador quando possivel.
+- **Sempre** evitar UI generica, inconsistente ou com cara de sistema legado.
+
+### Skills Disponiveis
+
+| Skill | Foco | Quando Usar |
+|-------|------|-------------|
+| `frontend-design` | Identidade visual marcante, design premium | Landing pages, branding, telas publicas |
+| `web-design-guidelines` | Auditoria 100+ regras web, acessibilidade | Pre-lancamento, code review de UI |
+| `react-best-practices` | 70 regras performance React/Next.js | Otimizacao, refatoracao de performance |
+| `composition-patterns` | Arquitetura de componentes React | Refatorar boolean props, design system |
+| `ui-ux-pro-max` | Design system completo (50+ styles, 161 palettes) | Decisoes de cor, tipografia, UX guidelines |
+| `bencium-innovative-ux-designer` | UX criativa e ousada | Interfaces inovadoras, diferenciacao |
+| `bencium-controlled-ux-designer` | UX controlada e sistematica | Sistemas enterprise, consistencia |
+| `react-native-skills` | Performance mobile React Native/Expo | Apps mobile, listas, animacoes |
+| `accesslint-audit` | Auditoria WCAG 2.2 completa | Acessibilidade, contraste, ARIA, labels |
+
+### Guia de Uso
+
+Consulte `~/.config/opencode/skills/UX_UI_SKILLS_USAGE_GUIDE.md` para exemplos prontos de prompts para cada cenario (auditoria mobile, dashboard SaaS, landing page, acessibilidade, etc).
+
+---
+
 ## ⚙️ Como editar este arquivo
 
 Se precisar alterar este `AGENTS.md`:
@@ -258,4 +299,4 @@ Se precisar alterar este `AGENTS.md`:
 
 ---
 
-*Última atualização: 2026-04-30 — Versão 1.0*
+*Ultima atualizacao: 2026-05-05 — Versao 1.1 (adicionadas skills globais UI/UX)*

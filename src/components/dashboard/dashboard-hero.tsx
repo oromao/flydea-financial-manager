@@ -48,7 +48,7 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
           {/* Top row: Label + Icon */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5 text-white/50">
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-4 h-4" aria-hidden="true" />
               <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">Saldo Geral</span>
               {!loading && timeAgo && (
                 <>
@@ -58,7 +58,7 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
               )}
             </div>
             <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10">
-              <Wallet className="w-5 h-5 md:w-6 md:h-6 text-white" />
+              <Wallet className="w-5 h-5 md:w-6 md:h-6 text-white" aria-hidden="true" />
             </div>
           </div>
 

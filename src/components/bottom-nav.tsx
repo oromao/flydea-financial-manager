@@ -55,11 +55,12 @@ export function BottomNav() {
             const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
             const Icon = item.icon;
 
-            if (item.isSheetTrigger) {
+              if (item.isSheetTrigger) {
               return (
                 <button
                   key={item.name}
                   onClick={() => setSheetOpen(true)}
+                  aria-label="Explorar mais módulos"
                   className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
                 >
                   <div className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-2xl transition-all duration-200 group-active:bg-surface-container">
@@ -111,6 +112,7 @@ export function BottomNav() {
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/50 z-[60] md:hidden"
               onClick={() => setSheetOpen(false)}
+              aria-hidden="true"
             />
             <motion.div
               initial={{ y: "100%" }}
@@ -119,6 +121,9 @@ export function BottomNav() {
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className="fixed bottom-0 left-0 right-0 z-[70] md:hidden bg-surface rounded-t-[32px] shadow-2xl"
               style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Explorar módulos"
             >
               <div className="flex items-center justify-between p-6 border-b border-outline/10">
                 <h2 className="text-xl font-black text-on-background">Explorar</h2>

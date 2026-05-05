@@ -152,7 +152,7 @@ export default function Dashboard() {
         <motion.section variants={itemVariants}>
           <div className="bg-surface-container-lowest rounded-2xl p-5 md:p-6 shadow-sm border border-outline/10 flex items-start gap-3">
             <div className="p-2 rounded-xl bg-primary/10 shrink-0">
-              <Sparkles className="w-4 h-4 text-primary" />
+              <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" />
             </div>
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-primary/60 mb-1">Copiloto IA</p>
@@ -284,7 +284,7 @@ export default function Dashboard() {
           {/* Budget Alerts */}
           <motion.section variants={itemVariants} className="space-y-4">
             <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-tertiary" />
+              <Target className="w-4 h-4 text-tertiary" aria-hidden="true" />
               <h2 className="text-lg font-display font-bold text-on-surface">
                 Orçamentos
               </h2>
