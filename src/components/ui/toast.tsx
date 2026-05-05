@@ -35,11 +35,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     (message: string, type: ToastType = "info", options?: { duration?: number; onUndo?: () => void }) => {
       const id = Math.random().toString(36).slice(2);
       setToasts((prev) => {
+        // Limit to 3 toasts maximum
         const next = [...prev, { id, message, type, ...options }];
-        if (next.length > 3) return next.slice(-3);
-        return next;
+        return next.slice(-3); // Keep only last 3
       });
-      const duration = options?.duration ?? (type === "undo" ? 5000 : 3500);
+      const duration = options?.duration ?? (type === "undo" ? 5000 : 5000); // 5s auto-dismiss
       setTimeout(() => dismiss(id), duration);
     },
     [dismiss]

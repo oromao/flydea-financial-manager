@@ -7,6 +7,20 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  
+  /* Typography Scale */
+  --text-display-xl: 3.5rem;
+  --text-display-lg: 2.5rem;
+  --text-display-md: 2rem;
+  --text-h1: 1.875rem;
+  --text-h2: 1.5rem;
+  --text-h3: 1.25rem;
+  --text-h4: 1.125rem;
+  --text-body-lg: 1rem;
+  --text-body-md: 0.875rem;
+  --text-body-sm: 0.8125rem;
+  --text-caption: 0.75rem;
+  --text-overline: 0.6875rem;
 
   /* Premium Fintech Palette - Light Mode */
   --color-primary: #8A05BE;
@@ -69,6 +83,83 @@
   --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
   --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
   --shadow-xl: 0 16px 48px rgba(0,0,0,0.10);
+  
+  /* Premium Shadows */
+  --shadow-premium: 0 4px 20px rgba(138, 5, 190, 0.15);
+  --shadow-float: 0 12px 40px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 30px rgba(138, 5, 190, 0.3);
+  
+  /* Premium Gradients */
+  --gradient-primary: linear-gradient(135deg, #8A05BE 0%, #D585FA 100%);
+  --gradient-secondary: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+  --gradient-success: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  --gradient-warning: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+  --gradient-destructive: linear-gradient(135deg, #EF4444 0%, #F48080 100%);
+  --gradient-surface: linear-gradient(180deg, #F9FAFB 0%, #F3F4F6 100%);
+  
+  /* Grid System - 4px increments */
+  --grid-gap-xs: 4px;
+  --grid-gap-sm: 8px;
+  --grid-gap-md: 16px;
+  --grid-gap-lg: 24px;
+  --grid-gap-xl: 32px;
+  --grid-gap-2xl: 48px;
+  
+  /* Spacing Scale */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  
+  /* Animations */
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-slide-up: slide-up 0.3s ease-out;
+  --animate-slide-down: slide-down 0.3s ease-out;
+  --animate-scale-in: scale-in 0.2s ease-out;
+  --animate-shake: shake 0.4s ease-out;
+  --animate-pulse-once: pulse-once 2s ease-out;
+  --animate-checkmark: checkmark 0.4s ease-out forwards;
+  --animate-shimmer: shimmer 2s linear infinite;
+  
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slide-down {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+  }
+  @keyframes pulse-once {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  @keyframes checkmark {
+    0% { stroke-dashoffset: 24; }
+    100% { stroke-dashoffset: 0; }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;

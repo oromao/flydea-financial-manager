@@ -366,17 +366,18 @@ function MovimentaçõesContent() {
   };
 
   const handleEdit = (t: Transaction) => {
+    if (!t.amount && t.amount !== 0) return; // Skip if amount is invalid
     setEditingId(t.id);
     setType(t.type);
     setDescription(t.description);
     setCategoryId(t.categoryId || "");
-    setAmount(t.amount.toString());
+    setAmount(t.amount?.toString() || "0");
     setDate(toLocalDateInput(t.date));
     setFrequency(t.frequency || "NONE");
     setPaymentStatus(t.paymentStatus || "PAID");
     setDueDate(t.dueDate ? toLocalDateInput(t.dueDate) : "");
     setPaidAt(t.paidAt ? toLocalDateInput(t.paidAt) : "");
-    setAmountPaid(t.amountPaid?.toString() || "");
+    setAmountPaid(t.amountPaid?.toString() || "0");
     setAttachmentUrl(t.attachmentUrl || "");
     setBlobUrl(t.blobUrl || "");
     setAccountId(t.accountId || "");
