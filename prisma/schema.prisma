@@ -602,3 +602,26 @@ model Webhook {
   
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+// ===== EXTERNAL LEARNING ENGINE =====
+
+model KnowledgeCandidate {
+  id            String    @id @default(cuid())
+  url           String
+  domain       String
+  title        String
+  category     String
+  insights     Json
+  tags         String[]
+  confidence   Float     @default(0)
+  content      String    @db.Text
+  sourceTitle  String
+  sourceDomain String
+  status       String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  @@index([status])
+  @@index([category])
+  @@index([confidence])
+}
