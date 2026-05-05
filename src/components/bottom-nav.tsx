@@ -13,7 +13,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 
 const mainNavItems = [
   { name: "Inicio", href: "/", icon: LayoutDashboard },
-  { name: "Fluxo", href: "/movimentacoes", icon: ReceiptText },
+  { name: "Transações", href: "/movimentacoes", icon: ReceiptText },
   { name: "Novo", href: "#", icon: Plus, isAction: true },
   { name: "Mais", href: "#", icon: MoreHorizontal, isSheetTrigger: true },
 ];
@@ -62,10 +62,10 @@ export function BottomNav() {
             if (item.isAction) {
               return (
                 <Tooltip key={item.name}>
-                  <TooltipTrigger>
+                  <TooltipTrigger asChild>
                     <button
                       onClick={() => setNewOpen(true)}
-                      aria-label="Novo lancamento"
+                      aria-label="Adicionar transação"
                       className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
                     >
                       <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 group-active:scale-95 transition-all">

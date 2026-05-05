@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Plus, Trash2, Wallet, CreditCard, PiggyBank, Banknote, Edit2, TrendingUp, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ProgressTrack, ProgressIndicator } from "@/components/ui/progress";
@@ -156,7 +156,7 @@ export default function ContasPage() {
     <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-secondary text-on-secondary shadow-lg shadow-secondary/20">
+          <div className="p-3 rounded-2xl bg-primary/10 text-primary">
             <Wallet className="w-8 h-8" />
           </div>
           <div>

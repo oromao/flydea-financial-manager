@@ -43,21 +43,22 @@ export function toUtcMidnight(dateInput: string): Date {
 
 /**
  * Safely formats a date string/Date to dd/MM/yy.
- * Returns "—" on any invalid input — never throws.
+ * Returns fallback on any invalid input — never throws.
  */
 export function safeFormatDate(
   dateInput: string | Date | null | undefined,
-  fmt: string = "dd/MM/yy"
+  fmt: string = "dd/MM/yy",
+  fallback: string = "—"
 ): string {
-  if (!dateInput) return "—";
+  if (!dateInput) return fallback;
   try {
     const d = typeof dateInput === "string"
       ? new Date(dateInput + "T12:00:00")
       : dateInput;
-    if (isNaN(d.getTime())) return "—";
+    if (isNaN(d.getTime())) return fallback;
     return format(d, fmt);
   } catch {
-    return "—";
+    return fallback;
   }
 }
 

@@ -48,6 +48,14 @@
 | E2-T4 | UX | Global | Permitir zoom do usuário (remover maximumScale) (S-07) | P1 | Baixa | ✅ completed |
 | E2-T5 | UX | Global | Foco-visible ring global (S-08) | P1 | Baixa | ✅ completed |
 | E2-T6 | UX | Contas | Touch targets mínimos 44px no mobile (C-05) | P1 | Baixa | ✅ completed |
+| E3-T1 | QA | UI | QA3-01: button nesting (bottom-nav) | P1 | Baixa | ✅ completed |
+| E3-T2 | QA | UI | QA3-02: botao IMPORTAR duplicado | P1 | Baixa | ✅ completed |
+| E3-T3 | QA | UI | QA3-05: datas nulas com "Sem data" | P1 | Baixa | ✅ completed |
+| E3-T4 | QA | UI | QA3-07: "Fluxo" → "Transacoes" bottom-nav | P1 | Baixa | ✅ completed |
+| E3-T5 | QA | UI | Fix modal Novo Lancamento transparente | P1 | Baixa | ✅ completed |
+| E3-T6 | UX | Movimentacoes | Filtros mais compactos no mobile | P1 | Media | ✅ completed |
+| E3-T7 | UX | FluxoCaixa | Summary cards com icones e cores | P1 | Media | ✅ completed |
+| E3-T8 | UX | Contas | Limpar tokens nao-shadcn | P1 | Baixa | ✅ completed |
 | E2-T7 | UX | Alertas | Loading state em search (M-07) | P1 | Baixa | ✅ completed |
 | E2-T8 | UX | Fluxo de Caixa | Substituir alert() por toast em InvoiceManager (F-02) | P1 | Baixa | ✅ completed |
 | E2-T9 | UX | Fluxo de Caixa | Substituir inputs hardcoded por shared Input (F-03) | P1 | Baixa | ✅ completed |
