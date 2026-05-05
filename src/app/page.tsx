@@ -172,12 +172,12 @@ export default function Dashboard() {
             <h2 className="text-lg font-display font-bold text-on-surface">
               Fluxo Mensal
             </h2>
-            <Card className="premium-card p-4 md:p-6 h-[320px] md:h-[380px]">
+            <Card className="premium-card p-4 md:p-6 min-h-[240px] md:min-h-[320px]">
               {loading ? (
                 <div className="h-full w-full flex items-center justify-center">
                   <Skeleton className="h-[280px] md:h-[340px] w-full rounded-2xl" />
                 </div>
-              ) : (
+              ) : metrics.chartData && metrics.chartData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={metrics.chartData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
                     <defs>
@@ -250,6 +250,10 @@ export default function Dashboard() {
                     />
                   </AreaChart>
                 </ResponsiveContainer>
+              ) : (
+                <div className="h-full w-full flex items-center justify-center">
+                  <p className="text-sm text-on-surface-variant">Sem dados para exibir</p>
+                </div>
               )}
             </Card>
           </motion.section>

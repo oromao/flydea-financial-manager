@@ -7,7 +7,7 @@ import {
   LayoutDashboard, ReceiptText, BarChart3, LogOut, Wallet, 
   UserCircle, RotateCcw, History, Target, CreditCard, 
   BadgeDollarSign, CalendarRange, ShieldCheck, 
-  TrendingUp, Menu, X, ChevronRight, Lightbulb
+  TrendingUp, Menu, X, ChevronRight
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -203,20 +203,6 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="mt-12 space-y-6">
-          {/* Advice Card */}
-          <div className="p-5 rounded-3xl bg-primary/5 border border-primary/10 space-y-3">
-            <div className="flex items-center gap-2 text-primary">
-              <Lightbulb className="w-4 h-4" />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Consultoria</span>
-            </div>
-            <p className="text-[11px] font-medium text-on-surface-variant leading-relaxed">
-              Deseja otimizar sua carteira de investimentos? Fale com um especialista.
-            </p>
-            <button className="w-full py-2 rounded-xl bg-primary text-white text-[11px] font-bold hover:bg-primary-container transition-all">
-              Agendar Conversa
-            </button>
-          </div>
-
           <div className="p-4 flex items-center gap-4 rounded-3xl bg-surface-container-low transition-all hover:bg-surface-container group">
             <div className="w-12 h-12 rounded-full overflow-hidden bg-surface-variant shrink-0 relative border-2 border-surface-container-lowest shadow-sm">
               {session?.user?.image ? (

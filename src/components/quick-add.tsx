@@ -71,11 +71,11 @@ export function QuickAdd({ categories, onSuccess, open: controlledOpen, onOpenCh
       if (res.ok) {
         toast.success(`${type === "EXPENSE" ? "Despesa" : "Receita"} adicionada!`);
         trackEvent("quick_add", { type, amount: numAmount, category: categoryId });
-        setOpen(false);
         setAmount("");
         setDescription("");
         setCategoryId("");
         onSuccess?.();
+        setTimeout(() => setOpen(false), 300);
       } else {
         const error = await res.json().catch(() => ({}));
         toast.error(error.error || "Erro ao adicionar");
