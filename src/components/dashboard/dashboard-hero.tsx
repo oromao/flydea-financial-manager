@@ -26,7 +26,7 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
   const [timeAgo, setTimeAgo] = useState<string | null>(null);
 
   useEffect(() => {
-    if (lastUpdated) {
+    if (lastUpdated && !isNaN(lastUpdated.getTime())) {
       setTimeAgo(
         new Intl.RelativeTimeFormat("pt-BR", { numeric: "auto" }).format(
           -Math.round((Date.now() - lastUpdated.getTime()) / 60000),
