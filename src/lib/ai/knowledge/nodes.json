@@ -1,0 +1,539 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "updatedAt": "2026-05-05",
+  "categories": [
+    "CASHFLOW",
+    "BUDGET",
+    "DEBT",
+    "SAVINGS",
+    "INVESTMENT",
+    "CREDIT",
+    "TAX",
+    "PSYCHOLOGY",
+    "GOALS",
+    "RETIREMENT"
+  ],
+  "nodes": [
+    {
+      "id": "kb-001",
+      "category": "BUDGET",
+      "level": "basic",
+      "title": "Regra 50/30/20",
+      "content": "Divida sua renda mensal em: 50% para necessidades básicas (aluguel, luz, comida), 30% para desejoiros (lazer, entretenimento) e 20% para poupança ou pagamento de dívidas.",
+      "keywords": ["50/30/20", "orçamento", "divisão", "porcentagem", "basico"],
+      "action": "Criar orçamento",
+      "url": "/orcamentos"
+    },
+    {
+      "id": "kb-002",
+      "category": "SAVINGS",
+      "level": "basic",
+      "title": "Reserva de Emergência",
+      "content": "Tenha guardados de 3 a 6 meses do seu custo de vida mensal em investimento de alta liquidez (poupança, CDB pós-fixado). Isso cobre emergências médicas, perda de emprego, etc.",
+      "keywords": ["reserva", "emergência", "segurança", "liquidez", "6 meses"],
+      "action": "Calcular reserva",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-003",
+      "category": "INVESTMENT",
+      "level": "intermediate",
+      "title": "Juros Compostos",
+      "content": "O tempo é seu maior aliado nos investimentos. R$ 100 por mês a 10% ao ano por 30 anos se tornam R$ 164.494. Comece cedo, mesmo com poco.",
+      "keywords": ["juros", "compostos", "tempo", "investimento", "exponencial"],
+      "action": "Simular investimento",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-004",
+      "category": "PSYCHOLOGY",
+      "level": "basic",
+      "title": "Gatilho de Impulso",
+      "content": "Anunciantes usam escassez e urgência para forçar decisões. Identifique frases como 'oferta por tempo limitado' ou 'ultimas peças'. Espere 24h antes de compras grandes.",
+      "keywords": ["impulso", "escassez", "urgência", "comprar", "esperar"],
+      "action": "Ler mais",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-005",
+      "category": "DEBT",
+      "level": "basic",
+      "title": "Método Bola de Neve",
+      "content": "Pague primeiro as dívidas com os menores saldos (ou maiores juros). Isso dá vitórias rápidas e motivação para continuar. Depois pase para a próxima.",
+      "keywords": ["bola de neve", "dívida", "menor", "取", "quitar"],
+      "action": "Ver dívidas",
+      "url": "/contas-a-pagar"
+    },
+    {
+      "id": "kb-006",
+      "category": "CREDIT",
+      "level": "basic",
+      "title": "Taxa de Juros do Cartão",
+      "content": "O rotativo do cartão de crédito pode chegar a 15% ao mês (180% ao ano!). Parcelar sem juros é diferente, mas o saldo total gera juros se não pagar.",
+      "keywords": ["cartão", "juros", "rotativo", "parcelar", "180%"],
+      "action": "Ver fatura",
+      "url": "/contas"
+    },
+    {
+      "id": "kb-007",
+      "category": "CASHFLOW",
+      "level": "basic",
+      "title": "DRE Pessoal",
+      "content": "Make um demonstrativo: Receitas - Despesas Fixas - Despesas Variáveis = Resultado. Fazendo isso monthly, você vê onde seu dinheiro vai.",
+      "keywords": ["DRE", "fluxo", "caixa", "receita", "despesa"],
+      "action": "Ver fluxo",
+      "url": "/fluxo-caixa"
+    },
+    {
+      "id": "kb-008",
+      "category": "BUDGET",
+      "level": "intermediate",
+      "title": "Orçamento por Envelope",
+      "content": "Coloque a.grades categories em 'envelopes' (categorias com limites). Quando o envelope acabar, você para de gastar nessa categoria até o próximo mês.",
+      "keywords": ["envelope", "categoria", "limite", "orçamento"],
+      "action": "Criar orçamento",
+      "url": "/orcamentos"
+    },
+    {
+      "id": "kb-009",
+      "category": "SAVINGS",
+      "level": "basic",
+      "title": "Pagamento Primeiro",
+      "content": "Quando receber, immediately separe X% para poupança ANTES de pagar contas. Assim a poupança acontece, não sobra.",
+      "keywords": ["pagamento primeiro", "pay yourself", "poupar", "automatizar"],
+      "action": "Configurar",
+      "url": "/orcamentos"
+    },
+    {
+      "id": "kb-010",
+      "category": "DEBT",
+      "level": "intermediate",
+      "title": "Refinanciamento",
+      "content": "Se suas dívidas têm juros >5% ao mês, considere refinanciar (crédito pessoal, consignado). Usually会比较便宜.",
+      "keywords": ["refinanciar", "consignado", "empréstimo", "juros"],
+      "action": "Simular",
+      "url": "/contas-a-pagar"
+    },
+    {
+      "id": "kb-011",
+      "category": "INVESTMENT",
+      "level": "intermediate",
+      "title": "Diversificação",
+      "content": "Não coloque todos os ovos na mesma cesta. Mix de renda fixa (poupança, CDB), variável (ações, FIIs) e internacional reduz risco.",
+      "keywords": ["diversificar", "carteira", "risco", "misto"],
+      "action": "Ver alocação",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-012",
+      "category": "TAX",
+      "level": "intermediate",
+      "title": "Imposto de Renda",
+      "content": "Declare投资收益 nos investimentos. Isentos: Poupança, LCIs, CRIs, debêntures. Tributáveis: Ações, FIIs, CDs.",
+      "keywords": ["IR", "imposto", "isenção", "declaração"],
+      "action": "Ver Informe",
+      "url": "/relatorios"
+    },
+    {
+      "id": "kb-013",
+      "category": "CREDIT",
+      "level": "basic",
+      "title": "Score de Crédito",
+      "content": "Seu score (Serasa) afeta juros de empréstimos. Boa_score: Pague contas em dia, evite múltiplos cartões, mantenha limite baixo uso <30%.",
+      "keywords": ["score", "serasa", "crédito", "limite"],
+      "action": "Check score",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-014",
+      "category": "PSYCHOLOGY",
+      "level": "basic",
+      "title": "Custo de Oportunidade",
+      "content": "Antes de comprar, pergunte: 'Quanto isso vai custar em 10 anos se investisse?'. R$ 100/mês por 10 anos a 12% = R$ 23.000.",
+      "keywords": ["oportunidade", "futuro", "investimento", "custo"],
+      "action": "Calcular",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-015",
+      "category": "BUDGET",
+      "level": "intermediate",
+      "title": "Necessidade vs Desejo",
+      "content": "Antes de qualquer compra, pergunte: 'Preciso disso ou quero?'. Needs: essencial para vida/trabalho. Wants: opcional, emocional.",
+      "keywords": ["necessidade", "desejo", "essencial", "opcional"],
+      "action": "Avaliar",
+      "url": "/movimentacoes"
+    },
+    {
+      "id": "kb-016",
+      "category": "SAVINGS",
+      "level": "advanced",
+      "title": "Regra dos 100",
+      "content": "Some sua idade. O resultado = % que deveria estar em renda fixa. Se tem 30 anos, 30% fixa, 70% variável. Com 50 anos, 50% fixa.",
+      "keywords": ["100", "idade", "renda fixa", "alocação"],
+      "action": "Calcular",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-017",
+      "category": "GOALS",
+      "level": "basic",
+      "title": "Meta SMART",
+      "content": "Metas devem ser: Specific (específica), Measurable (mensurável), Achievable (alcançável), Relevant (relevante), Time-bound (prazo). Ex: R$ 10k em 12 meses.",
+      "keywords": ["meta", "smart", "objetivo"],
+      "action": "Criar meta",
+      "url": "/orcamentos"
+    },
+    {
+      "id": "kb-018",
+      "category": "CASHFLOW",
+      "level": "intermediate",
+      "title": "Margem de Segurança",
+      "content": "Tenha um 'colchão' de R$ 500 a R$ 1.000 para emergências pequenas (celular quebrado, manutenção básica). Evite usar crédito para isso.",
+      "keywords": ["colchão", "emergência", "pequeno"],
+      "action": "Ver saldo",
+      "url": "/contas"
+    },
+    {
+      "id": "kb-019",
+      "category": "TAX",
+      "level": "intermediate",
+      "title": "IPTU e IPVA",
+      "content": "IPTU: paga yearly usually em janeiro. IPVA: license do carro varia por estado. Reserve mensalmente: monthly IPTU = valor anual / 12.",
+      "keywords": ["IPTU", "IPVA", "imposto", "tributo"],
+      "action": "Ver datas",
+      "url": "/contas-a-pagar"
+    },
+    {
+      "id": "kb-020",
+      "category": "DEBT",
+      "level": "basic",
+      "title": "Cheque Especial",
+      "content": "Juros do cheque especial são altíssimos (8-12% ao mês). Use apenas em emergência real e quite o quanto antes.",
+      "keywords": ["cheque especial", "limite", "empréstimo"],
+      "action": "Ver conta",
+      "url": "/contas"
+    },
+    {
+      "id": "kb-021",
+      "category": "CREDIT",
+      "level": "intermediate",
+      "title": "Análise de Extrato",
+      "content": "Reviewed seu extrato mensal. Identify: quanto gastou, em qué categories, o que foi planejado vs realizado. Isso revela padrões.",
+      "keywords": ["extrato", "análise", "padrão"],
+      "action": "Ver extrato",
+      "url": "/relatorios"
+    },
+    {
+      "id": "kb-022",
+      "category": "INVESTMENT",
+      "level": "basic",
+      "title": "Poupança vs CDB",
+      "content": "Poupança rende ~TR+3,5% ao ano (líquido). CDB de bancos pequenos rende mais e é seguro até R$ 250mil por CPF por banco.",
+      "keywords": ["poupança", "CDB", "rendimento"],
+      "action": "Comparar",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-023",
+      "category": "PSYCHOLOGY",
+      "level": "basic",
+      "title": "Efeito Ancorage",
+      "content": "Lojas mostram preço original muito alto para parecer que o desconto é grande. Descumpra: preço original geralmente é inflado.",
+      "keywords": ["ancoragem", "desconto", "preço"],
+      "action": "Verificar",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-024",
+      "category": "GOALS",
+      "level": "intermediate",
+      "title": "Milhar Centrada",
+      "content": "Some R$ 1.000 por mês. Em 5 anos são R$ 60mil + rendimentos. Em 10 anos: R$ 120mil + 80% do capital.",
+      "keywords": ["milhar", "mensal", "objetivo"],
+      "action": "Simular",
+      "url": "/orcamentos"
+    },
+    {
+      "id": "kb-025",
+      "category": "BUDGET",
+      "level": "basic",
+      "title": "Fixas vs Variáveis",
+      "content": "Despesas fixas (aluguel, mensalidade) should be <50% da renda. Variáveis (lazer, compras) should serflexível.",
+      "keywords": ["fixas", "variáveis", "porcentagem"],
+      "action": "Ver breakdown",
+      "url": "/relatorios"
+    },
+    {
+      "id": "kb-026",
+      "category": "CREDIT",
+      "level": "intermediate",
+      "title": "Consórcio",
+      "content": "Consórcios têm taxa administrativa (~20% total) mas sem juros. Alternativa ao financiamento para quem pode esperar.",
+      "keywords": ["consórcio", "parcela", "taxa"],
+      "action": "Avaliar",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-027",
+      "category": "SAVINGS",
+      "level": "intermediate",
+      "title": "Investimento LCI",
+      "content": "LCI (Letra de Crédito Imobiliário) isenta de IR para pessoa física. Rendimentos around 90-95% do CDI. Segurança:FGCO garante.",
+      "keywords": ["LCI", "imobiliário", "isenção"],
+      "action": "Ver opções",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-028",
+      "category": "TAX",
+      "level": "advanced",
+      "title": "Planejamento Tributário",
+      "content": "Contribuintes PJ podem otimizar via lucros distribuídos, benefícios fiscais (Lei do Bem). PF: deduções de saúde e educação.",
+      "keywords": ["tributo", "dedução", "otimização"],
+      "action": "Consultar",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-029",
+      "category": "RETIREMENT",
+      "level": "intermediate",
+      "title": "Previdência Complementar",
+      "content": "INSS é limitado. Para manter padrão, guarde额外Via PGBL (descontar IR) ou VGBL (isentona rescisão).Start joven, mesmo que pouco.",
+      "keywords": ["previdência", "pension", "aposentadoria"],
+      "action": "Simular",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-030",
+      "category": "INVESTMENT",
+      "level": "intermediate",
+      "title": "Fundos Imobiliários",
+      "content": "FIIs pagam dividendos mensais (isentos de IR) e diversificamexposiçãoimobiliária. Rendimentos ~6-10% ao ano.",
+      "keywords": ["FII", "imobiliário", "dividendo"],
+      "action": "Ver Fundo",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-031",
+      "category": "PSYCHOLOGY",
+      "level": "basic",
+      "title": "Auditoria Semanal",
+      "content": "Reserve 30 min por semana para revisar gastos. Anote o que foi bom e o que mudaria. Prevenção > correção.",
+      "keywords": ["auditoria", "semanal", "revisão"],
+      "action": "Iniciar",
+      "url": "/movimentacoes"
+    },
+    {
+      "id": "kb-032",
+      "category": "CASHFLOW",
+      "level": "basic",
+      "title": "Controle de Recebíveis",
+      "content": "Se bulk receives varying income, registre expected dates. Calcule média dos últimos 6 meses para base de orçamento.",
+      "keywords": ["recebível", "variável", "média"],
+      "action": "Ver padrões",
+      "url": "/fluxo-caixa"
+    },
+    {
+      "id": "kb-033",
+      "category": "DEBT",
+      "level": "advanced",
+      "title": "Consolidação de Dívidas",
+      "content": "Junte todas as dívidas em uma só (empréstimo pessoal). Usually taxa média é menor que média das dívidas atuais.",
+      "keywords": ["consolidação", "empréstimo", "unificar"],
+      "action": "Avaliar",
+      "url": "/contas-a-pagar"
+    },
+    {
+      "id": "kb-034",
+      "category": "INVESTMENT",
+      "level": "advanced",
+      "title": "Tese de Investimento",
+      "content": "Every investimento deve have uma tese: 'Compro porque X'. Saia quando a tese cambiar ('X não happened'). Sem tese = especulação.",
+      "keywords": ["tese", "investimento", "análise"],
+      "action": "Documentar",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-035",
+      "category": "CREDIT",
+      "level": "basic",
+      "title": "Armadilha do Mínimo",
+      "content": "Pagar só o mínimo do cartão leva Anos para quitare custos jurosaltos. Pague sempre acima do mínimo.",
+      "keywords": ["mínimo", "pagamento", "juros"],
+      "action": "Ver dívida",
+      "url": "/contas"
+    },
+    {
+      "id": "kb-036",
+      "category": "BUDGET",
+      "level": "intermediate",
+      "title": "Assinaturas",
+      "content": "List todas as assinaturas (streaming, apps, gym). Some mensais. Cancele as que não usa há 3+ meses.",
+      "keywords": ["assinatura", "recorrente", "mensal"],
+      "action": "Listar",
+      "url": "/recorrencias"
+    },
+    {
+      "id": "kb-037",
+      "category": "SAVINGS",
+      "level": "basic",
+      "title": "Poupança Indexada",
+      "content": "Reserve percentage da renda based na idade para aposentadoria. Regra: idade = % da renda. 30 anos = 30%.",
+      "keywords": ["aposentadoria", "futuro", "idade"],
+      "action": "Calcular",
+      "url": "/orcamentos"
+    },
+    {
+      "id": "kb-038",
+      "category": "TAX",
+      "level": "intermediate",
+      "title": "Gastos Dedutíveis",
+      "content": "Saúde (integranálise) education podem ser deduzidas do IRPF. Guarde notes e informes. Limite: 3.600 a 7.200 por dépendente.",
+      "keywords": ["dedução", "saúde", "educação"],
+      "action": "Ver despesas",
+      "url": "/relatorios"
+    },
+    {
+      "id": "kb-039",
+      "category": "PSYCHOLOGY",
+      "level": "intermediate",
+      "title": "Decomposição de Preço",
+      "content": "Ao ver price alto, decomponha: materia prima + mão de obra + imposto + lucro 30%. Usually o markup é mayor do que pensa.",
+      "keywords": ["decompor", "preço", "margem"],
+      "action": "Analisar",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-040",
+      "category": "CASHFLOW",
+      "level": "intermediate",
+      "title": "CicloseFinance",
+      "content": "Make 12-month projection. Income - (Fixed + Variable_average + Savings) = Result. Some months will be negative; planeje reservas.",
+      "keywords": ["projeção", "ano", "planejamento"],
+      "action": "Ver projeção",
+      "url": "/fluxo-caixa"
+    },
+    {
+      "id": "kb-041",
+      "category": "DEBT",
+      "level": "basic",
+      "title": "Carência",
+      "content": "Se endividado, negociação pode consegir carência (pause de 2-3 meses). Banks usually aceitam se você show capacidadefutura.",
+      "keywords": ["carência", "negociação", "banco"],
+      "action": "Negociar",
+      "url": "/contas-a-pagar"
+    },
+    {
+      "id": "kb-042",
+      "category": "INVESTMENT",
+      "level": "intermediate",
+      "title": "Renda Passiva",
+      "content": "Investimentos que geram renda mensal (FIIs, debêntures, LPs) podem create fluxo passivo. Meta: 80% da renda mensal em 20 anos.",
+      "keywords": ["passiva", "renda", "mensal"],
+      "action": "Calcular",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-043",
+      "category": "GOALS",
+      "level": "basic",
+      "title": "Priorização de Metas",
+      "content": "Liste todas as metas. Rank por: urgência X importância. Focus em 1-2maissimportant at a time. Multitarefa = resultado pior.",
+      "keywords": ["meta", "prioridade", "urgente"],
+      "action": "Listar",
+      "url": "/orcamentos"
+    },
+    {
+      "id": "kb-044",
+      "category": "CREDIT",
+      "level": "intermediate",
+      "title": "Cartão Additional",
+      "content": "Cartões adicionais give controle de gastos family. Alémdisso, você responsible pelo usage. Monitor closer.",
+      "keywords": ["adicional", "família", "controle"],
+      "action": "Ver gastos",
+      "url": "/relatorios"
+    },
+    {
+      "id": "kb-045",
+      "category": "PSYCHOLOGY",
+      "level": "advanced",
+      "title": "Viés de Otimização",
+      "content": "Humans tendem a superestimar ganhos e subestimar perdas. Registre sempre 'rendimento esperado X realizado'.",
+      "keywords": ["viés", "otimização", "perda"],
+      "action": "Registar",
+      "url": "/relatorios"
+    },
+    {
+      "id": "kb-046",
+      "category": "CASHFLOW",
+      "level": "basic",
+      "title": "Dias de Vencimento",
+      "content": "Agrupe vencimentos no mesmo day ou nearby days. Reduces cognitive load e pode gerar desconto por volume.",
+      "keywords": ["vencimento", "agrupar", "data"],
+      "action": "Organizar",
+      "url": "/contas-a-pagar"
+    },
+    {
+      "id": "kb-047",
+      "category": "INVESTMENT",
+      "level": "advanced",
+      "title": "Rebalanceamento",
+      "content": "A cada 6-12 meses, rebalanceie a carteira para oallocation targets. Venda o que muito subiu, compre o quecaiu.",
+      "keywords": ["rebalancear", "carteira", "alocação"],
+      "action": "Revisar",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-048",
+      "category": "BUDGET",
+      "level": "basic",
+      "title": "Natal Earlier",
+      "content": "Comece a planejar NATAL em September. Separe monthly valor total / 4 months. Evita endividamento e estresse.",
+      "keywords": ["natal", "ano novo", "feriado"],
+      "action": "Planejar",
+      "url": "/orcamentos"
+    },
+    {
+      "id": "kb-049",
+      "category": "TAX",
+      "level": "advanced",
+      "title": "Blindagem Patrimonial",
+      "content": "Para patrimonios grandes, considere holding familiar ou seguros de vida. Estruturas complexas requerem contador.",
+      "keywords": ["blindagem", "patrimônio", "seguro"],
+      "action": "Consultar",
+      "url": "/perfil"
+    },
+    {
+      "id": "kb-050",
+      "category": "RETIREMENT",
+      "level": "intermediate",
+      "title": "FIRE Movement",
+      "content": "FIRE = Financial Independence, Retire Early. Atinge quando investimentos geram 25x suas despesas anuais. 4% rule.",
+      "keywords": ["fire", "independência", "aposentadoria"],
+      "action": "Calcular",
+      "url": "/insights"
+    },
+    {
+      "id": "kb-051",
+      "category": "CREDIT",
+      "level": "intermediate",
+      "title": "Portabilidade",
+      "content": "Lei permite portabilidade de crédito sem custo. Se encontró melhor taxa elsewhere, banks devem equalar. Pesquise frequentemente.",
+      "keywords": ["portabilidade", "taxa", "mudar"],
+      "action": "Ver taxas",
+      "url": "/contas"
+    },
+    {
+      "id": "kb-052",
+      "category": "PSYCHOLOGY",
+      "level": "basic",
+      "title": "Transparência Financeira",
+      "content": "Casais devem ter transparência total sobre finanças. Segredos lead a conflitos future. Meet semanal de 15 min sobremoney.",
+      "keywords": ["casal", "transparente", "comunicação"],
+      "action": "Agendar",
+      "url": "/perfil"
+    }
+  ]
+}

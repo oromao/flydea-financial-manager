@@ -157,6 +157,8 @@ model AuditLog {
   userId    String
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
+  
+  metadata Json?
 }
 
 model Notification {
@@ -473,6 +475,7 @@ model UserIntelligence {
   
   // Profile & Scoring
   riskScore             Float    @default(50) // 0-100
+  financialScore       Float    @default(50) // 0-100
   savingsRate           Float    @default(0)  // %
   predictabilityScore   Float    @default(50) // 0-100
   impulsivityScore      Float    @default(50) // 0-100
