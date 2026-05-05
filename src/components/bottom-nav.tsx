@@ -62,23 +62,26 @@ export function BottomNav() {
             if (item.isAction) {
               return (
                 <Tooltip key={item.name}>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={() => setNewOpen(true)}
-                      aria-label="Adicionar transação"
-                      className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
-                    >
-                      <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 group-active:scale-95 transition-all">
-                        <Icon className="w-6 h-6 text-white stroke-[2.5px]" />
-                      </div>
-                      <span className="text-[10px] font-bold tracking-wide text-primary">
-                        {item.name}
-                      </span>
-                    </button>
+                  <TooltipTrigger
+                    render={
+                      <button
+                        onClick={() => setNewOpen(true)}
+                        aria-label="Adicionar transação"
+                        className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
+                      >
+                        <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 group-active:scale-95 transition-all">
+                          <Icon className="w-6 h-6 text-white stroke-[2.5px]" />
+                        </div>
+                        <span className="text-[10px] font-bold tracking-wide text-primary">
+                          {item.name}
+                        </span>
+                      </button>
+                    }
+                  >
+                    <TooltipContent>
+                      <p>Adicionar transação</p>
+                    </TooltipContent>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Adicionar transação</p>
-                  </TooltipContent>
                 </Tooltip>
               );
             }

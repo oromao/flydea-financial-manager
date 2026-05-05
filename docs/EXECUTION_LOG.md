@@ -53,6 +53,54 @@ Este é o registro oficial de tudo que foi executado no projeto. Cada entrada de
 
 ---
 
+## 2026-05-05 — FASE 0: Hotfix Crítico (ÉPICO 14)
+
+**Executado por:** AI Developer
+
+### E14-T1 — Fix RangeError: Invalid time value
+- **Status:** completed
+- **O que foi feito:** Refatorado `safeFormatDate()` e `safeDateSortKey()` em `src/lib/date-utils.ts` para validar strings de data corretamente (yyyy-MM-dd) e usar `Date.UTC()` para evitar mudanças de timezone. Isso previne o erro quando transações têm datas nulas/undefined no banco.
+- **Arquivos alterados:** `src/lib/date-utils.ts`
+
+### E14-T2 — Fix UUID no dropdown de categoria
+- **Status:** completed
+- **O que foi feito:** Adicionado `renderValue` customizado no `Select` de categoria em `src/app/movimentacoes/page.tsx` para mostrar o nome da categoria (ex: "Alimentação") em vez do UUID.
+- **Arquivos alterados:** `src/app/movimentacoes/page.tsx`
+
+### E14-T3 — Criar manifest.webmanifest para PWA
+- **Status:** completed
+- **O que foi feito:** Criado `public/manifest.webmanifest` com configurações PWA (name, short_name, icons, display standalone, orientation portrait).
+- **Arquivos criados:** `public/manifest.webmanifest`
+
+### E14-T4 — Fix botão Fechar interceptado por header sticky
+- **Status:** completed
+- **O que foi feito:** Reposicionado `DialogClose` para fora do `div` sticky header no modal de transações. Adicionado `z-30` para garantir que o botão fique acima do header.
+- **Arquivos alterados:** `src/app/movimentacoes/page.tsx`
+
+### E14-T8 — Remover dados seed de produção
+- **Status:** completed
+- **O que foi feito:** Adicionado guard `if (process.env.NODE_ENV === 'production')` no início do `prisma/seed.ts` para evitar que dados de teste sejam inseridos em produção.
+- **Arquivos alterados:** `prisma/seed.ts`
+
+### E14-T9 — Investigar inconsistência de saldo no dashboard
+- **Status:** completed
+- **O que foi feito:** 
+  - API `/api/dashboard` agora retorna `projectedBalance` (saldo projetado com todas as transações) além de `balance` (saldo realizado apenas com transações pagas).
+  - `DashboardHero` atualizado para mostrar o saldo projetado por padrão (mais intuitivo para o usuário).
+  - Adicionada explicação visual: "Realizado: X · Projetado: Y" quando houver diferença.
+- **Arquivos alterados:** 
+  - `src/app/api/dashboard/route.ts`
+  - `src/app/page.tsx`
+  - `src/components/dashboard/dashboard-hero.tsx`
+  - `src/app/fluxo-caixa/page.tsx` (corrigido erros de tipo com optional chaining)
+
+### Build Status
+- ✅ type-check: 0 erros em código fonte
+- ✅ build: 17 rotas compiladas com sucesso
+- ⚠️ lint: 2 erros pré-existentes (page-loading.tsx)
+
+---
+
 ## Inicialização do Projeto
 
 ### 2026-04-30 — Setup Inicial de Documentação

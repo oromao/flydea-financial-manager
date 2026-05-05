@@ -15,7 +15,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -471,17 +471,31 @@ function MovimentacoesContent() {
               }
             />
 
-            <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-border sm:rounded-2xl bg-card sm:shadow-2xl max-h-[90vh]">
-              <div className="border-b border-border p-6 sm:p-8 sticky top-0 z-20 bg-card">
-                <DialogHeader>
-                  <DialogTitle className="text-xl font-bold tracking-tight text-foreground">
-                    {editingId ? "Editar Lançamento" : "Novo Lançamento"}
-                  </DialogTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Registre suas entradas e saídas com precisão
-                  </p>
-                </DialogHeader>
-              </div>
+              <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-border sm:rounded-2xl bg-card sm:shadow-2xl max-h-[90vh]">
+                {/* Close button - positioned above sticky header */}
+                <DialogClose
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-4 right-4 z-30 rounded-full"
+                    />
+                  }
+                >
+                  <X className="w-5 h-5" />
+                  <span className="sr-only">Fechar</span>
+                </DialogClose>
+
+                <div className="border-b border-border p-6 sm:p-8 sticky top-0 z-20 bg-card">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl font-bold tracking-tight text-foreground">
+                      {editingId ? "Editar Lançamento" : "Novo Lançamento"}
+                    </DialogTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Registre suas entradas e saídas com precisão
+                    </p>
+                  </DialogHeader>
+                </div>
 
               <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
                 <div className="space-y-4">
@@ -580,7 +594,9 @@ function MovimentacoesContent() {
                         className="h-12 rounded-xl bg-muted/50 border-border font-semibold"
                         aria-describedby="categoryId-error"
                       >
-                        <SelectValue placeholder="Selecione..." />
+                        <SelectValue placeholder="Selecione...">
+                          {categoryId ? categories.find(c => c.id === categoryId)?.name || "Selecione..." : "Selecione..."}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-border">
                         {categories.map((c) => (

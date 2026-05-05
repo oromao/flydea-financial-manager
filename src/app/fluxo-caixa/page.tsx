@@ -371,9 +371,9 @@ className={cn(
                 <div className="flex items-center gap-2">
                   <div className={cn(
                     "p-1.5 rounded-lg",
-                    metrics.monthBalance >= 0 ? "bg-primary/10" : "bg-destructive/10"
+                    (metrics?.monthBalance ?? 0) >= 0 ? "bg-primary/10" : "bg-destructive/10"
                   )}>
-                    {metrics.monthBalance >= 0 ? (
+                    {(metrics?.monthBalance ?? 0) >= 0 ? (
                       <CheckCircle className="w-3.5 h-3.5 text-primary" />
                     ) : (
                       <AlertCircle className="w-3.5 h-3.5 text-destructive" />
@@ -381,7 +381,7 @@ className={cn(
                   </div>
                   <p className={cn(
                     "text-xs font-semibold uppercase tracking-wider",
-                    metrics.monthBalance >= 0 ? "text-primary" : "text-destructive"
+                    (metrics?.monthBalance ?? 0) >= 0 ? "text-primary" : "text-destructive"
                   )}>
                     Saldo do Mês
                   </p>
@@ -389,10 +389,10 @@ className={cn(
                 <p
                   className={cn(
                     "text-xl sm:text-2xl font-bold",
-                    metrics.monthBalance >= 0 ? "text-foreground" : "text-destructive"
+                    (metrics?.monthBalance ?? 0) >= 0 ? "text-foreground" : "text-destructive"
                   )}
                 >
-                  {formatCurrency(metrics.monthBalance)}
+                  {formatCurrency(metrics?.monthBalance ?? 0)}
                 </p>
                 <p className="text-[10px] text-muted-foreground">Receitas - Despesas</p>
               </CardContent>
@@ -519,7 +519,7 @@ className={cn(
                     Total Receitas
                   </p>
                   <p className="text-xl font-bold text-emerald-600">
-                    {formatCurrency(metrics.totalIncome)}
+                    {formatCurrency(metrics?.totalIncome ?? 0)}
                   </p>
                 </div>
                 <div className="space-y-1">
@@ -527,7 +527,7 @@ className={cn(
                     Total Despesas
                   </p>
                   <p className="text-xl font-bold text-destructive">
-                    {formatCurrency(metrics.totalExpenses)}
+                    {formatCurrency(metrics?.totalExpenses ?? 0)}
                   </p>
                 </div>
                 <div className="space-y-1">
@@ -537,26 +537,26 @@ className={cn(
                   <p
                     className={cn(
                       "text-xl font-bold",
-                      metrics.monthBalance >= 0 ? "text-foreground" : "text-destructive"
+                      (metrics?.monthBalance ?? 0) >= 0 ? "text-foreground" : "text-destructive"
                     )}
                   >
-                    {formatCurrency(metrics.monthBalance)}
+                    {formatCurrency(metrics?.monthBalance ?? 0)}
                   </p>
                 </div>
               </div>
 
               {/* Progress bar: faturado vs total projected */}
-              {metrics.totalProjectedIncome > 0 && (
+              {(metrics?.totalProjectedIncome ?? 0) > 0 && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>Progresso de recebimento</span>
                     <span>
-                      {formatCurrency(metrics.totalIncome)} / {formatCurrency(metrics.totalProjectedIncome + metrics.totalIncome)}
+                      {formatCurrency(metrics?.totalIncome ?? 0)} / {formatCurrency((metrics?.totalProjectedIncome ?? 0) + (metrics?.totalIncome ?? 0))}
                     </span>
                   </div>
                   <Progress
                     value={Math.min(
-                      Math.round((metrics.totalIncome / (metrics.totalProjectedIncome + metrics.totalIncome || 1)) * 100),
+                      Math.round(((metrics?.totalIncome ?? 0) / ((metrics?.totalProjectedIncome ?? 0) + (metrics?.totalIncome ?? 0) || 1)) * 100),
                       100
                     )}
                   />

@@ -143,8 +143,14 @@ export const GET = withRateLimit(async (request: NextRequest) => {
     .filter(t => t.paymentStatus === "PENDING" && t.type === "INCOME")
     .reduce((sum, t) => sum + t.amount, 0);
 
+  // Calculate projected balance (all transactions, not just paid)
+  const projectedBalance = allTransactions.reduce((sum, t) => {
+    return t.type === "INCOME" ? sum + t.amount : sum - t.amount;
+  }, 0);
+
   return NextResponse.json({
-    balance: summary.allTimeBalance,
+    balance: summary.allTimeBalance, // Realized (paid only)
+    projectedBalance, // Projected (all transactions)
     income: summary.monthIncome,
     expenses: summary.monthExpenses,
     pendingExpenses: globalPending,

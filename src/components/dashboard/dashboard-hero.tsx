@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 interface DashboardHeroProps {
   balance: number;
+  projectedBalance: number;
   loading: boolean;
   income: number;
   expenses: number;
@@ -17,7 +18,7 @@ interface DashboardHeroProps {
   categories: any[];
 }
 
-export function DashboardHero({ balance, loading, income, expenses, lastUpdated, categories }: DashboardHeroProps) {
+export function DashboardHero({ balance, projectedBalance, loading, income, expenses, lastUpdated, categories }: DashboardHeroProps) {
   const router = useRouter();
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -62,24 +63,29 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
             </div>
           </div>
 
-          {/* Balance - Hero display */}
-          <div>
-            <motion.p
-              key={balance}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="text-[42px] md:text-[56px] font-display font-extrabold tracking-tight leading-none"
-            >
-              {loading ? (
-                <span className="inline-block h-12 md:h-16 w-48 md:w-72 bg-accent/10 animate-pulse rounded-2xl" />
-              ) : balance != null && !isNaN(balance) ? (
-                formatCurrency(balance)
-              ) : (
-                <span className="text-white/40">Carregando...</span>
+            {/* Balance - Hero display */}
+            <div>
+              <motion.p
+                key={balance}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="text-[42px] md:text-[56px] font-display font-extrabold tracking-tight leading-none"
+              >
+                {loading ? (
+                  <span className="inline-block h-12 md:h-16 w-48 md:w-72 bg-accent/10 animate-pulse rounded-2xl" />
+                ) : balance != null && !isNaN(balance) ? (
+                  formatCurrency(projectedBalance || balance)
+                ) : (
+                  <span className="text-white/40">Carregando...</span>
+                )}
+              </motion.p>
+              {!loading && projectedBalance !== balance && (
+                <p className="text-xs text-white/40 mt-1">
+                  Realizado: {formatCurrency(balance)} · Projetado: {formatCurrency(projectedBalance)}
+                </p>
               )}
-            </motion.p>
-          </div>
+            </div>
 
           {/* Mini cards: Entradas / Saídas / Saldo do Mês */}
           <div className="grid grid-cols-3 gap-3">

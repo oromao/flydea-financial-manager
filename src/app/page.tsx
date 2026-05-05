@@ -70,9 +70,28 @@ const itemVariants = {
   visible: { y: 0, opacity: 1, transition: { type: "spring" as const, damping: 25, stiffness: 120 } },
 };
 
+interface DashboardData {
+  balance: number;
+  projectedBalance: number;
+  income: number;
+  expenses: number;
+  chartData: ChartDataPoint[];
+  topCategories: unknown[];
+  projectedExpenses: number;
+  projectedIncome: number;
+  pendingExpenses: number;
+  nextMonths: unknown[];
+  budgetAlerts: BudgetAlert[];
+  savingsRate: number;
+  monthIncome: number;
+  monthExpenses: number;
+  copilot?: CopilotData;
+}
+
 export default function Dashboard() {
   const [metrics, setMetrics] = useState<DashboardData>({
     balance: 0,
+    projectedBalance: 0,
     income: 0,
     expenses: 0,
     chartData: [],
@@ -138,6 +157,7 @@ export default function Dashboard() {
       <motion.section variants={itemVariants}>
         <DashboardHero
           balance={metrics.balance}
+          projectedBalance={metrics.projectedBalance || metrics.balance}
           income={metrics.monthIncome || metrics.income}
           expenses={metrics.monthExpenses || metrics.expenses}
           loading={loading}

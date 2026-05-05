@@ -52,9 +52,18 @@ export function safeFormatDate(
 ): string {
   if (!dateInput) return fallback;
   try {
-    const d = typeof dateInput === "string"
-      ? new Date(dateInput + "T12:00:00")
-      : dateInput;
+    let d: Date;
+    if (typeof dateInput === "string") {
+      // Handle ISO strings (with or without time)
+      const isoStr = dateInput.includes("T") ? dateInput.split("T")[0] : dateInput;
+      // Validate the string looks like yyyy-MM-dd
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(isoStr)) return fallback;
+      // Use UTC to avoid timezone shifts
+      const [y, m, day] = isoStr.split("-").map(Number);
+      d = new Date(Date.UTC(y, m - 1, day, 12, 0, 0));
+    } else {
+      d = dateInput;
+    }
     if (isNaN(d.getTime())) return fallback;
     return format(d, fmt);
   } catch {
@@ -71,9 +80,15 @@ export function safeDateSortKey(
 ): number {
   if (!dateInput) return 0;
   try {
-    const d = typeof dateInput === "string"
-      ? new Date(dateInput + "T12:00:00")
-      : dateInput;
+    let d: Date;
+    if (typeof dateInput === "string") {
+      const isoStr = dateInput.includes("T") ? dateInput.split("T")[0] : dateInput;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(isoStr)) return 0;
+      const [y, m, day] = isoStr.split("-").map(Number);
+      d = new Date(Date.UTC(y, m - 1, day, 12, 0, 0));
+    } else {
+      d = dateInput;
+    }
     if (isNaN(d.getTime())) return 0;
     return d.getTime();
   } catch {

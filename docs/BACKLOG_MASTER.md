@@ -236,15 +236,15 @@
 
 | ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
 |----|------|--------|-------|------------|--------------|--------|
-| E14-T1 | Bug 🔴 | Movimentações | Fix `RangeError: Invalid time value` — página quebrada 100% | P0 | Média | pending |
-| E14-T2 | Bug 🔴 | Transações | Dropdown de categoria mostra UUID em vez de nome no modal Novo Lançamento | P0 | Baixa | pending |
-| E14-T3 | Bug 🟡 | PWA | Criar `public/manifest.webmanifest` — retorna HTML em vez de JSON | P1 | Baixa | pending |
-| E14-T4 | Bug 🟡 | Contas e Cartões | Botão "Fechar" do modal de edição interceptado por header sticky | P1 | Baixa | pending |
+| E14-T1 | Bug 🔴 | Movimentações | Fix `RangeError: Invalid time value` — página quebrada 100% | P0 | Média | ✅ completed |
+| E14-T2 | Bug 🔴 | Transações | Dropdown de categoria mostra UUID em vez de nome no modal Novo Lançamento | P0 | Baixa | ✅ completed |
+| E14-T3 | Bug 🟡 | PWA | Criar `public/manifest.webmanifest` — retorna HTML em vez de JSON | P1 | Baixa | ✅ completed |
+| E14-T4 | Bug 🟡 | Contas e Cartões | Botão "Fechar" do modal de edição interceptado por header sticky | P1 | Baixa | ✅ completed |
 | E14-T5 | UX 🟡 | Dashboard | Adicionar toast de sucesso ao criar transação (modal fecha sem feedback) | P1 | Baixa | pending |
 | E14-T6 | UX 🟡 | Sidebar | Corrigir acentos: "Movimentacoes" → "Movimentações", "Recorrencias" → "Recorrências", "Analises" → "Análises" | P2 | Baixa | pending |
 | E14-T7 | UX 🟡 | Transações | Formatar campo de data em pt-BR (DD/MM/AAAA) em vez de ISO (YYYY-MM-DD) | P2 | Baixa | pending |
-| E14-T8 | Bug 🟡 | Produção | Remover dados seed visíveis ("Conta QA Edit") da página de Contas | P1 | Baixa | pending |
-| E14-T9 | UX 🟡 | Dashboard | Investigar inconsistência de saldo geral (-R$ 16.578 vs transações visíveis) | P1 | Média | pending |
+| E14-T8 | Bug 🟡 | Produção | Remover dados seed visíveis ("Conta QA Edit") da página de Contas | P1 | Baixa | ✅ completed |
+| E14-T9 | UX 🟡 | Dashboard | Investigar inconsistência de saldo geral (-R$ 16.578 vs transações visíveis) | P1 | Média | ✅ completed |
 | E14-T10 | Bug 🟡 | Console | Limpar 20+ erros de console acumulados durante sessão (manifest, date, React) | P2 | Média | pending |
 | E14-T11 | UX 🟡 | Global | Adicionar skeleton loading no dashboard enquanto dados carregam | P2 | Média | pending |
 | E14-T12 | Melhoria | Seed | Melhorar dados seed para demonstração (todas as páginas mostram R$ 0,00) | P2 | Baixa | pending |

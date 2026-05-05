@@ -4,6 +4,12 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
+  // Skip seed in production
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Seed skipped: NODE_ENV is production')
+    return
+  }
+
   const hashedPassword = await bcrypt.hash('flydea2026', 10)
   const e2ePassword = await bcrypt.hash('password123', 10) // Must match Playwright tests
 
