@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, ArrowDownRight, CheckCircle2, Edit2, Trash2, MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
+import { safeFormatDate } from "@/lib/date-utils";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -59,10 +60,7 @@ export function TransactionCard({
           </p>
           <p className="text-[11px] text-on-surface-variant/60 mt-0.5 flex items-center gap-1.5">
             <span>
-              {(() => {
-                const d = new Date(t.date + "T12:00:00");
-                return format(d, "dd MMM");
-              })()}
+              {safeFormatDate(t.date, "dd MMM")}
             </span>
             {t.category?.name && (
               <>

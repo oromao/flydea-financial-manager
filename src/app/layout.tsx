@@ -7,8 +7,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://flydea-financial-manager.vercel.app"),
   title: "Flydea - Seu assistente financeiro",
   description: "Assistente financeiro pessoal que ajuda voce a decidir melhor",
+  manifest: "/manifest",
   appleWebApp: {
     capable: true,
     title: "Flydea",

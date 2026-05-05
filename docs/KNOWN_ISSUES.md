@@ -1,6 +1,23 @@
 # FlyDea — Problemas Conhecidos
 
-> **Atualizado:** 2026-04-30 — Sincronizado com auditoria completa
+> **Atualizado:** 2026-05-05 — Auditoria QA Playwright MCP (produção)
+
+---
+
+## Bugs Confirmados em Produção (2026-05-05)
+
+| ID | Módulo | Problema | Impacto | Severidade |
+|----|--------|----------|---------|------------|
+| QA-01 | Movimentações | `RangeError: Invalid time value` — página 100% quebrada | Usuário não consegue ver/editar/deletar transações | 🔴 Crítico |
+| QA-02 | Transações | Dropdown de categoria mostra UUID em vez de nome | UX confusa, usuário não sabe qual categoria selecionou | 🔴 Crítico |
+| QA-03 | PWA | `manifest.webmanifest` ausente — retorna HTML | PWA não funcional, erros de console | 🟡 Alto |
+| QA-04 | Contas e Cartões | Botão "Fechar" do modal de edição interceptado por header sticky | Usuário não consegue fechar modal (Escape funciona) | 🟡 Alto |
+| QA-05 | Produção | Dados seed visíveis ("Conta QA Edit") | Dados de teste em produção | 🟡 Alto |
+| QA-06 | Dashboard | Inconsistência de saldo geral (-R$ 16.578 vs transações) | Usuário desconfia da precisão dos números | 🟡 Alto |
+| QA-07 | Sidebar | Nomes sem acento (Movimentacoes, Recorrencias, Analises) | Inconsistência linguística | 🟢 Médio |
+| QA-08 | Transações | Campo de data em formato ISO (YYYY-MM-DD) em vez de pt-BR | Inconsistência com padrão brasileiro | 🟢 Médio |
+| QA-09 | Console | 20+ erros de console acumulados durante sessão | Indica problemas subjacentes | 🟢 Médio |
+| QA-10 | UX | Sem toast de sucesso ao criar transação | Usuário não tem confirmação visual | 🟢 Médio |
 
 ---
 

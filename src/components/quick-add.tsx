@@ -75,7 +75,7 @@ export function QuickAdd({ categories, onSuccess, open: controlledOpen, onOpenCh
         setDescription("");
         setCategoryId("");
         onSuccess?.();
-        setTimeout(() => setOpen(false), 300);
+        setTimeout(() => setOpen(false), 600);
       } else {
         const error = await res.json().catch(() => ({}));
         toast.error(error.error || "Erro ao adicionar");
@@ -171,7 +171,7 @@ export function QuickAdd({ categories, onSuccess, open: controlledOpen, onOpenCh
                 <Label className="text-xs font-semibold text-on-surface-variant ml-1">Categoria</Label>
                 <Select value={categoryId || ""} onValueChange={(val) => setCategoryId(val)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
+                    {filteredCategories.find(c => c.id === categoryId)?.name || "Selecione"}
                   </SelectTrigger>
                   <SelectContent>
                     {filteredCategories.map((cat) => (

@@ -10,7 +10,23 @@
 
 ---
 
-## Estado Atual (2026-05-04)
+## Estado Atual (2026-05-05)
+
+### ✅ Auditoria QA Completa (Playwright MCP)
+
+- **10 páginas testadas** interativamente via Playwright MCP (browser real, iPhone 16)
+- **2 bugs críticos** encontrados em produção (Movimentações quebrada, UUID no dropdown)
+- **12 items** adicionados ao backlog como ÉPICO 14 (E14-T1 a E14-T12)
+- **MCPs utilizados:** Playwright MCP, Vercel MCP, GitHub MCP
+- **Deploy:** Último commit `37532226` (READY)
+
+### 🔴 Bugs Críticos em Produção
+
+| Bug | Página | Status |
+|-----|--------|--------|
+| RangeError: Invalid time value | /movimentacoes | Página 100% quebrada |
+| UUID no dropdown de categoria | Dashboard → Novo Lançamento | UX confusa |
+| manifest.webmanifest ausente | Global | PWA não funcional |
 
 ### ✅ Redesign Visual Executado
 
@@ -94,12 +110,14 @@ git push origin main # deploy automático no Vercel
 
 ## Próximos Passos Recomendados
 
-1. Deploy para Vercel: `git push origin main`
-2. Criar screenshots baseline: Playwright em 390x844 e 1280x800
-3. E2E tests para fluxos críticos (login → transação → relatório)
-4. Cobertura de testes: 45% → 80%+
-5. Bank reconciliation (E5-T1) quando API Open Finance disponível
+1. **HOTFIX (E14-T1):** Fix RangeError na página Movimentações — PÁGINA 100% QUEBRADA
+2. **HOTFIX (E14-T2):** Fix UUID no dropdown de categoria
+3. **HOTFIX (E14-T3):** Criar manifest.webmanifest
+4. Corrigir botão Fechar interceptado (E14-T4)
+5. Remover dados seed de produção (E14-T8)
+6. Investigar inconsistência de saldo (E14-T9)
+7. Continuar com Épico 7-13 do backlog
 
 ---
 
-*Última atualização: 2026-05-04*
+*Última atualização: 2026-05-05*

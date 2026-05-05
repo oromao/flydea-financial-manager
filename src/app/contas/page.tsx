@@ -166,7 +166,7 @@ export default function ContasPage() {
             <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA CONTA
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-[32px] bg-surface sm:shadow-2xl">
-            <div className="p-8 border-b border-outline/10 bg-surface sticky top-0 z-20">
+            <div className="p-8 border-b border-outline/10 bg-surface sticky top-0 z-10 pointer-events-none">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-black tracking-tight text-on-background">
                   {editingId ? "Editar Conta" : "Adicionar Banco"}

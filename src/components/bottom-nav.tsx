@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, ReceiptText, Plus, MoreHorizontal, X, BarChart3, Wallet, BadgeDollarSign, Target, RotateCcw, CalendarRange, CreditCard, History, ShieldCheck } from "lucide-react";
@@ -21,9 +21,9 @@ const allModules = [
   { name: "Fluxo de Caixa", href: "/fluxo-caixa", icon: Wallet },
   { name: "Contas a Pagar", href: "/contas-a-pagar", icon: BadgeDollarSign },
   { name: "Planejamento", href: "/orcamentos", icon: Target },
-  { name: "Recorrencias", href: "/recorrencias", icon: RotateCcw },
+  { name: "Recorrências", href: "/recorrencias", icon: RotateCcw },
   { name: "Fechamento", href: "/fechamento", icon: CalendarRange },
-  { name: "Analises", href: "/relatorios", icon: BarChart3 },
+  { name: "Análises", href: "/relatorios", icon: BarChart3 },
 ];
 
 const adminModules = [
@@ -40,6 +40,16 @@ export function BottomNav() {
 
   const isAdmin = session?.user?.role === "ADMIN";
   const modules = isAdmin ? [...allModules, ...adminModules] : allModules;
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && sheetOpen) {
+        setSheetOpen(false);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [sheetOpen]);
 
   if (pathname === "/login") return null;
 

@@ -221,20 +221,65 @@
 
 ---
 
+## ÉPICO 14: AUDITORIA QA PLAYWRIGHT — BUGS EM PRODUÇÃO (P0-P2) — 🔴 PENDING
+
+> **Auditado em:** 2026-05-05 via Playwright MCP (browser real, iPhone 16 390×844)
+> **Ambiente:** Produção (Vercel) — commit `37532226`
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E14-T1 | Bug 🔴 | Movimentações | Fix `RangeError: Invalid time value` — página quebrada 100% | P0 | Média | pending |
+| E14-T2 | Bug 🔴 | Transações | Dropdown de categoria mostra UUID em vez de nome no modal Novo Lançamento | P0 | Baixa | pending |
+| E14-T3 | Bug 🟡 | PWA | Criar `public/manifest.webmanifest` — retorna HTML em vez de JSON | P1 | Baixa | pending |
+| E14-T4 | Bug 🟡 | Contas e Cartões | Botão "Fechar" do modal de edição interceptado por header sticky | P1 | Baixa | pending |
+| E14-T5 | UX 🟡 | Dashboard | Adicionar toast de sucesso ao criar transação (modal fecha sem feedback) | P1 | Baixa | pending |
+| E14-T6 | UX 🟡 | Sidebar | Corrigir acentos: "Movimentacoes" → "Movimentações", "Recorrencias" → "Recorrências", "Analises" → "Análises" | P2 | Baixa | pending |
+| E14-T7 | UX 🟡 | Transações | Formatar campo de data em pt-BR (DD/MM/AAAA) em vez de ISO (YYYY-MM-DD) | P2 | Baixa | pending |
+| E14-T8 | Bug 🟡 | Produção | Remover dados seed visíveis ("Conta QA Edit") da página de Contas | P1 | Baixa | pending |
+| E14-T9 | UX 🟡 | Dashboard | Investigar inconsistência de saldo geral (-R$ 16.578 vs transações visíveis) | P1 | Média | pending |
+| E14-T10 | Bug 🟡 | Console | Limpar 20+ erros de console acumulados durante sessão (manifest, date, React) | P2 | Média | pending |
+| E14-T11 | UX 🟡 | Global | Adicionar skeleton loading no dashboard enquanto dados carregam | P2 | Média | pending |
+| E14-T12 | Melhoria | Seed | Melhorar dados seed para demonstração (todas as páginas mostram R$ 0,00) | P2 | Baixa | pending |
+
+### Detalhes dos Bugs Críticos (E14-T1, E14-T2)
+
+**E14-T1 — RangeError: Invalid time value**
+- Página `/movimentacoes` quebra completamente com erro "Algo deu errado"
+- Console: `RangeError: Invalid time value` + `[FlyDea Error] Invalid time value undefined`
+- Causa raiz: transação com data nula/undefined no banco de dados
+- Commit `a491fe67` já tentou corrigir (Safe format para date undefined) mas bug persiste
+- **Impacto:** Usuário não consegue ver, editar ou deletar transações existentes
+
+**E14-T2 — UUID no dropdown de categoria**
+- Modal "Novo Lançamento" → selecionar "Alimentação" → mostra "c7a64993-ea44-4585-9c9e-53cd56f0699a"
+- O `renderValue` do Select não está mapeando ID→nome da categoria
+- Transação é criada corretamente mas o campo fica com UUID visível
+- **Impacto:** UX confusa, usuário não sabe qual categoria selecionou
+
+---
+
 ## Resumo por Prioridade
 
 | Prioridade | Qtd Items | Items |
 |------------|-----------|-------|
-| P0 | 24 | E1-T1 a E1-T11, E7-T1 a E7-T5, E9-T1 a E9-T3, E12-T1 a E12-T8 |
-| P1 | 34 | E2-T1 a E2-T10, E3-T1 a E3-T7, E8-T1 a E8-T10, E9-T4 a E9-T8, E10-T1 a E10-T4, E13-T1 a E13-T5, E13-T7, E13-T8 |
-| P2 | 23 | E4-T1 a E4-T8, E5-T1, E5-T2, E5-T5, E5-T8, E6-T1 a E6-T10, E9-T9, E9-T10, E10-T5, E10-T6, E11-T1 a E11-T8, E13-T6, E13-T9 |
+| P0 | 26 | E1-T1 a E1-T11, E7-T1 a E7-T5, E9-T1 a E9-T3, E12-T1 a E12-T8, E14-T1, E14-T2 |
+| P1 | 38 | E2-T1 a E2-T10, E3-T1 a E3-T7, E8-T1 a E8-T10, E9-T4 a E9-T8, E10-T1 a E10-T4, E13-T1 a E13-T5, E13-T7, E13-T8, E14-T3, E14-T4, E14-T5, E14-T8, E14-T9 |
+| P2 | 28 | E4-T1 a E4-T8, E5-T1, E5-T2, E5-T5, E5-T8, E6-T1 a E6-T10, E9-T9, E9-T10, E10-T5, E10-T6, E11-T1 a E11-T8, E13-T6, E13-T9, E14-T6, E14-T7, E14-T10, E14-T11, E14-T12 |
 | P3 | 4 | E5-T3, E5-T4, E5-T6, E5-T7 |
 
 ---
 
-## Próximos Passos Recomendados (Design Overhaul)
+## Próximos Passos Recomendados
 
-### Semana 1: Fundação
+### Semana 0: HOTFIX — Bugs Críticos de Produção (E14)
+1. **E14-T1** — Fix RangeError na página Movimentações (PÁGINA 100% QUEBRADA)
+2. **E14-T2** — Fix UUID no dropdown de categoria
+3. **E14-T3** — Criar manifest.webmanifest
+4. **E14-T4** — Fix botão Fechar interceptado
+5. **E14-T8** — Remover dados seed de produção
+6. **E14-T9** — Investigar inconsistência de saldo
+
+### Semana 1: Fundação (E7 + E8)
 1. **E7-T1** — Corrigir loop infinito em Contas e Cartões
 2. **E7-T2** — Corrigir loop infinito em Admin Aprovações
 3. **E7-T3** — Validação de conta obrigatória
@@ -291,4 +336,4 @@ Este arquivo deve ser atualizado sempre que:
 
 ---
 
-*Última atualização: 2026-05-04 — Versão 2.0 (Design Overhaul)*
+*Última atualização: 2026-05-05 — Versão 2.1 (QA Audit Playwright MCP)*

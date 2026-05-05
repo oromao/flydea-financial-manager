@@ -40,3 +40,42 @@ export function toUtcMidnight(dateInput: string): Date {
   const [y, m, d] = dateInput.split("-").map(Number);
   return new Date(Date.UTC(y, m - 1, d, 0, 0, 0, 0));
 }
+
+/**
+ * Safely formats a date string/Date to dd/MM/yy.
+ * Returns "—" on any invalid input — never throws.
+ */
+export function safeFormatDate(
+  dateInput: string | Date | null | undefined,
+  fmt: string = "dd/MM/yy"
+): string {
+  if (!dateInput) return "—";
+  try {
+    const d = typeof dateInput === "string"
+      ? new Date(dateInput + "T12:00:00")
+      : dateInput;
+    if (isNaN(d.getTime())) return "—";
+    return format(d, fmt);
+  } catch {
+    return "—";
+  }
+}
+
+/**
+ * Safely converts a date to timestamp for sorting.
+ * Returns 0 on any invalid input — never throws.
+ */
+export function safeDateSortKey(
+  dateInput: string | Date | null | undefined
+): number {
+  if (!dateInput) return 0;
+  try {
+    const d = typeof dateInput === "string"
+      ? new Date(dateInput + "T12:00:00")
+      : dateInput;
+    if (isNaN(d.getTime())) return 0;
+    return d.getTime();
+  } catch {
+    return 0;
+  }
+}

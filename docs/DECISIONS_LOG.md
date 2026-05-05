@@ -26,6 +26,28 @@ Este é o log de decisões arquiteturais e de produto. Cada entrada documenta um
 
 ---
 
+## Decisões de Produção
+
+### 2026-05-05 — Auditoria QA em Produção via Playwright MCP
+
+**Contexto:** Sistema em produção com bugs críticos não identificados. Usuário solicitou auditoria completa como usuário real.
+
+**Opções Consideredas:**
+1. Script Playwright Python (menos interativo, mais propenso a falsos positivos)
+2. Teste manual sem automação (não reproduzível)
+3. Apenas code review (não captura bugs de runtime)
+4. Playwright MCP interativo (browser real, snapshot accessibility tree)
+
+**Decisão Final:** Opção 4 — Playwright MCP para teste interativo real no browser, simulando iPhone 16 (390×844). Combinar com Vercel MCP (deploy status) e GitHub MCP (issues/manifest).
+
+**Impacto:**
+- 2 bugs críticos encontrados (Movimentações quebrada, UUID no dropdown)
+- 12 items adicionados ao backlog como ÉPICO 14
+- KNOWN_ISSUES.md atualizado com 10 novos bugs de produção
+- Próximos passos claros: hotfix E14-T1 e E14-T2
+
+---
+
 ## Decisões Iniciais
 
 ### 2026-04-30 — Estrutura de Documentação do Projeto

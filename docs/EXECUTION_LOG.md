@@ -21,6 +21,38 @@ Este é o registro oficial de tudo que foi executado no projeto. Cada entrada de
 
 ---
 
+## [2026-05-05] AUDIT-01 — Auditoria QA Completa via Playwright MCP
+
+- **Executado por:** QA Agent (Playwright MCP + Vercel MCP + GitHub MCP)
+- **Status:** completed
+- **O que foi feito:**
+  - Teste interativo completo do sistema em produção (Vercel)
+  - 10 páginas navegadas: Login, Dashboard, Movimentações, Contas e Cartões, Fluxo de Caixa, Contas a Pagar, Planejamento, Recorrências, Fechamento, Análises, Perfil, Esqueci Senha
+  - Teste de login (credenciais inválidas e válidas)
+  - Teste de criação de transação (preenchimento, seleção de categoria, salvamento)
+  - Teste de validação de formulário vazio
+  - Teste de toggle de tema
+  - Teste de recuperação de senha
+  - Verificação de deploy no Vercel (20 deploys analisados)
+  - Verificação de issues no GitHub (0 abertas)
+  - Verificação de manifest.webmanifest (ausente)
+- **Bugs encontrados:**
+  - **P0:** Página Movimentações 100% quebrada (RangeError: Invalid time value)
+  - **P0:** Dropdown de categoria mostra UUID em vez de nome
+  - **P1:** manifest.webmanifest ausente (PWA quebrado)
+  - **P1:** Botão Fechar do modal de edição interceptado
+  - **P1:** Dados seed visíveis em produção ("Conta QA Edit")
+  - **P1:** Inconsistência de saldo geral no dashboard
+  - **P2:** Sidebar com nomes sem acento (Movimentacoes, Recorrencias, Analises)
+  - **P2:** Campo de data em formato ISO em vez de pt-BR
+  - **P2:** 20+ erros de console acumulados
+  - **P2:** Sem toast de sucesso ao criar transação
+  - **P2:** Todas as páginas mostram R$ 0,00 (dados seed insuficientes)
+- **Arquivos alterados:** docs/BACKLOG_MASTER.md (ÉPICO 14 adicionado com 12 items)
+- **Próximos passos:** Priorizar E14-T1 (Movimentações quebrada) e E14-T2 (UUID no dropdown)
+
+---
+
 ## Inicialização do Projeto
 
 ### 2026-04-30 — Setup Inicial de Documentação

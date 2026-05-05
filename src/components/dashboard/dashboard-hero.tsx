@@ -73,8 +73,10 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
             >
               {loading ? (
                 <span className="inline-block h-12 md:h-16 w-48 md:w-72 bg-white/10 animate-pulse rounded-2xl" />
-              ) : (
+              ) : balance != null && !isNaN(balance) ? (
                 formatCurrency(balance)
+              ) : (
+                <span className="text-white/40">Carregando...</span>
               )}
             </motion.p>
           </div>
@@ -135,7 +137,9 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
 
           {/* Actions */}
           <div className="flex flex-wrap items-center gap-3">
-            <QuickAdd categories={categories} onSuccess={() => router.refresh()} />
+            <span className="hidden md:inline-flex">
+              <QuickAdd categories={categories} onSuccess={() => router.refresh()} />
+            </span>
             <Link
               href="/movimentacoes"
               className="h-11 md:h-12 px-5 md:px-8 rounded-2xl bg-white/10 hover:bg-white/20 transition-all text-sm md:text-base font-semibold text-white flex items-center gap-2 backdrop-blur-sm border border-white/5 shadow-lg active:scale-95"

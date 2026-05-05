@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { format } from "date-fns";
+import { safeFormatDate, safeDateSortKey } from "@/lib/date-utils";
 import { Plus, Trash2, Search, ArrowUp, ArrowDown, Filter, LayoutList, FileSpreadsheet, Edit2, RotateCcw, X, Paperclip, ExternalLink, MoreVertical, Wallet, Loader2, Cloud, AlertCircle, CheckCircle2, FileUp, Link as LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -119,8 +120,8 @@ function MovimentacoesContent() {
         valA = a.amount;
         valB = b.amount;
       } else if (sortField === "date") {
-        valA = new Date(a.date).getTime();
-        valB = new Date(b.date).getTime();
+        valA = safeDateSortKey(a.date);
+        valB = safeDateSortKey(b.date);
       } else {
         valA = String(a[sortField] || "").toLowerCase();
         valB = String(b[sortField] || "").toLowerCase();
@@ -678,7 +679,7 @@ function MovimentacoesContent() {
                 <TableRow><TableCell colSpan={5} className="text-center py-32"><EmptyState icon={LayoutList} title="Sem movimentações" description="Ajuste os filtros ou crie um novo lançamento." /></TableCell></TableRow>
               ) : sortedTransactions.map((t) => (
                 <TableRow key={t.id} className="group border-b border-outline/5 hover:bg-surface-variant/10 transition-all">
-                  <TableCell className="px-6 py-5 font-black text-sm">                {t.date ? format(new Date(t.date), "dd/MM/yy") : "—"}</TableCell>
+                  <TableCell className="px-6 py-5 font-black text-sm">                {safeFormatDate(t.date, "dd/MM/yy")}</TableCell>
                   <TableCell className="py-5 font-bold text-sm">
                     {t.description}
                     <div className="flex gap-2 mt-2">

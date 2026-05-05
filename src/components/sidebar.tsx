@@ -18,14 +18,14 @@ const DarkModeToggleClient = dynamic(() => import("./dark-mode-toggle").then(mod
 
 const navItems = [
   { name: "Painel Geral", href: "/", icon: LayoutDashboard },
-  { name: "Movimentacoes", href: "/movimentacoes", icon: ReceiptText },
-  { name: "Contas e Cartoes", href: "/contas", icon: CreditCard },
+  { name: "Movimentações", href: "/movimentacoes", icon: ReceiptText },
+  { name: "Contas e Cartões", href: "/contas", icon: CreditCard },
   { name: "Fluxo de Caixa", href: "/fluxo-caixa", icon: TrendingUp },
   { name: "Contas a Pagar", href: "/contas-a-pagar", icon: BadgeDollarSign },
   { name: "Planejamento", href: "/orcamentos", icon: Target },
-  { name: "Recorrencias", href: "/recorrencias", icon: RotateCcw },
+  { name: "Recorrências", href: "/recorrencias", icon: RotateCcw },
   { name: "Fechamento", href: "/fechamento", icon: CalendarRange },
-  { name: "Analises", href: "/relatorios", icon: BarChart3 },
+  { name: "Análises", href: "/relatorios", icon: BarChart3 },
 ];
 
 const adminItems = [
@@ -103,7 +103,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <h1 className="text-xl font-display font-bold tracking-tight text-on-background leading-none">FlyDea</h1>
-              <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-primary/60 mt-1.5">Sovereign</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-primary/60 mt-1.5">Premium</p>
             </div>
           </div>
           <button
@@ -193,7 +193,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
               <h1 className="text-2xl font-display font-bold tracking-tight text-on-background leading-none">
                 FlyDea
               </h1>
-              <p className="text-[10px] uppercase tracking-[0.4em] font-bold text-primary/60 mt-2">Premium Access</p>
+              <p className="text-[10px] uppercase tracking-[0.4em] font-bold text-primary/60 mt-2">Premium</p>
             </div>
           </div>
         </div>
