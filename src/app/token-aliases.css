@@ -1,0 +1,28 @@
+/**
+ * Token Alias Bridge — FlyDea Financial Manager
+ * 
+ * Maps legacy design token names to the new shadcn/ui standard nomenclature.
+ * Import this from the root layout AFTER globals.css so both old and new
+ * classes work during the incremental migration.
+ * 
+ * --- TOKEN MIGRATION MAP ---
+ *
+ * TEXT:
+ *   text-on-background      → text-foreground
+ *   text-on-surface         → text-foreground
+ *   text-on-surface-variant → text-muted-foreground
+ *   text-on-primary         → text-primary-foreground
+ *
+ * BACKGROUNDS:
+ *   bg-surface                  → bg-card
+ *   bg-surface-variant          → bg-muted
+ *   bg-surface-container        → bg-muted/50
+ *   bg-surface-container-lowest → bg-background
+ *   bg-surface-container-high   → bg-muted
+ *
+ * BORDERS:
+ *   border-outline → border-border
+ */
+
+/* Not using @theme — these run at runtime so they properly resolve to CSS variables.
+   Define in a @layer base within your main globals.css to enable shadcn-style classes. */

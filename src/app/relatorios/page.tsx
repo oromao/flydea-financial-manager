@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   PieChart, TrendingDown, LayoutPanelLeft, BarChart3, Presentation,
   Download, Calendar, Filter, Target, RotateCcw, TrendingUp
@@ -128,27 +129,27 @@ export default function Relatorios() {
             <Presentation className="w-7 h-7 md:w-8 md:h-8" />
           </motion.div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-background">Relatórios</h1>
-            <p className="text-on-surface-variant font-medium text-xs sm:text-[10px] mt-1 uppercase tracking-widest">Estatísticas &amp; Insights</p>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Relatorios</h1>
+            <p className="text-muted-foreground font-medium text-xs sm:text-[10px] mt-1 uppercase tracking-widest">Estatisticas &amp; Insights</p>
           </div>
         </div>
 
         {/* Period Selector */}
-        <div className="flex items-center gap-4 bg-surface-variant/30 p-1.5 rounded-2xl border border-outline/5">
+        <div className="flex items-center gap-4 bg-muted/30 p-1.5 rounded-2xl border border-border/5">
           <div className="flex items-center gap-2 pl-3">
-            <Calendar className="w-4 h-4 text-on-surface-variant/70" />
-            <span className="text-xs sm:text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/80 hidden md:block">Período:</span>
+            <Calendar className="w-4 h-4 text-muted-foreground/70" />
+            <span className="text-xs sm:text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 hidden md:block">Periodo:</span>
           </div>
           <Select value={period} onValueChange={(v) => setPeriod(v || "0")}>
-            <SelectTrigger className="w-44 min-h-[44px] h-auto rounded-xl border-none bg-surface/80 font-bold text-xs ring-1 ring-outline/20">
+            <SelectTrigger className="w-44 min-h-[44px] h-auto rounded-xl border-none bg-card/80 font-bold text-xs ring-1 ring-border/20">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value="0" className="rounded-lg min-h-[44px]">Mês Atual</SelectItem>
-              <SelectItem value="1" className="rounded-lg min-h-[44px]">Mês Passado</SelectItem>
-              <SelectItem value="2" className="rounded-lg min-h-[44px]">2 Meses Atrás</SelectItem>
-              <SelectItem value="3" className="rounded-lg min-h-[44px]">3 Meses Atrás</SelectItem>
-              <SelectItem value="5" className="rounded-lg min-h-[44px]">5 Meses Atrás</SelectItem>
+              <SelectItem value="0" className="rounded-lg min-h-[44px]">Mes Atual</SelectItem>
+              <SelectItem value="1" className="rounded-lg min-h-[44px]">Mes Passado</SelectItem>
+              <SelectItem value="2" className="rounded-lg min-h-[44px]">2 Meses Atras</SelectItem>
+              <SelectItem value="3" className="rounded-lg min-h-[44px]">3 Meses Atras</SelectItem>
+              <SelectItem value="5" className="rounded-lg min-h-[44px]">5 Meses Atras</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -158,14 +159,14 @@ export default function Relatorios() {
       {loading ? (
         <div role="status" className="py-32 text-center">
           <div className="w-10 h-10 animate-spin mx-auto border-2 border-secondary/20 border-t-secondary rounded-full" />
-          <p className="mt-4 text-on-surface-variant/40 font-black text-xs uppercase tracking-widest">Carregando relatórios...</p>
+          <p className="mt-4 text-muted-foreground/40 font-black text-xs uppercase tracking-widest">Carregando relatorios...</p>
         </div>
       ) : transactions.length === 0 ? (
         <div className="py-16">
           <EmptyState
             icon={BarChart3}
-            title="Nenhum dado disponível"
-            description="Registre movimentações neste período para gerar relatórios e análises."
+            title="Nenhum dado disponivel"
+            description="Registre movimentacoes neste periodo para gerar relatorios e analises."
           />
         </div>
       ) : (
@@ -181,13 +182,15 @@ export default function Relatorios() {
           { label: "Receitas", value: totalIncome, color: "text-success" },
           { label: "Despesas", value: totalExpenses, color: "text-destructive" },
           { label: "Resultado", value: netBalance, color: netBalance >= 0 ? "text-success" : "text-destructive" },
-          { label: "Poupança", value: null, color: savingsRate >= 20 ? "text-success" : "text-warning", label2: `${savingsRate.toFixed(1)}%` },
+          { label: "Poupanca", value: null, color: savingsRate >= 20 ? "text-success" : "text-warning", label2: `${savingsRate.toFixed(1)}%` },
         ].map((card, i) => (
-          <Card key={i} className="premium-card p-4 sm:p-6 flex flex-col justify-between">
-            <p className="text-xs sm:text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/80">{card.label}</p>
-            <p className={cn("text-2xl md:text-3xl font-bold mt-1 tracking-tight", card.color)}>
-              {card.value !== null ? formatCurrency(card.value) : card.label2}
-            </p>
+          <Card key={i}>
+            <CardContent className="p-4 sm:p-6 flex flex-col justify-between">
+              <p className="text-xs sm:text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">{card.label}</p>
+              <p className={cn("text-2xl md:text-3xl font-bold mt-1 tracking-tight", card.color)}>
+                {card.value !== null ? formatCurrency(card.value) : card.label2}
+              </p>
+            </CardContent>
           </Card>
         ))}
       </motion.div>
@@ -200,24 +203,27 @@ export default function Relatorios() {
         className="grid gap-8 grid-cols-1 lg:grid-cols-2"
       >
         {/* Pie Chart - Expenses by Category */}
-        <Card className="premium-card p-4 sm:p-8">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-2.5 rounded-xl bg-surface-variant text-on-surface-variant border border-outline/5">
-              <PieChart className="w-5 h-5 opacity-70" />
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <div className="p-2.5 rounded-xl bg-muted text-muted-foreground border border-border/5">
+                <PieChart className="w-5 h-5 opacity-70" />
+              </div>
+              <div>
+                <CardTitle className="text-lg sm:text-xl text-foreground">Gastos por Categoria</CardTitle>
+                <p className="text-xs sm:text-[10px] font-bold text-muted-foreground/70 uppercase tracking-widest mt-0.5 capitalize">{periodLabel}</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg sm:text-xl font-bold text-on-background tracking-tight">Gastos por Categoria</h2>
-              <p className="text-xs sm:text-[10px] font-bold text-on-surface-variant/70 uppercase tracking-widest mt-0.5 capitalize">{periodLabel}</p>
-            </div>
-          </div>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-8 pt-0">
 
           {loading ? (
-            <div className="h-72 flex items-center justify-center text-on-surface-variant/20 font-bold text-xs uppercase tracking-[0.2em] italic">Analisando dados...</div>
+            <div className="h-72 flex items-center justify-center text-muted-foreground/20 font-bold text-xs uppercase tracking-[0.2em] italic">Analisando dados...</div>
           ) : pieData.length === 0 ? (
             <div className="h-72 flex flex-col items-center justify-center gap-3">
-              <TrendingDown className="w-10 h-10 text-on-surface-variant/30" />
-              <p className="font-semibold text-sm text-on-surface-variant/60">Sem dados disponíveis</p>
-              <p className="text-xs text-on-surface-variant/40">Registre movimentações neste período para ver os gráficos.</p>
+              <TrendingDown className="w-10 h-10 text-muted-foreground/30" />
+              <p className="font-semibold text-sm text-muted-foreground/60">Sem dados disponiveis</p>
+              <p className="text-xs text-muted-foreground/40">Registre movimentacoes neste periodo para ver os graficos.</p>
             </div>
           ) : (
             <div className="flex flex-col items-center">
@@ -256,34 +262,38 @@ export default function Relatorios() {
                   return (
                     <div key={entry.name} className={cn(
                       "flex items-center gap-2",
-                      isMobile ? "justify-between py-2 border-b border-outline/10" : ""
+                      isMobile ? "justify-between py-2 border-b border-border/10" : ""
                     )}>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                        <span className="text-xs text-on-surface-variant font-medium truncate max-w-[140px]">{entry.name}</span>
+                        <span className="text-xs text-muted-foreground font-medium truncate max-w-[140px]">{entry.name}</span>
                       </div>
-                      <span className="text-xs font-bold text-on-surface">{pct.toFixed(0)}%</span>
+                      <Badge variant="outline" className="text-xs font-bold">{pct.toFixed(0)}%</Badge>
                     </div>
                   );
                 })}
               </div>
             </div>
           )}
+          </CardContent>
         </Card>
 
         {/* Bar Chart - Income vs Expense by Category */}
-        <Card className="premium-card p-4 sm:p-8">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-2.5 rounded-xl bg-surface-variant text-on-surface-variant border border-outline/5">
-              <BarChart3 className="w-5 h-5 opacity-70" />
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <div className="p-2.5 rounded-xl bg-muted text-muted-foreground border border-border/5">
+                <BarChart3 className="w-5 h-5 opacity-70" />
+              </div>
+              <div>
+                <CardTitle className="text-lg sm:text-xl text-foreground">Receita vs Despesa</CardTitle>
+                <p className="text-xs sm:text-[10px] font-bold text-muted-foreground/70 uppercase tracking-widest mt-0.5">Visao Comparativa</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg sm:text-xl font-bold text-on-background tracking-tight">Receita vs Despesa</h2>
-              <p className="text-xs sm:text-[10px] font-bold text-on-surface-variant/70 uppercase tracking-widest mt-0.5">Visão Comparativa</p>
-            </div>
-          </div>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-8 pt-0">
           {loading ? (
-            <div className="h-72 flex items-center justify-center text-on-surface-variant/20 font-bold text-xs uppercase tracking-[0.2em] italic">Processando...</div>
+            <div className="h-72 flex items-center justify-center text-muted-foreground/20 font-bold text-xs uppercase tracking-[0.2em] italic">Processando...</div>
           ) : (
             <ResponsiveContainer width="100%" height={chartHeight}>
               <BarChart data={barData} barCategoryGap="30%" margin={isMobile ? { left: -10, right: 4 } : {}}>
@@ -301,6 +311,7 @@ export default function Relatorios() {
               </BarChart>
             </ResponsiveContainer>
           )}
+          </CardContent>
         </Card>
       </motion.div>
 
@@ -312,22 +323,25 @@ export default function Relatorios() {
         className="grid gap-8 grid-cols-1 lg:grid-cols-2"
       >
         {/* Expense breakdown list */}
-        <Card className="premium-card p-4 sm:p-8">
-          <div className="flex items-center gap-4 pb-6 border-b border-outline/5 mb-8">
-            <div className="p-2.5 rounded-xl bg-surface-variant text-on-surface-variant border border-outline/5">
-              <Filter className="w-5 h-5 opacity-70" />
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-4 pb-6 border-b border-border/5">
+              <div className="p-2.5 rounded-xl bg-muted text-muted-foreground border border-border/5">
+                <Filter className="w-5 h-5 opacity-70" />
+              </div>
+              <CardTitle className="text-base sm:text-xl text-foreground uppercase tracking-wider">Distribuicao Detalhada</CardTitle>
             </div>
-            <h2 className="text-base sm:text-xl font-bold text-on-background tracking-tight uppercase tracking-wider">Distribuição Detalhada</h2>
-          </div>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-8 pt-0">
           {loading ? (
-            <div className="py-20 text-center font-bold text-on-surface-variant/20 text-xs sm:text-[10px] tracking-[0.3em] italic uppercase">Consultando banco de dados...</div>
+            <div className="py-20 text-center font-bold text-muted-foreground/20 text-xs sm:text-[10px] tracking-[0.3em] italic uppercase">Consultando banco de dados...</div>
           ) : (
             <div className="space-y-4">
               {Object.entries(expensesByCategory).length === 0 ? (
                 <div className="py-16 flex flex-col items-center gap-3">
-                  <TrendingDown className="w-10 h-10 text-on-surface-variant/30" />
-                  <p className="font-semibold text-sm text-on-surface-variant/60">Nenhum registro encontrado</p>
-                  <p className="text-xs text-on-surface-variant/40">Adicione despesas para ver a distribuição detalhada.</p>
+                  <TrendingDown className="w-10 h-10 text-muted-foreground/30" />
+                  <p className="font-semibold text-sm text-muted-foreground/60">Nenhum registro encontrado</p>
+                  <p className="text-xs text-muted-foreground/40">Adicione despesas para ver a distribuicao detalhada.</p>
                 </div>
               ) : (
                 Object.entries(expensesByCategory)
@@ -336,12 +350,12 @@ export default function Relatorios() {
                     const pct = totalExpenses > 0 ? (Number(amount) / totalExpenses) * 100 : 0;
                     return (
                       <div key={category}
-                        className="flex items-center justify-between p-4 rounded-2xl bg-surface group hover:bg-surface-variant/10 transition-colors border border-outline/5 min-h-[44px]">
+                        className="flex items-center justify-between p-4 rounded-2xl bg-card group hover:bg-muted/10 transition-colors border border-border/5 min-h-[44px]">
                         <div className="flex items-center gap-4 flex-1">
                           <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
                           <div className="flex-1">
-                            <span className="font-bold text-sm text-on-background tracking-tight">{category}</span>
-                            <div className="w-full h-1 bg-surface-variant/50 rounded-full mt-2 overflow-hidden max-w-[120px]">
+                            <span className="font-bold text-sm text-foreground tracking-tight">{category}</span>
+                            <div className="w-full h-1 bg-muted/50 rounded-full mt-2 overflow-hidden max-w-[120px]">
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${pct}%` }}
@@ -352,8 +366,8 @@ export default function Relatorios() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <span className="font-bold text-lg text-on-background tracking-tight">{formatCurrency(Number(amount))}</span>
-                          <p className="text-[9px] text-on-surface-variant/70 font-bold uppercase tracking-widest mt-0.5">{pct.toFixed(1)}%</p>
+                          <span className="font-bold text-lg text-foreground tracking-tight">{formatCurrency(Number(amount))}</span>
+                          <p className="text-[9px] text-muted-foreground/70 font-bold uppercase tracking-widest mt-0.5">{pct.toFixed(1)}%</p>
                         </div>
                       </div>
                     );
@@ -361,23 +375,27 @@ export default function Relatorios() {
               )}
             </div>
           )}
+          </CardContent>
         </Card>
 
         {/* Composition & Export */}
         <div className="space-y-8">
           {/* Fixed vs Variable */}
-          <Card className="premium-card p-8">
-            <h3 className="text-xl font-bold text-on-background tracking-tight mb-8 uppercase tracking-wider text-sm">Composição de Gastos</h3>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl font-bold text-foreground uppercase tracking-wider text-sm">Composicao de Gastos</CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 pt-0">
             <div className="space-y-4">
               {[
                 { label: "Despesas Fixas", value: budgetBreakdown.FIXED, color: "text-destructive", icon: RotateCcw },
-                { label: "Despesas Variáveis", value: budgetBreakdown.VARIABLE, color: "text-success", icon: TrendingUp },
-                { label: "Taxa de Poupança", value: null, label2: `${savingsRate.toFixed(1)}%`, color: savingsRate >= 20 ? "text-success" : "text-warning", icon: Target }
+                { label: "Despesas Variaveis", value: budgetBreakdown.VARIABLE, color: "text-success", icon: TrendingUp },
+                { label: "Taxa de Poupanca", value: null, label2: `${savingsRate.toFixed(1)}%`, color: savingsRate >= 20 ? "text-success" : "text-warning", icon: Target }
               ].map((item, i) => (
-                <div key={i} className="flex justify-between items-center p-5 rounded-2xl bg-surface border border-outline/5 group hover:border-secondary/20 transition-colors min-h-[44px]">
+                <div key={i} className="flex justify-between items-center p-5 rounded-2xl bg-card border border-border/5 group hover:border-secondary/20 transition-colors min-h-[44px]">
                   <div className="flex items-center gap-3">
-                    <item.icon className="w-4 h-4 text-on-surface-variant/60" strokeWidth={2.5} />
-                    <span className="text-on-surface-variant/80 font-bold uppercase text-[10px] tracking-widest">{item.label}</span>
+                    <item.icon className="w-4 h-4 text-muted-foreground/60" strokeWidth={2.5} />
+                    <span className="text-muted-foreground/80 font-bold uppercase text-[10px] tracking-widest">{item.label}</span>
                   </div>
                   <span className={cn("font-bold text-2xl tracking-tight text-right", item.color)}>
                     {item.value !== null ? formatCurrency(item.value) : item.label2}
@@ -385,6 +403,7 @@ export default function Relatorios() {
                 </div>
               ))}
             </div>
+            </CardContent>
           </Card>
 
           {/* Export Actions */}
@@ -393,16 +412,16 @@ export default function Relatorios() {
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleExportCSV}
-              className="premium-card p-6 flex items-center justify-between text-left group border-none bg-surface min-h-[44px]"
+              className="p-6 flex items-center justify-between text-left group border-none bg-card rounded-xl shadow-sm min-h-[44px]"
               aria-label="Exportar dados como CSV"
             >
               <div className="space-y-1">
                 <h4 className="text-sm font-bold tracking-tight uppercase">Excel (CSV)</h4>
-                <p className="text-[10px] font-medium text-on-surface-variant/80">
+                <p className="text-[10px] font-medium text-muted-foreground/80">
                   Dados estruturados
                 </p>
               </div>
-              <div className="w-11 h-11 min-w-11 min-h-11 bg-success/10 text-success rounded-xl flex items-center justify-center group-hover:bg-success group-hover:text-on-primary transition-colors">
+              <div className="w-11 h-11 min-w-11 min-h-11 bg-success/10 text-success rounded-xl flex items-center justify-center group-hover:bg-success group-hover:text-primary-foreground transition-colors">
                 <Download className="w-5 h-5" />
               </div>
             </motion.button>
@@ -411,14 +430,14 @@ export default function Relatorios() {
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={handlePrint}
-              className="premium-card p-6 flex items-center justify-between text-left group border-none bg-surface min-h-[44px]"
+              className="p-6 flex items-center justify-between text-left group border-none bg-card rounded-xl shadow-sm min-h-[44px]"
               aria-label="Exportar como documento PDF"
             >
               <div className="space-y-1">
                 <h4 className="text-sm font-bold tracking-tight uppercase">Documento PDF</h4>
-                <p className="text-[10px] font-medium text-on-surface-variant/80">Versão impressa</p>
+                <p className="text-[10px] font-medium text-muted-foreground/80">Versao impressa</p>
               </div>
-              <div className="w-11 h-11 min-w-11 min-h-11 bg-surface-variant text-on-surface-variant rounded-xl flex items-center justify-center group-hover:bg-on-surface group-hover:text-surface transition-colors">
+              <div className="w-11 h-11 min-w-11 min-h-11 bg-muted text-muted-foreground rounded-xl flex items-center justify-center group-hover:bg-foreground group-hover:text-card transition-colors">
                 <LayoutPanelLeft className="w-5 h-5" />
               </div>
             </motion.button>

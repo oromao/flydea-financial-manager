@@ -7,10 +7,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress, ProgressTrack, ProgressIndicator } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Toggle } from "@/components/ui/toggle";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import { motion, type Variants } from "framer-motion";
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 
@@ -82,13 +85,13 @@ export default function Orcamentos() {
     e.preventDefault();
 
     if (!amount || !categoryId) {
-      toast.error("Preencha todos os campos obrigatórios");
+      toast.error("Preencha todos os campos obrigatorios");
       return;
     }
 
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
-      toast.error("O valor do orçamento deve ser maior que zero");
+      toast.error("O valor do orcamento deve ser maior que zero");
       return;
     }
 
@@ -101,13 +104,13 @@ export default function Orcamentos() {
         body: JSON.stringify(payload)
       });
       if (res.ok) {
-        toast.success("Orçamento criado!");
+        toast.success("Orcamento criado!");
         setIsOpen(false);
         resetForm();
         fetchData();
       } else {
         const err = await res.json();
-        toast.error(err.error || "Erro ao criar orçamento");
+        toast.error(err.error || "Erro ao criar orcamento");
       }
     } finally {
       setSaving(false);
@@ -115,9 +118,9 @@ export default function Orcamentos() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!await confirm({ title: "Excluir orçamento", message: "Tem certeza que deseja remover este orçamento?", confirmLabel: "Excluir", variant: "danger" })) return;
+    if (!await confirm({ title: "Excluir orcamento", message: "Tem certeza que deseja remover este orcamento?", confirmLabel: "Excluir", variant: "danger" })) return;
     const res = await fetch(`/api/budgets/${id}`, { method: "DELETE" });
-    if (res.ok) { toast.success("Orçamento removido!"); fetchData(); }
+    if (res.ok) { toast.success("Orcamento removido!"); fetchData(); }
     else toast.error("Erro ao remover");
   };
 
@@ -151,26 +154,26 @@ export default function Orcamentos() {
             <Target className="w-7 h-7 md:w-8 md:h-8" />
           </motion.div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-background">Orçamentos</h1>
-            <p className="text-on-surface-variant font-medium text-sm mt-1">Planejamento e controle de limites</p>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Orcamentos</h1>
+            <p className="text-muted-foreground font-medium text-sm mt-1">Planejamento e controle de limites</p>
           </div>
         </div>
 
-        {/* Period Selector — prominent, mobile-first */}
+        {/* Period Selector */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="inline-flex items-center gap-3 bg-surface-container-lowest rounded-2xl shadow-sm px-5 py-3.5 border border-outline/10 w-full md:w-auto"
+          className="inline-flex items-center gap-3 bg-background rounded-2xl shadow-sm px-5 py-3.5 border border-border/10 w-full md:w-auto"
         >
           <Calendar className="w-5 h-5 text-primary shrink-0" />
           <div className="flex flex-col items-start gap-0.5 min-w-0">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/50">Período</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Periodo</span>
             <input
               type="month"
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="h-12 min-h-[44px] px-0 py-0 bg-transparent border-0 font-bold text-base text-on-background focus:ring-0 focus:outline-none w-full"
+              className="h-12 min-h-[44px] px-0 py-0 bg-transparent border-0 font-bold text-base text-foreground focus:ring-0 focus:outline-none w-full"
             />
           </div>
         </motion.div>
@@ -183,37 +186,43 @@ export default function Orcamentos() {
         transition={{ delay: 0.1 }}
         className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6"
       >
-        <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Total Orçado</p>
-          <p className="text-2xl sm:text-3xl font-bold text-on-background tracking-tight mt-1">{formatCurrency(totalBudget)}</p>
+        <Card>
+          <CardContent>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total Orcado</p>
+            <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mt-1">{formatCurrency(totalBudget)}</p>
+          </CardContent>
         </Card>
-        <Card className="premium-card p-4 sm:p-6 flex flex-col justify-between">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Total Consumido</p>
-          <p className="text-2xl sm:text-3xl font-bold text-destructive tracking-tight mt-1">{formatCurrency(totalSpent)}</p>
+        <Card>
+          <CardContent>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total Consumido</p>
+            <p className="text-2xl sm:text-3xl font-bold text-destructive tracking-tight mt-1">{formatCurrency(totalSpent)}</p>
+          </CardContent>
         </Card>
-        <Card className={cn("premium-card p-4 sm:p-6 flex flex-col justify-between transition-colors", alertCount > 0 ? "border-warning/30 bg-warning/5" : "")}>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Alertas Críticos</p>
-          <div className="flex items-center gap-3 mt-1">
-            {alertCount > 0 ? <AlertTriangle className="w-6 h-6 text-warning" /> : <CheckCircle2 className="w-6 h-6 text-success" />}
-            <p className={cn("text-2xl sm:text-3xl font-bold tracking-tight", alertCount > 0 ? "text-warning" : "text-success")}>
-              {alertCount}
-            </p>
-          </div>
+        <Card className={alertCount > 0 ? "border-warning/30 bg-warning/5" : ""}>
+          <CardContent>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Alertas Criticos</p>
+            <div className="flex items-center gap-3 mt-1">
+              {alertCount > 0 ? <AlertTriangle className="w-6 h-6 text-warning" /> : <CheckCircle2 className="w-6 h-6 text-success" />}
+              <p className={cn("text-2xl sm:text-3xl font-bold tracking-tight", alertCount > 0 ? "text-warning" : "text-success")}>
+                {alertCount}
+              </p>
+            </div>
+          </CardContent>
         </Card>
       </motion.div>
 
       {/* Budget List */}
       {loading ? (
-        <div className="py-24 text-center text-on-surface-variant/30 font-semibold text-xs italic">
-          Analisando orçamentos...
+        <div className="py-24 text-center text-muted-foreground/30 font-semibold text-xs italic">
+          Analisando orcamentos...
         </div>
       ) : budgets.length === 0 ? (
         <div className="py-16">
           <EmptyState
             icon={Target}
-            title="Nenhum orçamento definido"
+            title="Nenhum orcamento definido"
             description="Crie metas para ter um controle financeiro preciso"
-            ctaLabel="Novo Orçamento"
+            ctaLabel="Novo Orcamento"
             onCta={() => setIsOpen(true)}
           />
         </div>
@@ -236,11 +245,11 @@ export default function Orcamentos() {
               barVariant === "warning" ? "bg-warning" :
               "bg-success";
 
-            const pctChipClass =
-              barVariant === "critical" ? "bg-destructive/15 text-destructive" :
-              barVariant === "danger" ? "bg-destructive/15 text-destructive" :
-              barVariant === "warning" ? "bg-warning/15 text-warning" :
-              "bg-success/15 text-success";
+            const badgeVariant =
+              barVariant === "critical" ? "destructive" :
+              barVariant === "danger" ? "destructive" :
+              barVariant === "warning" ? "secondary" :
+              "default";
 
             return (
               <motion.div
@@ -248,34 +257,34 @@ export default function Orcamentos() {
                 variants={itemVariants}
               >
                 <Card className={cn(
-                  "premium-card p-4 sm:p-6 group transition-all duration-300 hover:scale-[1.01] hover:shadow-lg",
+                  "group transition-all duration-300 hover:scale-[1.01] hover:shadow-lg",
                   isOver && "border-destructive/20 bg-destructive/5",
                   isAlert && !isOver && "border-warning/20 bg-warning/5"
                 )}>
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 md:mb-6">
                     <div className="space-y-1.5 text-left">
                       <div className="flex items-center gap-3 flex-wrap">
-                        <h3 className="font-bold text-lg sm:text-xl text-on-background tracking-tight">{budget.category?.name}</h3>
-                        <span className={cn(
-                          "px-2.5 py-1 rounded-full text-[11px] font-extrabold tracking-tight min-h-[44px] md:min-h-0 flex items-center",
-                          pctChipClass
+                        <h3 className="font-bold text-lg sm:text-xl text-foreground tracking-tight">{budget.category?.name}</h3>
+                        <Badge variant={badgeVariant} className={cn(
+                          "px-2.5 py-1 text-[11px] font-extrabold tracking-tight",
+                          badgeVariant === "default" && "bg-success/15 text-success border-success/30"
                         )}>
                           {(budget.percentage || 0).toFixed(1)}% usado
-                        </span>
-                        {isOver && <span className="px-2.5 py-1 rounded-full bg-destructive/10 text-destructive text-[10px] font-bold uppercase tracking-wider min-h-[44px] md:min-h-0 flex items-center">Limite Excedido</span>}
-                        {isAlert && !isOver && <span className="px-2.5 py-1 rounded-full bg-warning/10 text-warning text-[10px] font-bold uppercase tracking-wider min-h-[44px] md:min-h-0 flex items-center">Atenção</span>}
+                        </Badge>
+                        {isOver && <Badge variant="destructive" className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider">Limite Excedido</Badge>}
+                        {isAlert && !isOver && <Badge variant="secondary" className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-warning/10 text-warning border-warning/30">Atencao</Badge>}
                       </div>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">
                         Fluxo {budget.period === "MONTHLY" ? "Mensal" : "Anual"} de Gastos
                       </span>
                     </div>
                     <div className="flex items-center gap-5 self-end md:self-auto">
                       <div className="text-right">
-                        <p className="font-bold text-on-background text-xl sm:text-2xl tracking-tight">{formatCurrency(budget.spent || 0)}</p>
-                        <p className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-tighter">de {formatCurrency(budget.amount)} total</p>
+                        <p className="font-bold text-foreground text-xl sm:text-2xl tracking-tight">{formatCurrency(budget.spent || 0)}</p>
+                        <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-tighter">de {formatCurrency(budget.amount)} total</p>
                       </div>
                       <Button variant="ghost" size="icon"
-                        aria-label="Excluir orçamento"
+                        aria-label="Excluir orcamento"
                         className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-destructive/10 hover:bg-destructive/20 text-destructive hover:text-destructive transition-colors"
                         onClick={() => handleDelete(budget.id)}>
                         <Trash2 className="w-4.5 h-4.5" />
@@ -284,15 +293,11 @@ export default function Orcamentos() {
                   </div>
 
                   <div className="space-y-3">
-                    {/* Apple-style thin progress bar */}
-                    <div className="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${pct}%` }}
-                        transition={{ duration: 1, ease: "easeOut" }}
-                        className={cn("h-full rounded-full", barFillClass)}
-                      />
-                    </div>
+                    <Progress value={pct}>
+                      <ProgressTrack className="h-1.5 rounded-full bg-muted">
+                        <ProgressIndicator className={cn("h-full rounded-full", barFillClass)} />
+                      </ProgressTrack>
+                    </Progress>
                     <div className="flex justify-between items-center">
                       <span className={cn(
                         "text-[10px] font-bold uppercase tracking-wider",
@@ -300,7 +305,7 @@ export default function Orcamentos() {
                       )}>
                         {(budget.percentage || 0).toFixed(1)}% utilizado do total
                       </span>
-                      <span className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest">
+                      <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">
                         Alerta em {budget.alertAt}%
                       </span>
                     </div>
@@ -312,7 +317,7 @@ export default function Orcamentos() {
         </motion.div>
       )}
 
-      {/* FAB / CTA — Novo Orçamento */}
+      {/* FAB / CTA — Novo Orcamento */}
       <Dialog open={isOpen} onOpenChange={(v) => { setIsOpen(v); if (!v) resetForm(); }}>
         <DialogTrigger
           render={
@@ -322,11 +327,11 @@ export default function Orcamentos() {
             />
           }
         >
-          <Plus className="w-5 h-5 mr-2" /> Novo Orçamento
+          <Plus className="w-5 h-5 mr-2" /> Novo Orcamento
         </DialogTrigger>
         <DialogContent className="sm:max-w-md max-w-[calc(100vw-2rem)] rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Novo Orçamento</DialogTitle>
+            <DialogTitle className="text-xl font-bold">Novo Orcamento</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-5 mt-2">
             <div className="space-y-1.5">
@@ -349,16 +354,27 @@ export default function Orcamentos() {
               <Input id="amount" type="number" step="0.01" min="0.01" placeholder="0,00" value={amount} onChange={(e) => setAmount(e.target.value)} className="min-h-[44px] rounded-xl" />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="period">Periodicidade</Label>
-              <Select value={period} onValueChange={(v: string | null) => setPeriod(v || "MONTHLY")}>
-                <SelectTrigger id="period" className="min-h-[44px] rounded-xl">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="MONTHLY">Mensal</SelectItem>
-                  <SelectItem value="ANNUAL">Anual</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label>Periodicidade</Label>
+              <div className="flex gap-2">
+                <Toggle
+                  pressed={period === "MONTHLY"}
+                  onPressedChange={() => setPeriod("MONTHLY")}
+                  variant="outline"
+                  size="lg"
+                  className="flex-1 min-h-[44px] rounded-xl"
+                >
+                  Mensal
+                </Toggle>
+                <Toggle
+                  pressed={period === "ANNUAL"}
+                  onPressedChange={() => setPeriod("ANNUAL")}
+                  variant="outline"
+                  size="lg"
+                  className="flex-1 min-h-[44px] rounded-xl"
+                >
+                  Anual
+                </Toggle>
+              </div>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="alertAt">Alerta em (%)</Label>
@@ -366,7 +382,7 @@ export default function Orcamentos() {
             </div>
             <Button type="submit" size="lg" disabled={saving} className="w-full apple-button-primary min-h-[44px] rounded-xl">
               {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Plus className="w-5 h-5 mr-2" />}
-              Criar Orçamento
+              Criar Orcamento
             </Button>
           </form>
         </DialogContent>

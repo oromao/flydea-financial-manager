@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, ReceiptText, Plus, MoreHorizontal, X, BarChart3, Wallet, BadgeDollarSign, Target, RotateCcw, CalendarRange, CreditCard, History, ShieldCheck } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { QuickAdd } from "@/components/quick-add";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const mainNavItems = [
   { name: "Inicio", href: "/", icon: LayoutDashboard },
@@ -41,16 +43,6 @@ export function BottomNav() {
   const isAdmin = session?.user?.role === "ADMIN";
   const modules = isAdmin ? [...allModules, ...adminModules] : allModules;
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && sheetOpen) {
-        setSheetOpen(false);
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [sheetOpen]);
-
   if (pathname === "/login") return null;
 
   return (
@@ -69,19 +61,25 @@ export function BottomNav() {
 
             if (item.isAction) {
               return (
-                <button
-                  key={item.name}
-                  onClick={() => setNewOpen(true)}
-                  aria-label="Novo lancamento"
-                  className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
-                >
-                  <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 group-active:scale-95 transition-all">
-                    <Icon className="w-6 h-6 text-white stroke-[2.5px]" />
-                  </div>
-                  <span className="text-[10px] font-bold tracking-wide text-primary">
-                    {item.name}
-                  </span>
-                </button>
+                <Tooltip key={item.name}>
+                  <TooltipTrigger>
+                    <button
+                      onClick={() => setNewOpen(true)}
+                      aria-label="Novo lancamento"
+                      className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
+                    >
+                      <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 group-active:scale-95 transition-all">
+                        <Icon className="w-6 h-6 text-white stroke-[2.5px]" />
+                      </div>
+                      <span className="text-[10px] font-bold tracking-wide text-primary">
+                        {item.name}
+                      </span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Adicionar transação</p>
+                  </TooltipContent>
+                </Tooltip>
               );
             }
 
@@ -133,7 +131,6 @@ export function BottomNav() {
         </div>
       </nav>
 
-      {/* QuickAdd Dialog */}
       <QuickAdd
         categories={categories}
         onSuccess={() => setNewOpen(false)}
@@ -141,68 +138,49 @@ export function BottomNav() {
         onOpenChange={setNewOpen}
       />
 
-      {/* "Mais" Sheet */}
-      <AnimatePresence>
-        {sheetOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 z-[60] md:hidden"
-              onClick={() => setSheetOpen(false)}
-              aria-hidden="true"
-            />
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed bottom-0 left-0 right-0 z-[70] md:hidden bg-surface rounded-t-[32px] shadow-2xl"
-              style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
-              role="dialog"
-              aria-modal="true"
-              aria-label="Explorar modulos"
-            >
-              <div className="flex items-center justify-between p-6 border-b border-outline/10">
-                <h2 className="text-xl font-black text-on-background">Explorar</h2>
-                <button
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent
+          side="bottom"
+          showCloseButton={false}
+          className="bg-surface rounded-t-[32px]"
+          style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
+        >
+          <SheetHeader className="flex-row items-center justify-between p-6 border-b border-outline/10">
+            <SheetTitle className="text-xl font-black text-on-background">
+              Explorar
+            </SheetTitle>
+            <SheetClose className="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center [&_svg]:!size-5">
+              <X className="text-on-surface-variant" />
+              <span className="sr-only">Fechar</span>
+            </SheetClose>
+          </SheetHeader>
+          <div className="p-4 grid grid-cols-4 gap-3">
+            {modules.map((module) => {
+              const Icon = module.icon;
+              const isActive = pathname === module.href;
+              return (
+                <Link
+                  key={module.href}
+                  href={module.href}
                   onClick={() => setSheetOpen(false)}
-                  className="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center"
-                  aria-label="Fechar painel"
+                  className={cn(
+                    "flex flex-col items-center gap-2 p-3 rounded-2xl transition-all",
+                    isActive ? "bg-primary/10 text-primary" : "hover:bg-surface-variant/50 text-on-surface-variant"
+                  )}
                 >
-                  <X className="w-5 h-5 text-on-surface-variant" />
-                </button>
-              </div>
-              <div className="p-4 grid grid-cols-4 gap-3">
-                {modules.map((module) => {
-                  const Icon = module.icon;
-                  const isActive = pathname === module.href;
-                  return (
-                    <Link
-                      key={module.href}
-                      href={module.href}
-                      onClick={() => setSheetOpen(false)}
-                      className={cn(
-                        "flex flex-col items-center gap-2 p-3 rounded-2xl transition-all",
-                        isActive ? "bg-primary/10 text-primary" : "hover:bg-surface-variant/50 text-on-surface-variant"
-                      )}
-                    >
-                      <div className={cn(
-                        "w-12 h-12 rounded-2xl flex items-center justify-center",
-                        isActive ? "bg-primary/20" : "bg-surface-variant/50"
-                      )}>
-                        <Icon className="w-6 h-6" />
-                      </div>
-                      <span className="text-[10px] font-bold text-center leading-tight">{module.name}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+                  <div className={cn(
+                    "w-12 h-12 rounded-2xl flex items-center justify-center",
+                    isActive ? "bg-primary/20" : "bg-surface-variant/50"
+                  )}>
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-bold text-center leading-tight">{module.name}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
 import {
   ArrowUpRight, ArrowDownRight, Clock, ChevronRight,
   Target, BarChart3
@@ -152,7 +153,7 @@ export default function Dashboard() {
           {/* Weekly Cashflow Forecast */}
           <motion.section variants={itemVariants} className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-display font-bold text-on-surface">
+              <h2 className="text-lg font-display font-bold text-foreground">
                 Projeção de Caixa
               </h2>
               <Link
@@ -162,17 +163,17 @@ export default function Dashboard() {
                 Ver detalhes <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
-            <div className="bg-surface-container-lowest rounded-2xl p-4 md:p-6 shadow-sm border border-outline/10">
+            <div className="bg-background rounded-2xl p-4 md:p-6 shadow-sm border border-border/10">
               <WeeklyCashflowForecast />
             </div>
           </motion.section>
 
           {/* Monthly Flux Chart */}
           <motion.section variants={itemVariants} className="space-y-4">
-            <h2 className="text-lg font-display font-bold text-on-surface">
+            <h2 className="text-lg font-display font-bold text-foreground">
               Fluxo Mensal
             </h2>
-            <Card className="premium-card p-4 md:p-6 min-h-[240px] md:min-h-[320px]">
+            <Card className="bg-background shadow-md rounded-xl transition-all duration-500 hover:shadow-lg border-none p-4 md:p-6 min-h-[240px] md:min-h-[320px]">
               {loading ? (
                 <div className="h-full w-full flex items-center justify-center">
                   <Skeleton className="h-[280px] md:h-[340px] w-full rounded-2xl" />
@@ -252,7 +253,7 @@ export default function Dashboard() {
                 </ResponsiveContainer>
               ) : (
                 <div className="h-full w-full flex items-center justify-center">
-                  <p className="text-sm text-on-surface-variant">Sem dados para exibir</p>
+                  <p className="text-sm text-muted-foreground">Sem dados para exibir</p>
                 </div>
               )}
             </Card>
@@ -265,11 +266,11 @@ export default function Dashboard() {
           <motion.section variants={itemVariants} className="space-y-4">
             <div className="flex items-center gap-2">
               <Target className="w-4 h-4 text-tertiary" aria-hidden="true" />
-              <h2 className="text-lg font-display font-bold text-on-surface">
+              <h2 className="text-lg font-display font-bold text-foreground">
                 Orçamentos
               </h2>
             </div>
-            <Card className="premium-card p-5 md:p-6 space-y-5">
+            <Card className="bg-background shadow-md rounded-xl transition-all duration-500 hover:shadow-lg border-none p-5 md:p-6 space-y-5">
               {loading ? (
                 [1, 2, 3].map((i) => (
                   <div key={i} className="space-y-2">
@@ -285,7 +286,7 @@ export default function Dashboard() {
                   {metrics.budgetAlerts.map((budget) => (
                     <div key={budget.id} className="group">
                       <div className="flex justify-between items-center text-sm mb-2">
-                        <span className="font-semibold text-on-surface">{budget.category.name}</span>
+                        <span className="font-semibold text-foreground">{budget.category.name}</span>
                         <span
                           className={cn(
                             "font-display font-bold text-xs",
@@ -295,17 +296,10 @@ export default function Dashboard() {
                           {budget.percentage.toFixed(0)}%
                         </span>
                       </div>
-                      <div className="h-2 bg-surface-container rounded-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${Math.min(budget.percentage, 100)}%` }}
-                          transition={{ duration: 1, ease: "easeOut" }}
-                          className={cn(
-                            "h-full rounded-full transition-all duration-700",
-                            budget.percentage >= 100 ? "bg-destructive" : "bg-primary"
-                          )}
-                        />
-                      </div>
+                      <Progress
+                        value={Math.min(budget.percentage, 100)}
+                        className={budget.percentage >= 100 ? "[&_[data-slot=progress-indicator]]:bg-destructive" : ""}
+                      />
                     </div>
                   ))}
                   <Link
@@ -317,7 +311,7 @@ export default function Dashboard() {
                 </>
               ) : (
                 <div className="py-4 text-center">
-                  <p className="text-sm text-on-surface-variant">
+                  <p className="text-sm text-muted-foreground">
                     Nenhum orçamento configurado.
                   </p>
                   <Link href="/orcamentos" className="text-xs font-semibold text-primary hover:underline mt-1 inline-block">

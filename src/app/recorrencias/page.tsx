@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useToast } from "@/components/ui/toast";
@@ -73,20 +74,20 @@ export default function Recorrencias() {
         body: JSON.stringify({ isActive: !currentIsActive }),
       });
       if (res.ok) {
-        toast.success(currentIsActive ? "Recorrência pausada" : "Recorrência ativada");
+        toast.success(currentIsActive ? "Recorrencia pausada" : "Recorrencia ativada");
         fetchRecurrences();
       } else {
-        toast.error("Erro ao atualizar recorrência");
+        toast.error("Erro ao atualizar recorrencia");
       }
     } catch (e) {
-      toast.error("Erro ao atualizar recorrência");
+      toast.error("Erro ao atualizar recorrencia");
     }
   };
 
   const handleDelete = async (id: string) => {
     const ok = await confirm({
-      title: "Excluir recorrência",
-      message: "Tem certeza que deseja excluir esta recorrência? Lançamentos futuros não serão criados.",
+      title: "Excluir recorrencia",
+      message: "Tem certeza que deseja excluir esta recorrencia? Lancamentos futuros nao serao criados.",
       confirmLabel: "Excluir",
       variant: "danger",
     });
@@ -94,13 +95,13 @@ export default function Recorrencias() {
     try {
       const res = await fetch(`/api/recurrences/${id}`, { method: "DELETE" });
       if (res.ok) {
-        toast.success("Recorrência excluída");
+        toast.success("Recorrencia excluida");
         fetchRecurrences();
       } else {
-        toast.error("Erro ao excluir recorrência");
+        toast.error("Erro ao excluir recorrencia");
       }
     } catch (e) {
-      toast.error("Falha ao excluir recorrência");
+      toast.error("Falha ao excluir recorrencia");
     }
   };
 
@@ -123,7 +124,7 @@ export default function Recorrencias() {
     e.preventDefault();
 
     if (!description || !amount || !categoryId || !startDate) {
-      toast.error("Preencha todos os campos obrigatórios");
+      toast.error("Preencha todos os campos obrigatorios");
       return;
     }
 
@@ -141,17 +142,17 @@ export default function Recorrencias() {
         body: JSON.stringify({ description, amount: numAmount, frequency, startDate, categoryId })
       });
       if (res.ok) {
-        toast.success("Recorrência agendada!");
+        toast.success("Recorrencia agendada!");
         setIsDialogOpen(false);
         resetForm();
         fetchRecurrences();
         fetch("/api/cron/recurrence").catch(() => {});
       } else {
         const err = await res.json().catch(() => ({}));
-        toast.error(err.error || "Erro ao criar recorrência");
+        toast.error(err.error || "Erro ao criar recorrencia");
       }
     } catch (e) {
-      toast.error("Erro ao criar recorrência");
+      toast.error("Erro ao criar recorrencia");
     } finally {
       setSaving(false);
     }
@@ -181,45 +182,45 @@ export default function Recorrencias() {
             <RotateCcw className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-on-background">Recorrências</h1>
-            <p className="text-on-surface-variant font-medium text-sm mt-1">Automação de contas fixas e assinaturas</p>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Recorrencias</h1>
+            <p className="text-muted-foreground font-medium text-sm mt-1">Automacao de contas fixas e assinaturas</p>
           </div>
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (open) resetForm(); }}>
           <DialogTrigger render={<Button className="apple-button-primary h-11 px-8 rounded-xl shadow-lg shadow-secondary/20" />}>
-            <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA RECORRÊNCIA
+            <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA RECORRENCIA
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-[32px] bg-surface sm:shadow-2xl">
-            <div className="p-8 border-b border-outline/10 bg-surface">
+          <DialogContent className="sm:max-w-[600px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-[32px] bg-card sm:shadow-2xl">
+            <div className="p-8 border-b border-border/10 bg-card">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-black tracking-tight text-on-background">
-                  Agendar Automação
+                <DialogTitle className="text-2xl font-black tracking-tight text-foreground">
+                  Agendar Automacao
                 </DialogTitle>
-                <p className="text-on-surface-variant text-sm font-medium mt-1">Configure lançamentos automáticos inteligentes</p>
+                <p className="text-muted-foreground text-sm font-medium mt-1">Configure lancamentos automaticos inteligentes</p>
               </DialogHeader>
             </div>
             
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Descrição</Label>
+                <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Descricao</Label>
                 <Input value={description} onChange={e => setDescription(e.target.value)} 
-                  className="h-12 font-bold text-lg rounded-2xl bg-surface-variant/20 border-outline/10" 
-                  placeholder="Ex: Aluguel, Netflix, Salários..." />
+                  className="h-12 font-bold text-lg rounded-2xl bg-muted/20 border-border/10" 
+                  placeholder="Ex: Aluguel, Netflix, Salarios..." />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Valor Mensal (BRL)</Label>
-                  <MoneyInput value={amount} onChange={setAmount} className="h-12 font-black text-2xl rounded-2xl bg-surface-variant/20 border-outline/10" required />
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Valor Mensal (BRL)</Label>
+                  <MoneyInput value={amount} onChange={setAmount} className="h-12 font-black text-2xl rounded-2xl bg-muted/20 border-border/10" required />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Frequência</Label>
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Frequencia</Label>
                   <Select value={frequency} onValueChange={(v: string | null) => setFrequency(v || "MONTHLY")}>
-                    <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
+                    <SelectTrigger className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10">
                       {frequency === "MONTHLY" ? "Mensal" : frequency === "WEEKLY" ? "Semanal" : frequency === "BIWEEKLY" ? "Quinzenal" : "Anual"}
                     </SelectTrigger>
-                    <SelectContent className="rounded-2xl border-outline/10">
+                    <SelectContent className="rounded-2xl border-border/10">
                       <SelectItem value="WEEKLY" className="rounded-xl font-bold">Semanal</SelectItem>
                       <SelectItem value="BIWEEKLY" className="rounded-xl font-bold">Quinzenal</SelectItem>
                       <SelectItem value="MONTHLY" className="rounded-xl font-bold">Mensal</SelectItem>
@@ -231,17 +232,17 @@ export default function Recorrencias() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Data Inicial</Label>
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Data Inicial</Label>
                   <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
-                    className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" />
+                    className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Categoria</Label>
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Categoria</Label>
                   <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
-                    <SelectTrigger className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10">
-                      {categories.find(c => c.id === categoryId)?.name || <span className="text-on-surface-variant/50">Selecione...</span>}
+                    <SelectTrigger className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10">
+                      {categories.find(c => c.id === categoryId)?.name || <span className="text-muted-foreground/50">Selecione...</span>}
                     </SelectTrigger>
-                    <SelectContent className="rounded-2xl border-outline/10">
+                    <SelectContent className="rounded-2xl border-border/10">
                       {categories.map(c => (
                         <SelectItem key={c.id} value={c.id} className="rounded-xl font-bold">{c.name}</SelectItem>
                       ))}
@@ -261,15 +262,15 @@ export default function Recorrencias() {
       {loading ? (
         <div className="py-32 text-center">
            <Loader2 className="w-10 h-10 animate-spin mx-auto text-secondary/30" />
-           <p className="mt-4 text-on-surface-variant/40 font-black text-xs uppercase tracking-widest">Sincronizando automações...</p>
+           <p className="mt-4 text-muted-foreground/40 font-black text-xs uppercase tracking-widest">Sincronizando automacoes...</p>
         </div>
       ) : recurrences.length === 0 ? (
         <div className="py-16">
           <EmptyState
             icon={RotateCcw}
-            title="Nenhuma recorrência ativa"
+            title="Nenhuma recorrencia ativa"
             description="Agende suas despesas fixas para maior praticidade"
-            ctaLabel="Nova Recorrência"
+            ctaLabel="Nova Recorrencia"
             onCta={() => setIsDialogOpen(true)}
           />
         </div>
@@ -282,39 +283,39 @@ export default function Recorrencias() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: idx * 0.05 + 0.1 }}
             >
-              <Card className="premium-card overflow-hidden group hover:shadow-2xl transition-all duration-500 p-0 border-none bg-surface shadow-lg">
-                <div className="bg-surface-variant/30 p-6 flex justify-between items-start border-b border-outline/5 gap-3">
+              <Card className="overflow-hidden group hover:shadow-2xl transition-all duration-500 p-0 border-none shadow-lg">
+                <div className="bg-muted/30 p-6 flex justify-between items-start border-b border-border/5 gap-3">
                   <div className="space-y-1 flex-1 min-w-0">
-                    <h3 className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Próximo Lançamento</h3>
-                    <div className="flex items-center gap-2 text-on-background font-black text-sm">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Proximo Lancamento</h3>
+                    <div className="flex items-center gap-2 text-foreground font-black text-sm">
                       <Calendar className="w-4 h-4 text-secondary/70 shrink-0" />
                       <span className="truncate">{format(new Date(rec.nextDate || rec.startDate), "dd 'de' MMMM", { locale: ptBR })}</span>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2 shrink-0">
-                    <span className="px-3 py-1 rounded-full bg-surface text-secondary text-[10px] font-black uppercase tracking-widest border border-outline/10 shadow-sm whitespace-nowrap">
+                    <Badge variant="outline" className="text-secondary border-border/10 shadow-sm whitespace-nowrap text-[10px] font-black uppercase tracking-widest">
                       {rec.frequency === 'MONTHLY' ? 'Mensal' : rec.frequency === 'WEEKLY' ? 'Semanal' : rec.frequency === 'BIWEEKLY' ? 'Quinzenal' : 'Anual'}
-                    </span>
-                    <span className={cn(
-                      "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm whitespace-nowrap",
-                       rec.isActive ? "bg-success text-white border-success" : "bg-warning text-white border-warning"
+                    </Badge>
+                    <Badge variant={rec.isActive ? "default" : "secondary"} className={cn(
+                      "text-[10px] font-black uppercase tracking-widest border shadow-sm whitespace-nowrap",
+                      rec.isActive ? "bg-success border-success text-white" : "bg-warning border-warning text-white"
                     )}>
                       {rec.isActive ? "Ativa" : "Pausada"}
-                    </span>
+                    </Badge>
                   </div>
                 </div>
                 
                 <div className="p-7 space-y-6">
                   <div>
-                    <h2 className="text-xl font-black text-on-background tracking-tight leading-tight group-hover:text-secondary transition-colors truncate">{rec.description}</h2>
-                    <span className="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-widest mt-1 block">{rec.category?.name || "Outros"}</span>
+                    <h2 className="text-xl font-black text-foreground tracking-tight leading-tight group-hover:text-secondary transition-colors truncate">{rec.description}</h2>
+                    <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest mt-1 block">{rec.category?.name || "Outros"}</span>
                   </div>
 
-                  <div className="text-3xl font-black text-on-background tracking-tighter">
+                  <div className="text-3xl font-black text-foreground tracking-tighter">
                     {formatCurrency(rec.amount)}
                   </div>
 
-                  <div className="pt-6 border-t border-outline/5 flex items-center justify-between gap-3">
+                  <div className="pt-6 border-t border-border/5 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-secondary/60">
                       <div className={cn("w-2 h-2 rounded-full", rec.isActive ? "bg-success animate-pulse" : "bg-warning")} />
                       {rec.isActive ? "Rodando" : "Pausada"}

@@ -7,6 +7,10 @@ import { safeFormatDate, safeDateSortKey } from "@/lib/date-utils";
 import { Plus, Trash2, Search, ArrowUp, ArrowDown, Filter, LayoutList, FileSpreadsheet, Edit2, RotateCcw, X, Paperclip, ExternalLink, MoreVertical, Wallet, Loader2, Cloud, AlertCircle, CheckCircle2, FileUp, Link as LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -390,7 +394,7 @@ function MovimentacoesContent() {
     <div className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
       {/* Header Section */}
       <PageHeader icon={LayoutList} title="Movimentações" subtitle="Gerencie seu fluxo financeiro real">
-          <Button variant="outline" className="h-10 px-5 font-bold text-sm rounded-xl border-outline/20 hover:bg-surface-variant transition-all">
+          <Button variant="outline" className="h-10 px-5 font-bold text-sm rounded-xl border-border/20 hover:bg-muted transition-all">
             <FileSpreadsheet className="w-4 h-4 mr-2" /> Exportar
           </Button>
           <Dialog open={open} onOpenChange={async (val) => {
@@ -408,52 +412,52 @@ function MovimentacoesContent() {
           }}>
             <DialogTrigger render={<Button className="apple-button-primary h-11 px-6 rounded-xl shadow-lg shadow-secondary/20 whitespace-nowrap"><Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVO</Button>} />
             
-            <DialogContent className="sm:max-w-[550px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-[32px] bg-surface sm:shadow-2xl max-h-[90vh]">
-              <div className="p-8 border-b border-outline/10 bg-surface sticky top-0 z-20">
+            <DialogContent className="sm:max-w-[550px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-[32px] bg-card sm:shadow-2xl max-h-[90vh]">
+              <div className="p-8 border-b border-border/10 bg-card sticky top-0 z-20">
                 <DialogHeader>
-                  <DialogTitle className="text-2xl font-black tracking-tight text-on-background">
+                  <DialogTitle className="text-2xl font-black tracking-tight text-foreground">
                     {editingId ? "Editar Lançamento" : "Novo Lançamento"}
                   </DialogTitle>
-                  <p className="text-on-surface-variant text-sm font-medium mt-1">Registre suas entradas e saídas com precisão</p>
+                  <p className="text-muted-foreground text-sm font-medium mt-1">Registre suas entradas e saídas com precisão</p>
                 </DialogHeader>
               </div>
 
               <form onSubmit={handleSubmit} className="p-8 space-y-6">
                 {/* Dados Básicos */}
                 <div className="space-y-4">
-                  <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Dados Básicos</h3>
+                  <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest border-b border-border/10 pb-2">Dados Básicos</h3>
 
-                  <div className="flex p-1 bg-surface-variant/30 rounded-2xl border border-outline/5">
-                    <Button type="button" variant="ghost" className={cn("flex-1 h-10 rounded-xl text-xs font-black uppercase tracking-widest transition-all", type === "INCOME" ? "bg-surface-container-lowest text-success shadow-md scale-[1.02]" : "text-on-surface-variant")} onClick={() => setType("INCOME")}><ArrowUp className="w-4 h-4 mr-2" /> Receita</Button>
-                    <Button type="button" variant="ghost" className={cn("flex-1 h-10 rounded-xl text-xs font-black uppercase tracking-widest transition-all", type === "EXPENSE" ? "bg-surface-container-lowest text-destructive shadow-md scale-[1.02]" : "text-on-surface-variant")} onClick={() => setType("EXPENSE")}><ArrowDown className="w-4 h-4 mr-2" /> Despesa</Button>
+                  <div className="flex p-1 bg-muted/30 rounded-2xl border border-border/5">
+                    <Button type="button" variant="ghost" className={cn("flex-1 h-10 rounded-xl text-xs font-black uppercase tracking-widest transition-all", type === "INCOME" ? "bg-background text-success shadow-md scale-[1.02]" : "text-muted-foreground")} onClick={() => setType("INCOME")}><ArrowUp className="w-4 h-4 mr-2" /> Receita</Button>
+                    <Button type="button" variant="ghost" className={cn("flex-1 h-10 rounded-xl text-xs font-black uppercase tracking-widest transition-all", type === "EXPENSE" ? "bg-background text-destructive shadow-md scale-[1.02]" : "text-muted-foreground")} onClick={() => setType("EXPENSE")}><ArrowDown className="w-4 h-4 mr-2" /> Despesa</Button>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="description" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Descrição</Label>
-                    <Input id="description" name="description" required value={description} onChange={e => setDescription(e.target.value)} className="h-12 font-bold text-lg rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" placeholder="O que você pagou ou recebeu?" aria-label="Descrição da transação" aria-describedby="description-error" />
+                    <Label htmlFor="description" className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Descrição</Label>
+                    <Input id="description" name="description" required value={description} onChange={e => setDescription(e.target.value)} className="h-12 font-bold text-lg rounded-2xl bg-muted/20 border-border/10 focus:bg-card transition-all" placeholder="O que você pagou ou recebeu?" aria-label="Descrição da transação" aria-describedby="description-error" />
                     {errors.description && <p id="description-error" className="text-xs text-destructive mt-1">{errors.description}</p>}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="amount" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Valor (BRL)</Label>
-                    <MoneyInput id="amount" name="amount" value={amount} onChange={setAmount} className="h-12 font-black text-2xl rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" required aria-label="Valor da transação" aria-describedby="amount-error" />
+                    <Label htmlFor="amount" className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Valor (BRL)</Label>
+                    <MoneyInput id="amount" name="amount" value={amount} onChange={setAmount} className="h-12 font-black text-2xl rounded-2xl bg-muted/20 border-border/10 focus:bg-card transition-all" required aria-label="Valor da transação" aria-describedby="amount-error" />
                     {errors.amount && <p id="amount-error" className="text-xs text-destructive mt-1">{errors.amount}</p>}
                   </div>
                 </div>
 
-                <hr className="border-outline/10" />
+                <Separator />
 
                 {/* Classificação */}
                 <div className="space-y-4">
-                  <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Classificação</h3>
+                  <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest border-b border-border/10 pb-2">Classificação</h3>
 
                   <div className="space-y-2">
-                    <Label htmlFor="categoryId" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Categoria <span className="text-destructive">*</span></Label>
+                    <Label htmlFor="categoryId" className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Categoria <span className="text-destructive">*</span></Label>
                     <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
-                      <SelectTrigger id="categoryId" className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" aria-label="Categoria da transação" aria-describedby="categoryId-error">
+                      <SelectTrigger id="categoryId" className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10" aria-label="Categoria da transação" aria-describedby="categoryId-error">
                         {categories.find(c => c.id === categoryId)?.name || "Selecione..."}
                       </SelectTrigger>
-                      <SelectContent className="rounded-2xl border-outline/10">
+                      <SelectContent className="rounded-2xl border-border/10">
                         {categories.map(c => (
                           <SelectItem key={c.id} value={c.id} className="rounded-xl font-bold">{c.name}</SelectItem>
                         ))}
@@ -463,12 +467,12 @@ function MovimentacoesContent() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="accountId" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Conta <span className="text-destructive">*</span></Label>
+                    <Label htmlFor="accountId" className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Conta <span className="text-destructive">*</span></Label>
                     <Select value={accountId} onValueChange={(v: string | null) => setAccountId(v || "")}>
-                      <SelectTrigger id="accountId" className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" aria-label="Conta da transação">
+                      <SelectTrigger id="accountId" className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10" aria-label="Conta da transação">
                         {accounts.find(a => a.id === accountId)?.name || "Selecione..."}
                       </SelectTrigger>
-                      <SelectContent className="rounded-2xl border-outline/10">
+                      <SelectContent className="rounded-2xl border-border/10">
                         {accounts.map(a => (
                           <SelectItem key={a.id} value={a.id} className="rounded-xl font-bold">{a.name}</SelectItem>
                         ))}
@@ -478,12 +482,12 @@ function MovimentacoesContent() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="frequency" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Recorrência</Label>
+                    <Label htmlFor="frequency" className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Recorrência</Label>
                     <Select value={frequency} onValueChange={(v: string | null) => setFrequency(v || "")}>
-                      <SelectTrigger id="frequency" className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" aria-label="Recorrência da transação">
+                      <SelectTrigger id="frequency" className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10" aria-label="Recorrência da transação">
                         {frequency === "MONTHLY" ? "Mensal" : "Nenhuma"}
                       </SelectTrigger>
-                      <SelectContent className="rounded-2xl border-outline/10">
+                      <SelectContent className="rounded-2xl border-border/10">
                         <SelectItem value="NONE" className="rounded-xl font-bold">Nenhuma</SelectItem>
                         <SelectItem value="MONTHLY" className="rounded-xl font-bold">Mensal</SelectItem>
                       </SelectContent>
@@ -491,31 +495,31 @@ function MovimentacoesContent() {
                   </div>
                 </div>
 
-                <hr className="border-outline/10" />
+                <Separator />
 
                 {/* Datas e Status */}
                 <div className="space-y-4">
-                  <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-2">Datas e Status</h3>
+                  <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest border-b border-border/10 pb-2">Datas e Status</h3>
 
                   <div className="space-y-2">
-                    <Label htmlFor="date" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Data</Label>
-                    <Input id="date" name="date" required type="date" value={date} onChange={e => setDate(e.target.value)} className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" aria-label="Data da transação" aria-describedby="date-error" />
+                    <Label htmlFor="date" className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Data</Label>
+                    <Input id="date" name="date" required type="date" value={date} onChange={e => setDate(e.target.value)} className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10 focus:bg-card transition-all" aria-label="Data da transação" aria-describedby="date-error" />
                     {errors.date && <p id="date-error" className="text-xs text-destructive mt-1">{errors.date}</p>}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="dueDate" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Vencimento</Label>
-                    <Input id="dueDate" name="dueDate" type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface transition-all" aria-label="Data de vencimento" aria-describedby="dueDate-error" />
+                    <Label htmlFor="dueDate" className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Vencimento</Label>
+                    <Input id="dueDate" name="dueDate" type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10 focus:bg-card transition-all" aria-label="Data de vencimento" aria-describedby="dueDate-error" />
                     {errors.dueDate && <p id="dueDate-error" className="text-xs text-destructive mt-1">{errors.dueDate}</p>}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="paymentStatus" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Status de Pagamento</Label>
+                    <Label htmlFor="paymentStatus" className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Status de Pagamento</Label>
                     <Select value={paymentStatus} onValueChange={(v: string | null) => setPaymentStatus(v || "")}>
-                      <SelectTrigger id="paymentStatus" className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" aria-label="Status de pagamento" aria-describedby="paymentStatus-error">
+                      <SelectTrigger id="paymentStatus" className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10" aria-label="Status de pagamento" aria-describedby="paymentStatus-error">
                         {paymentStatus === "PAID" ? "Pago" : "Pendente"}
                       </SelectTrigger>
-                      <SelectContent className="rounded-2xl border-outline/10">
+                      <SelectContent className="rounded-2xl border-border/10">
                         <SelectItem value="PAID" className="rounded-xl font-bold">Confirmado / Pago</SelectItem>
                         <SelectItem value="PENDING" className="rounded-xl font-bold">Pendente / Agendado</SelectItem>
                       </SelectContent>
@@ -526,13 +530,13 @@ function MovimentacoesContent() {
 
                 {paymentStatus === "PENDING" && (
                   <div className="space-y-2">
-                    <Label htmlFor="amountPaid" className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Valor já Pago (parcial)</Label>
-                    <MoneyInput id="amountPaid" name="amountPaid" value={amountPaid} onChange={setAmountPaid} className="h-12 font-bold rounded-2xl bg-surface-variant/20 border-outline/10" placeholder="0,00" aria-label="Valor parcial já pago" />
+                    <Label htmlFor="amountPaid" className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Valor já Pago (parcial)</Label>
+                    <MoneyInput id="amountPaid" name="amountPaid" value={amountPaid} onChange={setAmountPaid} className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10" placeholder="0,00" aria-label="Valor parcial já pago" />
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Comprovante</Label>
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Comprovante</Label>
                   <div className="flex gap-3">
                     <div className="relative flex-1">
                       <Input
@@ -560,16 +564,16 @@ function MovimentacoesContent() {
                       />
                       <div className={cn(
                         "h-12 rounded-2xl border-2 border-dashed flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-widest",
-                        blobUrl ? "border-success bg-success/10 text-success" : "border-outline/20 bg-surface-variant/30 text-on-surface-variant/60"
+                        blobUrl ? "border-success bg-success/10 text-success" : "border-border/20 bg-muted/30 text-muted-foreground/60"
                       )}>
                         {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : blobUrl ? "PRONTO" : "ANEXAR"}
                       </div>
                     </div>
-                    <Input placeholder="Link externo..." value={attachmentUrl} onChange={e => setAttachmentUrl(e.target.value)} className="flex-[1.5] h-12 rounded-2xl bg-surface-variant/20 border-outline/10 focus:bg-surface font-medium" aria-label="Link externo do comprovante" />
+                    <Input placeholder="Link externo..." value={attachmentUrl} onChange={e => setAttachmentUrl(e.target.value)} className="flex-[1.5] h-12 rounded-2xl bg-muted/20 border-border/10 focus:bg-card font-medium" aria-label="Link externo do comprovante" />
                   </div>
                 </div>
 
-                <div className="pt-4 sticky bottom-0 bg-surface pb-2">
+                <div className="pt-4 sticky bottom-0 bg-card pb-2">
                   <Button type="submit" disabled={saving} className="apple-button-primary w-full h-14 text-lg font-black rounded-2xl shadow-xl shadow-secondary/20">
                     {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : editingId ? "SALVAR ALTERAÇÕES" : "CONFIRMAR LANÇAMENTO"}
                   </Button>
@@ -582,8 +586,8 @@ function MovimentacoesContent() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="premium-card p-4 min-h-[110px] flex flex-col justify-between">
-          <p className="text-[9px] uppercase tracking-widest font-black text-on-surface-variant/50">Saldo Geral</p>
-          <h2 className={cn("text-xl md:text-2xl font-black mt-2 tracking-tighter truncate", stats.balance >= 0 ? "text-on-background" : "text-destructive")}>{formatCurrency(stats.balance)}</h2>
+          <p className="text-[9px] uppercase tracking-widest font-black text-muted-foreground/50">Saldo Geral</p>
+          <h2 className={cn("text-xl md:text-2xl font-black mt-2 tracking-tighter truncate", stats.balance >= 0 ? "text-foreground" : "text-destructive")}>{formatCurrency(stats.balance)}</h2>
           <div className="flex items-center gap-1.5 mt-2 opacity-40">
             <Wallet className="w-3 h-3 text-secondary" />
             <span className="text-[8px] font-black uppercase tracking-widest">Total Líquido</span>
@@ -604,18 +608,18 @@ function MovimentacoesContent() {
       </div>
 
       {/* Filters */}
-      <div className="space-y-4 bg-surface p-6 rounded-[32px] border border-outline/10 mx-4 md:mx-0 shadow-sm">
+      <div className="space-y-4 bg-card p-6 rounded-[32px] border border-border/10 mx-4 md:mx-0 shadow-sm">
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/40" />
-            <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Pesquisar lançamentos..." className="pl-12 h-12 bg-surface-variant/40 border-transparent rounded-2xl focus:bg-surface transition-all" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40" />
+            <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Pesquisar lançamentos..." className="pl-12 h-12 bg-muted/40 border-transparent rounded-2xl focus:bg-card transition-all" />
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
             <Select value={filterCategory} onValueChange={(v) => setFilterCategory(v || "ALL")}>
-              <SelectTrigger className="sm:w-56 h-12 rounded-2xl bg-surface-variant/30 border-transparent font-black uppercase text-[10px] tracking-widest">
+              <SelectTrigger className="sm:w-56 h-12 rounded-2xl bg-muted/30 border-transparent font-black uppercase text-[10px] tracking-widest">
                 <div className="flex items-center gap-2"><Filter className="w-4 h-4 text-secondary" />{filterCategory === "Todos" ? "TODAS CATEGORIAS" : filterCategory.toUpperCase()}</div>
               </SelectTrigger>
-              <SelectContent className="rounded-2xl border-outline/10">
+              <SelectContent className="rounded-2xl border-border/10">
                 <SelectItem value="Todos" className="rounded-xl font-bold">TODAS CATEGORIAS</SelectItem>
                 {categories.map(c => (
                   <SelectItem key={c.id} value={c.name} className="rounded-xl font-bold">{c.name.toUpperCase()}</SelectItem>
@@ -629,27 +633,31 @@ function MovimentacoesContent() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:grid sm:grid-cols-2 lg:flex gap-3 p-4 bg-surface-variant/20 rounded-2xl border border-outline/5 lg:items-end">
+        <div className="flex flex-col sm:grid sm:grid-cols-2 lg:flex gap-3 p-4 bg-muted/20 rounded-2xl border border-border/5 lg:items-end">
           <div className="space-y-1 flex-1">
-            <Label className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/50 ml-2">Período De</Label>
-            <Input type="date" value={startDateFilter} onChange={e => setStartDateFilter(e.target.value)} className="h-12 bg-surface-container-lowest border-outline/10 rounded-xl text-xs font-black" />
+            <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 ml-2">Período De</Label>
+            <Input type="date" value={startDateFilter} onChange={e => setStartDateFilter(e.target.value)} className="h-12 bg-background border-border/10 rounded-xl text-xs font-black" />
           </div>
           <div className="space-y-1 flex-1">
-            <Label className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/50 ml-2">Período Até</Label>
-            <Input type="date" value={endDateFilter} onChange={e => setEndDateFilter(e.target.value)} className="h-12 bg-surface-container-lowest border-outline/10 rounded-xl text-xs font-black" />
+            <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 ml-2">Período Até</Label>
+            <Input type="date" value={endDateFilter} onChange={e => setEndDateFilter(e.target.value)} className="h-12 bg-background border-border/10 rounded-xl text-xs font-black" />
           </div>
           
-          <div className="flex bg-surface-container-lowest rounded-xl p-0.5 border border-outline/10 h-10 overflow-hidden">
-            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", !filterType ? "bg-surface-variant/30 text-on-surface shadow-sm" : "text-on-surface-variant/40")} onClick={() => setFilterType(null)}>Todos</Button>
-            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterType === "INCOME" ? "bg-success text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterType("INCOME")}>Receitas</Button>
-            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterType === "EXPENSE" ? "bg-destructive text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterType("EXPENSE")}>Despesas</Button>
-          </div>
+          <Tabs value={filterType || "ALL"} onValueChange={(val) => setFilterType(val === "ALL" ? null : val)} className="flex-1">
+            <TabsList className="h-10 w-full bg-background rounded-xl p-0.5 border border-border/10">
+              <TabsTrigger value="ALL" className="flex-1 text-[9px] font-black uppercase tracking-widest whitespace-nowrap">Todos</TabsTrigger>
+              <TabsTrigger value="INCOME" className="flex-1 text-[9px] font-black uppercase tracking-widest whitespace-nowrap">Receitas</TabsTrigger>
+              <TabsTrigger value="EXPENSE" className="flex-1 text-[9px] font-black uppercase tracking-widest whitespace-nowrap">Despesas</TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-          <div className="flex bg-surface-container-lowest rounded-xl p-0.5 border border-outline/10 h-10 overflow-hidden">
-            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterPaymentStatus === "ALL" ? "bg-surface-variant/30 text-on-surface shadow-sm" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("ALL")}>Status</Button>
-            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterPaymentStatus === "PAID" ? "bg-secondary text-on-secondary shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("PAID")}>Pagas</Button>
-            <Button variant="ghost" className={cn("flex-1 h-full px-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap", filterPaymentStatus === "PENDING" ? "bg-warning text-white shadow-lg" : "text-on-surface-variant/40")} onClick={() => setFilterPaymentStatus("PENDING")}>Pendentes</Button>
-          </div>
+          <Tabs value={filterPaymentStatus} onValueChange={setFilterPaymentStatus} className="flex-1">
+            <TabsList className="h-10 w-full bg-background rounded-xl p-0.5 border border-border/10">
+              <TabsTrigger value="ALL" className="flex-1 text-[9px] font-black uppercase tracking-widest whitespace-nowrap">Status</TabsTrigger>
+              <TabsTrigger value="PAID" className="flex-1 text-[9px] font-black uppercase tracking-widest whitespace-nowrap">Pagas</TabsTrigger>
+              <TabsTrigger value="PENDING" className="flex-1 text-[9px] font-black uppercase tracking-widest whitespace-nowrap">Pendentes</TabsTrigger>
+            </TabsList>
+          </Tabs>
 
           {(searchTerm || filterCategory !== "Todos" || filterType || filterPaymentStatus !== "ALL" || startDateFilter || endDateFilter) && (
             <Button variant="outline" onClick={clearFilters} className="h-10 px-4 rounded-xl font-black text-[9px] uppercase border-destructive/30 text-destructive hover:bg-destructive/10">
@@ -662,42 +670,44 @@ function MovimentacoesContent() {
       {/* Transaction List */}
       <div className="hidden md:block">
         <Card className="premium-card overflow-hidden border-none shadow-xl">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-surface-variant/30 border-b border-outline/5">
-                <TableHead className="px-6 py-5 font-black uppercase text-[10px] tracking-widest text-on-surface-variant/60 cursor-pointer" onClick={() => handleSort("date")}>Data</TableHead>
-                <TableHead className="py-5 font-black uppercase text-[10px] tracking-widest text-on-surface-variant/60 cursor-pointer" onClick={() => handleSort("description")}>Lançamento</TableHead>
-                <TableHead className="py-5 font-black uppercase text-[10px] tracking-widest text-on-surface-variant/60 text-center">Categoria</TableHead>
-                <TableHead className="px-6 py-5 font-black uppercase text-[10px] tracking-widest text-on-surface-variant/60 text-right cursor-pointer" onClick={() => handleSort("amount")}>Valor</TableHead>
-                <TableHead className="w-32"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow><TableCell colSpan={5} className="text-center py-32"><Loader2 className="w-8 h-8 animate-spin mx-auto" /></TableCell></TableRow>
-              ) : transactions.length === 0 ? (
-                <TableRow><TableCell colSpan={5} className="text-center py-32"><EmptyState icon={LayoutList} title="Sem movimentações" description="Ajuste os filtros ou crie um novo lançamento." /></TableCell></TableRow>
-              ) : sortedTransactions.map((t) => (
-                <TableRow key={t.id} className="group border-b border-outline/5 hover:bg-surface-variant/10 transition-all">
-                  <TableCell className="px-6 py-5 font-black text-sm">                {safeFormatDate(t.date, "dd/MM/yy")}</TableCell>
-                  <TableCell className="py-5 font-bold text-sm">
-                    {t.description}
-                    <div className="flex gap-2 mt-2">
-                      <span className={cn("px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border", t.paymentStatus === "PENDING" ? "bg-warning/10 text-warning border-warning/30" : "bg-success/10 text-success border-success/30")}>{t.paymentStatus === "PENDING" ? "Pendente" : "Confirmado"}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="py-5 text-center"><span className="px-3 py-1 rounded-full text-[9px] font-black uppercase bg-surface-variant text-on-surface-variant/60">{t.category?.name || "Outros"}</span></TableCell>
-                  <TableCell className={cn("px-6 py-5 text-right font-black text-base", t.type === 'INCOME' ? 'text-success' : 'text-on-background')}>{t.type === 'EXPENSE' && "- "}{formatCurrency(t.amount)}</TableCell>
-                  <TableCell className="pr-6 text-right">
-                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} aria-label="Editar transação" className="h-9 w-9 rounded-xl bg-secondary/5 text-secondary"><Edit2 className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} aria-label="Excluir transação" className="h-9 w-9 rounded-xl bg-destructive/10 text-destructive"><Trash2 className="w-4 h-4" /></Button>
-                    </div>
-                  </TableCell>
+          <ScrollArea>
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/30 border-b border-border/5">
+                  <TableHead className="px-6 py-5 font-black uppercase text-[10px] tracking-widest text-muted-foreground/60 cursor-pointer" onClick={() => handleSort("date")}>Data</TableHead>
+                  <TableHead className="py-5 font-black uppercase text-[10px] tracking-widest text-muted-foreground/60 cursor-pointer" onClick={() => handleSort("description")}>Lançamento</TableHead>
+                  <TableHead className="py-5 font-black uppercase text-[10px] tracking-widest text-muted-foreground/60 text-center">Categoria</TableHead>
+                  <TableHead className="px-6 py-5 font-black uppercase text-[10px] tracking-widest text-muted-foreground/60 text-right cursor-pointer" onClick={() => handleSort("amount")}>Valor</TableHead>
+                  <TableHead className="w-32"></TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow><TableCell colSpan={5} className="text-center py-32"><Loader2 className="w-8 h-8 animate-spin mx-auto" /></TableCell></TableRow>
+                ) : transactions.length === 0 ? (
+                  <TableRow><TableCell colSpan={5} className="text-center py-32"><EmptyState icon={LayoutList} title="Sem movimentações" description="Ajuste os filtros ou crie um novo lançamento." /></TableCell></TableRow>
+                ) : sortedTransactions.map((t) => (
+                  <TableRow key={t.id} className="group border-b border-border/5 hover:bg-muted/10 transition-all">
+                    <TableCell className="px-6 py-5 font-black text-sm">                {safeFormatDate(t.date, "dd/MM/yy")}</TableCell>
+                    <TableCell className="py-5 font-bold text-sm">
+                      {t.description}
+                      <div className="flex gap-2 mt-2">
+                        <Badge variant="outline" className={cn("text-[8px] font-black uppercase tracking-widest", t.paymentStatus === "PENDING" ? "bg-warning/10 text-warning border-warning/30" : "bg-success/10 text-success border-success/30")}>{t.paymentStatus === "PENDING" ? "Pendente" : "Confirmado"}</Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-5 text-center"><Badge variant="outline" className="px-3 py-1 text-[9px] font-black uppercase bg-muted text-muted-foreground/60">{t.category?.name || "Outros"}</Badge></TableCell>
+                    <TableCell className={cn("px-6 py-5 text-right font-black text-base", t.type === 'INCOME' ? 'text-success' : 'text-foreground')}>{t.type === 'EXPENSE' && "- "}{formatCurrency(t.amount)}</TableCell>
+                    <TableCell className="pr-6 text-right">
+                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(t)} aria-label="Editar transação" className="h-9 w-9 rounded-xl bg-secondary/5 text-secondary"><Edit2 className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} aria-label="Excluir transação" className="h-9 w-9 rounded-xl bg-destructive/10 text-destructive"><Trash2 className="w-4 h-4" /></Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
         </Card>
       </div>
 
@@ -717,7 +727,7 @@ function MovimentacoesContent() {
 
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 md:px-0 mt-8 pb-10">
-          <p className="text-[10px] font-black uppercase text-on-surface-variant/50">{total} registros · Página {page} de {totalPages}</p>
+          <p className="text-[10px] font-black uppercase text-muted-foreground/50">{total} registros · Página {page} de {totalPages}</p>
           <div className="flex gap-2 items-center">
             <Button variant="outline" disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="h-11 px-4 rounded-2xl font-black text-[10px] uppercase">Anterior</Button>
             <div className="flex gap-1">
@@ -736,7 +746,7 @@ function MovimentacoesContent() {
                 );
               })}
               {totalPages > 5 && (
-                <span className="flex items-center px-2 text-on-surface-variant/50">...</span>
+                <span className="flex items-center px-2 text-muted-foreground/50">...</span>
               )}
             </div>
             <Button variant="outline" disabled={page >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))} className="h-11 px-4 rounded-2xl font-black text-[10px] uppercase">Próxima</Button>
@@ -746,7 +756,7 @@ function MovimentacoesContent() {
 
       {/* Mobile FAB */}
       <div className="md:hidden fixed z-[50]" style={{ bottom: 'calc(6rem + env(safe-area-inset-bottom))', right: '1.5rem' }}>
-        <button onClick={() => { resetForm(); setOpen(true); }} className="h-16 w-16 rounded-[24px] bg-secondary text-on-secondary shadow-2xl shadow-secondary/40 flex items-center justify-center border-none active:scale-95 transition-all">
+        <button onClick={() => { resetForm(); setOpen(true); }} className="h-16 w-16 rounded-[24px] bg-secondary text-secondary-foreground shadow-2xl shadow-secondary/40 flex items-center justify-center border-none active:scale-95 transition-all">
           <Plus className="w-8 h-8" strokeWidth={3.5} />
         </button>
       </div>
