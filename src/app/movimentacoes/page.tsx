@@ -71,7 +71,7 @@ interface Category {
   name: string;
 }
 
-function MovimentacoesContent() {
+function MovimentaçõesContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -307,10 +307,13 @@ function MovimentacoesContent() {
 
       if (res.ok) {
         toast.success(editingId ? "Atualizado com sucesso!" : "Lançamento confirmado!");
-        setOpen(false);
-        resetForm();
-        fetchTransactions();
-        fetchStats();
+        // Pequeno delay para garantir que o toast apareça antes do modal fechar
+        setTimeout(() => {
+          setOpen(false);
+          resetForm();
+          fetchTransactions();
+          fetchStats();
+        }, 100);
       } else {
         const error = await res.json();
         toast.error(error.error || "Erro ao salvar");
@@ -1074,7 +1077,7 @@ function MovimentacoesContent() {
                       className="group border-border hover:bg-muted/40 transition-colors"
                     >
                       <TableCell className="px-5 py-4 text-sm font-semibold text-foreground">
-                        {safeFormatDate(t.date, "dd/MM/yy")}
+                        {safeFormatDate(t.date, "dd/MM/yyyy")}
                       </TableCell>
                       <TableCell className="py-4">
                         <p className="text-sm font-semibold text-foreground truncate max-w-[280px]">
@@ -1354,7 +1357,7 @@ function MovimentacoesContent() {
   );
 }
 
-export default function Movimentacoes() {
+export default function Movimentações() {
   return (
     <Suspense
       fallback={
@@ -1363,7 +1366,7 @@ export default function Movimentacoes() {
         </div>
       }
     >
-      <MovimentacoesContent />
+      <MovimentaçõesContent />
     </Suspense>
   );
 }

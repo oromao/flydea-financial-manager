@@ -42,12 +42,12 @@ export function toUtcMidnight(dateInput: string): Date {
 }
 
 /**
- * Safely formats a date string/Date to dd/MM/yy.
+ * Safely formats a date string/Date to dd/MM/yyyy (pt-BR full year).
  * Returns fallback on any invalid input — never throws.
  */
 export function safeFormatDate(
   dateInput: string | Date | null | undefined,
-  fmt: string = "dd/MM/yy",
+  fmt: string = "dd/MM/yyyy",
   fallback: string = "—"
 ): string {
   if (!dateInput) return fallback;

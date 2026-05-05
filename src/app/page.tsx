@@ -138,6 +138,51 @@ export default function Dashboard() {
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
+  if (loading) {
+    return (
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0"
+      >
+        {/* Hero Skeleton */}
+        <motion.section variants={itemVariants}>
+          <div className="bg-primary overflow-hidden rounded-[32px] md:rounded-[40px] p-6 md:p-10 shadow-2xl text-white relative">
+            <div className="space-y-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-3.5 w-3.5 rounded-full bg-accent/20" />
+                  <div className="h-3 w-24 rounded-full bg-accent/20" />
+                </div>
+                <div className="p-3 rounded-2xl bg-accent/10 border border-border">
+                  <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-accent/20" />
+                </div>
+              </div>
+              <div className="h-12 md:h-16 w-48 md:w-72 bg-accent/10 rounded-2xl animate-pulse" />
+              <div className="grid grid-cols-3 gap-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="bg-accent/10 rounded-2xl p-3 md:p-4 border border-border">
+                    <div className="h-3 w-16 bg-accent/20 rounded mb-1" />
+                    <div className="h-4 w-20 bg-accent/10 rounded animate-pulse" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* Chart Skeleton */}
+        <div className="space-y-4">
+          <div className="h-6 w-40 bg-muted/30 rounded" />
+          <div className="bg-background rounded-2xl p-4 md:p-6 shadow-sm border border-border/10">
+            <div className="h-[240px] md:h-[320px] w-full bg-muted/20 rounded-2xl animate-pulse" />
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
   if (!loading && metrics.balance === 0 && metrics.income === 0 && metrics.expenses === 0) {
     return (
       <motion.div initial="hidden" animate="visible" variants={containerVariants} className="max-w-7xl mx-auto">

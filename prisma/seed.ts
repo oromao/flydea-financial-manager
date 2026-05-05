@@ -19,7 +19,7 @@ async function main() {
     update: {},
     create: {
       email: 'admin@flydea.com',
-      name: 'Administrador FLY DEA',
+      name: 'Administrador FLYDEA',
       password: hashedPassword,
       role: 'ADMIN',
     },
@@ -97,13 +97,16 @@ async function main() {
     },
   })
 
-  // Seed transactions for the current month
+  // Seed transactions for the last 3 months
   const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const prefix = `${year}-${month}-`
+  const categoryMap = new Map<string, string>()
+  for (const cat of systemCategories) {
+    const dbCat = await prisma.category.findFirst({ where: { name: cat.name, userId: null } })
+    if (dbCat) categoryMap.set(cat.name, dbCat.id)
+  }
 
   const transactionSeed = [
+    // Current month
     { description: 'Salário', amount: 850000, type: 'INCOME', day: 5, category: 'Salário', paymentStatus: 'PAID' },
     { description: 'Freela Design', amount: 350000, type: 'INCOME', day: 10, category: 'Serviços', paymentStatus: 'PAID' },
     { description: 'Aluguel', amount: 220000, type: 'EXPENSE', day: 1, category: 'Aluguel', paymentStatus: 'PAID' },
@@ -116,28 +119,36 @@ async function main() {
     { description: 'Venda Produto', amount: 150000, type: 'INCOME', day: 20, category: 'Vendas', paymentStatus: 'PENDING' },
     { description: 'Gasolina', amount: 18500, type: 'EXPENSE', day: 22, category: 'Transporte', paymentStatus: 'PAID' },
     { description: 'Restaurante', amount: 12300, type: 'EXPENSE', day: 25, category: 'Alimentação', paymentStatus: 'PENDING' },
+    // 1 month ago
+    { description: 'Salário', amount: 850000, type: 'INCOME', day: 5, category: 'Salário', paymentStatus: 'PAID', monthOffset: -1 },
+    { description: 'Aluguel', amount: 220000, type: 'EXPENSE', day: 1, category: 'Aluguel', paymentStatus: 'PAID', monthOffset: -1 },
+    { description: 'Supermercado', amount: 92000, type: 'EXPENSE', day: 8, category: 'Alimentação', paymentStatus: 'PAID', monthOffset: -1 },
+    { description: 'Uber', amount: 5200, type: 'EXPENSE', day: 15, category: 'Transporte', paymentStatus: 'PAID', monthOffset: -1 },
+    { description: 'Venda Produto', amount: 200000, type: 'INCOME', day: 22, category: 'Vendas', paymentStatus: 'PAID', monthOffset: -1 },
+    // 2 months ago
+    { description: 'Salário', amount: 800000, type: 'INCOME', day: 5, category: 'Salário', paymentStatus: 'PAID', monthOffset: -2 },
+    { description: 'Aluguel', amount: 220000, type: 'EXPENSE', day: 1, category: 'Aluguel', paymentStatus: 'PAID', monthOffset: -2 },
+    { description: 'Supermercado', amount: 78000, type: 'EXPENSE', day: 10, category: 'Alimentação', paymentStatus: 'PAID', monthOffset: -2 },
+    { description: 'Academia', amount: 11990, type: 'EXPENSE', day: 12, category: 'Saúde', paymentStatus: 'PAID', monthOffset: -2 },
+    { description: 'Freela Design', amount: 300000, type: 'INCOME', day: 18, category: 'Serviços', paymentStatus: 'PAID', monthOffset: -2 },
   ]
-
-  // Get category IDs
-  const categoryMap = new Map<string, string>()
-  for (const cat of systemCategories) {
-    const dbCat = await prisma.category.findFirst({ where: { name: cat.name, userId: null } })
-    if (dbCat) categoryMap.set(cat.name, dbCat.id)
-  }
 
   for (const tx of transactionSeed) {
     const catId = categoryMap.get(tx.category)
     if (!catId) continue
+    
+    const txDate = new Date(now.getFullYear(), now.getMonth() + (tx.monthOffset || 0), tx.day)
     const existing = await prisma.transaction.findFirst({
-      where: { userId: testUser.id, description: tx.description }
+      where: { userId: testUser.id, description: tx.description, date: txDate }
     })
+    
     if (!existing) {
       await prisma.transaction.create({
         data: {
           description: tx.description,
           amount: tx.amount,
           type: tx.type,
-          date: new Date(now.getFullYear(), now.getMonth(), tx.day),
+          date: txDate,
           categoryId: catId,
           userId: testUser.id,
           accountId: testUser.id,
@@ -148,32 +159,37 @@ async function main() {
   }
 
   // Seed budget for test user
+  const currentYear = now.getFullYear()
+  const currentMonth = String(now.getMonth() + 1).padStart(2, '0')
+  const period = `${currentYear}-${currentMonth}`
+  
   const existingBudget = await prisma.budget.findFirst({ where: { userId: testUser.id } })
-  if (!existingBudget && categoryMap.has('Lazer')) {
-    await prisma.budget.create({
-      data: {
-        userId: testUser.id,
-        categoryId: categoryMap.get('Lazer')!,
-        amount: 50000,
-        period: `${year}-${month}`,
-        alertAt: 80,
-      }
-    })
-    // Also create an Alimentação budget
+  if (!existingBudget) {
+    if (categoryMap.has('Lazer')) {
+      await prisma.budget.create({
+        data: {
+          userId: testUser.id,
+          categoryId: categoryMap.get('Lazer')!,
+          amount: 50000,
+          period: period,
+          alertAt: 80,
+        }
+      })
+    }
     if (categoryMap.has('Alimentação')) {
       await prisma.budget.create({
         data: {
           userId: testUser.id,
           categoryId: categoryMap.get('Alimentação')!,
           amount: 100000,
-          period: `${year}-${month}`,
+          period: period,
           alertAt: 80,
         }
       })
     }
   }
 
-  console.log('Seed completo com transações e orçamentos de exemplo')
+  console.log('Seed completo com transações e orçamentos de exemplo para 3 meses')
 }
 
 main()

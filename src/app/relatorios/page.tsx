@@ -166,7 +166,7 @@ export default function Relatorios() {
           <EmptyState
             icon={BarChart3}
             title="Nenhum dado disponivel"
-            description="Registre movimentacoes neste periodo para gerar relatorios e analises."
+            description="Registre movimentações neste periodo para gerar relatórios e análises."
           />
         </div>
       ) : (

@@ -37,7 +37,7 @@ interface Category {
   name: string;
 }
 
-export default function Recorrencias() {
+export default function Recorrências() {
   const [recurrences, setRecurrences] = useState<Recurrence[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -182,7 +182,7 @@ export default function Recorrencias() {
             <RotateCcw className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Recorrencias</h1>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Recorrências</h1>
             <p className="text-muted-foreground font-medium text-sm mt-1">Automacao de contas fixas e assinaturas</p>
           </div>
         </div>
