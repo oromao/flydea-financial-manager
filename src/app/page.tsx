@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  ArrowUpRight, ArrowDownRight, Clock, Sparkles, ChevronRight,
+  ArrowUpRight, ArrowDownRight, Clock, ChevronRight,
   Target, BarChart3
 } from "lucide-react";
 import Link from "next/link";
@@ -12,8 +12,6 @@ import { cn } from "@/lib/utils";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Label } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
 import { WeeklyCashflowForecast } from "@/components/weekly-cashflow-forecast";
-import { SpendDecisionIndicator } from "@/components/spend-decision-indicator";
-import { DailyInsight } from "@/components/daily-insight";
 import { EmptyDashboard } from "@/components/ui/empty-states";
 import { DashboardHero } from "@/components/dashboard/dashboard-hero";
 
@@ -145,28 +143,6 @@ export default function Dashboard() {
           lastUpdated={lastUpdated}
           categories={categories}
         />
-      </motion.section>
-
-      {/* AI Copilot Message */}
-      {!loading && metrics.copilot?.proactiveMessage && (
-        <motion.section variants={itemVariants}>
-          <div className="bg-surface-container-lowest rounded-2xl p-5 md:p-6 shadow-sm border border-outline/10 flex items-start gap-3">
-            <div className="p-2 rounded-xl bg-primary/10 shrink-0">
-              <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" />
-            </div>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-primary/60 mb-1">Copiloto IA</p>
-              <p className="text-on-surface text-sm font-medium leading-relaxed">
-                {metrics.copilot.proactiveMessage}
-              </p>
-            </div>
-          </div>
-        </motion.section>
-      )}
-
-      {/* Spend Decision Indicator */}
-      <motion.section variants={itemVariants}>
-        <SpendDecisionIndicator />
       </motion.section>
 
       {/* Main Content: Charts + Sidebar */}
@@ -348,10 +324,6 @@ export default function Dashboard() {
             </Card>
           </motion.section>
 
-          {/* Daily Insight */}
-          <motion.section variants={itemVariants}>
-            <DailyInsight metrics={metrics} />
-          </motion.section>
         </div>
       </div>
     </motion.div>

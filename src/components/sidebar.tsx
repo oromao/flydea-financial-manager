@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, ReceiptText, BarChart3, LogOut, Wallet, 
   UserCircle, RotateCcw, History, Target, CreditCard, 
-  BadgeDollarSign, CalendarRange, Camera, ShieldCheck, 
-  TrendingUp, Menu, X, Brain, Clock, Plus, Sparkles, ChevronRight
+  BadgeDollarSign, CalendarRange, ShieldCheck, 
+  TrendingUp, Menu, X, ChevronRight, Lightbulb
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -18,15 +18,14 @@ const DarkModeToggleClient = dynamic(() => import("./dark-mode-toggle").then(mod
 
 const navItems = [
   { name: "Painel Geral", href: "/", icon: LayoutDashboard },
-  { name: "Movimentações", href: "/movimentacoes", icon: ReceiptText },
-  { name: "Contas e Cartões", href: "/contas", icon: CreditCard },
+  { name: "Movimentacoes", href: "/movimentacoes", icon: ReceiptText },
+  { name: "Contas e Cartoes", href: "/contas", icon: CreditCard },
   { name: "Fluxo de Caixa", href: "/fluxo-caixa", icon: TrendingUp },
   { name: "Contas a Pagar", href: "/contas-a-pagar", icon: BadgeDollarSign },
   { name: "Planejamento", href: "/orcamentos", icon: Target },
-  { name: "Recorrências", href: "/recorrencias", icon: RotateCcw },
+  { name: "Recorrencias", href: "/recorrencias", icon: RotateCcw },
   { name: "Fechamento", href: "/fechamento", icon: CalendarRange },
-  { name: "Inteligência IA", href: "/agents", icon: Brain },
-  { name: "Análises", href: "/relatorios", icon: BarChart3 },
+  { name: "Analises", href: "/relatorios", icon: BarChart3 },
 ];
 
 const adminItems = [
@@ -207,7 +206,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
           {/* Advice Card */}
           <div className="p-5 rounded-3xl bg-primary/5 border border-primary/10 space-y-3">
             <div className="flex items-center gap-2 text-primary">
-              <Sparkles className="w-4 h-4" />
+              <Lightbulb className="w-4 h-4" />
               <span className="text-[10px] font-bold uppercase tracking-widest">Consultoria</span>
             </div>
             <p className="text-[11px] font-medium text-on-surface-variant leading-relaxed">
@@ -261,17 +260,6 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Bottom Navigation */}
       <BottomNav />
-
-      {/* Mobile FAB */}
-      <div className="fixed bottom-28 right-6 z-[45] md:hidden">
-        <Link
-          href="/movimentacoes?action=new"
-          className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-2xl shadow-2xl shadow-primary/30 active:scale-95 transition-all animate-in zoom-in duration-500"
-          aria-label="Nova transação"
-        >
-          <Plus className="w-9 h-9 stroke-[3px]" />
-        </Link>
-      </div>
     </div>
   );
 }

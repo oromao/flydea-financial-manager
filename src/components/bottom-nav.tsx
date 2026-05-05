@@ -3,15 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ReceiptText, BrainCircuit, User, MoreHorizontal, X, BarChart3, Wallet, BadgeDollarSign, Target, RotateCcw, CalendarRange, Brain, CreditCard, History, ShieldCheck, LogOut } from "lucide-react";
+import { LayoutDashboard, ReceiptText, Plus, MoreHorizontal, X, BarChart3, Wallet, BadgeDollarSign, Target, RotateCcw, CalendarRange, CreditCard, History, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import { QuickAdd } from "@/components/quick-add";
 
 const mainNavItems = [
-  { name: "Início", href: "/", icon: LayoutDashboard },
+  { name: "Inicio", href: "/", icon: LayoutDashboard },
   { name: "Fluxo", href: "/movimentacoes", icon: ReceiptText },
-  { name: "IA", href: "/insights", icon: BrainCircuit },
+  { name: "Novo", href: "#", icon: Plus, isAction: true },
   { name: "Mais", href: "#", icon: MoreHorizontal, isSheetTrigger: true },
 ];
 
@@ -20,21 +21,22 @@ const allModules = [
   { name: "Fluxo de Caixa", href: "/fluxo-caixa", icon: Wallet },
   { name: "Contas a Pagar", href: "/contas-a-pagar", icon: BadgeDollarSign },
   { name: "Planejamento", href: "/orcamentos", icon: Target },
-  { name: "Recorrências", href: "/recorrencias", icon: RotateCcw },
+  { name: "Recorrencias", href: "/recorrencias", icon: RotateCcw },
   { name: "Fechamento", href: "/fechamento", icon: CalendarRange },
-  { name: "IA", href: "/insights", icon: Brain },
-  { name: "Análises", href: "/relatorios", icon: BarChart3 },
+  { name: "Analises", href: "/relatorios", icon: BarChart3 },
 ];
 
 const adminModules = [
   { name: "Logs", href: "/admin/logs", icon: History },
-  { name: "Aprovações", href: "/admin/aprovacoes", icon: ShieldCheck },
+  { name: "Aprovacoes", href: "/admin/aprovacoes", icon: ShieldCheck },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [newOpen, setNewOpen] = useState(false);
+  const [categories, setCategories] = useState<{ id: string; name: string; type: string }[]>([]);
 
   const isAdmin = session?.user?.role === "ADMIN";
   const modules = isAdmin ? [...allModules, ...adminModules] : allModules;
@@ -52,15 +54,33 @@ export function BottomNav() {
       >
         <div className="flex items-stretch justify-around h-16 max-w-lg mx-auto px-2">
           {mainNavItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+            const isActive = item.href !== "#" && (pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)));
             const Icon = item.icon;
 
-              if (item.isSheetTrigger) {
+            if (item.isAction) {
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => setNewOpen(true)}
+                  aria-label="Novo lancamento"
+                  className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
+                >
+                  <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 group-active:scale-95 transition-all">
+                    <Icon className="w-6 h-6 text-white stroke-[2.5px]" />
+                  </div>
+                  <span className="text-[10px] font-bold tracking-wide text-primary">
+                    {item.name}
+                  </span>
+                </button>
+              );
+            }
+
+            if (item.isSheetTrigger) {
               return (
                 <button
                   key={item.name}
                   onClick={() => setSheetOpen(true)}
-                  aria-label="Explorar mais módulos"
+                  aria-label="Explorar mais modulos"
                   className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
                 >
                   <div className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-2xl transition-all duration-200 group-active:bg-surface-container">
@@ -103,6 +123,15 @@ export function BottomNav() {
         </div>
       </nav>
 
+      {/* QuickAdd Dialog */}
+      <QuickAdd
+        categories={categories}
+        onSuccess={() => setNewOpen(false)}
+        open={newOpen}
+        onOpenChange={setNewOpen}
+      />
+
+      {/* "Mais" Sheet */}
       <AnimatePresence>
         {sheetOpen && (
           <>
@@ -123,7 +152,7 @@ export function BottomNav() {
               style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
               role="dialog"
               aria-modal="true"
-              aria-label="Explorar módulos"
+              aria-label="Explorar modulos"
             >
               <div className="flex items-center justify-between p-6 border-b border-outline/10">
                 <h2 className="text-xl font-black text-on-background">Explorar</h2>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Wallet, History, Sparkles, ArrowUpRight, Plus, TrendingUp, TrendingDown } from "lucide-react";
+import { Wallet, History, ArrowUpRight, Plus, TrendingUp, TrendingDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -48,7 +48,7 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
           {/* Top row: Label + Icon */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5 text-white/50">
-              <Sparkles className="w-4 h-4" aria-hidden="true" />
+              <Wallet className="w-3.5 h-3.5" aria-hidden="true" />
               <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">Saldo Geral</span>
               {!loading && timeAgo && (
                 <>

@@ -14,10 +14,14 @@ import { trackEvent } from "@/lib/use-metrics";
 interface QuickAddProps {
   categories: Array<{ id: string; name: string; type: string }>;
   onSuccess?: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function QuickAdd({ categories, onSuccess }: QuickAddProps) {
-  const [open, setOpen] = useState(false);
+export function QuickAdd({ categories, onSuccess, open: controlledOpen, onOpenChange: controlledSetOpen }: QuickAddProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = controlledSetOpen || setInternalOpen;
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState<"EXPENSE" | "INCOME">("EXPENSE");
   const [amount, setAmount] = useState("");
@@ -85,35 +89,37 @@ export function QuickAdd({ categories, onSuccess }: QuickAddProps) {
 
   return (
     <>
-      {!open && (
+      {controlledOpen === undefined && !open && (
         <Button
           onClick={() => setOpen(true)}
-          aria-label="Novo lançamento"
+          aria-label="Novo lancamento"
           className="fixed bottom-24 right-6 h-14 w-14 rounded-full bg-primary shadow-lg hover:bg-primary/90 transition-all hover:scale-110 z-40 md:hidden"
         >
           <Plus className="w-6 h-6" />
         </Button>
       )}
 
-      <Button
-        onClick={() => setOpen(true)}
-        className="hidden md:flex items-center gap-2 h-12 px-6 rounded-full bg-primary shadow-lg hover:bg-primary/90"
-      >
-        <Plus className="w-5 h-5" />
-        <span className="font-bold">Novo Lançamento</span>
-      </Button>
+      {controlledOpen === undefined && (
+        <Button
+          onClick={() => setOpen(true)}
+          className="hidden md:flex items-center gap-2 h-12 px-6 rounded-full bg-primary shadow-lg hover:bg-primary/90"
+        >
+          <Plus className="w-5 h-5" />
+          <span className="font-bold">Novo Lancamento</span>
+        </Button>
+      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="w-[95vw] max-w-md bg-surface border-none rounded-[32px] p-0 shadow-[0_32px_80px_rgba(0,0,0,0.8)] z-[9999]">
-          <div className="bg-white/5 p-6 border-b border-white/5">
+          <div className="p-6">
             <DialogHeader>
               <DialogTitle className="text-xl font-black text-on-background">
-                Novo Lançamento
+                Novo Lancamento
               </DialogTitle>
             </DialogHeader>
           </div>
 
-          <div className="p-6 space-y-4">
+          <div className="px-6 space-y-4">
             <div className="flex gap-2 p-1 bg-surface rounded-full border border-outline/20">
               <button
                 type="button"
@@ -184,13 +190,15 @@ export function QuickAdd({ categories, onSuccess }: QuickAddProps) {
               </div>
             </div>
 
+          <div className="sticky bottom-0 p-6 pt-4 bg-surface border-t border-outline/10 rounded-b-[32px]">
             <Button
               onClick={handleSubmit}
               disabled={loading || !amount || !description || !categoryId || !date}
-              className="w-full h-12 mt-4 apple-button-primary"
+              className="w-full h-12 apple-button-primary"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Salvar"}
             </Button>
+          </div>
           </div>
         </DialogContent>
       </Dialog>

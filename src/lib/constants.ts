@@ -111,3 +111,12 @@ export const DATE_FORMATS = {
   DISPLAY: 'dd/MM/yyyy',
   FULL: 'dd MMMM yyyy HH:mm:ss',
 } as const;
+
+/**
+ * Feature flags for controlling UI visibility.
+ * Set to false to hide features from end users without deleting code.
+ */
+export const FEATURE_FLAGS = {
+  /** Controls all AI/IA features (Copilot, Insights, Agents, AI Chat) */
+  ENABLE_AI_FEATURES: false,
+} as const;

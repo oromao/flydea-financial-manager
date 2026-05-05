@@ -3,7 +3,6 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Sidebar } from "@/components/sidebar";
 import { ErrorBoundary } from "@/components/error-boundary";
-import { CopilotWrapper } from "@/components/copilot/copilot-wrapper";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -51,7 +50,6 @@ export default async function RootLayout({
         <ErrorBoundary>
           <Providers session={session}>
             <Sidebar>{children}</Sidebar>
-            <CopilotWrapper />
           </Providers>
         </ErrorBoundary>
       </body>
