@@ -41,8 +41,8 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
       {/* Hero Card */}
       <div className="bg-primary overflow-hidden rounded-[32px] md:rounded-[40px] p-6 md:p-10 shadow-2xl text-white relative">
         {/* Ambient glow effects */}
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-56 h-56 bg-black/10 rounded-full blur-2xl" />
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-accent/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-56 h-56 bg-muted/10 rounded-full blur-2xl" />
 
         <div className="relative z-10 space-y-8">
           {/* Top row: Label + Icon */}
@@ -52,12 +52,12 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
               <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">Saldo Geral</span>
               {!loading && timeAgo && (
                 <>
-                  <div className="w-1 h-1 rounded-full bg-white/20" />
+                  <div className="w-1 h-1 rounded-full bg-accent/20" />
                   <span className="text-[10px] md:text-xs text-white/30">atualizado {timeAgo}</span>
                 </>
               )}
             </div>
-            <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10">
+            <div className="p-3 rounded-2xl bg-accent/10 border border-border">
               <Wallet className="w-5 h-5 md:w-6 md:h-6 text-white" aria-hidden="true" />
             </div>
           </div>
@@ -72,7 +72,7 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
               className="text-[42px] md:text-[56px] font-display font-extrabold tracking-tight leading-none"
             >
               {loading ? (
-                <span className="inline-block h-12 md:h-16 w-48 md:w-72 bg-white/10 animate-pulse rounded-2xl" />
+                <span className="inline-block h-12 md:h-16 w-48 md:w-72 bg-accent/10 animate-pulse rounded-2xl" />
               ) : balance != null && !isNaN(balance) ? (
                 formatCurrency(balance)
               ) : (
@@ -83,28 +83,28 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
 
           {/* Mini cards: Entradas / Saídas / Saldo do Mês */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-4 border border-white/5">
+            <div className="bg-accent/10 rounded-2xl p-3 md:p-4 border border-border">
               <div className="flex items-center gap-1.5 mb-1">
                 <ArrowUpRight className="w-3 h-3 text-white/60" />
                 <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-white/50">Entradas</p>
               </div>
               <p className="text-sm md:text-base font-display font-bold">
                 {loading ? (
-                  <span className="inline-block h-4 w-16 bg-white/10 animate-pulse rounded" />
+                  <span className="inline-block h-4 w-16 bg-accent/10 animate-pulse rounded" />
                 ) : (
                   formatCurrency(income)
                 )}
               </p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-4 border border-white/5">
+            <div className="bg-accent/10 rounded-2xl p-3 md:p-4 border border-border">
               <div className="flex items-center gap-1.5 mb-1">
                 <ArrowUpRight className="w-3 h-3 rotate-180 text-white/60" />
                 <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-white/50">Saídas</p>
               </div>
               <p className="text-sm md:text-base font-display font-bold">
                 {loading ? (
-                  <span className="inline-block h-4 w-16 bg-white/10 animate-pulse rounded" />
+                  <span className="inline-block h-4 w-16 bg-accent/10 animate-pulse rounded" />
                 ) : (
                   formatCurrency(expenses)
                 )}
@@ -112,10 +112,10 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
             </div>
 
             <div className={cn(
-              "backdrop-blur-sm rounded-2xl p-3 md:p-4 border",
+              "rounded-2xl p-3 md:p-4 border",
               netMonth >= 0
-                ? "bg-white/10 border-white/5"
-                : "bg-white/5 border-white/10"
+                ? "bg-accent/10 border-border"
+                : "bg-accent/5 border-border"
             )}>
               <div className="flex items-center gap-1.5 mb-1">
                 {netMonth >= 0 ? (
@@ -127,7 +127,7 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
               </div>
               <p className="text-sm md:text-base font-display font-bold">
                 {loading ? (
-                  <span className="inline-block h-4 w-16 bg-white/10 animate-pulse rounded" />
+                  <span className="inline-block h-4 w-16 bg-accent/10 animate-pulse rounded" />
                 ) : (
                   formatCurrency(netMonth)
                 )}
@@ -142,7 +142,7 @@ export function DashboardHero({ balance, loading, income, expenses, lastUpdated,
             </span>
             <Link
               href="/movimentacoes"
-              className="h-11 md:h-12 px-5 md:px-8 rounded-2xl bg-white/10 hover:bg-white/20 transition-all text-sm md:text-base font-semibold text-white flex items-center gap-2 backdrop-blur-sm border border-white/5 shadow-lg active:scale-95"
+              className="h-11 md:h-12 px-5 md:px-8 rounded-2xl bg-accent/10 hover:bg-accent/20 transition-all text-sm md:text-base font-semibold text-white flex items-center gap-2 border border-border shadow-lg active:scale-95"
             >
               <History className="w-4 h-4 md:w-5 md:h-5" />
               Extrato

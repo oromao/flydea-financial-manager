@@ -199,7 +199,7 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
               <Upload className="w-4 h-4" />
             </Button>
           ) : (
-            <Button className="h-10 px-4 rounded-lg bg-white/5 hover:bg-white/10 text-on-surface text-xs font-semibold uppercase border border-white/5 transition-colors whitespace-nowrap flex items-center gap-2">
+            <Button className="h-10 px-4 rounded-lg bg-accent/5 hover:bg-accent/10 text-on-surface text-xs font-semibold uppercase border border-border/50 transition-colors whitespace-nowrap flex items-center gap-2">
               <Upload className="w-4 h-4" />
               Importar Comprovante
             </Button>

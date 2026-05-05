@@ -217,15 +217,15 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
     >
       <DialogTrigger
         render={
-          <Button className="h-10 px-4 rounded-lg bg-white/5 hover:bg-white/10 text-on-surface text-xs font-semibold uppercase border border-white/5 transition-colors whitespace-nowrap flex items-center gap-2">
+          <Button className="h-10 px-4 rounded-lg bg-accent/5 hover:bg-accent/10 text-on-surface text-xs font-semibold uppercase border border-border/50 transition-colors whitespace-nowrap flex items-center gap-2">
             <Upload className="w-4 h-4 text-primary" />
             <span className="hidden sm:inline">IMPORTAR DOCUMENTO</span>
             <span className="sm:hidden">IMPORTAR</span>
           </Button>
         }
       />
-      <DialogContent className="w-[95vw] md:max-w-2xl bg-surface border-none rounded-[40px] p-0 shadow-[0_32px_80px_rgba(0,0,0,0.8)] backdrop-blur-3xl overflow-hidden ring-1 ring-white/10 max-h-[90vh] overflow-y-auto">
-        <div className="bg-white/5 p-8 md:p-12 border-b border-white/5">
+      <DialogContent className="w-[95vw] md:max-w-2xl bg-surface border-none rounded-[40px] p-0 shadow-xl overflow-hidden border border-border max-h-[90vh] overflow-y-auto">
+          <div className="bg-accent/5 p-8 md:p-12 border-b border-border">
           <DialogHeader>
             <DialogTitle className="text-3xl font-black text-on-background tracking-tighter uppercase italic">
               Importar Documento
@@ -238,7 +238,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
 
         <div className="p-8 md:p-10 space-y-8">
           {!file && !preview && (
-            <div className="border-4 border-dashed border-white/5 rounded-[32px] p-16 text-center hover:border-primary/50 hover:bg-primary/5 transition-colors duration-500 cursor-pointer relative group">
+            <div className="border-4 border-dashed border-border rounded-[32px] p-16 text-center hover:border-primary/50 hover:bg-primary/5 transition-colors duration-500 cursor-pointer relative group">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -246,7 +246,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer z-10"
               />
-              <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
+              <div className="w-20 h-20 bg-accent/5 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
                 <FileText className="w-10 h-10 text-primary" />
               </div>
               <p className="text-on-background text-lg font-black tracking-tight">
@@ -268,7 +268,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
 
           {preview && !editMode && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between bg-white/5 p-6 rounded-3xl border border-white/10">
+              <div className="flex items-center justify-between bg-accent/5 p-6 rounded-3xl border border-border">
                 <div className="flex items-center gap-6">
                   <div className="p-3 rounded-2xl bg-primary/20 text-primary shadow-xl">
                     <FileText className="w-6 h-6" />
@@ -297,7 +297,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                 </div>
               )}
 
-              <div className="bg-white/5 rounded-2xl p-6 space-y-4">
+              <div className="bg-accent/5 rounded-2xl p-6 space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] font-black uppercase text-on-surface-variant/60">DADOS EXTRAÍDOS</span>
                   <span className={cn("text-xs font-bold", getConfidenceColor(preview.classification.confidence))}>

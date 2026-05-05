@@ -215,9 +215,9 @@ export function AgentsDashboard() {
 
       <div className="pt-10">
         <h2 className="text-xs font-black text-on-surface-variant uppercase tracking-[0.3em] mb-6 flex items-center gap-3 opacity-50">
-          <div className="h-px flex-1 bg-white/5" />
+          <div className="h-px flex-1 bg-accent/5" />
           Seus Agentes Ativos
-          <div className="h-px flex-1 bg-white/5" />
+          <div className="h-px flex-1 bg-accent/5" />
         </h2>
         
         {/* Agent List */}
@@ -225,13 +225,13 @@ export function AgentsDashboard() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-20 bg-white/[0.02] border border-dashed border-white/5 rounded-[40px]"
+            className="text-center py-20 bg-accent/5 border border-dashed border-border rounded-[40px]"
           >
             <p className="text-on-surface-variant font-bold uppercase tracking-widest text-xs">Nenhum agente ativo no momento</p>
             <Button
               variant="outline"
               onClick={() => setShowForm(true)}
-              className="mt-6 rounded-full px-8 border-white/10 hover:bg-white/5"
+              className="mt-6 rounded-full px-8 border-border hover:bg-accent/5"
             >
               Criar meu primeiro assistente
             </Button>
@@ -249,7 +249,7 @@ export function AgentsDashboard() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="p-5 rounded-[24px] bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-all group"
+                  className="p-5 rounded-[24px] bg-accent/5 border border-border/50 hover:bg-accent/5 transition-all group"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
@@ -277,7 +277,7 @@ export function AgentsDashboard() {
                         }}
                         disabled={executing === agent.id}
                         aria-label="Histórico de execuções"
-                        className="rounded-full h-10 w-10 p-0 hover:bg-white/5 text-on-surface-variant"
+                        className="rounded-full h-10 w-10 p-0 hover:bg-accent/5 text-on-surface-variant"
                       >
                         <History className="w-4.5 h-4.5" />
                       </Button>

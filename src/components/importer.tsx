@@ -85,11 +85,11 @@ export function Importer({ onImportSuccess }: ImporterProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button className="h-12 md:h-16 px-3 md:px-8 w-auto rounded-full bg-white/5 hover:bg-white/10 text-on-surface text-xs md:text-base font-black uppercase tracking-widest border border-white/5 transition-colors active:scale-95 whitespace-nowrap flex items-center gap-1 md:gap-3" />}>
+      <DialogTrigger render={<Button className="h-12 md:h-16 px-3 md:px-8 w-auto rounded-full bg-accent/5 hover:bg-accent/10 text-on-surface text-xs md:text-base font-black uppercase tracking-widest border border-border/50 transition-colors active:scale-95 whitespace-nowrap flex items-center gap-1 md:gap-3" />}>
         <Upload className="w-5 md:w-6 h-5 md:h-6 text-primary" /> <span className="hidden sm:inline">IMPORTAR EXTRATO</span><span className="sm:hidden">IMPORTAR</span>
       </DialogTrigger>
-      <DialogContent className="w-[95vw] md:max-w-xl bg-surface border-none rounded-[40px] p-0 shadow-[0_32px_80px_rgba(0,0,0,0.8)] backdrop-blur-3xl overflow-hidden ring-1 ring-white/10">
-        <div className="bg-white/5 p-8 md:p-12 border-b border-white/5">
+      <DialogContent className="w-[95vw] md:max-w-xl bg-surface border-none rounded-[40px] p-0 shadow-xl overflow-hidden border border-border">
+        <div className="bg-accent/5 p-8 md:p-12 border-b border-border">
           <DialogHeader>
             <DialogTitle className="text-3xl font-black text-on-background tracking-tighter uppercase italic">Importar Extrato</DialogTitle>
             <p className="text-on-surface-variant/40 text-[10px] font-black uppercase tracking-[0.4em] mt-2">Módulo de Sincronização Bancária</p>
@@ -98,9 +98,9 @@ export function Importer({ onImportSuccess }: ImporterProps) {
 
         <div className="p-8 md:p-10 space-y-8">
           {!file ? (
-            <div className="border-4 border-dashed border-white/5 rounded-[32px] p-16 text-center hover:border-primary/50 hover:bg-primary/5 transition-colors duration-500 cursor-pointer relative group">
+            <div className="border-4 border-dashed border-border rounded-[32px] p-16 text-center hover:border-primary/50 hover:bg-primary/5 transition-colors duration-500 cursor-pointer relative group">
               <input type="file" accept=".ofx,.csv" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
-              <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
+              <div className="w-20 h-20 bg-accent/5 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
                 <FileText className="w-10 h-10 text-primary" />
               </div>
               <p className="text-on-background text-lg font-black tracking-tight">Arraste seu arquivo OFX ou CSV</p>
@@ -108,7 +108,7 @@ export function Importer({ onImportSuccess }: ImporterProps) {
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="flex items-center justify-between bg-white/5 p-6 rounded-3xl border border-white/10">
+              <div className="flex items-center justify-between bg-accent/5 p-6 rounded-3xl border border-border">
                 <div className="flex items-center gap-6">
                   <div className="p-3 rounded-2xl bg-primary/20 text-primary shadow-xl"><FileText className="w-6 h-6" /></div>
                   <span className="text-on-background font-black text-sm truncate max-w-[200px] tracking-tight">{file.name}</span>

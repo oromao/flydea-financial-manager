@@ -255,9 +255,7 @@
     border: none;
   }
 
-  .glass-card {
-    @apply bg-white/80 dark:bg-white/10 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-2xl shadow-lg;
-  }
+  /* .glass-card class removed — see AGENTS.md for shadcn replacement */
 }
 
 .nav-link {

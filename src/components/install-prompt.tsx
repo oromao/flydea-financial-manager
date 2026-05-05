@@ -68,7 +68,7 @@ export function InstallPrompt() {
         exit={{ y: 100, opacity: 0 }}
         className="fixed bottom-4 md:bottom-auto md:top-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 z-[200] max-w-sm w-[calc(100%-32px)] md:w-full mx-auto"
       >
-        <div className="bg-surface/90 backdrop-blur-3xl border border-outline/20 p-4 rounded-[24px] shadow-[0_16px_40px_rgba(0,0,0,0.12)] flex items-center gap-4">
+        <div className="bg-background border border-outline/20 p-4 rounded-[24px] shadow-lg flex items-center gap-4">
           <div className="w-12 h-12 bg-primary rounded-[14px] flex items-center justify-center text-on-primary font-black text-2xl shrink-0">
             F
           </div>

@@ -389,7 +389,7 @@ export function DailyInsight({ metrics }: DailyInsightProps) {
               {insight.id && (
                 <button
                   onClick={(e) => handleDismiss(insight.id!, e)}
-                  className="absolute top-3 right-3 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-black/5 transition-all text-current"
+                  className="absolute top-3 right-3 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-muted/5 transition-all text-current"
                   title="Descartar insight"
                 >
                   <X className="w-4 h-4 opacity-50 hover:opacity-100" />

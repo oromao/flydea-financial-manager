@@ -102,7 +102,7 @@ export default function LoginPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.5 }}
-          className="rounded-3xl bg-white/80 p-7 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_8px_32px_rgba(0,0,0,0.04)] backdrop-blur-xl ring-1 ring-black/[0.04]"
+          className="rounded-3xl bg-background p-7 shadow-md border border-border/50"
         >
           <AnimatePresence mode="wait">
             {error && (

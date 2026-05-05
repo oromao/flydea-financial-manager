@@ -80,7 +80,7 @@ export function InAppNotifications({ notifications = [] }: InAppNotificationsPro
               </div>
               <button
                 onClick={() => dismiss(n.id)}
-                className="shrink-0 p-1 rounded hover:bg-black/5"
+                className="shrink-0 p-1 rounded hover:bg-muted/5"
               >
                 <X className="w-4 h-4 text-on-surface-variant" />
               </button>

@@ -98,7 +98,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
         {/* Mobile Drawer Overlay */}
         <div
           className={cn(
-            "fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm transition-opacity duration-500 md:hidden",
+            "fixed inset-0 z-[60] bg-background/80 transition-opacity duration-500 md:hidden",
             drawerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           )}
           onClick={() => setDrawerOpen(false)}
@@ -176,7 +176,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
         </nav>
 
         {/* Mobile Top Header */}
-        <header className="h-20 flex items-center justify-between px-6 bg-surface/80 backdrop-blur-xl md:hidden sticky top-0 z-50 shrink-0 border-none shadow-[0_1px_10px_rgba(0,0,0,0.02)]">
+        <header className="h-20 flex items-center justify-between px-6 bg-background md:hidden sticky top-0 z-50 shrink-0 border-none">
           <Tooltip>
             <TooltipTrigger
               onClick={() => setDrawerOpen(true)}

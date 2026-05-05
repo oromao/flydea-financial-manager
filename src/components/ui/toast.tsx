@@ -135,7 +135,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
               toast.onUndo!();
               onDismiss(toast.id);
             }}
-            className="text-white text-xs font-bold uppercase tracking-wider hover:text-white/80 transition-colors px-2 py-1 rounded-lg hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="text-white text-xs font-bold uppercase tracking-wider hover:text-white/80 transition-colors px-2 py-1 rounded-lg hover:bg-black/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             Desfazer
           </button>
@@ -143,12 +143,12 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
         <button
           onClick={() => onDismiss(toast.id)}
           aria-label="Fechar notificação"
-          className="text-white/70 hover:text-white transition-colors p-1 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          className="text-white/70 hover:text-white transition-colors p-1 rounded-lg hover:bg-black/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
-      <div className="h-1 bg-black/20">
+      <div className="h-1 bg-black/10">
         <div
           className={`h-full transition-none ${barColors[toast.type]}`}
           style={{ width: `${progress}%` }}

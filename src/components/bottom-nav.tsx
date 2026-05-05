@@ -48,7 +48,7 @@ export function BottomNav() {
   return (
     <>
       <nav
-        className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-surface-container-lowest/95 backdrop-blur-2xl border-t border-outline/10"
+        className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-outline/10"
         style={{
           height: "calc(4rem + max(0px, env(safe-area-inset-bottom)))",
           paddingBottom: "max(0px, env(safe-area-inset-bottom))",

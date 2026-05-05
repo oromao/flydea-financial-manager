@@ -27,7 +27,7 @@ export function PageLoading() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-surface/80 backdrop-blur-sm"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-background"
         >
           <div className="flex flex-col items-center gap-4">
             <div className="w-16 h-16 rounded-3xl bg-primary/10 flex items-center justify-center">
