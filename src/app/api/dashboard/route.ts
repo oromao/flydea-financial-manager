@@ -16,10 +16,20 @@ export const GET = withRateLimit(async (request: NextRequest) => {
   const startDate = startOfMonth(now);
   const endDate = endOfMonth(now);
 
-  // 1. Fetch data for Tiny AI (PicoClaw) - Replaced RAG/CAG
-  const financialData = await picoClaw.fetchData(session.user.id);
-  const aiInsights = await picoClaw.generateInsights(financialData);
-  const proactiveMessage = await picoClaw.getQuickSummary(financialData);
+  // 1. PicoClaw AI (non-critical, best-effort)
+  let aiInsights = null;
+  let proactiveMessage = null;
+  try {
+    const financialData = await picoClaw.fetchData(session.user.id);
+    const [insights, msg] = await Promise.all([
+      picoClaw.generateInsights(financialData).catch(() => null),
+      picoClaw.getQuickSummary(financialData).catch(() => null),
+    ]);
+    aiInsights = insights;
+    proactiveMessage = msg;
+  } catch {
+    // AI features are optional - don't break the dashboard
+  }
 
   // 2. Fetch User Intelligence and other system components
   const intel = await prisma.userIntelligence.findUnique({
@@ -164,8 +174,8 @@ export const GET = withRateLimit(async (request: NextRequest) => {
     budgetAlerts: budgetAlerts.filter(b => b.isAlert),
     savingsRate: summary.monthIncome > 0 ? ((summary.monthIncome - summary.monthExpenses) / summary.monthIncome) * 100 : 0,
     copilot: {
-      proactiveMessage,
-      insights: aiInsights.map((i, idx) => ({
+      proactiveMessage: proactiveMessage || "Acompanhe suas finanças por aqui.",
+      insights: (aiInsights || []).map((i, idx) => ({
         id: `pico-${idx}`,
         type: i.priority === "HIGH" ? "URGENTE" : (i.priority === "MEDIUM" ? "IMPACTO" : "INFORMAÇÃO"),
         title: i.title,
