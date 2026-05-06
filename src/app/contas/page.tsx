@@ -148,7 +148,8 @@ export default function ContasPage() {
     setColor("#0071E3");
   };
 
-  const formatCurrency = (val: number) => {
+  const formatCurrency = (val: number | undefined | null) => {
+    if (val === undefined || val === null || isNaN(val)) return "R$ 0,00";
     return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
   };
 

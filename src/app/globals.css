@@ -23,10 +23,10 @@
   --text-overline: 0.6875rem;
 
   /* Premium Fintech Palette - Light Mode */
-  --color-primary: #8A05BE;
+  --color-primary: #059669;
   --color-on-primary: #ffffff;
-  --color-primary-container: #9B22C9;
-  --color-on-primary-container: #F3D9FA;
+  --color-primary-container: #10B981;
+  --color-on-primary-container: #ECFDF5;
 
   --color-secondary: #1F2937;
   --color-on-secondary: #ffffff;
@@ -60,7 +60,7 @@
   /* shadcn/ui compat + missing tokens */
   --color-popover: #ffffff;
   --color-popover-foreground: #111827;
-  --color-ring: #8A05BE;
+  --color-ring: #059669;
   --color-input: #E5E7EB;
   --color-border: #E5E7EB;
   --color-destructive: #EF4444;

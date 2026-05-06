@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, ArrowDown, ArrowUp, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -146,11 +147,11 @@ export function QuickAdd({
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="w-[95vw] max-w-md bg-background border border-border rounded-[32px] p-0 shadow-xl z-[9999]">
-          <div className="p-6">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-black text-on-background">
-                Novo Lancamento
+        <DialogContent className="w-[95vw] max-w-[420px] bg-background border border-border/30 p-0 shadow-2xl rounded-[28px]">
+          <div className="px-8 pt-10 pb-8">
+            <DialogHeader className="text-left mb-10">
+              <DialogTitle className="text-3xl font-black tracking-tight text-foreground leading-none">
+                Novo Lançamento
               </DialogTitle>
             </DialogHeader>
           </div>
@@ -158,36 +159,40 @@ export function QuickAdd({
           <Form {...form}>
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="space-y-4 px-6"
+              className="space-y-8 px-8 pb-10"
             >
               <FormField
                 control={form.control}
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex gap-2 p-1 bg-surface rounded-full border border-outline/20">
-                      <Toggle
-                        pressed={field.value === "EXPENSE"}
-                        onPressedChange={() => field.onChange("EXPENSE")}
+                    <div className="flex gap-3 p-1.5 bg-muted/40 rounded-2xl">
+                      <motion.button
+                        type="button"
+                        onClick={() => field.onChange("EXPENSE")}
+                        whileTap={{ scale: 0.97 }}
                         className={cn(
-                          "flex-1 h-10 rounded-full flex items-center justify-center gap-2 text-sm font-bold transition-all data-[state=on]:bg-destructive/10 data-[state=on]:text-destructive",
-                          field.value !== "EXPENSE" &&
-                            "text-on-surface-variant hover:bg-surface"
+                          "flex-1 py-4.5 rounded-xl font-bold text-base transition-all duration-300 cursor-pointer",
+                          field.value === "EXPENSE"
+                            ? "bg-foreground text-background shadow-lg"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted"
                         )}
                       >
-                        <ArrowDown className="w-4 h-4" /> Despesa
-                      </Toggle>
-                      <Toggle
-                        pressed={field.value === "INCOME"}
-                        onPressedChange={() => field.onChange("INCOME")}
+                        <ArrowDown className="w-5 h-5 inline-block mr-2" /> Despesa
+                      </motion.button>
+                      <motion.button
+                        type="button"
+                        onClick={() => field.onChange("INCOME")}
+                        whileTap={{ scale: 0.97 }}
                         className={cn(
-                          "flex-1 h-10 rounded-full flex items-center justify-center gap-2 text-sm font-bold transition-all data-[state=on]:bg-success/10 data-[state=on]:text-success",
-                          field.value !== "INCOME" &&
-                            "text-on-surface-variant hover:bg-surface"
+                          "flex-1 py-4.5 rounded-xl font-bold text-base transition-all duration-300 cursor-pointer",
+                          field.value === "INCOME"
+                            ? "bg-foreground text-background shadow-lg"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted"
                         )}
                       >
-                        <ArrowUp className="w-4 h-4" /> Receita
-                      </Toggle>
+                        <ArrowUp className="w-5 h-5 inline-block mr-2" /> Receita
+                      </motion.button>
                     </div>
                   </FormItem>
                 )}
@@ -197,21 +202,22 @@ export function QuickAdd({
                 control={form.control}
                 name="description"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs font-semibold text-on-surface-variant ml-1">
-                      Descrição
+                  <FormItem className="space-y-3">
+                    <FormLabel className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">
+                      O que?
                     </FormLabel>
                     <FormControl>
                       <Input
                         placeholder={
                           type === "EXPENSE"
                             ? "Ex: Almoço, Transporte..."
-                            : "Ex: Cliente X, Freelance..."
+                            : "Ex:freelance, Bongard..."
                         }
+                        className="h-14 text-lg font-medium bg-muted/40 border-0 rounded-2xl focus:ring-2 focus:ring-foreground/20"
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-sm" />
                   </FormItem>
                 )}
               />
@@ -220,29 +226,31 @@ export function QuickAdd({
                 control={form.control}
                 name="amount"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs font-semibold text-on-surface-variant ml-1">
-                      Valor (R$)
+                  <FormItem className="space-y-3">
+                    <FormLabel className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">
+                      Quanto?
                     </FormLabel>
-                    <FormControl>
+                    <div className="relative">
+                      <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-bold text-muted-foreground/50">R$</span>
                       <Input
                         type="number"
                         placeholder="0,00"
+                        className="h-20 text-3xl font-bold bg-muted/40 border-0 rounded-2xl focus:ring-2 focus:ring-foreground/20 pl-14 text-right pr-6"
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage />
+                    </div>
+                    <FormMessage className="text-sm" />
                   </FormItem>
                 )}
               />
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
                   name="categoryId"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs font-semibold text-on-surface-variant ml-1">
+                    <FormItem className="space-y-3">
+                      <FormLabel className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">
                         Categoria
                       </FormLabel>
                       <Select
@@ -250,7 +258,7 @@ export function QuickAdd({
                         onValueChange={(val) => field.onChange(val)}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="h-14 bg-muted/40 border-0 rounded-2xl font-medium">
                             <SelectValue placeholder="Selecione" />
                           </SelectTrigger>
                         </FormControl>
@@ -262,7 +270,7 @@ export function QuickAdd({
                           ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage />
+                      <FormMessage className="text-sm" />
                     </FormItem>
                   )}
                 />
@@ -271,31 +279,33 @@ export function QuickAdd({
                   control={form.control}
                   name="date"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs font-semibold text-on-surface-variant ml-1">
-                        Data
+                    <FormItem className="space-y-3">
+                      <FormLabel className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">
+                        Quando?
                       </FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <Input 
+                          type="date" 
+                          className="h-14 bg-muted/40 border-0 rounded-2xl font-medium" 
+                          {...field} 
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-sm" />
                     </FormItem>
                   )}
                 />
               </div>
 
-              <div className="sticky bottom-0 py-4 border-t border-outline/10">
+              <div className="pt-8 border-t border-border/20">
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  variant="default"
-                  size="lg"
-                  className="w-full h-12 font-bold"
+                  className="w-full h-14 font-bold text-base bg-foreground text-background hover:bg-foreground/90 rounded-2xl"
                 >
                   {isSubmitting ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
-                    "Salvar"
+                    "Salvar transação"
                   )}
                 </Button>
               </div>

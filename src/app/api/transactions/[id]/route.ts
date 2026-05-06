@@ -37,8 +37,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     data: {
       ...rest,
       date: rest.date ? new Date(rest.date) : undefined,
-      dueDate: rest.dueDate ? new Date(rest.dueDate) : rest.dueDate === "" ? null : undefined,
-      paidAt: rest.paidAt ? new Date(rest.paidAt) : rest.paidAt === "" ? null : undefined,
+      dueDate: rest.dueDate ? new Date(rest.dueDate) : rest.dueDate === "" ? undefined : undefined,
+      paidAt: rest.paidAt ? new Date(rest.paidAt) : rest.paidAt === "" ? undefined : undefined,
       paymentStatus: rest.paymentStatus || undefined,
       amountPaid: resolvedAmountPaid,
       attachmentUrl: rest.attachmentUrl || null,
