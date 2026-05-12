@@ -30,7 +30,8 @@ export async function GET(request: NextRequest) {
     } catch {}
 
     const intel = await prisma.userIntelligence.findUnique({
-      where: { userId: session.user.id }
+      where: { userId: session.user.id },
+      select: { predictionAccuracyScore: true, impactScore: true, riskScore: true, savingsRate: true },
     });
 
     const accuracy = intel?.predictionAccuracyScore || 50;
