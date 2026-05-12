@@ -508,33 +508,31 @@ function MovimentaçõesContent() {
                     Dados Básicos
                   </h3>
 
-                  <div className="flex rounded-xl bg-muted p-1">
-                    <Button
+                  <div className="flex rounded-xl bg-muted p-1 gap-1">
+                    <button
                       type="button"
-                      variant="ghost"
                       className={cn(
-                        "flex-1 h-10 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+                        "flex-1 h-10 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer",
                         type === "INCOME"
-                          ? "bg-background text-success shadow-sm"
-                          : "text-muted-foreground",
+                          ? "bg-success text-white shadow-md shadow-success/20"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
                       )}
                       onClick={() => setType("INCOME")}
                     >
-                      <ArrowUp className="mr-1.5 h-4 w-4" /> Receita
-                    </Button>
-                    <Button
+                      <ArrowUp className="mr-1.5 h-4 w-4 inline-block" /> Receita
+                    </button>
+                    <button
                       type="button"
-                      variant="ghost"
                       className={cn(
-                        "flex-1 h-10 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+                        "flex-1 h-10 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer",
                         type === "EXPENSE"
-                          ? "bg-background text-destructive shadow-sm"
-                          : "text-muted-foreground",
+                          ? "bg-destructive text-white shadow-md shadow-destructive/20"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
                       )}
                       onClick={() => setType("EXPENSE")}
                     >
-                      <ArrowDown className="mr-1.5 h-4 w-4" /> Despesa
-                    </Button>
+                      <ArrowDown className="mr-1.5 h-4 w-4 inline-block" /> Despesa
+                    </button>
                   </div>
 
                   <div className="space-y-1.5">

@@ -167,37 +167,35 @@ export function QuickAdd({
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex gap-3 p-1.5 bg-muted/40 rounded-2xl" role="radiogroup" aria-label="Tipo de lançamento">
-                      <motion.button
+                    <div className="flex gap-2 p-1 bg-muted rounded-2xl" role="radiogroup" aria-label="Tipo de lançamento">
+                      <button
                         type="button"
                         role="radio"
                         aria-checked={field.value === "EXPENSE"}
                         onClick={() => field.onChange("EXPENSE")}
-                        whileTap={{ scale: 0.97 }}
                         className={cn(
-                          "flex-1 py-4.5 rounded-xl font-bold text-base transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30",
+                          "flex-1 py-4 rounded-xl font-bold text-base transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30",
                           field.value === "EXPENSE"
-                            ? "bg-foreground text-background shadow-lg"
-                            : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                            ? "bg-destructive text-white shadow-md shadow-destructive/20"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
                         )}
                       >
                         <ArrowDown className="w-5 h-5 inline-block mr-2" /> Despesa
-                      </motion.button>
-                      <motion.button
+                      </button>
+                      <button
                         type="button"
                         role="radio"
                         aria-checked={field.value === "INCOME"}
                         onClick={() => field.onChange("INCOME")}
-                        whileTap={{ scale: 0.97 }}
                         className={cn(
-                          "flex-1 py-4.5 rounded-xl font-bold text-base transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30",
+                          "flex-1 py-4 rounded-xl font-bold text-base transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30",
                           field.value === "INCOME"
-                            ? "bg-foreground text-background shadow-lg"
-                            : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                            ? "bg-success text-white shadow-md shadow-success/20"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
                         )}
                       >
                         <ArrowUp className="w-5 h-5 inline-block mr-2" /> Receita
-                      </motion.button>
+                      </button>
                     </div>
                   </FormItem>
                 )}

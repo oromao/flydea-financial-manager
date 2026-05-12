@@ -60,14 +60,19 @@ function DialogContent({
         )}
         {...props}
       >
-        {/* Mobile: full screen container */}
-        <div className="flex flex-col flex-1 sm:flex-none sm:w-full sm:max-w-lg sm:max-h-[85vh] bg-background sm:rounded-2xl sm:shadow-2xl sm:ring-1 sm:ring-border/10 overflow-hidden animate-in fade-in duration-200 sm:data-open:animate-in sm:data-open:fade-in-0 sm:data-open:zoom-in-95 sm:data-open:slide-in-from-bottom-8 sm:data-closed:animate-out sm:data-closed:fade-out-0 sm:data-closed:zoom-out-95 data-closed:animate-out data-closed:fade-out-0 data-closed:slide-out-to-bottom-8">
+        <div className={cn(
+          "flex flex-col flex-1 bg-background overflow-hidden",
+          "sm:flex-none sm:w-full sm:max-w-lg sm:max-h-[85vh] sm:rounded-2xl sm:shadow-2xl sm:ring-1 sm:ring-border/10",
+          "animate-in fade-in duration-200",
+          "data-closed:animate-out data-closed:fade-out-0",
+          "sm:data-open:animate-in sm:data-open:fade-in-0 sm:data-open:zoom-in-95 sm:data-open:slide-in-from-bottom-4",
+          "sm:data-closed:animate-out sm:data-closed:fade-out-0 sm:data-closed:zoom-out-95",
+          "data-closed:slide-out-to-bottom-8"
+        )}>
           {/* Header with drag handle + close */}
-          <div className="relative flex items-center justify-center border-b border-border/5 min-h-[52px] shrink-0">
-            <div className="absolute left-0 top-0 bottom-0 flex items-center sm:hidden">
-              <div className="flex justify-center items-center w-12 h-full">
-                <div className="w-8 h-1 rounded-full bg-border/40" />
-              </div>
+          <div className="relative flex items-center justify-center border-b border-border/10 min-h-[52px] shrink-0 bg-background">
+            <div className="absolute left-0 top-0 bottom-0 flex items-center sm:hidden pl-4">
+              <div className="w-8 h-1 rounded-full bg-border/40" />
             </div>
             {showCloseButton && (
               <DialogPrimitive.Close
@@ -75,7 +80,7 @@ function DialogContent({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full h-8 w-8 hover:bg-muted/60"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full h-8 w-8 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
                   />
                 }
               >
@@ -86,7 +91,7 @@ function DialogContent({
           </div>
 
           {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]">
+          <div className="flex-1 overflow-y-auto overscroll-contain">
             {children}
           </div>
         </div>
