@@ -75,7 +75,13 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-  const mappedMonthTx = monthTransactions.map((t) => ({
+  const mappedMonthTx = monthTransactions.map((t): {
+    id: string; type: "INCOME" | "EXPENSE"; description: string; amount: number;
+    date: Date; dueDate: Date | null; paidAt: Date | null; amountPaid: number | null;
+    paymentStatus: "PAID" | "PENDING"; categoryId: string | null;
+    categoryName: string | undefined; recurrenceId: string | null;
+    accountId: string | null; createdAt: Date;
+  } => ({
     id: t.id,
     type: t.type as "INCOME" | "EXPENSE",
     description: t.description,
@@ -93,7 +99,7 @@ export async function GET(request: NextRequest) {
   }));
 
   const summary = computeMonthlySummary(
-    mappedMonthTx,
+    mappedMonthTx as any,
     startDate,
     endDate,
     allTransactions
@@ -111,12 +117,12 @@ export async function GET(request: NextRequest) {
         _sum: { amount: true },
       });
       const spentAmount = spent._sum.amount || 0;
-      const percentage = (spentAmount / budget.amount) * 100;
+      const percentage = budget.amount > 0 ? (spentAmount / budget.amount) * 100 : 0;
       return {
         ...budget,
         spent: spentAmount,
         percentage,
-        isAlert: percentage >= budget.alertAt,
+        isAlert: percentage >= (budget.alertAt || 80),
       };
     })
   );
