@@ -13,6 +13,7 @@ export const POST = withRateLimit(async (request: Request): Promise<NextResponse
 
   const { searchParams } = new URL(request.url);
   const filename = searchParams.get("filename") || `upload-${Date.now()}`;
+  const accessMode = searchParams.get("access") || "private";
 
   const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.VERCEL_BLOB_READ_WRITE_TOKEN;
 
@@ -104,7 +105,7 @@ export const POST = withRateLimit(async (request: Request): Promise<NextResponse
       return NextResponse.json({ error: "Nenhum arquivo enviado" }, { status: 400 });
     }
     const blob = await put(safeFilename, body, {
-      access: "private",
+      access: accessMode as "public" | "private",
       token,
       addRandomSuffix: true,
     });

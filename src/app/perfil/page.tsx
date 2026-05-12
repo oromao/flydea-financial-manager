@@ -56,7 +56,7 @@ export default function PerfilPage() {
       const formData = new FormData();
       formData.append("file", file);
       const filename = `avatar_${Date.now()}.${file.name.split('.').pop() || 'jpg'}`;
-      const res = await fetch(`/api/upload?filename=${encodeURIComponent(filename)}`, {
+      const res = await fetch(`/api/upload?filename=${encodeURIComponent(filename)}&access=public`, {
         method: "POST",
         body: formData,
       });
@@ -98,7 +98,7 @@ export default function PerfilPage() {
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl overflow-hidden bg-surface-variant border border-outline/20 flex items-center justify-center relative shrink-0">
               {avatarUrl ? (
                 <img
-                  src={avatarUrl.includes("blob.vercel") ? `/api/image-proxy?url=${encodeURIComponent(avatarUrl)}` : avatarUrl}
+                  src={avatarUrl}
                   alt="Foto do perfil"
                   className="h-full w-full object-cover"
                 />
