@@ -193,7 +193,7 @@ export default function ContasAPagar() {
                       <div className={cn(
                         "w-14 h-14 rounded-xl flex items-center justify-center shadow-inner",
                         isBeforeDueDate(t.dueDate, now) ? "bg-destructive/10 text-destructive" : "bg-muted/50 text-muted-foreground/40"
-                      }>
+                      )}>
                         {isBeforeDueDate(t.dueDate, now) ? <AlertTriangle className="w-7 h-7" /> : <CalendarDays className="w-7 h-7" />}
                       </div>
                       <div className="min-w-0">
