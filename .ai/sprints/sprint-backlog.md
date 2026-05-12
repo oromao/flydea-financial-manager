@@ -1,57 +1,42 @@
-# Sprint 1 Backlog
+# Sprint 2 — Detailed Backlog
 
-## FLY-001 — Estruturar harness de agentes AI
-- **Priority**: P0
-- **Owner**: Documentation / Knowledge Steward
-- **Reviewers**: Product Owner, Platform Architect
-- **Status**: ✅ DONE
-- **Notes**: Estrutura .ai/ completa com 20+ arquivos, 9 agentes, estado do harness
+## Agent Assignments
 
-## FLY-002 — Configurar CI/CD com GitHub Actions
-- **Priority**: P0
-- **Owner**: DevOps / Cloud Engineer
-- **Reviewers**: QA, Security
-- **Status**: 📋 TODO
-- **Notes**: Pipeline com lint, type-check, testes e deploy automático
+### DevOps / Cloud Engineer
+- FLY-002: CI/CD GitHub Actions (P0)
+- FLY-008: Monitoramento Vercel (P1)
 
-## FLY-003 — Implementar guardrails de segurança e comandos
-- **Priority**: P0
-- **Owner**: Platform Architect
-- **Reviewers**: Product Owner
-- **Status**: 🔄 IN PROGRESS
-- **Notes**: Security guardrails, command policy, approval policy
+### Platform Architect / Governance Lead
+- FLY-003: Guardrails segurança (P0)
 
-## FLY-004 — Criar backlog do produto com 15+ itens
-- **Priority**: P1
-- **Owner**: Product Owner
-- **Reviewers**: Platform Architect
-- **Status**: 🔄 IN PROGRESS
-- **Notes**: Backlog completo priorizado P0-P3
+### Product Owner / Sprint Planner
+- FLY-004: Backlog produto 20+ itens (P1)
 
-## FLY-005 — Resolver 11 bugs P0 do projeto
-- **Priority**: P0
-- **Owner**: Backend Engineer
-- **Reviewers**: QA, Security
-- **Status**: 📋 TODO
-- **Notes**: E1-T1 a E1-T11
+### Backend Engineer
+- FLY-005: Bugs P0 QA-05/QA-09 (P0)
+- FLY-020: Zod validation APIs (P1)
+- FLY-025: Esqueci senha + NextAuth (P1)
 
-## FLY-006 — Aumentar cobertura de testes para 60%+
-- **Priority**: P1
-- **Owner**: QA / Validation Engineer
-- **Reviewers**: Backend, Frontend
-- **Status**: 📋 TODO
-- **Notes**: Atual: 45.87%, target: 60%
+### QA / Validation Engineer
+- FLY-006: Cobertura testes 60%+ (P1)
+- FLY-009: Testes E2E fluxos críticos (P1)
 
-## FLY-007 — Fechar 30% dos gaps de UX (26 de 87)
-- **Priority**: P1
-- **Owner**: Frontend / Mobile Engineer
-- **Reviewers**: QA, Product Owner
-- **Status**: 📋 TODO
-- **Notes**: Priorizar gaps de maior impacto mobile
+### Frontend / Mobile Engineer
+- FLY-007: UX gaps 30% — parte frontend (P1)
+- FLY-010: Performance FCP < 1.5s (P1)
+- FLY-022: Responsividade mobile (P1)
+- FLY-024: Archive/deactivate contas — frontend (P2)
 
-## FLY-008 — Configurar monitoramento e observabilidade
-- **Priority**: P1
-- **Owner**: DevOps / Cloud Engineer
-- **Reviewers**: Security
-- **Status**: 📋 TODO
-- **Notes**: Vercel Analytics, error monitoring, performance alerts
+### UX/UI Designer & Researcher
+- FLY-007: UX gaps 30% — parte UX/UI (P1)
+- FLY-021: Acessibilidade WCAG ARIA (P1)
+- FLY-023: Navegação mobile reduzir taps (P2)
+
+### Security / Compliance Reviewer
+- FLY-003: Guardrails segurança (P0)
+- FLY-025: Revisão fluxo recovery (P1)
+
+## Velocity
+- Sprint 1: 5/12 items (42%)
+- Sprint 2 target: 10/14 items (71%)
+- Expected velocity increase due to established harness

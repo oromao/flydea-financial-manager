@@ -24,40 +24,17 @@
 - 87 UX gaps documented
 - Mobile-first (iPhone 16, 390x844)
 
-## Harness Agents
-- 10 agentes: PO, Platform Architect, Backend, Frontend/Mobile, QA, Security, FinOps, DevOps, Documentation, UX/UI
-- UX/UI Designer & Researcher (novo, grupo Design) — complementa Frontend com design system, UX research, acessibilidade, quality gate visual
+## Sprint 2 — Estabilização & Qualidade (ACTIVE)
+- 14 items, 2 semanas
+- Foco: CI/CD, guardrails, testes 60%, acessibilidade, Zod APIs, performance mobile
 
-## Design System Audit (FLY-017 ✅)
-- 80+ tokens inventariados, 40/44 componentes usam tokens corretamente
-- 22+ cores hardcoded, 24 touch target violations, 20+ radius hardcoded
-- 2 componentes duplicados identificados
-- Plano de correção priorizado em `docs/design-system-audit.md`
+## Agent Activity
+- DevOps: FLY-002 CI/CD | Platform: FLY-003 Guardrails | Backend: FLY-020 Zod APIs
+- Frontend: FLY-010 Performance | QA: FLY-006 Tests | UX/UI: FLY-021 Acessibilidade
 
-## UX Gaps Analysis (FLY-018 ✅)
-- 87 gaps categorizados: 10 P0, 22 P1, 22 P2
-- Top 20 priorizados para ação imediata
-- Plano de resolução S2 (19 itens) e S3 (10 itens) em `docs/ux-gaps-analysis.md`
-
-## Quality Gate Visual (FLY-019 ✅)
-- 25+ itens de verificação em 6 categorias
-- Critérios de aprovação/rejeição definidos
-- Template PR em `docs/quality-gate-visual.md`
-
-## UX Correções Aplicadas (Sprint 1)
-- Toast tokens, login tokens, touch targets, importer removido
-- Cores Tailwind fixas (15+) → tokens, radius hardcoded (15+) → tokens
-- Error boundary adicionado a 14 páginas (antes 3, agora 17/19)
-- Orçamentos period selector funcional
-- PWA manifest path corrigido + icons SVG criados
-- KNOWN_ISSUES: 10/11 P0 bugs corrigidos (91%), rate limit 35/44 APIs (80%)
-- QA-05 (seed data) e QA-09 (console errors) pendentes
-
-## Current Focus
-- Resolve P0 blockers
-- Increase test coverage
-- Close UX gaps (quality gate criado)
-- Stabilize recurrences and import flows
+## Deploy
+- Live: https://flydea-financial-manager.vercel.app (build ✅, 116 rotas)
+- Último deploy: 2026-05-11 — UX/UI Agent + rate limit 100% + P0 bug fixes
 
 ## Business Context Summary
 Flydea Financial Manager é um SaaS de finanças pessoais premium brasileiro, mobile-first iPhone 16, com IA local, automação e foco em privacidade. Decisões técnicas devem priorizar segurança de dados financeiros, performance mobile, precisão de cálculos e experiência premium.

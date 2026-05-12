@@ -11,7 +11,7 @@
       "reviewCount": 0,
       "blockedCount": 0,
       "needsAttention": false,
-      "lastActivityAt": "2026-05-11T21:30:00.000000Z"
+      "lastActivityAt": "2026-05-11T23:00:00.000000Z"
     },
     {
       "id": "platform-architect-governance",
@@ -24,59 +24,59 @@
       "reviewCount": 0,
       "blockedCount": 0,
       "needsAttention": false,
-      "lastActivityAt": "2026-05-11T21:30:00.000000Z"
+      "lastActivityAt": "2026-05-11T23:00:00.000000Z"
     },
     {
       "id": "backend-engineer",
       "name": "Backend Engineer",
       "group": "Execution",
       "file": "backend-engineer.md",
-      "status": "IDLE",
-      "currentItem": null,
+      "status": "WORKING",
+      "currentItem": "FLY-020",
       "doneCount": 0,
       "reviewCount": 0,
       "blockedCount": 0,
       "needsAttention": false,
-      "lastActivityAt": "2026-05-11T21:30:00.000000Z"
+      "lastActivityAt": "2026-05-11T23:00:00.000000Z"
     },
     {
       "id": "frontend-mobile-engineer",
       "name": "Frontend / Mobile Engineer",
       "group": "Execution",
       "file": "frontend-mobile-engineer.md",
-      "status": "IDLE",
-      "currentItem": null,
+      "status": "WORKING",
+      "currentItem": "FLY-010",
       "doneCount": 0,
       "reviewCount": 0,
       "blockedCount": 0,
       "needsAttention": false,
-      "lastActivityAt": "2026-05-11T21:30:00.000000Z"
+      "lastActivityAt": "2026-05-11T23:00:00.000000Z"
     },
     {
       "id": "qa-validator",
       "name": "QA / Validation Engineer",
       "group": "Review & Assurance",
       "file": "qa-validator.md",
-      "status": "IDLE",
-      "currentItem": null,
+      "status": "PLANNING",
+      "currentItem": "FLY-006",
       "doneCount": 0,
       "reviewCount": 0,
       "blockedCount": 0,
       "needsAttention": false,
-      "lastActivityAt": "2026-05-11T21:30:00.000000Z"
+      "lastActivityAt": "2026-05-11T23:00:00.000000Z"
     },
     {
       "id": "security-compliance-reviewer",
       "name": "Security / Compliance Reviewer",
       "group": "Review & Assurance",
       "file": "security-compliance-reviewer.md",
-      "status": "IDLE",
-      "currentItem": null,
+      "status": "WORKING",
+      "currentItem": "FLY-003",
       "doneCount": 0,
       "reviewCount": 0,
       "blockedCount": 0,
       "needsAttention": false,
-      "lastActivityAt": "2026-05-11T21:30:00.000000Z"
+      "lastActivityAt": "2026-05-11T23:00:00.000000Z"
     },
     {
       "id": "finops-cost-advisor",
@@ -89,20 +89,20 @@
       "reviewCount": 0,
       "blockedCount": 0,
       "needsAttention": false,
-      "lastActivityAt": "2026-05-11T21:30:00.000000Z"
+      "lastActivityAt": "2026-05-11T23:00:00.000000Z"
     },
     {
       "id": "devops-cloud-engineer",
       "name": "DevOps / Cloud Engineer",
       "group": "Operations",
       "file": "devops-cloud-engineer.md",
-      "status": "IDLE",
-      "currentItem": null,
+      "status": "WORKING",
+      "currentItem": "FLY-002",
       "doneCount": 0,
       "reviewCount": 0,
       "blockedCount": 0,
       "needsAttention": false,
-      "lastActivityAt": "2026-05-11T21:30:00.000000Z"
+      "lastActivityAt": "2026-05-11T23:00:00.000000Z"
     },
     {
       "id": "documentation-knowledge-steward",
@@ -110,25 +110,25 @@
       "group": "Knowledge",
       "file": "documentation-knowledge-steward.md",
       "status": "WORKING",
-      "currentItem": "FLY-001",
+      "currentItem": "FLY-004",
       "doneCount": 1,
       "reviewCount": 0,
       "blockedCount": 0,
       "needsAttention": false,
-      "lastActivityAt": "2026-05-11T21:30:00.000000Z"
+      "lastActivityAt": "2026-05-11T23:00:00.000000Z"
     },
     {
       "id": "ux-ui-designer-researcher",
       "name": "UX/UI Designer & Researcher",
       "group": "Design",
       "file": "ux-ui-designer-researcher.md",
-      "status": "IDLE",
-      "currentItem": null,
+      "status": "WORKING",
+      "currentItem": "FLY-021",
       "doneCount": 4,
       "reviewCount": 0,
       "blockedCount": 0,
       "needsAttention": false,
-      "lastActivityAt": "2026-05-11T21:30:00.000000Z"
+      "lastActivityAt": "2026-05-11T23:00:00.000000Z"
     }
   ]
 }

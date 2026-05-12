@@ -1,13 +1,13 @@
 {
   "sprint": {
-    "name": "Sprint 1 — Fundação do Harness",
-    "goal": "Estruturar o harness de agentes, definir backlog inicial e estabelecer governança do projeto",
-    "duration": "1 semana"
+    "name": "Sprint 2 — Estabilização & Qualidade",
+    "goal": "Fechar CI/CD, guardrails, testes, acessibilidade e UX gaps remanescentes para estabilizar o produto",
+    "duration": "2 semanas"
   },
-  "progressPercent": 15,
-  "totalItems": 12,
-  "doneItems": 5,
-  "readyItems": 7,
+  "progressPercent": 0,
+  "totalItems": 14,
+  "doneItems": 0,
+  "readyItems": 14,
   "blockedItems": 0,
   "inProgressItems": 0,
   "inReviewItems": 0,

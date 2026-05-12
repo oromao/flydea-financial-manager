@@ -1,123 +1,108 @@
 # FlyDea Financial Manager — Contexto de Handoff para IA
 
-## Resumo do Projeto
+**Data:** 2026-05-11 | **Sprint:** 2 — Estabilização & Qualidade
 
-**FlyDea Financial Manager** é um sistema financeiro pessoal/premium, SaaS, mobile-first (iPhone 16), construído em Next.js 16 + React 19 + TypeScript + Prisma + PostgreSQL (Neon).
+---
 
-- **Live:** https://flydea-financial-manager.vercel.app
-- **Local:** http://localhost:3010
+## Estado Atual do Projeto
+
+**FlyDea Financial Manager** — SaaS de finanças pessoais premium, mobile-first (iPhone 16).
+
+- **Live:** https://flydea-financial-manager.vercel.app ✅
+- **Local:** `npm run dev` → http://localhost:3010
 - **Stack:** Next.js 16, React 19, TypeScript, Tailwind CSS 4, shadcn/ui, Framer Motion, Prisma, Neon, Vercel Blob
+- **Harness:** 10 agentes AI em `.ai/team/`
 
 ---
 
-## Estado Atual (2026-05-05)
+## O que foi feito nesta Sprint (Sprint 1 — ✅ Fechada)
 
-### ✅ Auditoria QA Completa (Playwright MCP)
+| Entrega | Status |
+|---------|--------|
+| Harness de agentes AI (`.ai/` com 10 agentes) | ✅ |
+| Plano de atuação UX/UI Agent | ✅ |
+| Auditoria design system (80+ tokens) | ✅ |
+| 87 gaps de UX mapeados e priorizados | ✅ |
+| Quality gate visual para PRs | ✅ |
+| Toast.tsx rgba → tokens CSS | ✅ |
+| Login page hex → tokens (15+ valores) | ✅ |
+| Touch targets 44px (24 violações → 0) | ✅ |
+| Dead code removido (importer, weekly-cashflow) | ✅ |
+| Cores Tailwind fixas → tokens (15+) | ✅ |
+| Error boundary em 14 páginas (3→17, 89%) | ✅ |
+| PWA manifest + icons SVG | ✅ |
+| Radius hardcoded → tokens (15+) | ✅ |
+| Orçamentos period selector funcional | ✅ |
+| RangeError date safety (API + 4 páginas) | ✅ |
+| Dashboard saldo consistente (projectedBalance) | ✅ |
+| Rate limiting: 44/44 APIs (100%) | ✅ |
+| Zod validation: 11/44 APIs (25%) | 🟡 |
+| KNOWN_ISSUES: 10/11 P0 bugs corrigidos | ✅ |
+| Deploy Vercel (build ✅, 116 rotas) | ✅ |
 
-- **10 páginas testadas** interativamente via Playwright MCP (browser real, iPhone 16)
-- **2 bugs críticos** encontrados em produção (Movimentações quebrada, UUID no dropdown)
-- **12 items** adicionados ao backlog como ÉPICO 14 (E14-T1 a E14-T12)
-- **MCPs utilizados:** Playwright MCP, Vercel MCP, GitHub MCP
-- **Deploy:** Último commit `37532226` (READY)
+## Sprint 2 Ativa — 14 items
 
-### 🔴 Bugs Críticos em Produção
+| ID | Título | Owner | Prioridade |
+|----|--------|-------|-----------|
+| FLY-002 | CI/CD GitHub Actions | DevOps | P0 |
+| FLY-003 | Guardrails segurança | Security | P0 |
+| FLY-004 | Backlog produto 20+ itens | PO | P1 |
+| FLY-005 | Bugs P0 restantes (QA-05, QA-09) | Backend | P0 |
+| FLY-006 | Cobertura testes 60%+ | QA | P1 |
+| FLY-007 | 30% gaps UX (26 correções) | Frontend + UX/UI | P1 |
+| FLY-008 | Monitoramento Vercel | DevOps | P1 |
+| FLY-009 | Testes E2E fluxos críticos | QA | P1 |
+| FLY-010 | Performance FCP < 1.5s | Frontend | P1 |
+| FLY-020 | Zod validation APIs restantes | Backend | P1 |
+| FLY-021 | Acessibilidade WCAG ARIA | UX/UI | P1 |
+| FLY-022 | Responsividade mobile | Frontend | P1 |
+| FLY-023 | Navegação reduzir taps | UX/UI | P2 |
+| FLY-024 | Archive/deactivate contas | Backend + Frontend | P2 |
+| FLY-025 | Esqueci senha + NextAuth errors | Backend | P1 |
 
-| Bug | Página | Status |
-|-----|--------|--------|
-| RangeError: Invalid time value | /movimentacoes | Página 100% quebrada |
-| UUID no dropdown de categoria | Dashboard → Novo Lançamento | UX confusa |
-| manifest.webmanifest ausente | Global | PWA não funcional |
+## Estado dos Agentes
 
-### ✅ Redesign Visual Executado
+| Agente | Status | Trabalhando em |
+|--------|--------|---------------|
+| Product Owner | PLANNING | FLY-004 |
+| Platform Architect | WORKING | FLY-003 |
+| Backend Engineer | WORKING | FLY-020 |
+| Frontend/Mobile Engineer | WORKING | FLY-010 |
+| QA/Validation Engineer | PLANNING | FLY-006 |
+| Security/Compliance | WORKING | FLY-003 |
+| DevOps/Cloud Engineer | WORKING | FLY-002 |
+| Documentation Steward | WORKING | FLY-004 |
+| UX/UI Designer | WORKING | FLY-021 |
+| FinOps/Cost Advisor | IDLE | — |
 
-- **Design System:** Button `rounded-xl` (12px), ~60+ cores hardcoded → tokens CSS
-- **Dashboard:** Hero premium com saldo display 42px, timestamp, 3 mini-cards integrados, gráfico com label Y
-- **Relatórios:** Cores tokenizadas (`var(--color-success)`, etc), labels rotacionados no mobile
-- **A11y:** Skip-to-content link, focus-visible global, zoom permitido
-- **Todas as páginas:** Verificadas e confirmadas funcionais
+## Documentos de Referência
 
-### ✅ Backlog Anterior Completamente Verificado
-
-| Épico | Status |
-|-------|--------|
-| Épico 1-2 (P0/P1): Bugs e consistência | ✅ Todos corrigidos |
-| Épico 3: Testes e QA | ✅ Mocks criados |
-| Épico 4: Funcionalidades parciais | ✅ Todas implementadas |
-| Épico 5: Novas funcionalidades | ✅ Quase total (falta Bank reconciliation E5-T1) |
-| Épico 6: UX Polish | ✅ Completo |
-| Épico 7-8: Redesign + Design System | ✅ Completo |
-
-### ⚠️ Pendências (P2-P3)
-
-- E5-T1: Bank reconciliation (requer Open Finance)
-- E5-T7: LLM integration (requer API externa)
-- E10-T4: ARIA labels em todos os ícones (parcial)
-- E10-T5: prefers-reduced-motion (parcial, alguns components)
-- Testes: 0 screenshots padronizados, cobertura ~45%
-
----
-
-## Arquivos Modificados Recentemente (2026-05-04)
-
-- `src/app/page.tsx` — Dashboard redesenhado
-- `src/components/dashboard/dashboard-hero.tsx` — Hero premium
-- `src/components/ui/button.tsx` — rounded-xl
-- `src/app/relatorios/page.tsx` — Chart tokens
-- `src/app/layout.tsx` — Skip-to-content
-- `src/components/sidebar.tsx` — main#main-content
-- `src/components/ui/toast.tsx` — Cores tokenizadas
-- `src/components/movimentacoes/transaction-card.tsx` — Cores tokenizadas
-- `src/components/daily-insight.tsx` — Cores tokenizadas
-- `src/components/agents/agents-dashboard.tsx` — Cores tokenizadas
-- `src/components/agents/agent-execution-history.tsx` — Cores tokenizadas
-- `src/components/weekly-cashflow.tsx` — Cores tokenizadas
-- `src/components/weekly-cashflow-forecast.tsx` — Cores tokenizadas
-- `src/components/spend-decision-indicator.tsx` — Cores tokenizadas
-- `src/components/confirm-dialog.tsx` — Ícones tokenizados
-- `src/components/field-error.tsx` — Cores tokenizadas
-- `src/components/copilot/intelligent-copilot.tsx` — Cores tokenizadas
-- `src/components/quick-add.tsx` — Cores tokenizadas
-- `src/components/payment-importer.tsx` — Cores tokenizadas
-- `src/components/document-importer.tsx` — Cores tokenizadas
-- `src/components/importer.tsx` — Cores tokenizadas
-- `src/components/invoice-manager.tsx` — Cores tokenizadas (select items)
-- `src/components/notifications/in-app-notifications.tsx` — Cores tokenizadas
-- `src/app/contas-a-pagar/page.tsx` — Cores tokenizadas
-- `src/app/admin/aprovacoes/page.tsx` — Cores tokenizadas
-- `src/app/admin/logs/page.tsx` — Cores tokenizadas
-- `src/app/mais/page.tsx` — Cores tokenizadas
-- `src/app/login/page.tsx` — Cores tokenizadas
-- `src/app/esqueci-senha/page.tsx` — Cores tokenizadas
-- `src/app/perfil/page.tsx` — Cores tokenizadas
-- `src/app/alertas/page.tsx` — Cores tokenizadas
-- `src/app/insights/page.tsx` — Cores tokenizadas
-- `src/app/fechamento/page.tsx` — Cores tokenizadas (sem alterações de cor, só verificada)
-
----
+| Documento | Conteúdo |
+|-----------|----------|
+| `docs/UX_UI_AGENT_PLAN.md` | Plano de atuação UX/UI |
+| `docs/design-system-audit.md` | Auditoria design system |
+| `docs/ux-gaps-analysis.md` | 87 gaps de UX priorizados |
+| `docs/quality-gate-visual.md` | Quality gate PR checklist |
+| `docs/KNOWN_ISSUES.md` | Bugs conhecidos atualizados |
 
 ## Comandos Essenciais
 
 ```bash
 npm run dev          # localhost:3010
-npm run type-check   # tsc --noEmit (passa limpo no src/)
-npm run lint         # 5 erros pré-existentes, 441 warnings
-npm run build        # compila 17 rotas com sucesso
-npm run test         # testes existentes
-git push origin main # deploy automático no Vercel
+npm run type-check   # tsc --noEmit
+npm run build        # next build
+npm run test         # vitest
+git push origin main # deploy automático Vercel
 ```
 
----
+## Próximos Passos para a Próxima IA
 
-## Próximos Passos Recomendados
-
-1. **HOTFIX (E14-T1):** Fix RangeError na página Movimentações — PÁGINA 100% QUEBRADA
-2. **HOTFIX (E14-T2):** Fix UUID no dropdown de categoria
-3. **HOTFIX (E14-T3):** Criar manifest.webmanifest
-4. Corrigir botão Fechar interceptado (E14-T4)
-5. Remover dados seed de produção (E14-T8)
-6. Investigar inconsistência de saldo (E14-T9)
-7. Continuar com Épico 7-13 do backlog
+1. **FLY-021**: Auditoria WCAG — ARIA labels nos 21 componentes (alta prioridade)
+2. **FLY-020**: Zod schemas para upload, import, revenues, reconciliation
+3. **FLY-002**: GitHub Actions workflow com lint + type-check + test + deploy
+4. **FLY-010**: Lighthouse audit + bundle analysis + code splitting
+5. **FLY-007**: Resolver 26 gaps de UX priorizados no `docs/ux-gaps-analysis.md`
 
 ---
 
-*Última atualização: 2026-05-05*
+*Handoff gerado em: 2026-05-11 23:00 BRT*

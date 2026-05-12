@@ -1,28 +1,39 @@
-# Sprint 1 — Fundação do Harness
+# Sprint 2 — Estabilização & Qualidade
 
-**Goal**: Estruturar o harness de agentes, definir backlog inicial e estabelecer governança do projeto
+**Goal:** Fechar CI/CD, guardrails, testes, acessibilidade e UX gaps remanescentes para estabilizar o produto
 
-**Duration**: 1 semana
-**Started**: 2026-05-11
-**Status**: ACTIVE
+**Duration:** 2 semanas (2026-05-11 até 2026-05-25)
 
-## Items
+## Items (14)
 
-| ID | Title | Owner | Status |
-|----|-------|-------|--------|
-| FLY-001 | Estruturar harness de agentes AI | Documentation Steward | ✅ DONE |
-| FLY-002 | Configurar CI/CD com GitHub Actions | DevOps Engineer | 📋 TODO |
-| FLY-003 | Implementar guardrails de segurança e comandos | Platform Architect | 🔄 IN PROGRESS |
-| FLY-004 | Criar backlog do produto com 15+ itens | Product Owner | 🔄 IN PROGRESS |
-| FLY-005 | Resolver 11 bugs P0 do projeto | Backend Engineer | 📋 TODO |
-| FLY-006 | Aumentar cobertura de testes para 60%+ | QA Engineer | 📋 TODO |
-| FLY-007 | Fechar 30% dos gaps de UX | Frontend Engineer | 📋 TODO |
-| FLY-008 | Configurar monitoramento e observabilidade | DevOps Engineer | 📋 TODO |
+### P0 — Bloqueantes
+| ID | Título | Owner |
+|----|--------|-------|
+| FLY-002 | CI/CD GitHub Actions | DevOps |
+| FLY-003 | Guardrails de segurança | Security |
+| FLY-005 | Últimos bugs P0 (QA-05, QA-09) | Backend |
 
-## Capacity
+### P1 — Alta Prioridade
+| ID | Título | Owner |
+|----|--------|-------|
+| FLY-004 | Backlog do produto 20+ itens | PO |
+| FLY-006 | Cobertura testes 60%+ | QA |
+| FLY-007 | 30% gaps UX (26 correções) | Frontend + UX/UI |
+| FLY-008 | Monitoramento Vercel | DevOps |
+| FLY-009 | Testes E2E fluxos críticos | QA |
+| FLY-010 | Performance FCP < 1.5s | Frontend |
+| FLY-020 | Zod validation APIs | Backend |
+| FLY-021 | Acessibilidade WCAG | UX/UI |
+| FLY-022 | Responsividade mobile | Frontend |
+| FLY-025 | Esqueci senha + NextAuth | Backend |
 
-- Ready: 7/8
-- In Progress: 2
-- Blocked: 0
-- Done: 1
-- Progress: 12%
+### P2 — Melhorias
+| ID | Título | Owner |
+|----|--------|-------|
+| FLY-023 | Navegação mobile — reduzir taps | UX/UI |
+| FLY-024 | Archive/deactivate contas | Backend + Frontend |
+
+## Dependencies
+- FLY-006 ← FLY-020 (testes dependem de APIs validadas)
+- FLY-007 ← FLY-021, FLY-022 (UX gaps incluem acessibilidade e responsividade)
+- FLY-025 ← FLY-003 (security guardrails)

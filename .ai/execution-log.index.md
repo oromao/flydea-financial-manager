@@ -125,9 +125,19 @@
   - Total: 44/44 APIs com withRateLimit (100% ✅)
   - KNOWN_ISSUES: AN2-T2 marcado como 100% corrigido
 
-## Final State — Sprint 1 Progress
-- FLY-001: Harness ✅ | FLY-002: CI/CD ⏳ | FLY-003: Guardrails ⏳ | FLY-004: Backlog ⏳
-- FLY-005: Bugs P0 → 10/11 ✅ | FLY-006: Testes ⏳
-- FLY-007: UX gaps → 26/87 ⏳ | FLY-008: Observabilidade ⏳
-- FLY-016 a FLY-019: UX/UI Agent ✅
-- UX/UI Agent: IDLE — todas as tasks da Sprint 1 concluídas
+## 2026-05-11 — Sprint 1 Closed → Sprint 2 Started
+
+- **23:00 BRT**: Sprint 1 finalizada (5/12 items, 42%) e Sprint 2 criada:
+  - Sprint 2: "Estabilização & Qualidade" — 14 items, 2 semanas
+  - Foco: CI/CD, guardrails, testes 60%, acessibilidade WCAG, Zod APIs, performance mobile
+  - 6 agentes ativos: DevOps(FLY-002), Platform(FLY-003), Backend(FLY-020), Frontend(FLY-010), QA(FLY-006), UX/UI(FLY-021)
+  - Deploy realizado: https://flydea-financial-manager.vercel.app ✅
+  - Build: ✓ Compiled successfully, 116 rotas
+
+## Next Actions
+- DevOps: CI/CD GitHub Actions (FLY-002)
+- Platform Architect: Guardrails (FLY-003)
+- Backend: Zod validation APIs (FLY-020)
+- UX/UI: Acessibilidade WCAG ARIA (FLY-021)
+- Frontend: Performance mobile (FLY-010)
+- QA: Cobertura testes 60%+ (FLY-006)

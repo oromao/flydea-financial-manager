@@ -1,17 +1,23 @@
 # Current Task
 
-## Nenhuma task ativa no momento
+## Sprint 2 — Estabilização & Qualidade
 
-**Status**: ⏸️ IDLE
+**Status**: 🚀 ACTIVE (14 items)
+**Duration**: 2 semanas (2026-05-11 → 2026-05-25)
 
-### Últimas tasks concluídas (UX/UI Agent)
-- [x] FLY-016: Plano de atuação do UX/UI Agent ✅
-- [x] FLY-017: Auditoria do design system ✅
-- [x] FLY-018: Mapeamento dos 87 gaps de UX ✅
-- [x] FLY-019: Quality gate visual para PRs ✅
+### Goals
+- Fechar CI/CD e guardrails (P0)
+- Zod validation + rate limit completos
+- Acessibilidade WCAG + ARIA labels
+- Testes E2E + cobertura 60%
+- Performance mobile FCP < 1.5s
+- Esqueci senha + erros NextAuth
 
-### Próximos Passos
-- FLY-002: CI/CD (DevOps)
-- FLY-003: Guardrails e comando (Platform Architect)
-- FLY-004: Backlog do produto (Product Owner)
-- UX/UI Agent aguardando próximas tasks (FLY-007 ou correções P0 do design system)
+### Sprints History
+- Sprint 1: 5/12 items concluídos (42%) ✅
+
+### First Items to Start
+- FLY-002: CI/CD — DevOps
+- FLY-003: Guardrails — Platform Architect
+- FLY-020: Zod validation — Backend
+- FLY-021: Acessibilidade — UX/UI

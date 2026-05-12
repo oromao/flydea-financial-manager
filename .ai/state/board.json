@@ -1,199 +1,134 @@
 {
   "columns": {
     "TODO": [
-      "FLY-002: Configurar CI/CD com GitHub Actions e testes automatizados",
-      "FLY-003: Implementar guardrails de segurança e comandos",
-      "FLY-004: Criar backlog do produto com 15+ itens priorizados",
-      "FLY-005: Resolver 11 bugs P0 do projeto",
-      "FLY-006: Aumentar cobertura de testes para 60%+",
-      "FLY-007: Fechar 30% dos gaps de UX (26 de 87)",
-      "FLY-008: Configurar monitoramento e observabilidade",
+      "FLY-002: Configurar CI/CD com GitHub Actions e testes automatizados (P0)",
+      "FLY-003: Implementar guardrails de segurança e comandos (P0)",
+      "FLY-004: Criar backlog do produto com 20+ itens priorizados (P1)",
+      "FLY-005: Resolver últimos bugs P0 — QA-05 seed data, QA-09 console (P0)",
+      "FLY-006: Aumentar cobertura de testes para 60%+ (P1)",
+      "FLY-007: Fechar 30% dos gaps de UX — 26 correções (P1)",
+      "FLY-008: Configurar monitoramento e observabilidade Vercel (P1)",
       "FLY-009: Implementar testes E2E para fluxos críticos (P1)",
-      "FLY-010: Otimizar performance mobile (FCP < 1.5s) (P1)"
-      "FLY-019: Criar quality gate visual para PRs"
+      "FLY-010: Otimizar performance mobile — FCP < 1.5s (P1)",
+      "FLY-020: Adicionar Zod validation nas APIs POST/PUT restantes (P1)",
+      "FLY-021: Auditoria e correção de acessibilidade WCAG — ARIA labels (P1)",
+      "FLY-022: Responsividade mobile — relatórios, fechamento, navegação (P1)",
+      "FLY-023: Melhorias na navegação mobile — reduzir taps (P2)",
+      "FLY-024: Feature: archive/deactivate contas (P2)",
+      "FLY-025: Feature: esqueci senha funcional + tratamento erros NextAuth (P1)"
     ],
     "READY": [],
     "IN_PROGRESS": [],
     "IN_REVIEW": [],
     "BLOCKED": [],
     "DONE": [
-      "FLY-001: Estruturar harness de agentes AI",
-      "FLY-016: Planejar atuação do agente UX/UI Designer & Researcher",
-      "FLY-017: Auditoria inicial do design system e tokens CSS",
-      "FLY-018: Mapear e priorizar 87 gaps de UX para resolução",
-      "FLY-019: Criar quality gate visual para PRs"
+      "FLY-001: Estruturar harness de agentes AI (P0)",
+      "FLY-016: Planejar atuação do agente UX/UI Designer (P1)",
+      "FLY-017: Auditoria inicial do design system e tokens CSS (P1)",
+      "FLY-018: Mapear e priorizar 87 gaps de UX (P1)",
+      "FLY-019: Criar quality gate visual para PRs (P2)"
     ]
   },
   "items": {
     "FLY-001": {
-      "id": "FLY-001",
-      "title": "Estruturar harness de agentes AI",
-      "priority": "P0",
-      "owner": "Platform Architect",
-      "reviewers": ["Product Owner"],
-      "description": "Criar estrutura .ai/ completa com agentes, estados, sprints e governança para orquestração do time de AI.",
-      "acceptanceCriteria": [
-        "[x] .ai/ diretório criado com 20+ arquivos",
-        "[x] 9 agentes definidos com responsabilidades claras",
-        "[x] Estado do harness configurado (dashboard, sprint, board)",
-        "[x] AGENTS.md atualizado com bootstrap do harness"
-      ]
+      "id": "FLY-001", "title": "Estruturar harness de agentes AI", "priority": "P0",
+      "owner": "Platform Architect", "reviewers": ["Product Owner"],
+      "description": "Estrutura .ai/ completa com agentes, estados, sprints e governança.",
+      "acceptanceCriteria": ["[x] .ai/ diretório criado", "[x] 10 agentes definidos", "[x] Estado configurado", "[x] AGENTS.md atualizado"]
     },
     "FLY-002": {
-      "id": "FLY-002",
-      "title": "Configurar CI/CD com GitHub Actions e testes automatizados",
-      "priority": "P0",
-      "owner": "DevOps Engineer",
-      "reviewers": ["QA", "Security"],
-      "description": "Configurar pipeline de CI/CD no GitHub Actions com lint, type-check, testes unitários e deploy automático na Vercel.",
-      "acceptanceCriteria": [
-        "[ ] Pipeline executa lint + type-check + testes",
-        "[ ] Deploy automático na Vercel ao mergear na main",
-        "[ ] Notificação em caso de falha",
-        "[ ] Testes de smoke pós-deploy"
-      ]
+      "id": "FLY-002", "title": "Configurar CI/CD com GitHub Actions", "priority": "P0",
+      "owner": "DevOps Engineer", "reviewers": ["QA", "Security"],
+      "description": "Pipeline CI/CD com lint, type-check, testes e deploy automático Vercel.",
+      "acceptanceCriteria": ["[ ] Pipeline executa lint + type-check + testes", "[ ] Deploy auto ao mergear main", "[ ] Notificação falha", "[ ] Smoke tests pós-deploy"]
     },
     "FLY-003": {
-      "id": "FLY-003",
-      "title": "Implementar guardrails de segurança e comandos",
-      "priority": "P0",
-      "owner": "Security Reviewer",
-      "reviewers": ["Platform Architect"],
-      "description": "Criar guardrails de segurança para desenvolvimento e política de comandos mutantes/destrutivos.",
-      "acceptanceCriteria": [
-        "[ ] Guardrails de segurança definidos",
-        "[ ] Command policy com classificação de riscos",
-        "[ ] Approval policy para comandos destrutivos",
-        "[ ] Backend guardrails criados"
-      ]
+      "id": "FLY-003", "title": "Implementar guardrails de segurança", "priority": "P0",
+      "owner": "Security Reviewer", "reviewers": ["Platform Architect"],
+      "description": "Guardrails, command policy, approval policy.",
+      "acceptanceCriteria": ["[ ] Guardrails segurança definidos", "[ ] Command policy classificado", "[ ] Approval policy criado", "[ ] Backend guardrails criados"]
     },
     "FLY-004": {
-      "id": "FLY-004",
-      "title": "Criar backlog do produto com 15+ itens priorizados",
-      "priority": "P1",
-      "owner": "Product Owner",
-      "reviewers": ["Platform Architect"],
-      "description": "Mapear backlog completo do produto incluindo features existentes, bugs conhecidos e melhorias planejadas.",
-      "acceptanceCriteria": [
-        "[ ] 15+ itens no backlog",
-        "[ ] Todos priorizados P0-P3",
-        "[ ] Dependências mapeadas",
-        "[ ] Associados a módulos do produto"
-      ]
+      "id": "FLY-004", "title": "Criar backlog do produto 20+ itens", "priority": "P1",
+      "owner": "Product Owner", "reviewers": ["Platform Architect"],
+      "description": "Backlog completo com features, bugs, melhorias do produto.",
+      "acceptanceCriteria": ["[ ] 20+ itens", "[ ] Priorizados P0-P3", "[ ] Dependências mapeadas", "[ ] Associados a módulos"]
     },
     "FLY-005": {
-      "id": "FLY-005",
-      "title": "Resolver 11 bugs P0 do projeto",
-      "priority": "P0",
-      "owner": "Backend Engineer",
-      "reviewers": ["QA", "Security"],
-      "description": "Resolver os 11 bugs críticos P0 identificados no projeto (E1-T1 a E1-T11).",
-      "acceptanceCriteria": [
-        "[ ] Todos os 11 bugs P0 resolvidos",
-        "[ ] Testes de regressão para cada bug",
-        "[ ] QA validou cada correção"
-      ]
+      "id": "FLY-005", "title": "Resolver últimos bugs P0", "priority": "P0",
+      "owner": "Backend Engineer", "reviewers": ["QA", "Security"],
+      "description": "QA-05: seed data cleanup produção. QA-09: 20+ console errors.",
+      "acceptanceCriteria": ["[ ] Seed data removido produção", "[ ] Console errors < 5", "[ ] QA validou"]
     },
     "FLY-006": {
-      "id": "FLY-006",
-      "title": "Aumentar cobertura de testes para 60%+",
-      "priority": "P1",
-      "owner": "QA Engineer",
-      "reviewers": ["Backend Engineer", "Frontend Engineer"],
-      "description": "Expandir cobertura de testes de 45.87% para 60%+, focando em módulos críticos: transações, orçamentos, agentes IA.",
-      "acceptanceCriteria": [
-        "[ ] Cobertura ≥ 60%",
-        "[ ] Módulos críticos com ≥ 70%",
-        "[ ] Testes de integração para API routes principais"
-      ]
+      "id": "FLY-006", "title": "Aumentar cobertura testes 60%+", "priority": "P1",
+      "owner": "QA Engineer", "reviewers": ["Backend", "Frontend"],
+      "description": "Testes unitários + integração: transações, orçamentos, agentes IA.",
+      "acceptanceCriteria": ["[ ] Cobertura ≥ 60%", "[ ] Módulos críticos ≥ 70%", "[ ] Testes integração API"]
     },
     "FLY-007": {
-      "id": "FLY-007",
-      "title": "Fechar 30% dos gaps de UX (26 de 87)",
-      "priority": "P1",
-      "owner": "Frontend Engineer",
-      "reviewers": ["QA", "Product Owner"],
-      "description": "Corrigir 30% dos 87 gaps de UX documentados no QA_CHECKLIST.md, priorizando os de maior impacto na experiência mobile.",
-      "acceptanceCriteria": [
-        "[ ] 26 gaps de UX resolvidos",
-        "[ ] Verificação em viewport iPhone 16 (390x844)",
-        "[ ] QA validou cada correção"
-      ]
+      "id": "FLY-007", "title": "Fechar 30% gaps de UX (26/87)", "priority": "P1",
+      "owner": "Frontend + UX/UI", "reviewers": ["QA", "Product Owner"],
+      "description": "Corrigir 26 gaps priorizados no docs/ux-gaps-analysis.md.",
+      "acceptanceCriteria": ["[ ] 26 gaps resolvidos", "[ ] Verificado iPhone 16", "[ ] QA validou"]
     },
     "FLY-008": {
-      "id": "FLY-008",
-      "title": "Configurar monitoramento e observabilidade",
-      "priority": "P1",
-      "owner": "DevOps Engineer",
-      "reviewers": ["Security"],
-      "description": "Configurar monitoramento de performance, erros e uso para ambiente de produção na Vercel.",
-      "acceptanceCriteria": [
-        "[ ] Monitoramento de erros configurado",
-        "[ ] Alertas de performance (FCP, LCP, CLS)",
-        "[ ] Logs de API acessíveis",
-        "[ ] Dashboard de observabilidade"
-      ]
-    }
-  },
-    "FLY-016": {
-      "id": "FLY-016",
-      "title": "Planejar atuação do agente UX/UI Designer & Researcher",
-      "priority": "P1",
-      "owner": "UX/UI Designer",
-      "reviewers": ["Product Owner", "Frontend Engineer"],
-      "description": "Definir escopo de atuação, primeiras tarefas, métricas de sucesso e integração com o fluxo de desenvolvimento existente.",
-      "acceptanceCriteria": [
-        "[x] Plano de atuação documentado em docs/UX_UI_AGENT_PLAN.md",
-        "[x] Primeiras tarefas priorizadas (FLY-017 a FLY-019)",
-        "[x] Métricas de sucesso definidas (8 métricas)",
-        "[x] Quality gate checklist para PRs criado"
-      ]
+      "id": "FLY-008", "title": "Monitoramento e observabilidade", "priority": "P1",
+      "owner": "DevOps Engineer", "reviewers": ["Security"],
+      "description": "Vercel Analytics, erros, performance, logs de API.",
+      "acceptanceCriteria": ["[ ] Monitoramento erros", "[ ] Alertas FCP/LCP/CLS", "[ ] Logs API", "[ ] Dashboard observabilidade"]
     },
-    "FLY-017": {
-      "id": "FLY-017",
-      "title": "Auditoria inicial do design system e tokens CSS",
-      "priority": "P1",
-      "owner": "UX/UI Designer",
-      "reviewers": ["Frontend Engineer", "QA"],
-      "description": "Auditar tokens CSS existentes, detectar CSS hardcoded, componentes inconsistentes e gaps no design system.",
-      "acceptanceCriteria": [
-        "[x] Inventário de tokens CSS existentes (80+ tokens em globals.css)",
-        "[x] Detecção de CSS hardcoded por página (22+ ocorrências hex, 24 touch target violations)",
-        "[x] Relatório de inconsistências em docs/design-system-audit.md",
-        "[x] Recomendações de correção priorizadas (P0 a P2)"
-      ]
+    "FLY-009": {
+      "id": "FLY-009", "title": "Testes E2E fluxos críticos", "priority": "P1",
+      "owner": "QA Engineer", "reviewers": ["Frontend", "Backend"],
+      "description": "Playwright E2E: auth, transações, recorrências, orçamentos, agents.",
+      "acceptanceCriteria": ["[ ] Auth flow E2E", "[ ] CRUD transações", "[ ] Recorrências", "[ ] Orçamentos", "[ ] 5+ specs"]
     },
-    "FLY-018": {
-      "id": "FLY-018",
-      "title": "Mapear e priorizar 87 gaps de UX para resolução",
-      "priority": "P1",
-      "owner": "UX/UI Designer",
-      "reviewers": ["Product Owner", "QA"],
-      "description": "Analisar os 87 gaps de UX documentados no QA_CHECKLIST.md, categorizar por severidade e impacto, e priorizar para resolução nas próximas sprints.",
-      "acceptanceCriteria": [
-        "[x] 87 gaps categorizados por severidade (10 P0, 22 P1, 22 P2)",
-        "[x] Top 20 gaps priorizados para ação imediata",
-        "[x] Recomendações de correção em docs/ux-gaps-analysis.md",
-        "[x] Plano de resolução para sprint 2 e 3"
-      ]
+    "FLY-010": {
+      "id": "FLY-010", "title": "Performance mobile FCP < 1.5s", "priority": "P1",
+      "owner": "Frontend Engineer", "reviewers": ["DevOps"],
+      "description": "Otimizar FCP, LCP, bundle size, lazy loading, code splitting.",
+      "acceptanceCriteria": ["[ ] FCP < 1.5s mobile", "[ ] Lighthouse ≥ 85", "[ ] Bundle analysis"]
     },
-    "FLY-019": {
-      "id": "FLY-019",
-      "title": "Criar quality gate visual para PRs",
-      "priority": "P2",
-      "owner": "UX/UI Designer",
-      "reviewers": ["Platform Architect", "QA"],
-      "description": "Definir checklist de revisão visual para PRs que alteram UI/UX, incluindo verificação de tokens, responsividade mobile, acessibilidade e consistência.",
-      "acceptanceCriteria": [
-        "[x] Checklist de revisão visual documentado (25+ itens em 6 categorias)",
-        "[x] Integração com fluxo de PR — template markdown para body do PR",
-        "[x] Critérios objetivos de aprovação/rejeição (P0 → REJEITADO, P1/P2 → RESSALVAS)",
-        "[x] Exemplos de uso documentados (PR real de header sticky)"
-      ]
+    "FLY-020": {
+      "id": "FLY-020", "title": "Zod validation APIs restantes", "priority": "P1",
+      "owner": "Backend Engineer", "reviewers": ["Security"],
+      "description": "Adicionar schemas Zod para POST/PUT sem validação (upload, import, revenues, reconciliation, cobranca, etc).",
+      "acceptanceCriteria": ["[ ] 30+ APIs com Zod", "[ ] Error messages pt-BR", "[ ] Testes validação"]
+    },
+    "FLY-021": {
+      "id": "FLY-021", "title": "Acessibilidade WCAG — ARIA labels", "priority": "P1",
+      "owner": "UX/UI Designer", "reviewers": ["QA"],
+      "description": "ARIA labels em 15/21 componentes, contraste, focus-visible, prefers-reduced-motion.",
+      "acceptanceCriteria": ["[ ] ARIA labels 21 componentes", "[ ] Contrast ratio ≥ 4.5:1", "[ ] Focus visible everywhere", "[ ] prefers-reduced-motion"]
+    },
+    "FLY-022": {
+      "id": "FLY-022", "title": "Responsividade mobile páginas", "priority": "P1",
+      "owner": "Frontend Engineer", "reviewers": ["UX/UI", "QA"],
+      "description": "Corrigir overflow charts (RE-01), botões período (FE-01), print styles (RE-03), FAB overlap (M-09).",
+      "acceptanceCriteria": ["[ ] Pie labels não sobrepõem", "[ ] Print styles OK", "[ ] FAB safe-area", "[ ] Período não overflow"]
+    },
+    "FLY-023": {
+      "id": "FLY-023", "title": "Navegação mobile — reduzir taps", "priority": "P2",
+      "owner": "UX/UI Designer", "reviewers": ["Product Owner", "Frontend"],
+      "description": "Reduzir 67% módulos 2+ taps: shortcuts, recentes, favoritos na bottom nav.",
+      "acceptanceCriteria": ["[ ] Análise de taps atual", "[ ] Proposta redução", "[ ] Implementação top 3", "[ ] Teste usuário"]
+    },
+    "FLY-024": {
+      "id": "FLY-024", "title": "Feature: archive/deactivate contas", "priority": "P2",
+      "owner": "Backend + Frontend", "reviewers": ["QA"],
+      "description": "Permitir arquivar/desativar contas sem deletar transações vinculadas.",
+      "acceptanceCriteria": ["[ ] isActive field", "[ ] UI toggle archive", "[ ] Transações preservadas", "[ ] Filtro ativas/arquivadas"]
+    },
+    "FLY-025": {
+      "id": "FLY-025", "title": "Esqueci senha + tratamento erros NextAuth", "priority": "P1",
+      "owner": "Backend Engineer", "reviewers": ["Security"],
+      "description": "Fluxo de recuperação de senha (email) e tratamento de erros de autenticação.",
+      "acceptanceCriteria": ["[ ] Página esqueci senha funcional", "[ ] Email recovery via Resend", "[ ] Erros NextAuth amigáveis", "[ ] Rate limited"]
     }
   },
   "itemsByStatus": {
-    "TODO": 8,
+    "TODO": 14,
     "READY": 0,
     "IN_PROGRESS": 0,
     "IN_REVIEW": 0,
