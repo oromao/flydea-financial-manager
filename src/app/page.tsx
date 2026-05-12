@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -42,23 +43,6 @@ interface CopilotData {
     isRead: boolean;
   }>;
   healthScore?: number;
-}
-
-interface DashboardData {
-  balance: number;
-  income: number;
-  expenses: number;
-  chartData: ChartDataPoint[];
-  topCategories: unknown[];
-  projectedExpenses: number;
-  projectedIncome: number;
-  pendingExpenses: number;
-  nextMonths: unknown[];
-  budgetAlerts: BudgetAlert[];
-  savingsRate: number;
-  monthIncome: number;
-  monthExpenses: number;
-  copilot?: CopilotData;
 }
 
 const containerVariants = {
@@ -108,6 +92,7 @@ export default function Dashboard() {
     copilot: undefined,
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
 
@@ -122,6 +107,9 @@ export default function Dashboard() {
           const data = await metricsRes.json();
           setMetrics(data);
           setLastUpdated(new Date());
+        } else {
+          const err = await metricsRes.json().catch(() => ({ error: "Erro ao carregar dados" }));
+          setError(err.error || "Erro ao carregar dashboard");
         }
         if (categoriesRes.ok) {
           const catData = await categoriesRes.json();
@@ -129,6 +117,7 @@ export default function Dashboard() {
         }
       } catch (e) {
         console.error("Dashboard fetch error:", e);
+        setError("Erro de conexão. Verifique sua internet.");
       } finally {
         setLoading(false);
       }
@@ -186,7 +175,24 @@ export default function Dashboard() {
     );
   }
 
-  if (!loading && metrics.balance === 0 && metrics.income === 0 && metrics.expenses === 0) {
+  if (error) {
+    return (
+      <PageErrorBoundary>
+      <motion.div initial="hidden" animate="visible" variants={containerVariants} className="max-w-7xl mx-auto px-4 py-20 text-center">
+        <div className="w-16 h-16 bg-destructive/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
+          <BarChart3 className="w-8 h-8 text-destructive" aria-hidden="true" />
+        </div>
+        <h2 className="text-xl font-bold text-on-background mb-2">Dashboard indisponível</h2>
+        <p className="text-sm text-on-surface-variant mb-6 max-w-xs mx-auto">{error}</p>
+        <Button onClick={() => window.location.reload()} className="h-11 rounded-xl">
+          Tentar novamente
+        </Button>
+      </motion.div>
+    </PageErrorBoundary>
+    );
+  }
+
+  if (!loading && metrics.balance === 0 && metrics.income === 0 && metrics.expenses === 0 && !metrics.chartData?.length) {
     return (
       <PageErrorBoundary>
       <motion.div initial="hidden" animate="visible" variants={containerVariants} className="max-w-7xl mx-auto">

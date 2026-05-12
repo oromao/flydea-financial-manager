@@ -101,9 +101,7 @@ export function DashboardHero({ balance, projectedBalance, loading, income, expe
 
           {/* Actions */}
           <div className="flex flex-wrap items-center gap-3">
-            <span className="hidden md:inline-flex">
-              <QuickAdd categories={categories} onSuccess={() => router.refresh()} />
-            </span>
+            <QuickAdd categories={categories} onSuccess={() => router.refresh()} />
             <Link
               href="/movimentacoes"
               className="h-11 md:h-12 px-5 md:px-8 rounded-2xl bg-accent/10 hover:bg-accent/20 transition-all text-sm md:text-base font-semibold text-white flex items-center gap-2 border border-border shadow-lg active:scale-95"
