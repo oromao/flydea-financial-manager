@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { AccountSchema } from "@/lib/validations";
 import { withRateLimit } from "@/lib/rate-limit";
 
 type RouteParams = { params: Promise<{ id: string }> };
@@ -12,20 +13,26 @@ export const PUT = withRateLimit(async (request: NextRequest, { params }: RouteP
 
   const { id } = await params;
   const body = await request.json();
+  const parsed = AccountSchema.partial().safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
+  }
 
   const account = await prisma.account.findUnique({ where: { id } });
   if (!account || account.userId !== session.user.id) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  const { name, type, balance, color, isActive } = parsed.data;
+
   const updated = await prisma.account.update({
     where: { id },
     data: {
-      ...(body.name && { name: body.name }),
-      ...(body.type && { type: body.type }),
-      ...(body.balance !== undefined && { balance: body.balance }),
-      ...(body.color && { color: body.color }),
-      ...(body.isActive !== undefined && { isActive: body.isActive }),
+      ...(name ? { name } : {}),
+      ...(type ? { type } : {}),
+      ...(balance !== undefined ? { balance } : {}),
+      ...(color ? { color } : {}),
+      ...(isActive !== undefined ? { isActive } : {}),
     }
   });
 
@@ -34,8 +41,8 @@ export const PUT = withRateLimit(async (request: NextRequest, { params }: RouteP
       action: "UPDATE",
       entity: "ACCOUNT",
       entityId: id,
-      details: body.isActive !== undefined 
-        ? `Conta ${body.isActive ? "reativada" : "arquivada"}: ${account.name}`
+      details: isActive !== undefined 
+        ? `Conta ${isActive ? "reativada" : "arquivada"}: ${account.name}`
         : `Conta atualizada: ${account.name}`,
       userId: session.user.id
     }

@@ -87,9 +87,13 @@ export default function AILearningDashboard() {
           </div>
           <div className="rounded-lg border bg-card p-4">
             <div className="text-2xl font-bold text-warning">{stats.pending}</div>
-
+            <div className="text-sm text-muted-foreground">Pendentes</div>
+          </div>
+          <div className="rounded-lg border bg-card p-4">
             <div className="text-2xl font-bold text-success">{stats.approved}</div>
-
+            <div className="text-sm text-muted-foreground">Aprovados</div>
+          </div>
+          <div className="rounded-lg border bg-card p-4">
             <div className="text-2xl font-bold text-destructive">{stats.rejected}</div>
             <div className="text-sm text-muted-foreground">Rejeitados</div>
           </div>

@@ -129,7 +129,7 @@ export function QuickAdd({
       {controlledOpen === undefined && !open && (
         <Button
           onClick={() => setOpen(true)}
-          aria-label="Novo lancamento"
+          aria-label="Novo lançamento"
           className="fixed bottom-24 right-6 h-14 w-14 rounded-full bg-primary shadow-lg hover:bg-primary/90 transition-all hover:scale-110 z-40 md:hidden"
         >
           <Plus className="w-6 h-6" />
@@ -142,12 +142,12 @@ export function QuickAdd({
           className="hidden md:flex items-center gap-2 h-12 px-6 rounded-full bg-primary shadow-lg hover:bg-primary/90"
         >
           <Plus className="w-5 h-5" />
-          <span className="font-bold">Novo Lancamento</span>
+          <span className="font-bold">Novo Lançamento</span>
         </Button>
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="w-[95vw] max-w-[420px] bg-background border border-border/30 p-0 shadow-2xl rounded-3xl">
+        <DialogContent className="sm:max-w-[420px] p-0">
           <div className="px-8 pt-10 pb-8">
             <DialogHeader className="text-left mb-10">
               <DialogTitle className="text-3xl font-black tracking-tight text-foreground leading-none">
@@ -157,22 +157,25 @@ export function QuickAdd({
           </div>
 
           <Form {...form}>
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="space-y-8 px-8 pb-10"
-            >
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            aria-label="Formulário de novo lançamento"
+            className="space-y-8 px-8 pb-10"
+          >
               <FormField
                 control={form.control}
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex gap-3 p-1.5 bg-muted/40 rounded-2xl">
+                    <div className="flex gap-3 p-1.5 bg-muted/40 rounded-2xl" role="radiogroup" aria-label="Tipo de lançamento">
                       <motion.button
                         type="button"
+                        role="radio"
+                        aria-checked={field.value === "EXPENSE"}
                         onClick={() => field.onChange("EXPENSE")}
                         whileTap={{ scale: 0.97 }}
                         className={cn(
-                          "flex-1 py-4.5 rounded-xl font-bold text-base transition-all duration-300 cursor-pointer",
+                          "flex-1 py-4.5 rounded-xl font-bold text-base transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30",
                           field.value === "EXPENSE"
                             ? "bg-foreground text-background shadow-lg"
                             : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -182,10 +185,12 @@ export function QuickAdd({
                       </motion.button>
                       <motion.button
                         type="button"
+                        role="radio"
+                        aria-checked={field.value === "INCOME"}
                         onClick={() => field.onChange("INCOME")}
                         whileTap={{ scale: 0.97 }}
                         className={cn(
-                          "flex-1 py-4.5 rounded-xl font-bold text-base transition-all duration-300 cursor-pointer",
+                          "flex-1 py-4.5 rounded-xl font-bold text-base transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30",
                           field.value === "INCOME"
                             ? "bg-foreground text-background shadow-lg"
                             : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -231,7 +236,7 @@ export function QuickAdd({
                       Quanto?
                     </FormLabel>
                     <div className="relative">
-                      <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-bold text-muted-foreground/50">R$</span>
+                      <span aria-hidden="true" className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-bold text-muted-foreground/50">R$</span>
                       <Input
                         type="number"
                         placeholder="0,00"
@@ -259,7 +264,7 @@ export function QuickAdd({
                       >
                         <FormControl>
                           <SelectTrigger className="h-14 bg-muted/40 border-0 rounded-2xl font-medium">
-                            <SelectValue placeholder="Selecione" />
+                            <SelectValue placeholder="Selecione">{field.value ? filteredCategories.find(c => c.id === field.value)?.name || "Selecione" : "Selecione"}</SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>

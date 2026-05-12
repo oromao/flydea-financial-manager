@@ -224,7 +224,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
           </Button>
         }
       />
-      <DialogContent className="w-[95vw] md:max-w-2xl bg-surface border-none rounded-4xl p-0 shadow-xl overflow-hidden border border-border max-h-[90vh] overflow-y-auto">
+      <DialogContent className="md:max-w-2xl p-0 overflow-y-auto border-none max-h-[90vh]">
           <div className="bg-accent/5 p-8 md:p-12 border-b border-border">
           <DialogHeader>
             <DialogTitle className="text-3xl font-black text-on-background tracking-tighter uppercase italic">
@@ -438,7 +438,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                     onValueChange={(v) => setEditedData({ ...editedData, categoryId: v || "" })}
                   >
                     <SelectTrigger className="h-11">
-                      <SelectValue />
+                      <SelectValue>{editedData.categoryId ? categories.find(c => c.id === editedData.categoryId)?.name : "Selecione..."}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((c) => (

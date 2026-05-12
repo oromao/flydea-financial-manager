@@ -20,12 +20,12 @@ export default function MaisPage() {
   return (
     <PageErrorBoundary>
     <div className="space-y-8 max-w-6xl mx-auto pb-20 md:pb-0">
-      <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2 px-4 md:px-0">
+      <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight text-on-background">Mais opções</h1>
         <p className="text-on-surface-variant text-sm max-w-2xl">Acesso rápido às demais áreas do seu assistente</p>
       </motion.header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 px-4 md:px-0">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {shortcuts.map((item) => {
           const Icon = item.icon;
           return (

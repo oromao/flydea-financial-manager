@@ -7,7 +7,7 @@ import { parseDocumentText, computeFileHash } from "@/lib/document-parser";
 import { classifyDocument } from "@/lib/category-classifier";
 import { checkForDuplicate } from "@/lib/duplicate-detector";
 import { uploadFileToBlobStorage } from "@/lib/blob-storage";
-import { paddleOCR } from "@/lib/ocr/paddle-ocr";
+import { paddleOCR, StructuredFinanceData } from "@/lib/ocr/paddle-ocr";
 import { generateRequestId } from "@/lib/utils";
 import { withRateLimit } from "@/lib/rate-limit";
 
@@ -62,7 +62,7 @@ export const POST = withRateLimit(async (request: NextRequest) => {
 
     // 1. Extraction Pipeline (Fast-path for text files)
     let rawText = "";
-    let structured: any = {};
+    let structured: Partial<StructuredFinanceData> = {};
     const ocrStartTime = Date.now();
 
     if (mimeType === "text/plain") {
@@ -194,7 +194,7 @@ export async function GET(request: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
 
   const PAGE_SIZE = 20;
-  const where: any = {
+  const where: Record<string, unknown> = {
     userId: session.user.id,
   };
   if (status) {

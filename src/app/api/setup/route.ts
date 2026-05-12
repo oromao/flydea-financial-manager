@@ -4,13 +4,16 @@ import bcrypt from "bcryptjs";
 import { withRateLimit } from "@/lib/rate-limit";
 
 export const GET = withRateLimit(async () => {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Setup não disponível em produção" }, { status: 403 });
+  }
+
   try {
     // Add missing columns if they don't exist (Neon PostgreSQL)
     try {
       await prisma.$executeRawUnsafe(`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "resetToken" TEXT`);
       await prisma.$executeRawUnsafe(`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "resetTokenExpires" TIMESTAMP(3)`);
-    } catch (schemaError) {
-      console.warn("Schema update warning:", schemaError);
+    } catch {
     }
 
     const hashedPassword = await bcrypt.hash("flydea2026", 10);
@@ -42,7 +45,7 @@ export const GET = withRateLimit(async () => {
     const adminResult = await prisma.$queryRawUnsafe<{ id: string }[]>(
       `SELECT "id" FROM "User" WHERE "email" = 'admin@flydea.com' LIMIT 1`
     );
-    const adminId = (adminResult as any)[0]?.id;
+    const adminId = adminResult[0]?.id;
 
     // Seed system categories
     const systemCategories = [
@@ -67,7 +70,7 @@ export const GET = withRateLimit(async () => {
           await prisma.category.create({
             data: {
               name: cat.name,
-              type: cat.type as any,
+              type: cat.type as "INCOME" | "EXPENSE",
               userId: adminId,
             },
           });

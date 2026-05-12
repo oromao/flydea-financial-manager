@@ -21,21 +21,17 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Senha", type: "password" }
       },
       async authorize(credentials) {
-        console.log("Tentativa de login para:", credentials?.email);
-        
         if (!credentials?.email || !credentials?.password) {
-          console.error("Credenciais ausentes");
           throw new Error("Email e senha obrigatórios");
         }
 
         try {
           const { success } = await checkRateLimit(`login:${credentials.email}`);
           if (!success) {
-            console.error("Rate limit excedido para:", credentials.email);
             throw new Error("Muitas tentativas. Tente novamente em 60 segundos.");
           }
         } catch (e) {
-          console.error("Erro no checkRateLimit, prosseguindo:", e);
+          if (e instanceof Error && e.message.includes("Muitas tentativas")) throw e;
         }
 
         try {
@@ -44,8 +40,7 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!user || !user.password) {
-            console.error("Usuário não encontrado no BD:", credentials.email);
-            throw new Error("Usuário não encontrado");
+            throw new Error("Credenciais inválidas");
           }
 
           const isPasswordValid = await bcrypt.compare(
@@ -54,11 +49,9 @@ export const authOptions: NextAuthOptions = {
           );
 
           if (!isPasswordValid) {
-            console.error("Senha inválida para:", credentials.email);
-            throw new Error("Senha inválida");
+            throw new Error("Credenciais inválidas");
           }
 
-          console.log("Login autorizado com sucesso para:", credentials.email);
           return {
             id: user.id,
             email: user.email,
@@ -67,7 +60,6 @@ export const authOptions: NextAuthOptions = {
             role: user.role,
           };
         } catch (error) {
-          console.error("Erro na validação do Prisma/Bcrypt:", error);
           throw error;
         }
       }
@@ -100,6 +92,7 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/login",
+    error: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

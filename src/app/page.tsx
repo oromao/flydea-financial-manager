@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -74,6 +75,7 @@ interface DashboardData {
 }
 
 export default function Dashboard() {
+  const router = useRouter();
   const [metrics, setMetrics] = useState<DashboardData>({
     balance: 0,
     projectedBalance: 0,
@@ -94,7 +96,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string; type: string }[]>([]);
 
   useEffect(() => {
     async function fetchMetrics() {
@@ -115,8 +117,7 @@ export default function Dashboard() {
           const catData = await categoriesRes.json();
           setCategories(Array.isArray(catData) ? catData : []);
         }
-      } catch (e) {
-        console.error("Dashboard fetch error:", e);
+      } catch {
         setError("Erro de conexão. Verifique sua internet.");
       } finally {
         setLoading(false);
@@ -135,7 +136,7 @@ export default function Dashboard() {
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0"
+        className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-24 md:pb-8"
       >
         {/* Hero Skeleton */}
         <motion.section variants={itemVariants}>
@@ -143,18 +144,18 @@ export default function Dashboard() {
             <div className="space-y-8">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="h-3.5 w-3.5 rounded-full bg-accent/20" />
-                  <div className="h-3 w-24 rounded-full bg-accent/20" />
+                  <div className="h-3.5 w-3.5 rounded-full bg-white/[0.07]" />
+                  <div className="h-3 w-24 rounded-full bg-white/[0.07]" />
                 </div>
                 <div className="p-3 rounded-2xl bg-accent/10 border border-border">
-                  <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-accent/20" />
+                  <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-white/[0.07]" />
                 </div>
               </div>
               <div className="h-12 md:h-16 w-48 md:w-72 bg-accent/10 rounded-2xl animate-pulse" />
               <div className="grid grid-cols-3 gap-3">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="bg-accent/10 rounded-2xl p-3 md:p-4 border border-border">
-                    <div className="h-3 w-16 bg-accent/20 rounded mb-1" />
+                    <div className="h-3 w-16 bg-white/[0.07] rounded mb-1" />
                     <div className="h-4 w-20 bg-accent/10 rounded animate-pulse" />
                   </div>
                 ))}
@@ -184,7 +185,7 @@ export default function Dashboard() {
         </div>
         <h2 className="text-xl font-bold text-on-background mb-2">Dashboard indisponível</h2>
         <p className="text-sm text-on-surface-variant mb-6 max-w-xs mx-auto">{error}</p>
-        <Button onClick={() => window.location.reload()} className="h-11 rounded-xl">
+        <Button onClick={() => router.refresh()} className="h-11 rounded-xl">
           Tentar novamente
         </Button>
       </motion.div>
@@ -208,7 +209,7 @@ export default function Dashboard() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0"
+      className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-24 md:pb-8"
     >
       {/* Hero: Saldo Geral + Mini Cards */}
       <motion.section variants={itemVariants}>

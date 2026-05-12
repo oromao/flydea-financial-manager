@@ -118,7 +118,7 @@ function MovimentaçõesContent() {
     const queryString = params.toString();
     const newUrl = `${pathname}${queryString ? `?${queryString}` : ""}`;
 
-    if (window.location.search !== `?${queryString}` && !(window.location.search === "" && !queryString)) {
+    if (searchParams.toString() !== queryString && !(searchParams.toString() === "" && !queryString)) {
       router.replace(newUrl, { scroll: false });
     }
   }, [searchTerm, filterCategory, filterType, filterPaymentStatus, startDateFilter, endDateFilter, sortField, sortOrder, page, router, pathname]);
@@ -175,8 +175,7 @@ function MovimentaçõesContent() {
         } else {
           setTransactions(Array.isArray(data) ? data : []);
         }
-      } catch (e) {
-        console.error("Fetch transactions error:", e);
+      } catch {
       } finally {
         setLoading(false);
       }
@@ -429,7 +428,7 @@ function MovimentaçõesContent() {
 
   return (
     <PageErrorBoundary>
-    <div className="mx-auto max-w-7xl space-y-4 pb-24 md:space-y-6 md:pb-8 px-4 md:px-0">
+    <div className="mx-auto max-w-7xl space-y-4 pb-24 md:space-y-6 md:pb-8">
       {/* ─── TOP BAR ─── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
@@ -477,7 +476,7 @@ function MovimentaçõesContent() {
               }
             />
 
-              <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-border sm:rounded-2xl bg-card sm:shadow-2xl max-h-[90vh]">
+              <DialogContent className="sm:max-w-[550px] p-0 overflow-y-auto border-border sm:rounded-2xl bg-card sm:shadow-2xl max-h-[85vh]">
                 {/* Close button - positioned above sticky header */}
                 <DialogClose
                   render={
@@ -631,7 +630,7 @@ function MovimentaçõesContent() {
                         id="accountId"
                         className="h-12 rounded-xl bg-muted/50 border-border font-semibold"
                       >
-                        <SelectValue placeholder="Selecione..." />
+                        <SelectValue placeholder="Selecione...">{accountId ? accounts.find(a => a.id === accountId)?.name || "Selecione..." : "Selecione..."}</SelectValue>
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-border">
                         {accounts.map((a) => (
@@ -914,6 +913,7 @@ function MovimentaçõesContent() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Pesquisar..."
+                aria-label="Pesquisar movimentações"
                 className="pl-9 h-11 rounded-xl bg-muted/50 border-border text-sm"
               />
             </div>
@@ -947,6 +947,7 @@ function MovimentaçõesContent() {
                 type="date"
                 value={startDateFilter}
                 onChange={(e) => setStartDateFilter(e.target.value)}
+                aria-label="Data inicial"
                 className="h-11 w-24 rounded-lg bg-muted/50 border-border text-xs"
               />
               <span className="text-xs text-muted-foreground">-</span>
@@ -954,6 +955,7 @@ function MovimentaçõesContent() {
                 type="date"
                 value={endDateFilter}
                 onChange={(e) => setEndDateFilter(e.target.value)}
+                aria-label="Data final"
                 className="h-11 w-24 rounded-lg bg-muted/50 border-border text-xs"
               />
             </div>
@@ -963,7 +965,7 @@ function MovimentaçõesContent() {
               onValueChange={(val) => setFilterType(val === "ALL" ? null : val)}
               className="flex-shrink-0"
             >
-              <TabsList className="h-11 rounded-lg bg-muted border-border p-0.5">
+              <TabsList aria-label="Filtrar por tipo" className="h-11 rounded-lg bg-muted border-border p-0.5">
                 <TabsTrigger value="ALL" className="px-3 h-9 text-xs font-medium rounded-md">
                   Todos
                 </TabsTrigger>
@@ -981,7 +983,7 @@ function MovimentaçõesContent() {
               onValueChange={setFilterPaymentStatus}
               className="flex-shrink-0"
             >
-              <TabsList className="h-11 rounded-lg bg-muted border-border p-0.5">
+              <TabsList aria-label="Filtrar por status" className="h-11 rounded-lg bg-muted border-border p-0.5">
                 <TabsTrigger value="ALL" className="px-3 h-9 text-xs font-medium rounded-md">
                   Status
                 </TabsTrigger>
@@ -1118,7 +1120,7 @@ function MovimentaçõesContent() {
                         {formatCurrency(t.amount)}
                       </TableCell>
                       <TableCell className="pr-5 py-4 text-right">
-                        <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex justify-end gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                           <Button
                             variant="ghost"
                             size="icon"
@@ -1200,7 +1202,7 @@ function MovimentaçõesContent() {
                           {t.category?.name && (
                             <>
                               <span>·</span>
-                              <span className="truncate max-w-[100px]">
+                              <span className="truncate max-w-[140px]">
                                 {t.category.name}
                               </span>
                             </>
@@ -1290,7 +1292,7 @@ function MovimentaçõesContent() {
 
       {/* ─── PAGINATION ─── */}
       {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 md:px-0 mt-4 pb-10">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 pb-10">
           <p className="text-xs font-medium text-muted-foreground">
             {total} registros · Página {page} de {totalPages}
           </p>
@@ -1343,7 +1345,7 @@ function MovimentaçõesContent() {
         className="md:hidden fixed z-50"
         style={{
           bottom: "calc(6rem + env(safe-area-inset-bottom))",
-          right: "1.5rem",
+          right: "max(1.5rem, env(safe-area-inset-right))",
         }}
       >
         <button

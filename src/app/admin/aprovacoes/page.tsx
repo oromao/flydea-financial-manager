@@ -110,7 +110,7 @@ export default function AprovacoesPage() {
 
   return (
     <PageErrorBoundary>
-    <div className="space-y-10 max-w-6xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
+    <div className="space-y-10 max-w-6xl mx-auto pb-24 md:pb-8">
       <div className="flex items-center gap-5">
         <div className="p-3.5 rounded-2xl bg-primary text-on-primary shadow-xl shadow-primary/20">
           <ShieldCheck className="w-8 h-8" />
@@ -177,11 +177,11 @@ export default function AprovacoesPage() {
                         </div>
                       </div>
 
-                      <div className="p-6 bg-surface-variant/10 md:w-[220px] flex md:flex-col items-center justify-center gap-3 border-l border-outline/5">
+                      <div className="p-6 bg-surface-variant/10 md:w-[220px] w-full flex md:flex-col items-center justify-center gap-3 border-l border-outline/5">
                         <Button
                           onClick={() => handle(item.id, "APPROVE")}
                           disabled={!!actionLoading}
-                          className="w-full h-11 rounded-xl bg-success hover:bg-success/90 text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-success/20"
+                          className="w-full h-11 rounded-xl bg-success hover:bg-success/90 text-success-foreground font-black text-[11px] uppercase tracking-widest shadow-lg shadow-success/20"
                         >
                           {actionLoading === item.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
                           Aprovar

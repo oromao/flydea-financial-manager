@@ -117,7 +117,7 @@ export default function ContasAPagar() {
 
   return (
     <PageErrorBoundary>
-    <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
+    <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <div className="p-3 rounded-2xl bg-warning text-white shadow-lg shadow-warning/30">
@@ -130,7 +130,7 @@ export default function ContasAPagar() {
         </div>
 
         <Tabs value={filter} onValueChange={(value) => setFilter(value as typeof filter)} className="self-start md:self-center">
-          <TabsList className="h-11 rounded-2xl p-1 overflow-x-auto">
+          <TabsList aria-label="Filtrar por vencimento" className="h-11 rounded-2xl p-1 overflow-x-auto">
             <TabsTrigger value="all" className="rounded-xl text-xs font-black uppercase tracking-widest h-10 px-4 whitespace-nowrap">Todas</TabsTrigger>
             <TabsTrigger value="overdue" className="rounded-xl text-xs font-black uppercase tracking-widest h-10 px-4 whitespace-nowrap">Atrasadas</TabsTrigger>
             <TabsTrigger value="upcoming" className="rounded-xl text-xs font-black uppercase tracking-widest h-10 px-4 whitespace-nowrap">Proximos 7d</TabsTrigger>
@@ -166,16 +166,17 @@ export default function ContasAPagar() {
              value={query} 
              onChange={e => setQuery(e.target.value)} 
              placeholder="Filtrar por nome..." 
+             aria-label="Filtrar contas a pagar"
              className="h-14 pl-12 rounded-2xl bg-muted/30 border-transparent font-bold text-lg focus:bg-card focus:border-border/20"
            />
         </div>
 
-        <div className="grid gap-3 px-4 md:px-0">
+          <div className="grid gap-3">
           <AnimatePresence mode="popLayout">
             {loading ? (
-              <div className="py-24 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-secondary/20" /></div>
+              <div role="status" className="py-24 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-secondary/20" /><span className="sr-only">Carregando...</span></div>
             ) : filteredData.length === 0 ? (
-              <Card className="flex flex-col items-center gap-4 opacity-30 border-dashed p-20">
+              <Card role="status" className="flex flex-col items-center gap-4 opacity-30 border-dashed p-20">
                  <CheckCircle2 className="w-16 h-16" />
                  <p className="font-black uppercase tracking-widest text-xs">Tudo liquidado!</p>
               </Card>

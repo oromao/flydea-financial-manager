@@ -45,9 +45,10 @@ export const RecurrenceSchema = z.object({
 
 export const AccountSchema = z.object({
   name: z.string().min(1, "Nome obrigatório").max(100),
-  type: z.enum(["CHECKING", "SAVINGS", "CREDIT", "CASH"]),
+  type: z.enum(["CHECKING", "SAVINGS", "INVESTMENT", "CREDIT_CARD", "CASH"]),
   balance: z.coerce.number().default(0),
   color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Cor inválida").optional(),
+  isActive: z.boolean().optional(),
 });
 
 export const BudgetSchema = z.object({

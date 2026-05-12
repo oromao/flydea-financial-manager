@@ -85,7 +85,7 @@ export const POST = withRateLimit(async (request: Request): Promise<NextResponse
   }
 
   try {
-    let body: any;
+    let body: File | ReadableStream | null;
 
     if (contentType.includes("multipart/form-data")) {
       const formData = await request.formData();
@@ -100,6 +100,9 @@ export const POST = withRateLimit(async (request: Request): Promise<NextResponse
     }
 
     // Use private access for strictly private stores
+    if (!body) {
+      return NextResponse.json({ error: "Nenhum arquivo enviado" }, { status: 400 });
+    }
     const blob = await put(safeFilename, body, {
       access: "private",
       token,
@@ -108,9 +111,10 @@ export const POST = withRateLimit(async (request: Request): Promise<NextResponse
 
     logger.info("Vercel blob upload success", { url: blob.url });
     return NextResponse.json(blob);
-  } catch (error: any) {
-    const errorMsg = error instanceof Error ? error.message : String(error);
-    const errorCode = error?.code || "UNKNOWN_ERROR";
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    const errorMsg = err.message;
+    const errorCode = "code" in err ? (err as { code: string }).code : "UNKNOWN_ERROR";
     
     // Check for specific Vercel Blob errors
     if (errorMsg.includes("BLOB_READ_WRITE_TOKEN") || errorCode === "BLOB_INVALID_TOKEN") {

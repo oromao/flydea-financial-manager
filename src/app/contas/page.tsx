@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Trash2, Wallet, CreditCard, PiggyBank, Banknote, Edit2, TrendingUp, Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Plus, Wallet, CreditCard, PiggyBank, Banknote, Edit2, TrendingUp, Loader2, Archive, RotateCcw, ChevronDown, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Progress as ProgressPrimitive } from "@base-ui/react/progress";
 import { ProgressTrack, ProgressIndicator } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ interface Account {
   name: string;
   type: string;
   balance: number;
+  currentBalance?: number;
   color: string;
   isActive: boolean;
 }
@@ -43,6 +45,7 @@ export default function ContasPage() {
   const [saving, setSaving] = useState(false);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [archivedOpen, setArchivedOpen] = useState(false);
 
   const [name, setName] = useState("");
   const [type, setType] = useState("CHECKING");
@@ -55,7 +58,7 @@ export default function ContasPage() {
   const fetchAccounts = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/accounts");
+      const res = await fetch("/api/accounts?archived=true");
       const data = await res.json();
       setAccounts(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -70,10 +73,13 @@ export default function ContasPage() {
     fetchAccounts();
   }, [fetchAccounts]);
 
+  const activeAccounts = accounts.filter(a => a.isActive !== false);
+  const archivedAccounts = accounts.filter(a => a.isActive === false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return toast.error("Nome é obrigatório");
-    
+
     setSaving(true);
     try {
       const url = editingId ? `/api/accounts/${editingId}` : "/api/accounts";
@@ -100,34 +106,51 @@ export default function ContasPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleArchive = async (id: string) => {
     const account = accounts.find(a => a.id === id);
-    const isActive = account?.isActive !== false;
+    if (!account) return;
 
     const ok = await confirm({
-      title: isActive ? "Desativar conta" : "Reativar conta",
-      message: isActive 
-        ? "A conta será arquivada mas o histórico de transações será preservado. Você pode reativar a qualquer momento."
-        : "Esta conta voltará a aparecer normalmente.",
-      confirmLabel: isActive ? "Desativar" : "Reativar",
-      variant: isActive ? "danger" : "info",
+      title: "Arquivar conta",
+      message: `"${account.name}" será arquivada. O histórico de transações será preservado. Você pode reativar a qualquer momento.`,
+      confirmLabel: "Arquivar",
+      variant: "danger",
     });
     if (!ok) return;
 
     try {
-      const res = await fetch(`/api/accounts/${id}`, { 
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive: !isActive })
-      });
+      const res = await fetch(`/api/accounts/${id}/archive`, { method: "PATCH" });
       if (res.ok) {
-        toast.success(isActive ? "Conta arquivada!" : "Conta reativada!");
+        toast.success("Conta arquivada!");
         fetchAccounts();
       } else {
         const err = await res.json();
-        toast.error(err.error || "Erro ao atualizar conta.");
+        toast.error(err.error || "Erro ao arquivar conta");
       }
-    } catch (e) {
+    } catch {
+      toast.error("Erro ao processar");
+    }
+  };
+
+  const handleRestore = async (id: string) => {
+    const ok = await confirm({
+      title: "Reativar conta",
+      message: "Esta conta voltará a aparecer na lista principal de contas.",
+      confirmLabel: "Reativar",
+      variant: "info",
+    });
+    if (!ok) return;
+
+    try {
+      const res = await fetch(`/api/accounts/${id}/restore`, { method: "PATCH" });
+      if (res.ok) {
+        toast.success("Conta reativada!");
+        fetchAccounts();
+      } else {
+        const err = await res.json();
+        toast.error(err.error || "Erro ao reativar conta");
+      }
+    } catch {
       toast.error("Erro ao processar");
     }
   };
@@ -154,9 +177,88 @@ export default function ContasPage() {
     return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
   };
 
+  const renderAccountCard = (acc: Account, idx: number, archived: boolean = false) => {
+    const cfg = accountTypes.find(t => t.value === acc.type) || accountTypes[0];
+    const Icon = cfg.icon;
+
+    return (
+      <motion.div
+        key={acc.id}
+        layout
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: idx * 0.05 }}
+      >
+        <Card className={cn(
+          "premium-card p-0 overflow-hidden group border-none shadow-lg hover:shadow-2xl transition-all duration-500 bg-card min-h-[180px] flex flex-col",
+          archived && "opacity-60 hover:opacity-80 saturate-50"
+        )}>
+          <CardContent className="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-start gap-4">
+                <div className="flex items-center gap-4">
+                  <Avatar size="lg" className="rounded-2xl shadow-lg" style={{ backgroundColor: acc.color || cfg.color }}>
+                    <AvatarFallback className="rounded-2xl text-white" style={{ backgroundColor: acc.color || cfg.color }}>
+                      <Icon className="w-6 h-6" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <h2 className={cn(
+                      "text-xl font-black tracking-tight truncate group-hover:text-secondary transition-colors",
+                      archived ? "text-muted-foreground" : "text-foreground"
+                    )}>{acc.name}</h2>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge variant="secondary" className="text-[10px] font-black uppercase tracking-widest">{cfg.label}</Badge>
+                      {archived && (
+                        <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest text-muted-foreground">ARQUIVADA</Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                        <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {!archived && (
+                            <Button variant="ghost" size="icon" onClick={() => handleEdit(acc)} aria-label="Editar conta" className="h-11 w-11 rounded-xl bg-muted text-muted-foreground hover:bg-secondary hover:text-white transition-all">
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                          )}
+                          {archived ? (
+                            <Button variant="ghost" size="icon" onClick={() => handleRestore(acc.id)} aria-label="Reativar conta" className="h-11 w-11 rounded-xl bg-muted text-muted-foreground hover:bg-success hover:text-white transition-all">
+                              <RotateCcw className="w-4 h-4" />
+                            </Button>
+                          ) : (
+                            <Button variant="ghost" size="icon" onClick={() => handleArchive(acc.id)} aria-label="Arquivar conta" className="h-11 w-11 rounded-xl bg-muted text-muted-foreground hover:bg-destructive hover:text-white transition-all">
+                              <Archive className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+              </div>
+
+              <div className="mt-8">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Saldo Líquido</p>
+                <h3 className={cn(
+                  "text-3xl font-black tracking-tighter mt-1",
+                    archived ? "text-muted-foreground" : (acc.currentBalance ?? acc.balance) >= 0 ? "text-foreground" : "text-destructive"
+                  )}>
+                  {formatCurrency(acc.currentBalance ?? acc.balance)}
+                </h3>
+              </div>
+            </div>
+          </CardContent>
+
+          <ProgressPrimitive.Root value={100}>
+            <ProgressTrack className="h-1.5 rounded-none bg-muted/30">
+              <ProgressIndicator className="rounded-none" style={{ width: "100%", backgroundColor: archived ? "hsl(var(--muted-foreground))" : (acc.color || cfg.color) }} />
+            </ProgressTrack>
+          </ProgressPrimitive.Root>
+        </Card>
+      </motion.div>
+    );
+  };
+
   return (
     <PageErrorBoundary>
-    <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
+    <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <div className="p-3 rounded-2xl bg-primary/10 text-primary">
@@ -186,8 +288,8 @@ export default function ContasPage() {
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Nome da Conta</Label>
-                <Input required value={name} onChange={e => setName(e.target.value)} 
-                  className="h-12 font-bold text-lg rounded-2xl bg-muted/20 border-border/10" 
+                <Input required value={name} onChange={e => setName(e.target.value)}
+                  className="h-12 font-bold text-lg rounded-2xl bg-muted/20 border-border/10"
                   placeholder="Ex: Nubank, Itaú, Carteira..." />
               </div>
 
@@ -225,7 +327,7 @@ export default function ContasPage() {
                       type="button"
                       onClick={() => setColor(c)}
                       className={cn(
-                        "w-10 h-10 rounded-xl transition-all shadow-sm ring-offset-2 ring-offset-background",
+                        "w-11 h-11 rounded-xl transition-all shadow-sm ring-offset-2 ring-offset-background",
                         color === c ? "ring-2 ring-secondary scale-110 shadow-lg" : "hover:scale-105"
                       )}
                       style={{ backgroundColor: c }}
@@ -257,63 +359,60 @@ export default function ContasPage() {
           />
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {accounts.map((acc, idx) => {
-            const cfg = accountTypes.find(t => t.value === acc.type) || accountTypes[0];
-            const Icon = cfg.icon;
+        <div className="space-y-12">
+          {activeAccounts.length > 0 && (
+            <div>
+              {archivedAccounts.length > 0 && (
+                <div className="flex items-center gap-2 mb-6">
+                  <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
+                    Ativas
+                  </span>
+                  <div className="flex-1 h-px bg-border/30" />
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {activeAccounts.map((acc, idx) => renderAccountCard(acc, idx, false))}
+              </div>
+            </div>
+          )}
 
-            return (
-              <motion.div 
-                key={acc.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.05 }}
+          {archivedAccounts.length > 0 && (
+            <div>
+              <button
+                onClick={() => setArchivedOpen(!archivedOpen)}
+                className="flex items-center gap-3 w-full group cursor-pointer"
               >
-                <Card className={cn("premium-card p-0 overflow-hidden group border-none shadow-lg hover:shadow-2xl transition-all duration-500 bg-card min-h-[180px] flex flex-col", acc.isActive === false && "opacity-50")}>
-                  <CardContent className="p-6 flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex justify-between items-start gap-4">
-                        <div className="flex items-center gap-4">
-                          <Avatar size="lg" className="rounded-2xl shadow-lg" style={{ backgroundColor: acc.color || cfg.color }}>
-                            <AvatarFallback className="rounded-2xl text-white" style={{ backgroundColor: acc.color || cfg.color }}>
-                              <Icon className="w-6 h-6" />
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="min-w-0">
-                            <h2 className="text-xl font-black text-foreground tracking-tight truncate group-hover:text-secondary transition-colors">{acc.name}</h2>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="secondary" className="text-[10px] font-black uppercase tracking-widest">{cfg.label}</Badge>
-                              {acc.isActive === false && (
-                                <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest text-muted-foreground">ARQUIVADA</Badge>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(acc)} aria-label="Editar conta" className="h-11 w-11 rounded-xl bg-muted text-muted-foreground hover:bg-secondary hover:text-white transition-all"><Edit2 className="w-4 h-4" /></Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(acc.id)} aria-label={acc.isActive === false ? "Reativar conta" : "Excluir conta"} className={cn("h-11 w-11 rounded-xl bg-muted text-muted-foreground hover:bg-destructive hover:text-white transition-all", acc.isActive === false && "hover:bg-success")}>
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
+                <div className="flex items-center gap-2">
+                  {archivedOpen ? (
+                    <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform" />
+                  )}
+                  <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
+                    Arquivadas ({archivedAccounts.length})
+                  </span>
+                </div>
+                <div className="flex-1 h-px bg-border/30" />
+              </button>
 
-                      <div className="mt-8">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Saldo Líquido</p>
-                        <h3 className={cn("text-3xl font-black tracking-tighter mt-1", acc.balance >= 0 ? "text-foreground" : "text-destructive")}>
-                          {formatCurrency(acc.balance)}
-                        </h3>
-                      </div>
+              <AnimatePresence initial={false}>
+                {archivedOpen && (
+                  <motion.div
+                    key="archived-grid"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-6">
+                      {archivedAccounts.map((acc, idx) => renderAccountCard(acc, idx, true))}
                     </div>
-                  </CardContent>
-                  
-                  <ProgressTrack className="h-1.5 rounded-none bg-muted/30">
-                    <ProgressIndicator className="rounded-none" style={{ width: "100%", backgroundColor: acc.color || cfg.color }} />
-                  </ProgressTrack>
-                </Card>
-              </motion.div>
-            );
-          })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
       )}
     </div>

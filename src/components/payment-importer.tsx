@@ -382,7 +382,7 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
                     }
                   >
                     <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Selecione..." />
+                      <SelectValue placeholder="Selecione...">{editData.categoryId ? categories.find(c => c.id === editData.categoryId)?.name || "Selecione..." : "Selecione..."}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((cat) => (

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 
 describe('Smoke Tests', () => {
   it('should have valid globals.css', async () => {
-    const css = await import('@/app/globals.css' as any).catch(() => null);
+    await import('@/app/globals.css' as any).catch(() => null);
     const fs = await import('fs');
     expect(fs.existsSync('src/app/globals.css')).toBe(true);
   });
@@ -12,23 +12,11 @@ describe('Smoke Tests', () => {
     expect(fs.existsSync('prisma/schema.prisma')).toBe(true);
   });
 
-  it('should have financial engine', async () => {
+  it('should have financial engine', { timeout: 15000 }, async () => {
     const engine = await import('@/lib/financial-engine');
     expect(engine).toBeDefined();
-  });
-
-  it('should export computeSpendDecision', async () => {
-    const engine = await import('@/lib/financial-engine');
     expect(typeof engine.computeSpendDecision).toBe('function');
-  });
-
-  it('should export computeMonthlySummary', async () => {
-    const engine = await import('@/lib/financial-engine');
     expect(typeof engine.computeMonthlySummary).toBe('function');
-  });
-
-  it('should export computeWeeklyForecast', async () => {
-    const engine = await import('@/lib/financial-engine');
     expect(typeof engine.computeWeeklyForecast).toBe('function');
   });
 

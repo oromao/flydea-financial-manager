@@ -2,6 +2,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
+import { withValidation } from "@/lib/api-helpers";
 import { withRateLimit } from "@/lib/rate-limit";
 
 export const GET = withRateLimit(async (request: Request) => {
@@ -50,6 +52,22 @@ export const GET = withRateLimit(async (request: Request) => {
   }
 });
 
+const InstallmentItemSchema = z.object({
+  amount: z.number().positive(),
+  dueDate: z.union([z.string(), z.date()]),
+});
+
+const RevenueSchema = z.object({
+  description: z.string().min(1, "Descrição obrigatória"),
+  totalAmount: z.number().positive("Valor total deve ser positivo"),
+  emissionDate: z.string().refine((d) => !isNaN(Date.parse(d)), "Data inválida"),
+  type: z.enum(["AVISTA", "PARCELADO"]).default("PARCELADO"),
+  categoryId: z.string().optional(),
+  observations: z.string().optional(),
+  installmentData: z.array(InstallmentItemSchema).default([]),
+  numberOfInstallments: z.number().int().positive().optional(),
+});
+
 export const POST = withRateLimit(async (request: Request) => {
   try {
     const session = await getServerSession(authOptions);
@@ -72,21 +90,15 @@ export const POST = withRateLimit(async (request: Request) => {
     }
 
     const body = await request.json();
-    const {
-      description,
-      totalAmount,
-      emissionDate,
-      type = "PARCELADO",
-      categoryId,
-      installmentData = [],
-    } = body;
-
-    if (!description || !totalAmount || !emissionDate) {
+    const parsed = RevenueSchema.safeParse(body);
+    if (!parsed.success) {
       return new Response(
-        JSON.stringify({ error: "Missing required fields" }),
+        JSON.stringify({ error: "Dados inválidos", fields: parsed.error.flatten().fieldErrors }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
+
+    const { description, totalAmount, emissionDate, type, categoryId, observations, installmentData, numberOfInstallments } = parsed.data;
 
     // Criar receita
     const revenue = await prisma.revenue.create({
@@ -97,12 +109,12 @@ export const POST = withRateLimit(async (request: Request) => {
         emissionDate: new Date(emissionDate),
         type,
         categoryId,
-        observations: body.observations,
+        observations,
       },
     });
 
     // Criar parcelas
-    let installments: typeof installmentData = installmentData;
+    let installments = [...installmentData];
 
     // Se AVISTA, criar 1 parcela
     if (type === "AVISTA" && installments.length === 0) {
@@ -115,30 +127,20 @@ export const POST = withRateLimit(async (request: Request) => {
     }
 
     // Se PARCELADO sem parcelas, distribuir uniformemente
-    if (
-      type === "PARCELADO" &&
-      installments.length === 0 &&
-      body.numberOfInstallments
-    ) {
-      const monthlyAmount = totalAmount / body.numberOfInstallments;
+    if (type === "PARCELADO" && installments.length === 0 && numberOfInstallments) {
+      const monthlyAmount = totalAmount / numberOfInstallments;
       const baseDate = new Date(emissionDate);
 
-      installments = Array.from(
-        { length: body.numberOfInstallments },
-        (_, i) => {
-          const dueDate = new Date(baseDate);
-          dueDate.setMonth(dueDate.getMonth() + i + 1);
-          return {
-            amount: monthlyAmount,
-            dueDate,
-          };
-        }
-      );
+      installments = Array.from({ length: numberOfInstallments }, (_, i) => {
+        const dueDate = new Date(baseDate);
+        dueDate.setMonth(dueDate.getMonth() + i + 1);
+        return { amount: monthlyAmount, dueDate };
+      });
     }
 
     // Criar installments no banco
     const createdInstallments = await Promise.all(
-      installments.map((inst: { amount: number; dueDate: string | Date }, idx: number) =>
+      installments.map((inst, idx: number) =>
         prisma.revenueInstallment.create({
           data: {
             revenueId: revenue.id,
@@ -152,10 +154,7 @@ export const POST = withRateLimit(async (request: Request) => {
     );
 
     return new Response(
-      JSON.stringify({
-        revenue,
-        installments: createdInstallments,
-      }),
+      JSON.stringify({ revenue, installments: createdInstallments }),
       {
         status: 201,
         headers: { "Content-Type": "application/json" },

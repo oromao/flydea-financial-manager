@@ -56,9 +56,8 @@ function SwipeableContent({ children, onClose }: { children: React.ReactNode; on
         setIsAtTop(yVal <= 0)
       }}
       style={{ y, opacity }}
-      className="fixed inset-x-0 bottom-0 z-50 sm:hidden"
     >
-      <div className="flex justify-center pt-3 pb-1">
+      <div className="flex justify-center pt-3 pb-1 sm:hidden">
         <div className={cn(
           "w-8 h-1 rounded-full transition-colors",
           isAtTop ? "bg-border" : "bg-muted-foreground/30"
@@ -86,19 +85,23 @@ function DialogContent({
   return (
     <DialogPortal>
       <DialogOverlay />
-      {/* Mobile: Bottom Sheet */}
-      <SwipeableContent onClose={handleClose}>
-        <div className={cn(
-          "bg-background rounded-t-3xl shadow-2xl overflow-hidden",
+      <DialogPrimitive.Popup
+        data-slot="dialog-content"
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-50 w-full max-w-[calc(100vw-2rem)] sm:max-w-lg sm:w-full rounded-t-3xl sm:rounded-3xl bg-background p-6 text-sm shadow-2xl ring-1 ring-border/20 outline-none duration-200 sm:fixed sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 overflow-y-auto max-h-[85vh] pb-[env(safe-area-inset-bottom)] data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
-        )}>
+        )}
+        {...props}
+      >
+        <SwipeableContent onClose={handleClose}>
+          {children}
           {showCloseButton && (
             <DialogPrimitive.Close
               render={
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute top-4 right-4 sm:hidden rounded-full"
+                  className="absolute top-4 right-4 rounded-full"
                 />
               }
             >
@@ -106,33 +109,7 @@ function DialogContent({
               <span className="sr-only">Fechar</span>
             </DialogPrimitive.Close>
           )}
-          {children}
-        </div>
-      </SwipeableContent>
-      {/* Desktop: Centered modal */}
-      <DialogPrimitive.Popup
-        data-slot="dialog-content"
-        className={cn(
-          "fixed top-1/2 left-1/2 z-50 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-3xl bg-background p-6 text-sm shadow-2xl ring-1 ring-border/20 duration-200 outline-none hidden sm:grid sm:max-w-lg data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
-          className
-        )}
-        {...props}
-      >
-        {children}
-        {showCloseButton && (
-          <DialogPrimitive.Close
-            render={
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-4 right-4 hidden sm:flex rounded-full"
-              />
-            }
-          >
-            <XIcon className="w-5 h-5" />
-            <span className="sr-only">Fechar</span>
-          </DialogPrimitive.Close>
-        )}
+        </SwipeableContent>
       </DialogPrimitive.Popup>
     </DialogPortal>
   )

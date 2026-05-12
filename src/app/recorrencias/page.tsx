@@ -60,8 +60,7 @@ export default function Recorrências() {
       const res = await fetch("/api/recurrences");
       const data = await res.json();
       setRecurrences(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error("Fetch recurrences error:", e);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -75,20 +74,20 @@ export default function Recorrências() {
         body: JSON.stringify({ isActive: !currentIsActive }),
       });
       if (res.ok) {
-        toast.success(currentIsActive ? "Recorrencia pausada" : "Recorrencia ativada");
+        toast.success(currentIsActive ? "Recorrência pausada" : "Recorrência ativada");
         fetchRecurrences();
       } else {
-        toast.error("Erro ao atualizar recorrencia");
+        toast.error("Erro ao atualizar recorrência");
       }
     } catch (e) {
-      toast.error("Erro ao atualizar recorrencia");
+      toast.error("Erro ao atualizar recorrência");
     }
   };
 
   const handleDelete = async (id: string) => {
     const ok = await confirm({
-      title: "Excluir recorrencia",
-      message: "Tem certeza que deseja excluir esta recorrencia? Lancamentos futuros nao serao criados.",
+      title: "Excluir recorrência",
+      message: "Tem certeza que deseja excluir esta recorrência? Lançamentos futuros não serão criados.",
       confirmLabel: "Excluir",
       variant: "danger",
     });
@@ -96,13 +95,13 @@ export default function Recorrências() {
     try {
       const res = await fetch(`/api/recurrences/${id}`, { method: "DELETE" });
       if (res.ok) {
-        toast.success("Recorrencia excluida");
+        toast.success("Recorrência excluída");
         fetchRecurrences();
       } else {
-        toast.error("Erro ao excluir recorrencia");
+        toast.error("Erro ao excluir recorrência");
       }
     } catch (e) {
-      toast.error("Falha ao excluir recorrencia");
+      toast.error("Falha ao excluir recorrência");
     }
   };
 
@@ -143,17 +142,17 @@ export default function Recorrências() {
         body: JSON.stringify({ description, amount: numAmount, frequency, startDate, categoryId })
       });
       if (res.ok) {
-        toast.success("Recorrencia agendada!");
+        toast.success("Recorrência agendada!");
         setIsDialogOpen(false);
         resetForm();
         fetchRecurrences();
         fetch("/api/cron/recurrence").catch(() => {});
       } else {
         const err = await res.json().catch(() => ({}));
-        toast.error(err.error || "Erro ao criar recorrencia");
+        toast.error(err.error || "Erro ao criar recorrência");
       }
     } catch (e) {
-      toast.error("Erro ao criar recorrencia");
+      toast.error("Erro ao criar recorrência");
     } finally {
       setSaving(false);
     }
@@ -172,7 +171,7 @@ export default function Recorrências() {
 
   return (
     <PageErrorBoundary>
-    <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
+    <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8">
       {/* Header */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
@@ -185,27 +184,27 @@ export default function Recorrências() {
           </div>
           <div>
             <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Recorrências</h1>
-            <p className="text-muted-foreground font-medium text-sm mt-1">Automacao de contas fixas e assinaturas</p>
+            <p className="text-muted-foreground font-medium text-sm mt-1">Automação de contas fixas e assinaturas</p>
           </div>
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (open) resetForm(); }}>
           <DialogTrigger render={<Button className="apple-button-primary h-11 px-8 rounded-xl shadow-lg shadow-secondary/20" />}>
-            <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA RECORRENCIA
+            <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA RECORRÊNCIA
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-3xl bg-card sm:shadow-2xl">
+          <DialogContent className="sm:max-w-[600px] p-0 overflow-y-auto border-none sm:rounded-3xl bg-card sm:shadow-2xl">
             <div className="p-8 border-b border-border/10 bg-card">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-black tracking-tight text-foreground">
-                  Agendar Automacao
+                  Agendar Automação
                 </DialogTitle>
-                <p className="text-muted-foreground text-sm font-medium mt-1">Configure lancamentos automaticos inteligentes</p>
+                <p className="text-muted-foreground text-sm font-medium mt-1">Configure lançamentos automáticos inteligentes</p>
               </DialogHeader>
             </div>
             
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Descricao</Label>
+                <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Descrição</Label>
                 <Input value={description} onChange={e => setDescription(e.target.value)} 
                   className="h-12 font-bold text-lg rounded-2xl bg-muted/20 border-border/10" 
                   placeholder="Ex: Aluguel, Netflix, Salarios..." />
@@ -217,7 +216,7 @@ export default function Recorrências() {
                   <MoneyInput value={amount} onChange={setAmount} className="h-12 font-black text-2xl rounded-2xl bg-muted/20 border-border/10" required />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Frequencia</Label>
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Frequência</Label>
                   <Select value={frequency} onValueChange={(v: string | null) => setFrequency(v || "MONTHLY")}>
                     <SelectTrigger className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10">
                       {frequency === "MONTHLY" ? "Mensal" : frequency === "WEEKLY" ? "Semanal" : frequency === "BIWEEKLY" ? "Quinzenal" : "Anual"}
@@ -264,15 +263,15 @@ export default function Recorrências() {
       {loading ? (
         <div className="py-32 text-center">
            <Loader2 className="w-10 h-10 animate-spin mx-auto text-secondary/30" />
-           <p className="mt-4 text-muted-foreground/40 font-black text-xs uppercase tracking-widest">Sincronizando automacoes...</p>
+           <p className="mt-4 text-muted-foreground/40 font-black text-xs uppercase tracking-widest">Sincronizando automações...</p>
         </div>
       ) : recurrences.length === 0 ? (
         <div className="py-16">
           <EmptyState
             icon={RotateCcw}
-            title="Nenhuma recorrencia ativa"
+            title="Nenhuma recorrência ativa"
             description="Agende suas despesas fixas para maior praticidade"
-            ctaLabel="Nova Recorrencia"
+            ctaLabel="Nova Recorrência"
             onCta={() => setIsDialogOpen(true)}
           />
         </div>
@@ -288,7 +287,7 @@ export default function Recorrências() {
               <Card className="overflow-hidden group hover:shadow-2xl transition-all duration-500 p-0 border-none shadow-lg">
                 <div className="bg-muted/30 p-6 flex justify-between items-start border-b border-border/5 gap-3">
                   <div className="space-y-1 flex-1 min-w-0">
-                    <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Proximo Lancamento</h3>
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Próximo Lançamento</h3>
                     <div className="flex items-center gap-2 text-foreground font-black text-sm">
                       <Calendar className="w-4 h-4 text-secondary/70 shrink-0" />
                       <span className="truncate">{format(new Date(rec.nextDate || rec.startDate), "dd 'de' MMMM", { locale: ptBR })}</span>
@@ -300,7 +299,7 @@ export default function Recorrências() {
                     </Badge>
                     <Badge variant={rec.isActive ? "default" : "secondary"} className={cn(
                       "text-[10px] font-black uppercase tracking-widest border shadow-sm whitespace-nowrap",
-                      rec.isActive ? "bg-success border-success text-white" : "bg-warning border-warning text-white"
+                      rec.isActive ? "bg-success border-success text-success-foreground" : "bg-warning border-warning text-warning-foreground"
                     )}>
                       {rec.isActive ? "Ativa" : "Pausada"}
                     </Badge>

@@ -16,15 +16,15 @@ export const GET = withRateLimit(async (request: NextRequest) => {
   const entity = searchParams.get("entity");
   const query = searchParams.get("query");
 
-  const where: any = {};
+  const where: Record<string, unknown> = {};
   if (action && action !== "ALL") where.action = action;
   if (entity && entity !== "ALL") where.entity = entity;
   if (query) {
     where.OR = [
-      { details: { contains: query, mode: "insensitive" } },
-      { entity: { contains: query, mode: "insensitive" } },
-      { action: { contains: query, mode: "insensitive" } },
-      { user: { name: { contains: query, mode: "insensitive" } } }
+      { details: { contains: query, mode: "insensitive" as const } },
+      { entity: { contains: query, mode: "insensitive" as const } },
+      { action: { contains: query, mode: "insensitive" as const } },
+      { user: { name: { contains: query, mode: "insensitive" as const } } }
     ];
   }
 

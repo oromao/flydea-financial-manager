@@ -134,10 +134,66 @@
   - Deploy realizado: https://flydea-financial-manager.vercel.app ✅
   - Build: ✓ Compiled successfully, 116 rotas
 
+## 2026-05-12 — DevOps: CI/CD + Guardrails + Monitoring (FLY-002, FLY-003, FLY-008)
+
+- **12:00 BRT**: DevOps/Cloud Engineer + Security/Compliance entregaram:
+  - FLY-002: CI/CD GitHub Actions workflow reescrito com 4 jobs (lint, type-check, test+coverage, build), Node.js 20.x, cache npm/.next, badge no README
+  - FLY-003: Security guardrails expandido com LGPD, session timeout, HSTS, Permissions-Policy, XSS, CSRF, SQL injection, file upload, cron, dependency audit. Auditoria de segurança atual: HSTS e Permissions-Policy adicionados ao next.config.ts
+  - FLY-008: Monitoring criado (`src/lib/monitoring.ts`, `src/lib/monitoring-middleware.ts`, `docs/monitoring-plan.md`)
+  - Arquivos: `.github/workflows/ci.yml`, `.ai/guardrails/security-guardrails.md`, `src/lib/monitoring.ts`, `src/lib/monitoring-middleware.ts`, `docs/monitoring-plan.md`, `next.config.ts`, `README.md`
+
+## 2026-05-12 — UX/UI: ARIA Labels + UX Gaps (FLY-021 + FLY-007)
+
+- **12:30 BRT**: UX/UI Designer & Researcher completou FLY-021 (Acessibilidade) e parcial FLY-007 (UX gaps):
+  - ARIA labels adicionados em 9 arquivos (sidebar, bottom-nav, quick-add, confirm-dialog, table, dashboard-hero, alertas, movimentacoes, contas-a-pagar)
+  - AL-01: markAllRead batching — chama PATCH /api/notifications com { ids } em vez de N chamadas paralelas
+  - QA-07: bottom-nav "Aprovacoes" → "Aprovações" (acentuação PT-BR)
+  - QA-10: toast de sucesso já existente no quick-add (pre-fix)
+  - P-03: useConfirm() já implementado em contas-a-pagar (pre-fix)
+  - Role/aria attributes: radiogroup, radio, aria-checked, aria-current, aria-live, role="status", role="region", aria-describedby em dialog
+  - Focus-visible rings adicionados em type toggle buttons
+
+## 2026-05-12 — QA: Cobertura de Testes FLY-006 & Plano E2E FLY-009
+
+- **Executado por:** QA Engineer (OpenCode)
+- **FLY-006:** Aumento de cobertura de ~20% para 37.62%
+  - API routes com >90% de cobertura: transactions, accounts, dashboard, budgets, categories, recurrences, tags
+  - Domain layer: Transaction (93%), Money (100%), value objects (100%), errors (100%)
+  - Lib: financial-engine (100%), format-errors (100%), blob-storage (100%)
+  - 16 novos arquivos de teste criados
+  - 538 → 576 testes (38 novos), todas as 60 suites passando
+  - 3 testes de estrutura corrigidos (expectativas desatualizadas)
+- **FLY-009:** Plano E2E criado em `docs/e2e-test-plan.md`
+  - 5 fluxos críticos mapeados: Login, Create Transaction, Dashboard, Account Management
+  - Integração com Playwright, priorização P0/P1/P2
+  - Critérios de aceite e infraestrutura de teste
+- **Arquivos alterados:**
+  - `__tests__/api/transactions/route.test.ts` — 16 testes para GET/POST
+  - `__tests__/api/transactions/[id]/route.test.ts` — 12 testes para PUT/DELETE
+  - `__tests__/api/accounts/route.test.ts` — 8 testes para GET/POST
+  - `__tests__/api/accounts/[id]/route.test.ts` — 9 testes para PUT/DELETE
+  - `__tests__/api/dashboard/route.test.ts` — 10 testes para GET
+  - `__tests__/api/budgets/route.test.ts` — 6 testes para GET/POST
+  - `__tests__/api/budgets/[id]/route.test.ts` — 7 testes para PUT/DELETE
+  - `__tests__/api/categories/route.test.ts` — 4 testes para GET/POST
+  - `__tests__/api/recurrences/route.test.ts` — 4 testes para GET/POST
+  - `__tests__/api/recurrences/[id]/route.test.ts` — 8 testes para PUT/DELETE
+  - `__tests__/api/tags/route.test.ts` — 4 testes para GET/POST
+  - `__tests__/api/tags/[id]/route.test.ts` — 3 testes para DELETE
+  - `__tests__/unit/domain/transaction/Transaction.test.ts` — 15 testes
+  - `__tests__/unit/domain/transaction/value-objects/TransactionType.test.ts` — 7 testes
+  - `__tests__/unit/domain/transaction/value-objects/PaymentStatus.test.ts` — 7 testes
+  - `__tests__/unit/domain/shared/value-objects/UserId.test.ts` — 6 testes
+  - `__tests__/unit/domain/shared/value-objects/Money.test.ts` — 12 testes (edge cases)
+  - `__tests__/unit/domain/shared/errors/DomainError.test.ts` — 5 testes
+  - `__tests__/structure.test.ts` — corrigido (3 testes)
+  - `__tests__/validations.test.ts` — corrigido (CREDIT → CREDIT_CARD)
+  - `__tests__/smoke.test.ts` — consolidado (timeout fix)
+  - `vitest.config.ts` — thresholds atualizados
+- **Próximos passos:** Implementar testes E2E no Playwright seguindo o plano
+
 ## Next Actions
-- DevOps: CI/CD GitHub Actions (FLY-002)
-- Platform Architect: Guardrails (FLY-003)
-- Backend: Zod validation APIs (FLY-020)
-- UX/UI: Acessibilidade WCAG ARIA (FLY-021)
-- Frontend: Performance mobile (FLY-010)
-- QA: Cobertura testes 60%+ (FLY-006)
+- FLY-004: Backlog do produto 20+ itens (PO)
+- Deploy Sprint 2 para produção
+- Implementar E2E tests (Playwright)
+- Sessão de QA review antes do deploy

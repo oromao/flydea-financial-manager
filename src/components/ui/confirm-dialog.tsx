@@ -74,7 +74,7 @@ export function ConfirmDialogProvider({ children }: { children: ReactNode }) {
     <ConfirmContext.Provider value={{ confirm }}>
       {children}
       <AlertDialog open={open} onOpenChange={(v) => { if (!v) handle(false) }}>
-        <AlertDialogContent className="max-w-sm">
+        <AlertDialogContent className="max-w-sm" aria-labelledby="confirm-dialog-title" aria-describedby="confirm-dialog-description">
           <AlertDialogHeader>
             <div className="flex items-start gap-4">
               <div className={cn("rounded-2xl p-2.5 shrink-0", styles.iconBg)}>
@@ -82,9 +82,9 @@ export function ConfirmDialogProvider({ children }: { children: ReactNode }) {
               </div>
               <div className="flex-1 space-y-1">
                 {options?.title && (
-                  <AlertDialogTitle>{options.title}</AlertDialogTitle>
+                  <AlertDialogTitle id="confirm-dialog-title">{options.title}</AlertDialogTitle>
                 )}
-                <AlertDialogDescription className="text-sm leading-relaxed">
+                <AlertDialogDescription id="confirm-dialog-description" className="text-sm leading-relaxed">
                   {options?.message}
                 </AlertDialogDescription>
               </div>

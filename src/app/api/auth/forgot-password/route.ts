@@ -1,15 +1,21 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendPasswordResetEmail } from "@/lib/email";
+import { z } from "zod";
 import { withRateLimit } from "@/lib/rate-limit";
+
+const ForgotPasswordSchema = z.object({
+  email: z.string().email("Email inválido"),
+});
 
 export const POST = withRateLimit(async (request: NextRequest) => {
   const body = await request.json();
-  const { email } = body;
-
-  if (!email) {
-    return NextResponse.json({ error: "Email é obrigatório" }, { status: 400 });
+  const parsed = ForgotPasswordSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Email inválido" }, { status: 400 });
   }
+
+  const { email } = parsed.data;
 
   const user = await prisma.user.findUnique({
     where: { email: email.toLowerCase() }

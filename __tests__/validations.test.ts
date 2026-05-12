@@ -183,7 +183,7 @@ describe("AccountSchema", () => {
   });
 
   it("defaults balance to 0", () => {
-    const result = AccountSchema.safeParse({ name: "Bank", type: "CREDIT" });
+    const result = AccountSchema.safeParse({ name: "Bank", type: "CREDIT_CARD" });
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.balance).toBe(0);
   });

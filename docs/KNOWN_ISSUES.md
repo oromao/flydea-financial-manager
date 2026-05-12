@@ -1,23 +1,6 @@
 # FlyDea — Problemas Conhecidos
 
-> **Atualizado:** 2026-05-05 — Auditoria QA Playwright MCP (produção)
-
----
-
-## Bugs Confirmados em Produção (2026-05-05)
-
-| ID | Módulo | Problema | Impacto | Severidade |
-|----|--------|----------|---------|------------|
-| QA-01 | Movimentações | ~~`RangeError: Invalid time value`~~ | ✅ Date validation adicionada: API transactions, contas-a-pagar safeDate helpers, fluxo-caixa fmtDate/fmtFullMonth safe, alertas safeFormatDate | 🔴 Crítico ✅ |
-| QA-02 | Transações | ~~Dropdown de categoria mostra UUID em vez de nome~~ | ✅ API retorna category.name, frontend usa c.name | 🔴 Crítico ✅ |
-| QA-03 | PWA | ~~manifest.webmanifest ausente~~ | ✅ Manifest existe, icons SVG criados, path corrigido no layout | 🟡 Alto ✅ |
-| QA-04 | Contas e Cartões | Botão "Fechar" do modal de edição interceptado por header sticky | Usuário não consegue fechar modal (Escape funciona) | 🟡 Alto |
-| QA-05 | Produção | Dados seed visíveis ("Conta QA Edit") | Dados de teste em produção | 🟡 Alto |
-| QA-06 | Dashboard | ~~Inconsistência de saldo geral~~ | ✅ Dashboard `balance` agora = projectedBalance (transações committed, não só PAID), `realizedBalance` disponível separadamente | 🟡 Alto ✅ |
-| QA-07 | Sidebar | Nomes sem acento (Movimentacoes, Recorrencias, Analises) | Inconsistência linguística | 🟢 Médio |
-| QA-08 | Transações | Campo de data em formato ISO (YYYY-MM-DD) em vez de pt-BR | Inconsistência com padrão brasileiro | 🟢 Médio |
-| QA-09 | Console | 20+ erros de console acumulados durante sessão | Indica problemas subjacentes | 🟢 Médio |
-| QA-10 | UX | Sem toast de sucesso ao criar transação | Usuário não tem confirmação visual | 🟢 Médio |
+> **Atualizado:** 2026-05-12 — Sprint 2 completo (93%)
 
 ---
 
@@ -25,20 +8,47 @@
 
 | ID | Módulo | Problema | Impacto | Severidade |
 |----|--------|----------|---------|------------|
-| AN1-T1 | CSS | 5 tokens ausentes (popover, ring, input, border, destructive) | Dialog sem fundo, select sem ring | 🔴 Crítico |
-| AN1-T2 | CSS | ~~glass-card quebra em dark mode~~ | ✅ Classe glass-card removida, premium-card usa tokens | 🔴 Crítico ✅ |
-| AN1-T3 | CSS | ~~apple-button-primary não definida~~ | ✅ Classe existe em globals.css:344 | 🔴 Crítico ✅ |
 | AN1-T4 | Agents | confirm() nativo em agents-dashboard.tsx:133 | Quebra design system | 🟡 Alto |
-| AN1-T5 | Global | window.location.reload() / window.location.href no código | Perda de estado | 🟡 Alto (reduzido de 5 para 1 — relatorios download) |
 | AN1-T6 | UI | Link quebrado para /import em empty-states.tsx | 404 ao clicar | 🟡 Alto |
-| AN2-T1 | API | Validação Zod | 10 APIs com Zod + 1 nova (approvals) = 11/44 | 🔴 Crítico (progresso: 25%) |
-| AN2-T2 | API | ~~Rate limiting~~ | ✅ 44/44 APIs com withRateLimit (100%) | 🔴 Crítico ✅ |
-| AN3-T1 | TS | 104+ `any` types no código | Type safety perdido | 🟡 Alto |
-| AN3-T2 | CSS | Cores Tailwind hardcoded | Não adaptam dark mode | 🟡 Alto (reduzido de 77+ para ~40 — login, fluxo-caixa, ai-learning corrigidos) |
-| AN3-T3 | Global | ~~18 páginas sem error boundary~~ | ✅ 14 páginas agora com PageErrorBoundary (só insights/agents sem, pois só redirect) | 🟡 Alto ✅ |
-| AN4-T6 | A11y | 15/21 componentes sem ARIA | Inacessível para leitores de tela | 🟡 Alto |
-| AN5-T4 | Mobile | Touch targets < 44px | Dificuldade de toque | 🟡 Alto |
-| AN6-T1 | Testes | Sem coverage config no Vitest | Cobertura não verificável | 🟡 Alto |
+| AN3-T2 | CSS | ~40 cores Tailwind hardcoded (reduzido de 77+) | Não adaptam dark mode | 🟡 Alto |
+| AN4-T6 | A11y | ~6/21 componentes sem ARIA (reduzido de 15) | Inacessível para leitores de tela | 🟡 Alto |
+| AN5-T4 | Mobile | ~4 touch targets < 44px (reduzido de 24) | Dificuldade de toque | 🟡 Alto |
+| AN3-T1 | TS | 31 `any` types (reduzido de 104+) | Type safety perdido | 🟡 Médio |
+| QA-02 (reaberto) | Orçamentos | UUID visível em dropdown de categoria no modal "Novo Orçamento" | Usuário vê UUID em vez de nome | 🔴 Crítico |
+| QA-04 | Contas e Cartões | Botão "Fechar" do modal de edição interceptado por header sticky | Usuário não consegue fechar modal (Escape funciona) | 🟡 Alto |
+| QA-08 | Transações | Campo de data em formato ISO (YYYY-MM-DD) em vez de pt-BR | Inconsistência com padrão brasileiro | 🟢 Médio |
+| QA-09 | Console | 20+ erros de console (parcialmente corrigido) | Indica problemas subjacentes | 🟢 Médio |
+| AU-01 | Contas e Cartões | Base UI error #51 — página quebrada (/contas) | Usuário não acessa contas | 🔴 Crítico |
+| AU-02 | Editar Lançamento | UUID visível no dropdown "Conta" | Usuário vê UUID em vez de nome da conta | 🔴 Crítico |
+| AU-03 | Dev Server | Turbopack crash com path ../Documents/Obsidian Vault/brain | Dev server não inicia | 🔴 Crítico |
+| AU-04 | UI | Typos em pt-BR: "Automacao", "Criticos", "Lancamento", "RECORRENCIA" | Contraste com proposta de clareza | 🟡 Alto |
+| AU-05 | Insights | Conteúdo duplica o Dashboard | Página inútil | 🟡 Alto |
+| AU-06 | Sidebar | Links perdem texto ao scroll | Navegação comprometida | 🟡 Alto |
+| AU-07 | Sidebar | Link "Relatórios" ausente na navegação | Página sem acesso | 🟢 Médio |
+
+---
+
+## Bugs Corrigidos (Sprint 1 + Sprint 2)
+
+| Bug | Status |
+|-----|--------|
+| QA-01 RangeError time value | ✅ Date validation adicionada |
+| QA-02 Dropdown UUID | ✅ API retorna category.name |
+| QA-03 PWA manifest | ✅ Manifest + icons SVG |
+| QA-05 Dados seed produção | ✅ /api/setup retorna 403 em prod |
+| QA-06 Dashboard saldo | ✅ balance = projectedBalance |
+| QA-07 Sidebar acentos | ✅ "Aprovações" corrigido |
+| AN1-T1 Tokens CSS ausentes | ✅ Adicionados ao globals.css |
+| AN1-T2 glass-card dark mode | ✅ Removido, premium-card usa tokens |
+| AN1-T3 apple-button-primary | ✅ Definido em globals.css |
+| AN1-T5 window.location | ✅ 0 ocorrências (3→0) |
+| AN2-T1 Zod validation | ✅ 19/44 APIs (43%, era 25%) |
+| AN2-T2 Rate limiting | ✅ 44/44 APIs (100%) |
+| AN3-T3 Error boundaries | ✅ 14 páginas com PageErrorBoundary |
+| AN3-T1 any types | ✅ 104→31 (73+ fixados) |
+| AN1-T4 confirm() nativo | ⏳ Ainda aberto (agents-dashboard) |
+| AL-01 markAllRead batch | ✅ N paralelas → batch único |
+| FLY-024 Archive contas | ✅ Implementado completo |
 
 ---
 

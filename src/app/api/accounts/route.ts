@@ -5,16 +5,22 @@ import { prisma } from "@/lib/prisma";
 import { AccountSchema } from "@/lib/validations";
 import { withRateLimit } from "@/lib/rate-limit";
 
-export const GET = withRateLimit(async () => {
+export const GET = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { searchParams } = new URL(request.url);
+  const includeArchived = searchParams.get("archived") === "true";
+
   const accounts = await prisma.account.findMany({
-    where: { userId: session.user.id, isActive: true },
+    where: {
+      userId: session.user.id,
+      ...(includeArchived ? {} : { isActive: true }),
+    },
     include: {
       _count: { select: { transactions: true } }
     },
-    orderBy: { createdAt: "asc" }
+    orderBy: [{ isActive: "desc" }, { createdAt: "asc" }]
   });
 
   // Calculate real balance for each account based on transactions
@@ -29,8 +35,9 @@ export const GET = withRateLimit(async () => {
         return t.type === "INCOME" ? sum + t.amount : sum - t.amount;
       }, 0);
 
+      const { _count, ...accountData } = account;
       return {
-        ...account,
+        ...accountData,
         currentBalance: account.balance + txBalance
       };
     })

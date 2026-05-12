@@ -45,7 +45,13 @@ export default function Alertas() {
   };
 
   const markAllRead = async () => {
-    await Promise.all(notifications.filter((n) => !n.read).map((n) => markRead(n.id, true)));
+    const unreadIds = notifications.filter((n) => !n.read).map((n) => n.id);
+    if (unreadIds.length === 0) return;
+    await fetch("/api/notifications", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids: unreadIds }),
+    });
     await load();
   };
 
@@ -73,7 +79,7 @@ export default function Alertas() {
 
   return (
     <PageErrorBoundary>
-    <div className="space-y-8 max-w-5xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
+    <div className="space-y-8 max-w-5xl mx-auto pb-20 md:pb-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <PageHeader icon={Bell} title="Alertas" subtitle="Notificações in-app do sistema" iconClassName="bg-secondary text-on-secondary shadow-secondary/20" />
         <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
@@ -81,6 +87,7 @@ export default function Alertas() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Buscar alertas"
+            aria-label="Buscar alertas"
             className="h-11 rounded-xl"
           />
           <div className="flex flex-wrap gap-2">
@@ -98,9 +105,9 @@ export default function Alertas() {
 
       <Card className="premium-card p-4 sm:p-6">
         {loading ? (
-          <div className="py-10 text-center text-on-surface-variant/40">Carregando...</div>
+          <div role="status" className="py-10 text-center text-on-surface-variant/40"><span className="sr-only">Carregando...</span>Carregando...</div>
         ) : filteredNotifications.length === 0 ? (
-          <div className="py-10 text-center text-on-surface-variant/40">Sem alertas.</div>
+          <div role="status" className="py-10 text-center text-on-surface-variant/40">Sem alertas.</div>
         ) : (
           <div className="space-y-3">
             {filteredNotifications.map((n) => (

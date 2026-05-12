@@ -1,6 +1,6 @@
 # FlyDea Financial Manager — Contexto de Handoff para IA
 
-**Data:** 2026-05-11 | **Sprint:** 2 — Estabilização & Qualidade
+**Data:** 2026-05-12 | **Sprint:** 3 — UX/UI Audit Bugfix (ACTIVE 🔶)
 
 ---
 
@@ -9,100 +9,88 @@
 **FlyDea Financial Manager** — SaaS de finanças pessoais premium, mobile-first (iPhone 16).
 
 - **Live:** https://flydea-financial-manager.vercel.app ✅
-- **Local:** `npm run dev` → http://localhost:3010
+- **Local:** `npm run dev` → http://localhost:3010 (⚠️ Turbopack crash — usar build produção)
 - **Stack:** Next.js 16, React 19, TypeScript, Tailwind CSS 4, shadcn/ui, Framer Motion, Prisma, Neon, Vercel Blob
-- **Harness:** 10 agentes AI em `.ai/team/`
+- **Testes:** 576 passing, 60 files
 
 ---
 
-## O que foi feito nesta Sprint (Sprint 1 — ✅ Fechada)
+## Última Auditoria (browser-use — 2026-05-12)
 
-| Entrega | Status |
-|---------|--------|
-| Harness de agentes AI (`.ai/` com 10 agentes) | ✅ |
-| Plano de atuação UX/UI Agent | ✅ |
-| Auditoria design system (80+ tokens) | ✅ |
-| 87 gaps de UX mapeados e priorizados | ✅ |
-| Quality gate visual para PRs | ✅ |
-| Toast.tsx rgba → tokens CSS | ✅ |
-| Login page hex → tokens (15+ valores) | ✅ |
-| Touch targets 44px (24 violações → 0) | ✅ |
-| Dead code removido (importer, weekly-cashflow) | ✅ |
-| Cores Tailwind fixas → tokens (15+) | ✅ |
-| Error boundary em 14 páginas (3→17, 89%) | ✅ |
-| PWA manifest + icons SVG | ✅ |
-| Radius hardcoded → tokens (15+) | ✅ |
-| Orçamentos period selector funcional | ✅ |
-| RangeError date safety (API + 4 páginas) | ✅ |
-| Dashboard saldo consistente (projectedBalance) | ✅ |
-| Rate limiting: 44/44 APIs (100%) | ✅ |
-| Zod validation: 11/44 APIs (25%) | 🟡 |
-| KNOWN_ISSUES: 10/11 P0 bugs corrigidos | ✅ |
-| Deploy Vercel (build ✅, 116 rotas) | ✅ |
+Auditoria completa com navegador real (Chromium headed) na produção Vercel.
 
-## Sprint 2 Ativa — 14 items
+| Páginas auditadas | Modais testados | Problemas encontrados |
+|-------------------|----------------|----------------------|
+| 12 | 5 | 17 |
 
-| ID | Título | Owner | Prioridade |
-|----|--------|-------|-----------|
-| FLY-002 | CI/CD GitHub Actions | DevOps | P0 |
-| FLY-003 | Guardrails segurança | Security | P0 |
-| FLY-004 | Backlog produto 20+ itens | PO | P1 |
-| FLY-005 | Bugs P0 restantes (QA-05, QA-09) | Backend | P0 |
-| FLY-006 | Cobertura testes 60%+ | QA | P1 |
-| FLY-007 | 30% gaps UX (26 correções) | Frontend + UX/UI | P1 |
-| FLY-008 | Monitoramento Vercel | DevOps | P1 |
-| FLY-009 | Testes E2E fluxos críticos | QA | P1 |
-| FLY-010 | Performance FCP < 1.5s | Frontend | P1 |
-| FLY-020 | Zod validation APIs restantes | Backend | P1 |
-| FLY-021 | Acessibilidade WCAG ARIA | UX/UI | P1 |
-| FLY-022 | Responsividade mobile | Frontend | P1 |
-| FLY-023 | Navegação reduzir taps | UX/UI | P2 |
-| FLY-024 | Archive/deactivate contas | Backend + Frontend | P2 |
-| FLY-025 | Esqueci senha + NextAuth errors | Backend | P1 |
+**Relatório completo:** `docs/AUDITORIA_UX_UI_2026-05-12.md`
 
-## Estado dos Agentes
+---
 
-| Agente | Status | Trabalhando em |
-|--------|--------|---------------|
-| Product Owner | PLANNING | FLY-004 |
-| Platform Architect | WORKING | FLY-003 |
-| Backend Engineer | WORKING | FLY-020 |
-| Frontend/Mobile Engineer | WORKING | FLY-010 |
-| QA/Validation Engineer | PLANNING | FLY-006 |
-| Security/Compliance | WORKING | FLY-003 |
-| DevOps/Cloud Engineer | WORKING | FLY-002 |
-| Documentation Steward | WORKING | FLY-004 |
-| UX/UI Designer | WORKING | FLY-021 |
-| FinOps/Cost Advisor | IDLE | — |
+## Sprint 3 — 10 items (3 P0 🔴, 6 P1 🟡, 1 P2 🟢)
+
+| ID | Título | Prioridade | Status |
+|----|--------|------------|--------|
+| E15-T1 | Base UI error #51 — página /contas quebrada | P0 🔴 | pending |
+| E15-T2 | UUID visível em categoria no modal "Novo Orçamento" | P0 🔴 | pending |
+| E15-T3 | UUID visível em conta no modal "Editar Lançamento" | P0 🔴 | pending |
+| E15-T4 | Typo "Alertas Criticos" → "Críticos" | P1 🟡 | pending |
+| E15-T5 | Typos "Automacao" → "Automação", "RECORRENCIA" → "RECORRÊNCIA" | P1 🟡 | pending |
+| E15-T6 | Typo "Novo Lancamento" → "Novo Lançamento" | P1 🟡 | pending |
+| E15-T7 | Sidebar perde texto ao scroll | P1 🟡 | pending |
+| E15-T8 | /insights duplica Dashboard | P1 🟡 | pending |
+| E15-T9 | Dropdown de categoria inconsistente entre modais | P1 🟡 | pending |
+| E15-T10 | Adicionar link "Relatórios" na sidebar | P2 🟢 | pending |
+
+### Notas Importantes
+- **C3 (Turbopack crash)**: IGNORADO por decisão do usuário. Build de produção funciona.
+- **QA-02 reaberto**: UUID em dropdowns foi parcialmente fixado — orçamentos e edição ainda mostram UUID.
+- **Contas e Cartões**: O Base UI error #51 pode ser relacionado ao E14-T4 (modal Fechar interceptado).
+
+---
+
+## Prioridade de Execução Recomendada
+
+```
+1. E15-T1 → E15-T2 → E15-T3  (P0 — bugs críticos)
+2. E15-T4 → E15-T5 → E15-T6  (P1 — typos rápidos)
+3. E15-T7 → E15-T8 → E15-T9  (P1 — UX)
+4. E15-T10                    (P2 — melhoria)
+```
+
+---
 
 ## Documentos de Referência
 
 | Documento | Conteúdo |
 |-----------|----------|
-| `docs/UX_UI_AGENT_PLAN.md` | Plano de atuação UX/UI |
-| `docs/design-system-audit.md` | Auditoria design system |
-| `docs/ux-gaps-analysis.md` | 87 gaps de UX priorizados |
-| `docs/quality-gate-visual.md` | Quality gate PR checklist |
-| `docs/KNOWN_ISSUES.md` | Bugs conhecidos atualizados |
+| `docs/AUDITORIA_UX_UI_2026-05-12.md` | Relatório completo da auditoria |
+| `docs/KNOWN_ISSUES.md` | Bugs conhecidos (atualizado) |
+| `docs/BACKLOG_MASTER.md` | Backlog mestre (Épico 15 adicionado) |
+| `.ai/current-task.md` | Tarefa corrente |
+| `.ai/backlog.index.md` | Índice do backlog |
 
 ## Comandos Essenciais
 
 ```bash
-npm run dev          # localhost:3010
+npm run dev          # localhost:3010 (⚠️ Turbopack crash)
 npm run type-check   # tsc --noEmit
-npm run build        # next build
-npm run test         # vitest
-git push origin main # deploy automático Vercel
+npm run build        # next build ✅ (116 rotas)
+npm run test         # vitest (576 testes)
+npm run test:coverage# vitest com cobertura
 ```
-
-## Próximos Passos para a Próxima IA
-
-1. **FLY-021**: Auditoria WCAG — ARIA labels nos 21 componentes (alta prioridade)
-2. **FLY-020**: Zod schemas para upload, import, revenues, reconciliation
-3. **FLY-002**: GitHub Actions workflow com lint + type-check + test + deploy
-4. **FLY-010**: Lighthouse audit + bundle analysis + code splitting
-5. **FLY-007**: Resolver 26 gaps de UX priorizados no `docs/ux-gaps-analysis.md`
 
 ---
 
-*Handoff gerado em: 2026-05-11 23:00 BRT*
+## Próximos Passos para a Próxima IA
+
+1. **E15-T1**: Debug Base UI error #51 em `/contas` — investigar componente quebrado
+2. **E15-T2/T3**: Corrigir UUID em dropdowns de categoria (orçamentos) e conta (edição)
+3. **E15-T4/T5/T6**: Corrigir typos de acentuação pt-BR
+4. **E15-T7**: Debug sidebar perdendo texto ao scroll
+5. **E15-T8**: Diferenciar página /insights do Dashboard
+6. Documentar cada fix em `docs/EXECUTION_LOG.md`
+
+---
+
+*Handoff gerado em: 2026-05-12 15:00 BRT — Sprint 3 UX/UI Audit Bugfix*

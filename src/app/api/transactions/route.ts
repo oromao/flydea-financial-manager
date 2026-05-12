@@ -31,7 +31,7 @@ export const GET = withRateLimit(async (request: NextRequest) => {
   const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
   const all = searchParams.get("all") === "true";
 
-  const where: any = {
+  const where: Record<string, unknown> = {
     userId: session.user.id,
     ...(type ? { type } : {}),
     ...(category && category !== "Todos" ? { category: { name: category } } : {}),
@@ -40,8 +40,8 @@ export const GET = withRateLimit(async (request: NextRequest) => {
     ...(paymentStatus && paymentStatus !== "ALL" ? { paymentStatus } : {}),
     ...(search ? {
       OR: [
-        { description: { contains: search, mode: "insensitive" } },
-        { observations: { contains: search, mode: "insensitive" } }
+        { description: { contains: search, mode: "insensitive" as const } },
+        { observations: { contains: search, mode: "insensitive" as const } }
       ]
     } : {}),
     ...(startDate || endDate ? {
@@ -128,13 +128,12 @@ export const POST = withRateLimit(async (request: NextRequest) => {
     include: { category: true, account: true, tags: { include: { tag: true } } }
   });
 
-  // Background Intelligence & Audit Hooks (Non-blocking)
   void (async () => {
     try {
       const behavioralService = new BehavioralIntelligenceService();
       await behavioralService.onTransactionCreated(session.user.id, amount, categoryId);
 
-      const auditLog = await prisma.auditLog.create({
+      await prisma.auditLog.create({
         data: {
           action: "CREATE",
           entity: "TRANSACTION",
@@ -143,8 +142,7 @@ export const POST = withRateLimit(async (request: NextRequest) => {
           userId: session.user.id
         }
       });
-    } catch (hookError) {
-      console.error("[BackgroundHook] Error:", hookError);
+    } catch {
     }
   })();
 

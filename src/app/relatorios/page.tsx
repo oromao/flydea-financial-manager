@@ -19,10 +19,21 @@ import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
-const COLORS = ["#09090b", "#18181b", "#27272a", "#3f3f46", "#52525b", "#71717a", "#a1a1aa", "#d4d4d8"];
+const COLORS = ["var(--color-secondary)", "var(--color-on-surface-variant)", "var(--color-primary)", "var(--color-primary)", "var(--color-success)", "var(--color-destructive)", "var(--color-warning)", "var(--color-tertiary)"];
+
+interface ReportTransaction {
+  id: string;
+  type: string;
+  amount: number;
+  date: string;
+  description: string;
+  paymentStatus: string;
+  status?: string;
+  category?: { id: string; name: string };
+}
 
 export default function Relatorios() {
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<ReportTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState("0");
   const [isMobile, setIsMobile] = useState(false);
@@ -105,7 +116,12 @@ export default function Relatorios() {
     const refDate = subMonths(new Date(), monthsAgo);
     const start = format(startOfMonth(refDate), "yyyy-MM-dd");
     const end = format(endOfMonth(refDate), "yyyy-MM-dd");
-    window.location.href = `/api/transactions/export?startDate=${start}&endDate=${end}`;
+    const a = document.createElement("a");
+    a.href = `/api/transactions/export?startDate=${start}&endDate=${end}`;
+    a.download = `relatorio-${periodLabel.replace(/\s+/g, "-")}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const handlePrint = () => window.print();
@@ -116,7 +132,7 @@ export default function Relatorios() {
 
   return (
     <PageErrorBoundary>
-    <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0 relative no-print">
+    <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 md:pb-0 relative no-print">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -10 }}
@@ -248,8 +264,8 @@ export default function Relatorios() {
                   </Pie>
                   <Tooltip
                     formatter={(value: any) => formatCurrency(Number(value || 0))}
-                    contentStyle={{ backgroundColor: "#fff", border: "none", borderRadius: "16px", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
-                    itemStyle={{ color: "#000", fontSize: "12px", fontWeight: "bold" }}
+                    contentStyle={{ backgroundColor: "var(--color-background)", border: "none", borderRadius: "16px", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
+                    itemStyle={{ color: "var(--color-on-background)", fontSize: "12px", fontWeight: "bold" }}
                   />
                 </RechartsPie>
               </ResponsiveContainer>
@@ -298,15 +314,15 @@ export default function Relatorios() {
             <div className="h-72 flex items-center justify-center text-muted-foreground/20 font-bold text-xs uppercase tracking-[0.2em] italic">Processando...</div>
           ) : (
             <ResponsiveContainer width="100%" height={chartHeight}>
-              <BarChart data={barData} barCategoryGap="30%" margin={isMobile ? { left: -10, right: 4 } : {}}>
+              <BarChart data={barData} barCategoryGap="30%" margin={isMobile ? { left: 0, right: 4 } : {}}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-outline)" strokeOpacity={0.3} />
-                <XAxis dataKey="name" stroke="var(--color-on-surface-variant)" fontSize={isMobile ? 8 : 9} fontWeight="bold" tickLine={false} axisLine={false} dy={10} angle={isMobile ? -30 : 0} textAnchor={isMobile ? "end" : "middle"} height={isMobile ? 50 : 30} />
+                <XAxis dataKey="name" stroke="var(--color-on-surface-variant)" fontSize={isMobile ? 8 : 9} fontWeight="bold" tickLine={false} axisLine={false} dy={8} angle={isMobile ? -20 : 0} textAnchor={isMobile ? "end" : "middle"} height={isMobile ? 50 : 30} />
                 <YAxis stroke="var(--color-on-surface-variant)" fontSize={isMobile ? 8 : 9} fontWeight="bold" tickLine={false} axisLine={false}
                   tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                 <Tooltip
                   formatter={(value: any) => formatCurrency(Number(value || 0))}
-                  contentStyle={{ backgroundColor: "#fff", border: "none", borderRadius: "16px", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
-                  itemStyle={{ color: "#000", fontSize: "12px", fontWeight: "bold" }}
+                  contentStyle={{ backgroundColor: "var(--color-background)", border: "none", borderRadius: "16px", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
+                  itemStyle={{ color: "var(--color-on-background)", fontSize: "12px", fontWeight: "bold" }}
                 />
                 <Bar dataKey="Receita" fill="var(--color-success)" radius={[4, 4, 0, 0]} barSize={isMobile ? 12 : 20} />
                 <Bar dataKey="Despesa" fill="var(--color-destructive)" radius={[4, 4, 0, 0]} barSize={isMobile ? 12 : 20} />

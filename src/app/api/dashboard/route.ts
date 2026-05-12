@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { startOfMonth, endOfMonth, addMonths } from "date-fns";
-import { computeMonthlySummary } from "@/lib/financial-engine";
+import { computeMonthlySummary, TransactionType, PaymentStatus } from "@/lib/financial-engine";
 import { picoClaw } from "@/lib/ai/pico-claw";
 
 export async function GET(request: NextRequest) {
@@ -59,18 +59,18 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    const mappedMonthTx = monthTransactions.map((t: any) => ({
+    const mappedMonthTx = monthTransactions.map((t) => ({
       id: t.id,
-      type: t.type,
+      type: t.type as TransactionType,
       description: t.description,
       amount: t.amount,
       date: t.date,
       dueDate: t.dueDate,
       paidAt: t.paidAt,
       amountPaid: t.amountPaid,
-      paymentStatus: t.paymentStatus,
+      paymentStatus: t.paymentStatus as PaymentStatus,
       categoryId: t.categoryId,
-      categoryName: t.category?.name,
+      categoryName: t.category?.name ?? null,
       recurrenceId: t.recurrenceId,
       accountId: t.accountId,
       createdAt: t.createdAt,
@@ -78,10 +78,10 @@ export async function GET(request: NextRequest) {
 
     const summary = computeMonthlySummary(mappedMonthTx, startDate, endDate, allTransactions);
 
-    const budgetAlerts = budgets.map((budget: any) => {
+    const budgetAlerts = budgets.map((budget) => {
       const monthExpenses = mappedMonthTx
-        .filter((t: any) => t.type === "EXPENSE" && t.categoryId === budget.categoryId)
-        .reduce((sum: number, t: any) => sum + t.amount, 0);
+        .filter((t) => t.type === "EXPENSE" && t.categoryId === budget.categoryId)
+        .reduce((sum, t) => sum + t.amount, 0);
       const percentage = budget.amount > 0 ? (monthExpenses / budget.amount) * 100 : 0;
       return { ...budget, spent: monthExpenses, percentage, isAlert: percentage >= (budget.alertAt || 80) };
     });
@@ -91,13 +91,13 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => a.day - b.day);
 
     const projectedExpenses = recurrences
-      .filter((r: any) => r.type === "EXPENSE" || !r.type)
-      .reduce((sum: number, r: any) => sum + r.amount, 0);
+      .filter((r) => r.type === "EXPENSE" || !r.type)
+      .reduce((sum, r) => sum + r.amount, 0);
     const projectedIncome = recurrences
-      .filter((r: any) => r.type === "INCOME")
-      .reduce((sum: number, r: any) => sum + r.amount, 0);
+      .filter((r) => r.type === "INCOME")
+      .reduce((sum, r) => sum + r.amount, 0);
 
-    const projectedBalance = allTransactions.reduce((sum: number, t: any) => {
+    const projectedBalance = allTransactions.reduce((sum, t) => {
       return t.type === "INCOME" ? sum + t.amount : sum - t.amount;
     }, 0);
 
@@ -113,17 +113,17 @@ export async function GET(request: NextRequest) {
       topCategories: summary.topCategories,
       projectedExpenses,
       projectedIncome,
-      budgetAlerts: budgetAlerts.filter((b: any) => b.isAlert),
+      budgetAlerts: budgetAlerts.filter((b) => b.isAlert),
       savingsRate: summary.monthIncome > 0
         ? ((summary.monthIncome - summary.monthExpenses) / summary.monthIncome) * 100
         : 0,
     });
 
-  } catch (e: any) {
-    console.error("Dashboard API error:", e?.message || e, e?.stack || "");
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : "Erro desconhecido";
     return NextResponse.json({
       error: "Erro interno ao carregar dashboard",
-      detail: e?.message || "unknown"
+      detail: msg
     }, { status: 500 });
   }
 }

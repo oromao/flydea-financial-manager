@@ -15,8 +15,19 @@ import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 const LOGS_PER_PAGE = 25;
 
+interface AuditEntry {
+  id: string;
+  action: string;
+  entity: string;
+  entityId: string;
+  details: string;
+  createdAt: string;
+  userId: string;
+  user?: { name: string | null };
+}
+
 export default function AuditLogs() {
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [action, setAction] = useState("ALL");
@@ -49,8 +60,7 @@ export default function AuditLogs() {
         setTotalPages(data.totalPages);
         setTotal(data.total);
       }
-    } catch (e) {
-      console.error("Failed to fetch logs", e);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -66,7 +76,7 @@ export default function AuditLogs() {
       .then(res => res.json())
       .then(data => {
         const allLogs = data.data || [];
-        const entities = Array.from(new Set(allLogs.map((log: any) => log.entity).filter(Boolean))) as string[];
+        const entities = Array.from(new Set(allLogs.map((log: AuditEntry) => log.entity).filter(Boolean))) as string[];
         setUniqueEntities(entities.sort());
       });
   }, []);
@@ -167,7 +177,8 @@ export default function AuditLogs() {
         </CardContent>
       </Card>
 
-      <Card className="premium-card bg-surface rounded-3xl border-outline-variant overflow-hidden shadow-sm">
+      {/* DESKTOP TABLE */}
+      <Card className="premium-card bg-surface rounded-3xl border-outline-variant overflow-hidden shadow-sm hidden md:block">
         {logs.length === 0 && !loading ? (
           <div className="p-8">
             <EmptyState icon={ShieldCheck} title="Nenhum log encontrado" description="Ajuste os filtros para ver os registros de auditoria." />
@@ -215,9 +226,37 @@ export default function AuditLogs() {
         )}
       </Card>
 
+      {/* MOBILE CARDS */}
+      <div className="md:hidden space-y-3">
+        {loading ? (
+          <div className="py-12 text-center animate-pulse uppercase text-xs font-bold tracking-widest text-on-surface-variant/60">Carregando logs...</div>
+        ) : logs.length === 0 ? (
+          <Card className="premium-card bg-surface rounded-3xl border-outline-variant overflow-hidden shadow-sm p-8">
+            <EmptyState icon={ShieldCheck} title="Nenhum log encontrado" description="Ajuste os filtros para ver os registros de auditoria." />
+          </Card>
+        ) : logs.map((log) => (
+          <Card key={log.id} className="rounded-2xl border-border p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="font-bold text-xs">{format(new Date(log.createdAt), "dd/MM/yyyy HH:mm")}</span>
+              <span className={cn("px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest", getActionColor(log.action))}>
+                {log.action}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 text-sm text-on-surface-variant mb-1">
+              <User className="w-3 h-3 shrink-0" />
+              <span className="font-semibold truncate">{log.user?.name || log.userId}</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-on-surface-variant/60 mb-1">
+              <span className="font-medium">{log.entity}</span>
+            </div>
+            <p className="text-xs text-on-surface-variant/60 italic line-clamp-2">{log.details}</p>
+          </Card>
+        ))}
+      </div>
+
       {/* Pagination */}
       {total > LOGS_PER_PAGE && (
-        <div className="flex items-center justify-between px-4 md:px-0">
+        <div className="flex items-center justify-between">
           <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/80">
             {total} registros · Página {page} de {totalPages}
           </p>

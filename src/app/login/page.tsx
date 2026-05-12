@@ -48,15 +48,15 @@ export default function LoginPage() {
     <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-surface px-5 py-8">
       {/* Ambient background gradients */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-[30%] -left-[20%] h-[600px] w-[600px] rounded-full bg-primary/[0.04] blur-[100px]" />
-        <div className="absolute -bottom-[20%] -right-[10%] h-[500px] w-[500px] rounded-full bg-primary/[0.03] blur-[80px]" />
+        <div className="absolute -top-[30%] -left-[20%] h-[300px] w-[300px] md:h-[600px] md:w-[600px] rounded-full bg-primary/[0.04] blur-[100px]" />
+        <div className="absolute -bottom-[20%] -right-[10%] h-[250px] w-[250px] md:h-[500px] md:w-[500px] rounded-full bg-primary/[0.03] blur-[80px]" />
       </div>
 
       {/* Subtle grid pattern */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.015]"
         style={{
-          backgroundImage: `linear-gradient(#8A05BE 1px, transparent 1px), linear-gradient(90deg, #8A05BE 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(var(--color-primary) 1px, transparent 1px), linear-gradient(90deg, var(--color-primary) 1px, transparent 1px)`,
           backgroundSize: "60px 60px",
         }}
       />
@@ -73,7 +73,8 @@ export default function LoginPage() {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.5, ease: "backOut" }}
-            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#8A05BE] to-[#D585FA] shadow-lg shadow-premium"
+            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg shadow-premium"
+            style={{ background: "var(--gradient-primary)" }}
           >
             <Sparkles className="h-7 w-7 text-white" />
           </motion.div>
@@ -142,7 +143,7 @@ export default function LoginPage() {
                   required
                   autoComplete="email"
                   spellCheck={false}
-                  className="h-12 rounded-xl border-border bg-surface-container pl-11 pr-4 text-[15px] text-on-background placeholder:text-muted-foreground transition-all focus:border-[#8A05BE]/30 focus:bg-background focus:ring-2 focus:ring-[#8A05BE]/10"
+                  className="h-12 rounded-xl border-border bg-surface-container pl-11 pr-4 text-[15px] text-on-background placeholder:text-muted-foreground transition-all focus:border-primary/30 focus:bg-background focus:ring-2 focus:ring-primary/10"
                 />
               </div>
             </div>
@@ -165,7 +166,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
-                  className="h-12 rounded-xl border-border bg-surface-container pl-11 pr-11 text-[15px] text-on-background placeholder:text-muted-foreground transition-all focus:border-[#8A05BE]/30 focus:bg-background focus:ring-2 focus:ring-[#8A05BE]/10"
+                  className="h-12 rounded-xl border-border bg-surface-container pl-11 pr-11 text-[15px] text-on-background placeholder:text-muted-foreground transition-all focus:border-primary/30 focus:bg-background focus:ring-2 focus:ring-primary/10"
                 />
                 <button
                   type="button"
@@ -187,7 +188,7 @@ export default function LoginPage() {
             <div className="flex justify-end">
               <Link
                 href="/esqueci-senha"
-                className="text-[13px] font-medium text-[#8A05BE] transition-colors hover:text-[#6B03A0]"
+                className="text-[13px] font-medium text-primary transition-colors hover:text-primary/80"
               >
                 Esqueci minha senha
               </Link>
@@ -198,7 +199,8 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="h-12 w-full rounded-xl bg-gradient-to-r from-[#8A05BE] to-[#D585FA] text-[15px] font-semibold text-white shadow-md shadow-[#8A05BE]/20 transition-all hover:brightness-110 hover:shadow-lg hover:shadow-[#8A05BE]/25 disabled:opacity-60"
+                className="h-12 w-full rounded-xl text-[15px] font-semibold text-white shadow-md shadow-primary/20 transition-all hover:brightness-110 hover:shadow-lg hover:shadow-primary/25 disabled:opacity-60"
+                style={{ background: "var(--gradient-primary)" }}
               >
                 {loading ? (
                   <span className="flex items-center gap-2">

@@ -25,12 +25,12 @@ const allModules = [
   { name: "Planejamento", href: "/orcamentos", icon: Target },
   { name: "Recorrências", href: "/recorrencias", icon: RotateCcw },
   { name: "Fechamento", href: "/fechamento", icon: CalendarRange },
-  { name: "Análises", href: "/relatorios", icon: BarChart3 },
+  { name: "Relatórios", href: "/relatorios", icon: BarChart3 },
 ];
 
 const adminModules = [
   { name: "Logs", href: "/admin/logs", icon: History },
-  { name: "Aprovacoes", href: "/admin/aprovacoes", icon: ShieldCheck },
+  { name: "Aprovações", href: "/admin/aprovacoes", icon: ShieldCheck },
 ];
 
 export function BottomNav() {
@@ -48,6 +48,7 @@ export function BottomNav() {
   return (
     <>
       <nav
+        aria-label="Navegação principal"
         className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-outline/10"
         style={{
           height: "calc(4rem + max(0px, env(safe-area-inset-bottom)))",
@@ -70,7 +71,7 @@ export function BottomNav() {
                         className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
                       >
                         <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 group-active:scale-95 transition-all">
-                          <Icon className="w-6 h-6 text-white stroke-[2.5px]" />
+                          <Icon className="w-6 h-6 text-primary-foreground stroke-[2.5px]" />
                         </div>
                         <span className="text-[10px] font-bold tracking-wide text-primary">
                           {item.name}
@@ -95,9 +96,9 @@ export function BottomNav() {
                   className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
                 >
                   <div className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-2xl transition-all duration-200 group-active:bg-surface-container">
-                    <Icon className="w-5 h-5 text-on-surface-variant/50 stroke-[1.5px]" />
+                    <Icon className="w-5 h-5 text-on-surface-variant/80 stroke-[1.5px]" />
                   </div>
-                  <span className="text-[10px] font-bold tracking-wide transition-all duration-200 text-on-surface-variant/50">
+                  <span className="text-[10px] font-bold tracking-wide transition-all duration-200 text-on-surface-variant/80">
                     {item.name}
                   </span>
                 </button>
@@ -108,6 +109,7 @@ export function BottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
               >
                 {isActive && (
@@ -119,12 +121,12 @@ export function BottomNav() {
                 )}>
                   <Icon className={cn(
                     "transition-all duration-200",
-                    isActive ? "w-5 h-5 text-primary stroke-[2.5px]" : "w-5 h-5 text-on-surface-variant/50 stroke-[1.5px]"
+                    isActive ? "w-5 h-5 text-primary stroke-[2.5px]" : "w-5 h-5 text-on-surface-variant/80 stroke-[1.5px]"
                   )} />
                 </div>
                 <span className={cn(
                   "text-[10px] font-bold tracking-wide transition-all duration-200",
-                  isActive ? "text-primary" : "text-on-surface-variant/50"
+                  isActive ? "text-primary" : "text-on-surface-variant/80"
                 )}>
                   {item.name}
                 </span>
@@ -166,6 +168,7 @@ export function BottomNav() {
                   key={module.href}
                   href={module.href}
                   onClick={() => setSheetOpen(false)}
+                  aria-current={isActive ? "page" : undefined}
                   className={cn(
                     "flex flex-col items-center gap-2 p-3 rounded-2xl transition-all",
                     isActive ? "bg-primary/10 text-primary" : "hover:bg-surface-variant/50 text-on-surface-variant"

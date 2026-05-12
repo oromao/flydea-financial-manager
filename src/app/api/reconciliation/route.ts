@@ -2,20 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { z } from "zod";
+import { withValidation } from "@/lib/api-helpers";
 import { withRateLimit } from "@/lib/rate-limit";
 
-export const POST = withRateLimit(async (request: NextRequest) => {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+const ReconciliationSchema = z.object({
+  transactionId: z.string().min(1, "ID da transação obrigatório"),
+  amount: z.number().positive("Valor deve ser positivo"),
+  note: z.string().optional(),
+});
 
-  const body = await request.json().catch(() => ({}));
-  const transactionId = typeof body.transactionId === "string" ? body.transactionId : "";
-  const amount = Number(body.amount);
-  const note = typeof body.note === "string" ? body.note : "";
+export const POST = withRateLimit(
+  withValidation(ReconciliationSchema, async (body, request) => {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (!transactionId || !Number.isFinite(amount) || amount <= 0) {
-    return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
-  }
+    const { transactionId, amount, note } = body;
 
   const transaction = await prisma.transaction.findFirst({
     where: { id: transactionId, userId: session.user.id },
@@ -50,4 +52,5 @@ export const POST = withRateLimit(async (request: NextRequest) => {
   });
 
   return NextResponse.json(updated);
-});
+  })
+);

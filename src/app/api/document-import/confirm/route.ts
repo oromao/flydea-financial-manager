@@ -15,7 +15,15 @@ const postSchema = z.object({
     type: z.enum(["INCOME", "EXPENSE"]),
     categoryId: z.string(),
     date: z.string(),
-  })),
+  })).optional(),
+  overrideType: z.enum(["INCOME", "EXPENSE"]).optional(),
+  overrideCategoryId: z.string().optional(),
+  overrideAmount: z.number().positive().optional(),
+  overrideDate: z.string().optional(),
+  overrideDueDate: z.string().optional(),
+  overridePaymentStatus: z.enum(["PAID", "PENDING"]).optional(),
+  overrideDescription: z.string().optional(),
+  confirmAnyway: z.boolean().optional(),
 });
 
 export const POST = withRateLimit(
@@ -35,7 +43,7 @@ export const POST = withRateLimit(
       overridePaymentStatus,
       overrideDescription,
       confirmAnyway,
-    } = body as any;
+    } = body;
 
   logger.info("DocumentImportConfirm: confirming", { userId: session.user.id, documentId });
 
@@ -60,7 +68,7 @@ export const POST = withRateLimit(
   const transactionType = overrideType || 
     (extractedData?.documentType === "NOTA_FISCAL" ? "EXPENSE" : "EXPENSE");
 
-  const amount = overrideAmount || extractedData?.totalAmount;
+  const amount = overrideAmount || (extractedData?.totalAmount as number);
   if (!amount || amount <= 0) {
     return NextResponse.json({ error: "Valor inválido ou não encontrado" }, { status: 400 });
   }
@@ -118,10 +126,9 @@ export const POST = withRateLimit(
       return newTransaction;
     });
 
-    // Background Audit (Non-blocking)
     void (async () => {
       try {
-        const auditLog = await prisma.auditLog.create({
+        await prisma.auditLog.create({
           data: {
             action: "IMPORT",
             entity: "TRANSACTION",
@@ -130,8 +137,7 @@ export const POST = withRateLimit(
             userId: session.user.id,
           },
         });
-      } catch (e) {
-        console.error("[AuditHook] Error:", e);
+      } catch {
       }
     })();
 

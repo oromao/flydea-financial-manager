@@ -86,12 +86,12 @@ export default function Fechamento() {
 
   return (
     <PageErrorBoundary>
-    <div className="space-y-8 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
+    <div className="space-y-8 max-w-7xl mx-auto pb-20 md:pb-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <PageHeader icon={CalendarRange} title="Fechamento Mensal" subtitle={periodLabel} iconClassName="bg-secondary text-on-secondary shadow-secondary/20" />
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <Tabs value={period} onValueChange={setPeriod}>
-            <TabsList className="overflow-x-auto">
+            <TabsList className="overflow-x-auto flex-nowrap">
               {["0", "1", "2", "3"].map((p) => (
                 <TabsTrigger key={p} value={p} className="whitespace-nowrap rounded-xl">
                   {periodLabels[parseInt(p, 10)]}

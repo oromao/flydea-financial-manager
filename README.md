@@ -2,6 +2,8 @@
 
 **Plataforma financeira pessoal premium com IA, automação e controle total.**
 
+[![CI](https://github.com/oromao/flydea-financial-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/oromao/flydea-financial-manager/actions/workflows/ci.yml)
+
 [🌐 Live](https://flydea-financial-manager.vercel.app) · [📖 Docs](docs/) · [🐛 Bugs](https://github.com/oromao/flydea-financial-manager/issues)
 
 ---

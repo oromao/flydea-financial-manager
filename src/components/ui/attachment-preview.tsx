@@ -77,7 +77,7 @@ export function AttachmentPreview({ url, filename, className }: AttachmentPrevie
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-3xl p-0 overflow-hidden">
+        <DialogContent className="max-w-3xl p-0 overflow-y-auto">
           <div className="flex items-center justify-between p-4 border-b border-outline/10">
             <h3 className="font-bold text-lg">{filename || "Preview"}</h3>
                   <Button variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Fechar visualização">

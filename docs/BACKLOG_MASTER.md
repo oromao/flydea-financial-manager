@@ -344,4 +344,32 @@ Este arquivo deve ser atualizado sempre que:
 
 ---
 
-*Última atualização: 2026-05-05 — Versão 2.1 (QA Audit Playwright MCP)*
+---
+
+## ÉPICO 15: UX/UI AUDIT BUGFIX (P0-P2) — 🔶 SPRINT 3
+
+> **Auditado em:** 2026-05-12 via browser-use (Chromium headed, produção Vercel)
+> **Ambiente:** Produção (Vercel) — usuário augusto@flydea.com
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E15-T1 | Bug 🔴 | Contas e Cartões | Corrigir Base UI error #51 — página /contas quebrada | P0 | Média | ✅ completed |
+| E15-T2 | Bug 🔴 | Orçamentos | UUID visível em dropdown de categoria no modal "Novo Orçamento" | P0 | Baixa | ✅ completed |
+| E15-T3 | Bug 🔴 | Transações | UUID visível em dropdown de conta no modal "Editar Lançamento" | P0 | Baixa | ✅ completed |
+| E15-T4 | UX 🟡 | Orçamentos | Typo: "Alertas Criticos" → "Alertas Críticos" | P1 | Baixa | ✅ completed |
+| E15-T5 | UX 🟡 | Recorrências | Typos: "Automacao" → "Automação", "RECORRENCIA" → "RECORRÊNCIA" | P1 | Baixa | ✅ completed |
+| E15-T6 | UX 🟡 | Transações | Typo: "Novo Lancamento" → "Novo Lançamento" | P1 | Baixa | ✅ completed |
+| E15-T7 | UX 🟡 | Sidebar | Sidebar perde texto dos links ao scroll da página — removido truncate, whitespace-nowrap | P1 | Média | ✅ completed |
+| E15-T8 | UX 🟡 | Insights | /insights redirecionava para Dashboard → redirecionar para /relatorios | P1 | Média | ✅ completed |
+| E15-T9 | UX 🟡 | Transações | Dropdown inconsistente: quick-add, document-importer, payment-importer | P1 | Baixa | ✅ completed |
+| E15-T10 | UX 🟢 | Sidebar | Renomear "Análises" → "Relatórios" na sidebar e bottom-nav | P2 | Baixa | ✅ completed |
+
+### Notas do Épico 15
+- **E15-T2**: Reabertura do QA-02. O fix anterior corrigiu o dropdown NOVO LANÇAMENTO mas não NOVO ORÇAMENTO.
+- **E15-T3**: Bug novo — conta dropdown mostra UUID bruto no formulário de edição.
+- **C3 (Turbopack crash)**: Ignorado por decisão do usuário. Build de produção funciona normalmente.
+- **M2 (formato data ISO)**: Já registrado como QA-08, re-auditado.
+- **M5 (sem cadastro)**: Limitação conhecida do produto (usuários criados administrativamente).
+- **Contas e Cartões**: O Base UI error #51 pode ser relacionado ao E14-T4 (modal Fechar interceptado).
+
+*Última atualização: 2026-05-12 — Versão 3.0 (browser-use Audit Sprint 3)*

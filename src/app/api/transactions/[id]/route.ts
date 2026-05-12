@@ -55,10 +55,9 @@ export const PUT = withRateLimit(async (request: NextRequest, { params }: { para
     include: { category: true, account: true, tags: { include: { tag: true } } }
   });
 
-  // Background Audit (Non-blocking)
   void (async () => {
     try {
-      const auditLog = await prisma.auditLog.create({
+      await prisma.auditLog.create({
         data: {
           action: "UPDATE",
           entity: "TRANSACTION",
@@ -67,8 +66,7 @@ export const PUT = withRateLimit(async (request: NextRequest, { params }: { para
           userId: session.user.id
         }
       });
-    } catch (e) {
-      console.error("[AuditHook] Error:", e);
+    } catch {
     }
   })();
 
@@ -93,10 +91,9 @@ export const DELETE = withRateLimit(async (request: NextRequest, { params }: { p
   try {
     await prisma.transaction.delete({ where: { id } });
     
-    // Background Audit (Non-blocking)
     void (async () => {
       try {
-        const auditLog = await prisma.auditLog.create({
+        await prisma.auditLog.create({
           data: {
             action: "DELETE",
             entity: "TRANSACTION",
@@ -105,8 +102,7 @@ export const DELETE = withRateLimit(async (request: NextRequest, { params }: { p
             userId: session.user.id
           }
         });
-      } catch (e) {
-        console.error("[AuditHook] Error:", e);
+      } catch {
       }
     })();
     

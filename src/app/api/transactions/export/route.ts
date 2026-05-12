@@ -63,7 +63,7 @@ export const GET = withRateLimit(async (request: NextRequest) => {
     const summary = computeExportSummary(transactions);
 
     // Add summary footer rows
-    const summaryRows: any[] = [
+    const summaryRows: Record<string, string | number | Date | null>[] = [
       {},
       { "Data": "RESUMO", "Descrição": "", "Valor (R$)": "", "Observações": "" },
       { "Descrição": "Receitas", "Valor (R$)": summary.totalIncome, "Observações": formatExportValue(summary.totalIncome) },
@@ -73,7 +73,7 @@ export const GET = withRateLimit(async (request: NextRequest) => {
       { "Descrição": "Despesas Pendentes", "Valor (R$)": -summary.totalPending, "Observações": formatExportValue(summary.totalPending) },
     ];
 
-    rows.push(...summaryRows);
+    rows.push(...summaryRows as any);
 
     const worksheet = xlsx.utils.json_to_sheet(rows);
     const workbook = xlsx.utils.book_new();

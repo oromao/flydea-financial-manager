@@ -93,7 +93,7 @@ export default function Orcamentos() {
 
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
-      toast.error("O valor do orcamento deve ser maior que zero");
+      toast.error("O valor do orçamento deve ser maior que zero");
       return;
     }
 
@@ -106,13 +106,13 @@ export default function Orcamentos() {
         body: JSON.stringify(payload)
       });
       if (res.ok) {
-        toast.success("Orcamento criado!");
+        toast.success("Orçamento criado!");
         setIsOpen(false);
         resetForm();
         fetchData();
       } else {
         const err = await res.json();
-        toast.error(err.error || "Erro ao criar orcamento");
+        toast.error(err.error || "Erro ao criar orçamento");
       }
     } finally {
       setSaving(false);
@@ -120,9 +120,9 @@ export default function Orcamentos() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!await confirm({ title: "Excluir orcamento", message: "Tem certeza que deseja remover este orcamento?", confirmLabel: "Excluir", variant: "danger" })) return;
+    if (!await confirm({ title: "Excluir orçamento", message: "Tem certeza que deseja remover este orçamento?", confirmLabel: "Excluir", variant: "danger" })) return;
     const res = await fetch(`/api/budgets/${id}`, { method: "DELETE" });
-    if (res.ok) { toast.success("Orcamento removido!"); fetchData(); }
+    if (res.ok) { toast.success("Orçamento removido!"); fetchData(); }
     else toast.error("Erro ao remover");
   };
 
@@ -142,7 +142,7 @@ export default function Orcamentos() {
 
   return (
     <PageErrorBoundary>
-    <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0 relative">
+    <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 md:pb-0 relative">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -157,7 +157,7 @@ export default function Orcamentos() {
             <Target className="w-7 h-7 md:w-8 md:h-8" />
           </motion.div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Orcamentos</h1>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Orçamentos</h1>
             <p className="text-muted-foreground font-medium text-sm mt-1">Planejamento e controle de limites</p>
           </div>
         </div>
@@ -203,7 +203,7 @@ export default function Orcamentos() {
         </Card>
         <Card className={alertCount > 0 ? "border-warning/30 bg-warning/5" : ""}>
           <CardContent>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Alertas Criticos</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Alertas Críticos</p>
             <div className="flex items-center gap-3 mt-1">
               {alertCount > 0 ? <AlertTriangle className="w-6 h-6 text-warning" /> : <CheckCircle2 className="w-6 h-6 text-success" />}
               <p className={cn("text-2xl sm:text-3xl font-bold tracking-tight", alertCount > 0 ? "text-warning" : "text-success")}>
@@ -217,15 +217,15 @@ export default function Orcamentos() {
       {/* Budget List */}
       {loading ? (
         <div className="py-24 text-center text-muted-foreground/30 font-semibold text-xs italic">
-          Analisando orcamentos...
+          Analisando orçamentos...
         </div>
       ) : budgets.length === 0 ? (
         <div className="py-16">
           <EmptyState
             icon={Target}
-            title="Nenhum orcamento definido"
+            title="Nenhum orçamento definido"
             description="Crie metas para ter um controle financeiro preciso"
-            ctaLabel="Novo Orcamento"
+            ctaLabel="Novo Orçamento"
             onCta={() => setIsOpen(true)}
           />
         </div>
@@ -287,7 +287,7 @@ export default function Orcamentos() {
                         <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-tighter">de {formatCurrency(budget.amount)} total</p>
                       </div>
                       <Button variant="ghost" size="icon"
-                        aria-label="Excluir orcamento"
+                        aria-label="Excluir orçamento"
                         className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-destructive/10 hover:bg-destructive/20 text-destructive hover:text-destructive transition-colors"
                         onClick={() => handleDelete(budget.id)}>
                         <Trash2 className="w-4.5 h-4.5" />
@@ -320,28 +320,29 @@ export default function Orcamentos() {
         </motion.div>
       )}
 
-      {/* FAB / CTA — Novo Orcamento */}
+      {/* FAB / CTA — Novo Orçamento */}
       <Dialog open={isOpen} onOpenChange={(v) => { setIsOpen(v); if (!v) resetForm(); }}>
         <DialogTrigger
           render={
             <Button
               size="lg"
-              className="fixed bottom-[12rem] right-6 z-30 md:relative md:bottom-auto md:right-auto md:mt-8 apple-button-primary rounded-2xl shadow-lg px-6 py-3.5 min-h-[44px]"
+              className="fixed z-30 md:relative md:mt-8 apple-button-primary rounded-2xl shadow-lg px-6 py-3.5 min-h-[44px]"
+              style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))", right: "max(1.5rem, env(safe-area-inset-right))" }}
             />
           }
         >
-          <Plus className="w-5 h-5 mr-2" /> Novo Orcamento
+          <Plus className="w-5 h-5 mr-2" /> Novo Orçamento
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md max-w-[calc(100vw-2rem)] rounded-2xl">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Novo Orcamento</DialogTitle>
+            <DialogTitle className="text-xl font-bold">Novo Orçamento</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-5 mt-2">
             <div className="space-y-1.5">
               <Label htmlFor="category">Categoria</Label>
               <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
                 <SelectTrigger id="category" className="min-h-[44px] rounded-xl">
-                  <SelectValue placeholder="Selecione uma categoria" />
+                  <SelectValue placeholder="Selecione uma categoria">{categoryId ? categories.find(c => c.id === categoryId)?.name || "Selecione uma categoria" : "Selecione uma categoria"}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((cat: Category) => (

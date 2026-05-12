@@ -3,7 +3,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
 import { withRateLimit } from "@/lib/rate-limit";
+
+const InvoiceUpdateSchema = z.object({
+  installmentId: z.string().min(1),
+  status: z.enum(["PENDING", "RECEIVED", "OVERDUE"]),
+  paidAmount: z.number().positive().optional(),
+});
 
 export const GET = withRateLimit(async (
   request: NextRequest,
@@ -34,14 +41,12 @@ export const PUT = withRateLimit(async (
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
-  const { installmentId, status, paidAmount } = body;
-
-  if (!installmentId || !status) {
-    return NextResponse.json(
-      { error: "installmentId e status são obrigatórios" },
-      { status: 400 }
-    );
+  const parsed = InvoiceUpdateSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Dados inválidos", fields: parsed.error.flatten().fieldErrors }, { status: 400 });
   }
+
+  const { installmentId, status, paidAmount } = parsed.data;
 
   try {
     const invoice = await prisma.invoice.findUnique({

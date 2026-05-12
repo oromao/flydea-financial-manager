@@ -14,10 +14,10 @@ export const GET = withRateLimit(async (request: NextRequest) => {
   const status = searchParams.get("status");
   const clientName = searchParams.get("clientName");
 
-  const where: any = {
+  const where: Record<string, unknown> = {
     userId: session.user.id,
     ...(status ? { status } : {}),
-    ...(clientName ? { clientName: { contains: clientName, mode: "insensitive" } } : {})
+    ...(clientName ? { clientName: { contains: clientName, mode: "insensitive" as const } } : {})
   };
 
   const invoices = await prisma.invoice.findMany({

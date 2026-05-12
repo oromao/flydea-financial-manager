@@ -30,7 +30,7 @@ const navItems = [
   { name: "Planejamento", href: "/orcamentos", icon: Target },
   { name: "Recorrências", href: "/recorrencias", icon: RotateCcw },
   { name: "Fechamento", href: "/fechamento", icon: CalendarRange },
-  { name: "Análises", href: "/relatorios", icon: BarChart3 },
+  { name: "Relatórios", href: "/relatorios", icon: BarChart3 },
 ];
 
 const adminItems = [
@@ -52,7 +52,7 @@ function NavLinks({ pathname, isAdmin, onItemClick }: { pathname: string; isAdmi
   const allItems = isAdmin ? [...navItems, ...adminItems] : navItems;
 
   return (
-    <nav className="space-y-1">
+    <nav aria-label="Navegação principal" className="space-y-1">
       {allItems.map((item) => {
         const isActive = pathname === item.href;
         const Icon = item.icon;
@@ -62,16 +62,17 @@ function NavLinks({ pathname, isAdmin, onItemClick }: { pathname: string; isAdmi
             key={item.href}
             href={item.href}
             onClick={onItemClick}
+            aria-current={isActive ? "page" : undefined}
             className={cn(
               "flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group relative text-sm font-medium",
               isActive
                 ? "bg-surface-container-lowest shadow-sm text-primary"
-                : "text-on-surface-variant hover:bg-surface-container-low hover:text-primary"
+                : "text-on-surface-variant hover:bg-surface-container hover:text-primary"
             )}
           >
             <div className="flex items-center gap-3">
               <Icon className={cn("w-5 h-5 shrink-0", isActive ? "text-primary" : "text-outline group-hover:text-primary transition-colors")} />
-              <span className="truncate font-sans tracking-tight">{item.name}</span>
+              <span className="font-sans tracking-tight whitespace-nowrap">{item.name}</span>
             </div>
             {isActive && <div className="w-1 h-4 rounded-full bg-primary" />}
           </Link>
@@ -110,6 +111,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
 
         {/* Mobile Drawer Panel */}
         <nav
+          aria-label="Menu de navegação"
           className={cn(
             "fixed inset-y-0 left-0 z-[70] w-80 bg-surface flex flex-col p-6 transform transition-transform duration-500 ease-in-out md:hidden border-none shadow-2xl",
             drawerOpen ? "translate-x-0" : "-translate-x-full"
@@ -147,7 +149,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
 
           <div className="mt-8 pt-8 space-y-6">
             <Separator />
-            <div className="p-4 rounded-2xl bg-surface-container-low flex items-center gap-4 transition-all hover:bg-surface-container">
+            <div className="p-4 rounded-2xl bg-surface-container flex items-center gap-4 transition-all hover:bg-surface-container-high">
               <Avatar size="lg" className="w-11 h-11 border-2 border-surface-container-lowest shadow-sm">
                 <AvatarImage src={userImage} alt="Foto do perfil" />
                 <AvatarFallback>{userInitials}</AvatarFallback>
@@ -179,7 +181,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
         </nav>
 
         {/* Mobile Top Header */}
-        <header className="h-20 flex items-center justify-between px-6 bg-background md:hidden sticky top-0 z-50 shrink-0 border-none">
+        <header aria-label="Cabeçalho" className="h-20 flex items-center justify-between px-6 bg-background md:hidden sticky top-0 z-50 shrink-0 border-none">
           <Tooltip>
             <TooltipTrigger
               onClick={() => setDrawerOpen(true)}
@@ -215,7 +217,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Sidebar - Desktop Only */}
-        <aside className="w-[320px] bg-surface hidden md:flex flex-col fixed inset-y-0 z-50 p-8 border-none shadow-[1px_0_20px_rgba(0,0,0,0.02)]">
+        <aside aria-label="Menu lateral" className="w-[320px] bg-surface hidden md:flex flex-col fixed inset-y-0 z-50 p-8 border-none shadow-[1px_0_20px_rgba(0,0,0,0.02)]">
           <div className="h-20 flex items-center px-2 mb-12">
             <div className="flex items-center gap-4 w-full">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary shrink-0 shadow-xl shadow-primary/10">
@@ -239,7 +241,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
           </ScrollArea>
 
           <div className="mt-12 space-y-6">
-            <div className="p-4 flex items-center gap-4 rounded-3xl bg-surface-container-low transition-all hover:bg-surface-container group">
+            <div className="p-4 flex items-center gap-4 rounded-3xl bg-surface-container transition-all hover:bg-surface-container-high group">
               <Avatar size="lg" className="w-12 h-12 border-2 border-surface-container-lowest shadow-sm">
                 <AvatarImage src={userImage} alt="Foto do perfil" />
                 <AvatarFallback>{userInitials}</AvatarFallback>
@@ -284,7 +286,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
         </aside>
 
         {/* Main Content Area */}
-        <main id="main-content" tabIndex={-1} className="flex-1 md:ml-[320px] min-h-screen pb-24 md:pb-0 bg-background scroll-mt-20">
+        <main id="main-content" aria-label="Conteúdo principal" tabIndex={-1} className="flex-1 md:ml-[320px] min-h-screen pb-24 md:pb-0 bg-background scroll-mt-20">
           <div className="w-full max-w-7xl mx-auto p-6 md:p-12 lg:p-16 animate-in fade-in slide-in-from-bottom-4 duration-1000 ease-out">
             {children}
           </div>

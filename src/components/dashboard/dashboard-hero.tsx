@@ -15,7 +15,7 @@ interface DashboardHeroProps {
   income: number;
   expenses: number;
   lastUpdated: Date | null;
-  categories: any[];
+  categories: { id: string; name: string; type: string }[];
 }
 
 export function DashboardHero({ balance, projectedBalance, loading, income, expenses, lastUpdated, categories }: DashboardHeroProps) {
@@ -38,7 +38,7 @@ export function DashboardHero({ balance, projectedBalance, loading, income, expe
   }, [lastUpdated]);
 
   return (
-    <section className="relative">
+    <section aria-label="Resumo financeiro" className="relative">
       {/* Hero Card - Minimal */}
       <div className="bg-primary overflow-hidden rounded-3xl p-6 md:p-8 text-white relative">
         <div className="relative z-10 space-y-8">
@@ -57,7 +57,7 @@ export function DashboardHero({ balance, projectedBalance, loading, income, expe
           </div>
 
             {/* Balance */}
-            <div>
+            <div aria-live="polite" aria-atomic="true">
               <motion.p
                 key={balance}
                 initial={{ opacity: 0, y: 8 }}
@@ -66,7 +66,7 @@ export function DashboardHero({ balance, projectedBalance, loading, income, expe
                 className="text-4xl md:text-5xl font-black tracking-tight leading-none"
               >
                 {loading ? (
-                  <span className="inline-block h-12 w-48 bg-white/10 animate-pulse rounded-lg" />
+                  <span aria-hidden="true" className="inline-block h-12 w-48 bg-white/10 animate-pulse rounded-lg" />
                 ) : balance != null && !isNaN(balance) ? (
                   formatCurrency(balance)
                 ) : (
@@ -77,23 +77,23 @@ export function DashboardHero({ balance, projectedBalance, loading, income, expe
 
           {/* Mini cards: Entradas / Saídas / Saldo do Mês */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-white/5 rounded-xl p-4">
+            <div className="bg-white/5 rounded-xl p-4" aria-label={`Entradas: ${formatCurrency(income)}`}>
               <p className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Entradas</p>
-              <p className="text-lg font-bold">
+              <p className="text-lg font-bold" aria-hidden="true">
                 {loading ? <span className="inline-block h-5 w-20 bg-white/10 animate-pulse rounded" /> : formatCurrency(income)}
               </p>
             </div>
 
-            <div className="bg-white/5 rounded-xl p-4">
+            <div className="bg-white/5 rounded-xl p-4" aria-label={`Saídas: ${formatCurrency(expenses)}`}>
               <p className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Saídas</p>
-              <p className="text-lg font-bold">
+              <p className="text-lg font-bold" aria-hidden="true">
                 {loading ? <span className="inline-block h-5 w-20 bg-white/10 animate-pulse rounded" /> : formatCurrency(expenses)}
               </p>
             </div>
 
-            <div className={cn("rounded-xl p-4", netMonth >= 0 ? "bg-white/5" : "bg-white/5")}>
+            <div className={cn("rounded-xl p-4", netMonth >= 0 ? "bg-white/5" : "bg-white/5")} aria-label={`Saldo do mês: ${formatCurrency(netMonth)}`}>
               <p className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Saldo</p>
-              <p className="text-lg font-bold">
+              <p className="text-lg font-bold" aria-hidden="true">
                 {loading ? <span className="inline-block h-5 w-20 bg-white/10 animate-pulse rounded" /> : formatCurrency(netMonth)}
               </p>
             </div>
