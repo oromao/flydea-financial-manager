@@ -8,6 +8,7 @@ import { picoClaw } from "@/lib/ai/pico-claw";
 import { withRateLimit } from "@/lib/rate-limit";
 
 export const GET = withRateLimit(async (request: NextRequest) => {
+  try {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -190,4 +191,8 @@ export const GET = withRateLimit(async (request: NextRequest) => {
       }
     },
   });
+  } catch (e) {
+    console.error("Dashboard API error:", e);
+    return NextResponse.json({ error: "Erro interno ao carregar dashboard" }, { status: 500 });
+  }
 });
