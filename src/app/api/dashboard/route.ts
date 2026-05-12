@@ -5,9 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { startOfMonth, endOfMonth, addMonths } from "date-fns";
 import { computeMonthlySummary } from "@/lib/financial-engine";
 import { picoClaw } from "@/lib/ai/pico-claw";
-import { withRateLimit } from "@/lib/rate-limit";
-
-export const GET = withRateLimit(async (request: NextRequest) => {
+export async function GET(request: NextRequest) {
   try {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id)
@@ -195,4 +193,4 @@ export const GET = withRateLimit(async (request: NextRequest) => {
     console.error("Dashboard API error:", e);
     return NextResponse.json({ error: "Erro interno ao carregar dashboard" }, { status: 500 });
   }
-});
+}
