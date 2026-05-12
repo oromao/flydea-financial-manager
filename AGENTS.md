@@ -37,6 +37,16 @@ Um sistema financeiro pessoal com foco em:
 
 ## 🗂️ Como a IA deve trabalhar neste repositório
 
+### BOOTSTRAP — Leitura Obrigatória Inicial
+
+Sempre iniciar lendo o arquivo de bootstrap do Harness:
+
+1. **`.ai/00-START-HERE.md`** — Bootstrap oficial do Harness de Agentes
+2. **`.ai/context-compact.md`** — Estado atual do projeto
+3. **`.ai/current-task.md`** — Tarefa corrente
+4. **`.ai/backlog.index.md`** — Sprint ativa e backlog priorizado
+5. **`.ai/tools/command-policy.md`** — Política de comandos (leitura obrigatória antes de executar)
+
 ### FLUXO OBRIGATÓRIO (sempre siga esta ordem)
 
 ```
@@ -51,6 +61,9 @@ Um sistema financeiro pessoal com foco em:
 
 | Arquivo | Por que |
 |---------|---------|
+| `.ai/business-context.index.md` | Contexto de negócio do Flydea |
+| `.ai/personas.index.md` | Personas do produto |
+| `.ai/platform-strategy.index.md` | Estratégia da plataforma |
 | `docs/PROJECT_OVERVIEW.md` | Resumo do projeto em 30 linhas |
 | `docs/PRODUCT_VISION.md` | Proposta de valor, usuário, dores, diferenciais |
 | `docs/MODULE_MAP.md` | Mapa completo: módulos, telas, APIs, entidades, gaps |
@@ -129,6 +142,10 @@ Um sistema financeiro pessoal com foco em:
 
 **Ao finalizar qualquer tarefa, a IA DEVE:**
 
+- ✅ Atualizar `.ai/execution-log.index.md` com entrada da tarefa executada
+- ✅ Atualizar `.ai/current-task.md` se a tarefa corrente mudou
+- ✅ Atualizar `.ai/backlog.index.md` se o backlog mudou
+- ✅ Atualizar `.ai/context-compact.md` se o estado do projeto mudou
 - ✅ Atualizar `docs/EXECUTION_LOG.md` com entrada da tarefa executada
 - ✅ Atualizar status em `docs/BACKLOG_MASTER.md` (pending → in_progress → completed)
 - ✅ Atualizar `docs/KNOWN_ISSUES.md` se descobriu novo bug

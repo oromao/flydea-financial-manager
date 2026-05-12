@@ -89,7 +89,7 @@ function DialogContent({
       {/* Mobile: Bottom Sheet */}
       <SwipeableContent onClose={handleClose}>
         <div className={cn(
-          "bg-background rounded-t-[32px] shadow-2xl overflow-hidden",
+          "bg-background rounded-t-3xl shadow-2xl overflow-hidden",
           className
         )}>
           {showCloseButton && (

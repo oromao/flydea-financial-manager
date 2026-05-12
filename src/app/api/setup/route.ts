@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function GET() {
+export const GET = withRateLimit(async () => {
   try {
     // Add missing columns if they don't exist (Neon PostgreSQL)
     try {
@@ -90,4 +91,4 @@ export async function GET() {
     const msg = error instanceof Error ? error.message : "Erro desconhecido";
     return NextResponse.json({ error: msg }, { status: 500 });
   }
-}
+});

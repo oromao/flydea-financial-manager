@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -12,6 +13,7 @@ import { useConfirm } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 type Approval = {
   id: string;
@@ -25,6 +27,7 @@ type Approval = {
 };
 
 export default function AprovacoesPage() {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const [items, setItems] = useState<Approval[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,6 +82,7 @@ export default function AprovacoesPage() {
 
   if (status === "authenticated" && session?.user?.role !== "ADMIN") {
     return (
+      <PageErrorBoundary>
       <div className="max-w-3xl mx-auto py-32 px-4">
         <Card className="premium-card p-12 text-center border-none shadow-2xl">
           <div className="w-20 h-20 bg-destructive/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
@@ -86,22 +90,26 @@ export default function AprovacoesPage() {
           </div>
           <h1 className="text-2xl font-black text-on-background tracking-tight">Acesso Restrito</h1>
           <p className="text-on-surface-variant/70 mt-3 max-w-sm mx-auto">Esta área é exclusiva para administradores do sistema.</p>
-          <Button onClick={() => window.location.href = "/"} className="mt-8 apple-button-outline px-8 rounded-xl font-bold">Voltar ao Início</Button>
+          <Button onClick={() => router.push("/")} className="mt-8 apple-button-outline px-8 rounded-xl font-bold">Voltar ao Início</Button>
         </Card>
       </div>
+    </PageErrorBoundary>
     );
   }
 
   if (status === "loading") {
     return (
+      <PageErrorBoundary>
       <div className="flex flex-col items-center justify-center py-48 gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-secondary/30" />
         <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">Autenticando...</p>
       </div>
+    </PageErrorBoundary>
     );
   }
 
   return (
+    <PageErrorBoundary>
     <div className="space-y-10 max-w-6xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
       <div className="flex items-center gap-5">
         <div className="p-3.5 rounded-2xl bg-primary text-on-primary shadow-xl shadow-primary/20">
@@ -197,5 +205,6 @@ export default function AprovacoesPage() {
         </div>
       )}
     </div>
+    </PageErrorBoundary>
   );
 }

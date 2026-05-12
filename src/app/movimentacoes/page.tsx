@@ -34,6 +34,7 @@ import { MoneyInput } from "@/components/ui/money-input";
 import { EmptyState } from "@/components/ui/empty-state";
 import { z } from "zod";
 import { useZodForm } from "@/hooks/use-zod-form";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 const transactionSchema = z.object({
   description: z.string().min(1, "Descrição é obrigatória"),
@@ -427,6 +428,7 @@ function MovimentaçõesContent() {
     endDateFilter;
 
   return (
+    <PageErrorBoundary>
     <div className="mx-auto max-w-7xl space-y-4 pb-24 md:space-y-6 md:pb-8 px-4 md:px-0">
       {/* ─── TOP BAR ─── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -912,7 +914,7 @@ function MovimentaçõesContent() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Pesquisar..."
-                className="pl-9 h-9 sm:h-10 rounded-xl bg-muted/50 border-border text-sm"
+                className="pl-9 h-11 rounded-xl bg-muted/50 border-border text-sm"
               />
             </div>
             <div className="flex gap-2">
@@ -920,7 +922,7 @@ function MovimentaçõesContent() {
                 value={filterCategory}
                 onValueChange={(v) => setFilterCategory(v || "Todos")}
               >
-                <SelectTrigger className="w-28 h-9 rounded-xl bg-muted/50 border-border text-xs font-medium">
+                <SelectTrigger className="w-28 h-11 rounded-xl bg-muted/50 border-border text-xs font-medium">
                   <span className="truncate">
                     {filterCategory === "Todos" ? "Categoria" : filterCategory}
                   </span>
@@ -945,14 +947,14 @@ function MovimentaçõesContent() {
                 type="date"
                 value={startDateFilter}
                 onChange={(e) => setStartDateFilter(e.target.value)}
-                className="h-8 w-24 rounded-lg bg-muted/50 border-border text-xs"
+                className="h-11 w-24 rounded-lg bg-muted/50 border-border text-xs"
               />
               <span className="text-xs text-muted-foreground">-</span>
               <Input
                 type="date"
                 value={endDateFilter}
                 onChange={(e) => setEndDateFilter(e.target.value)}
-                className="h-8 w-24 rounded-lg bg-muted/50 border-border text-xs"
+                className="h-11 w-24 rounded-lg bg-muted/50 border-border text-xs"
               />
             </div>
 
@@ -961,14 +963,14 @@ function MovimentaçõesContent() {
               onValueChange={(val) => setFilterType(val === "ALL" ? null : val)}
               className="flex-shrink-0"
             >
-              <TabsList className="h-8 rounded-lg bg-muted border-border p-0.5">
-                <TabsTrigger value="ALL" className="px-2 h-7 text-[10px] font-medium rounded-md">
+              <TabsList className="h-11 rounded-lg bg-muted border-border p-0.5">
+                <TabsTrigger value="ALL" className="px-3 h-9 text-xs font-medium rounded-md">
                   Todos
                 </TabsTrigger>
-                <TabsTrigger value="INCOME" className="px-2 h-7 text-[10px] font-medium rounded-md">
+                <TabsTrigger value="INCOME" className="px-3 h-9 text-xs font-medium rounded-md">
                   +
                 </TabsTrigger>
-                <TabsTrigger value="EXPENSE" className="px-2 h-7 text-[10px] font-medium rounded-md">
+                <TabsTrigger value="EXPENSE" className="px-3 h-9 text-xs font-medium rounded-md">
                   -
                 </TabsTrigger>
               </TabsList>
@@ -979,14 +981,14 @@ function MovimentaçõesContent() {
               onValueChange={setFilterPaymentStatus}
               className="flex-shrink-0"
             >
-              <TabsList className="h-8 rounded-lg bg-muted border-border p-0.5">
-                <TabsTrigger value="ALL" className="px-2 h-7 text-[10px] font-medium rounded-md">
+              <TabsList className="h-11 rounded-lg bg-muted border-border p-0.5">
+                <TabsTrigger value="ALL" className="px-3 h-9 text-xs font-medium rounded-md">
                   Status
                 </TabsTrigger>
-                <TabsTrigger value="PAID" className="px-2 h-7 text-[10px] font-medium rounded-md">
+                <TabsTrigger value="PAID" className="px-3 h-9 text-xs font-medium rounded-md">
                   Pago
                 </TabsTrigger>
-                <TabsTrigger value="PENDING" className="px-2 h-7 text-[10px] font-medium rounded-md">
+                <TabsTrigger value="PENDING" className="px-3 h-9 text-xs font-medium rounded-md">
                   Pend
                 </TabsTrigger>
               </TabsList>
@@ -997,7 +999,7 @@ function MovimentaçõesContent() {
                 variant="outline"
                 size="sm"
                 onClick={clearFilters}
-                className="h-8 rounded-lg text-xs font-medium border-destructive/30 text-destructive hover:bg-destructive/5"
+                className="h-11 rounded-lg text-xs font-medium border-destructive/30 text-destructive hover:bg-destructive/5"
               >
                 Limpar
               </Button>
@@ -1122,16 +1124,16 @@ function MovimentaçõesContent() {
                             size="icon"
                             onClick={() => handleEdit(t)}
                             aria-label="Editar transação"
-                            className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground"
+                            className="h-11 w-11 rounded-lg text-muted-foreground hover:text-foreground"
                           >
-                            <Edit2 className="h-3.5 w-3.5" />
+                            <Edit2 className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => deleteTransaction(t.id)}
                             aria-label="Excluir transação"
-                            className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive"
+                            className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </Button>
@@ -1237,7 +1239,7 @@ function MovimentaçõesContent() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 rounded-lg flex-shrink-0"
+                              className="h-11 w-11 rounded-lg flex-shrink-0"
                               aria-label="Ações"
                             >
                               <MoreVertical className="h-4 w-4 text-muted-foreground" />
@@ -1298,7 +1300,7 @@ function MovimentaçõesContent() {
               size="sm"
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="h-9 rounded-xl text-xs font-semibold"
+              className="h-11 rounded-xl text-xs font-semibold"
             >
               Anterior
             </Button>
@@ -1311,7 +1313,7 @@ function MovimentaçõesContent() {
                     variant={page === pageNum ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setPage(pageNum)}
-                    className="min-w-[36px] h-9 rounded-xl text-xs font-semibold"
+                    className="min-w-[44px] h-11 rounded-xl text-xs font-semibold"
                   >
                     {pageNum}
                   </Button>
@@ -1328,7 +1330,7 @@ function MovimentaçõesContent() {
               size="sm"
               disabled={page >= totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              className="h-9 rounded-xl text-xs font-semibold"
+              className="h-11 rounded-xl text-xs font-semibold"
             >
               Próxima
             </Button>
@@ -1355,6 +1357,7 @@ function MovimentaçõesContent() {
         </button>
       </div>
     </div>
+    </PageErrorBoundary>
   );
 }
 

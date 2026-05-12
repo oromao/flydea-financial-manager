@@ -1,0 +1,22 @@
+{
+  "lastGeneratedAt": "2026-05-11T21:30:00.000000Z",
+  "stateAgeSeconds": 0,
+  "isStale": false,
+  "mode": "READ_ONLY",
+  "sourceFiles": [
+    "sprints/current-sprint.md",
+    "sprints/sprint-board.md",
+    "sprints/sprint-backlog.md",
+    "execution-log.index.md",
+    "current-task.md",
+    "team/operating-model.md"
+  ],
+  "missingFiles": [],
+  "sourceFilesCount": 6,
+  "reportsCount": 3,
+  "boardItemsCount": 8,
+  "watcherMode": "polling",
+  "warnings": [],
+  "recommendations": [],
+  "status": "ok"
+}

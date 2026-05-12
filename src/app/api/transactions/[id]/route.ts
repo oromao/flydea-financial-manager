@@ -3,8 +3,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TransactionSchema } from "@/lib/validations";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const PUT = withRateLimit(async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -72,9 +73,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   })();
 
   return NextResponse.json(transaction);
-}
+});
 
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const DELETE = withRateLimit(async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -114,4 +115,4 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     const msg = e instanceof Error ? e.message : "Erro ao excluir";
     return NextResponse.json({ error: msg }, { status: 500 });
   }
-}
+});

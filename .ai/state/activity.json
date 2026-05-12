@@ -1,0 +1,31 @@
+{
+  "entries": [
+    {
+      "id": "fly-evt-001",
+      "timestamp": "2026-05-11T21:30:00.000000Z",
+      "agent": "Documentation / Knowledge Steward",
+      "itemId": "FLY-001",
+      "type": "status_change",
+      "message": "[x] FLY-001: Estrutura completa do harness criada com 20+ arquivos, 9 agentes, estado do board e governança.",
+      "severity": "success"
+    },
+    {
+      "id": "fly-evt-002",
+      "timestamp": "2026-05-11T21:30:00.000000Z",
+      "agent": "Platform Architect",
+      "itemId": "FLY-003",
+      "type": "status_change",
+      "message": "Platform Architect iniciou definição dos guardrails de segurança e command policy.",
+      "severity": "info"
+    },
+    {
+      "id": "fly-evt-003",
+      "timestamp": "2026-05-11T21:30:00.000000Z",
+      "agent": "Product Owner",
+      "itemId": "FLY-004",
+      "type": "status_change",
+      "message": "PO iniciou planejamento do backlog do produto com 15+ itens.",
+      "severity": "info"
+    }
+  ]
+}

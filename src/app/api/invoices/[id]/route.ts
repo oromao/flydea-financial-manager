@@ -3,11 +3,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function GET(
+export const GET = withRateLimit(async (
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -22,12 +23,12 @@ export async function GET(
   }
 
   return NextResponse.json(invoice);
-}
+});
 
-export async function PUT(
+export const PUT = withRateLimit(async (
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -98,4 +99,4 @@ export async function PUT(
     logger.error("Invoice update error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Erro ao atualizar" }, { status: 500 });
   }
-}
+});

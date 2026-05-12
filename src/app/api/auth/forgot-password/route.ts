@@ -1,8 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendPasswordResetEmail } from "@/lib/email";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function POST(request: NextRequest) {
+export const POST = withRateLimit(async (request: NextRequest) => {
   const body = await request.json();
   const { email } = body;
 
@@ -42,4 +43,4 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ 
     message: "Se o email existir, você receberá um link de recuperação." 
   });
-}
+})

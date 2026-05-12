@@ -18,6 +18,7 @@ import { useConfirm } from "@/components/ui/confirm-dialog";
 import { MoneyInput } from "@/components/ui/money-input";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 interface Account {
   id: string;
@@ -154,6 +155,7 @@ export default function ContasPage() {
   };
 
   return (
+    <PageErrorBoundary>
     <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
@@ -170,7 +172,7 @@ export default function ContasPage() {
           <DialogTrigger render={<Button className="apple-button-primary h-11 px-8 rounded-xl shadow-lg shadow-secondary/20" />}>
             <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA CONTA
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-[32px] bg-card sm:shadow-2xl">
+          <DialogContent className="sm:max-w-[500px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-3xl bg-card sm:shadow-2xl">
             <div className="p-8 bg-card sticky top-0 z-10 pointer-events-none">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-black tracking-tight text-foreground">
@@ -289,8 +291,8 @@ export default function ContasPage() {
                         </div>
                         
                         <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(acc)} aria-label="Editar conta" className="h-9 w-9 rounded-xl bg-muted text-muted-foreground hover:bg-secondary hover:text-white transition-all"><Edit2 className="w-4 h-4" /></Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(acc.id)} aria-label={acc.isActive === false ? "Reativar conta" : "Excluir conta"} className={cn("h-9 w-9 rounded-xl bg-muted text-muted-foreground hover:bg-destructive hover:text-white transition-all", acc.isActive === false && "hover:bg-success")}>
+                          <Button variant="ghost" size="icon" onClick={() => handleEdit(acc)} aria-label="Editar conta" className="h-11 w-11 rounded-xl bg-muted text-muted-foreground hover:bg-secondary hover:text-white transition-all"><Edit2 className="w-4 h-4" /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDelete(acc.id)} aria-label={acc.isActive === false ? "Reativar conta" : "Excluir conta"} className={cn("h-11 w-11 rounded-xl bg-muted text-muted-foreground hover:bg-destructive hover:text-white transition-all", acc.isActive === false && "hover:bg-success")}>
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
@@ -315,5 +317,6 @@ export default function ContasPage() {
         </div>
       )}
     </div>
+    </PageErrorBoundary>
   );
 }

@@ -1,0 +1,10 @@
+{
+  "appName": "Harness Control Center",
+  "sprintName": "Sprint 1 — Fundação do Harness",
+  "sprintGoal": "Estruturar o harness de agentes, definir backlog inicial e estabelecer governança do projeto",
+  "health": "ok",
+  "lastUpdated": "2026-05-11T21:30:00.000000Z",
+  "recommendations": [
+    "UX/UI Agent completou 4 tasks na Sprint 1 — aguardando novas atribuições"
+  ]
+}

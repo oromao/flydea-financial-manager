@@ -1,0 +1,16 @@
+{
+  "sprint": {
+    "name": "Sprint 1 — Fundação do Harness",
+    "goal": "Estruturar o harness de agentes, definir backlog inicial e estabelecer governança do projeto",
+    "duration": "1 semana"
+  },
+  "progressPercent": 15,
+  "totalItems": 12,
+  "doneItems": 5,
+  "readyItems": 7,
+  "blockedItems": 0,
+  "inProgressItems": 0,
+  "inReviewItems": 0,
+  "health": "healthy",
+  "triggers": []
+}

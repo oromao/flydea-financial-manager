@@ -60,7 +60,7 @@ export function AgentExecutionHistory({
       case "RUNNING":
         return <Loader2 className="w-5 h-5 text-primary animate-spin" />;
       default:
-        return <Clock className="w-5 h-5 text-yellow-500" />;
+        return <Clock className="w-5 h-5 text-warning" />;
     }
   };
 

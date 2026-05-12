@@ -249,7 +249,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
               </div>
               <Tooltip>
                 <TooltipTrigger>
-                  <Link href="/perfil" aria-label="Ver perfil" className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                  <Link href="/perfil" aria-label="Ver perfil" className="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
                     <ChevronRight className="w-4 h-4" />
                   </Link>
                 </TooltipTrigger>

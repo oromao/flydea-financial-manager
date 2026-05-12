@@ -147,7 +147,7 @@ export function QuickAdd({
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="w-[95vw] max-w-[420px] bg-background border border-border/30 p-0 shadow-2xl rounded-[28px]">
+        <DialogContent className="w-[95vw] max-w-[420px] bg-background border border-border/30 p-0 shadow-2xl rounded-3xl">
           <div className="px-8 pt-10 pb-8">
             <DialogHeader className="text-left mb-10">
               <DialogTitle className="text-3xl font-black tracking-tight text-foreground leading-none">

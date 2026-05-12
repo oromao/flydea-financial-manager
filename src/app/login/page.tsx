@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -43,11 +44,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#FAFAFA] px-5 py-8">
+    <PageErrorBoundary>
+    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-surface px-5 py-8">
       {/* Ambient background gradients */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-[30%] -left-[20%] h-[600px] w-[600px] rounded-full bg-[#8A05BE]/[0.04] blur-[100px]" />
-        <div className="absolute -bottom-[20%] -right-[10%] h-[500px] w-[500px] rounded-full bg-[#8A05BE]/[0.03] blur-[80px]" />
+        <div className="absolute -top-[30%] -left-[20%] h-[600px] w-[600px] rounded-full bg-primary/[0.04] blur-[100px]" />
+        <div className="absolute -bottom-[20%] -right-[10%] h-[500px] w-[500px] rounded-full bg-primary/[0.03] blur-[80px]" />
       </div>
 
       {/* Subtle grid pattern */}
@@ -71,7 +73,7 @@ export default function LoginPage() {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.5, ease: "backOut" }}
-            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#8A05BE] shadow-lg shadow-[#8A05BE]/20"
+            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#8A05BE] to-[#D585FA] shadow-lg shadow-premium"
           >
             <Sparkles className="h-7 w-7 text-white" />
           </motion.div>
@@ -80,8 +82,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-[28px] font-bold tracking-tight text-[#111827]"
-            style={{ fontFamily: "Manrope, system-ui, sans-serif" }}
+            className="text-[28px] font-bold tracking-tight text-on-background"
           >
             Flydea
           </motion.h1>
@@ -90,8 +91,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="mt-2 text-[15px] font-medium text-[#6B7280]"
-            style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+            className="mt-2 text-[15px] font-medium text-on-surface-variant"
           >
             Seu assistente financeiro pessoal
           </motion.p>
@@ -102,7 +102,7 @@ export default function LoginPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.5 }}
-          className="rounded-3xl bg-background p-7 shadow-md border border-border/50"
+          className="rounded-3xl bg-surface-container-lowest p-7 shadow-md border border-border/50"
         >
           <AnimatePresence mode="wait">
             {error && (
@@ -127,12 +127,12 @@ export default function LoginPage() {
             <div className="space-y-1.5">
               <Label
                 htmlFor="email"
-                className="ml-0.5 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]"
+                className="ml-0.5 text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant"
               >
                 E-mail
               </Label>
               <div className="relative">
-                <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+                <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
@@ -142,7 +142,7 @@ export default function LoginPage() {
                   required
                   autoComplete="email"
                   spellCheck={false}
-                  className="h-12 rounded-xl border-[#E5E7EB] bg-[#F9FAFB] pl-11 pr-4 text-[15px] text-[#111827] placeholder:text-[#9CA3AF] transition-all focus:border-[#8A05BE]/30 focus:bg-white focus:ring-2 focus:ring-[#8A05BE]/10"
+                  className="h-12 rounded-xl border-border bg-surface-container pl-11 pr-4 text-[15px] text-on-background placeholder:text-muted-foreground transition-all focus:border-[#8A05BE]/30 focus:bg-background focus:ring-2 focus:ring-[#8A05BE]/10"
                 />
               </div>
             </div>
@@ -151,12 +151,12 @@ export default function LoginPage() {
             <div className="space-y-1.5">
               <Label
                 htmlFor="password"
-                className="ml-0.5 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]"
+                className="ml-0.5 text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant"
               >
                 Senha
               </Label>
               <div className="relative">
-                <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+                <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -165,12 +165,12 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
-                  className="h-12 rounded-xl border-[#E5E7EB] bg-[#F9FAFB] pl-11 pr-11 text-[15px] text-[#111827] placeholder:text-[#9CA3AF] transition-all focus:border-[#8A05BE]/30 focus:bg-white focus:ring-2 focus:ring-[#8A05BE]/10"
+                  className="h-12 rounded-xl border-border bg-surface-container pl-11 pr-11 text-[15px] text-on-background placeholder:text-muted-foreground transition-all focus:border-[#8A05BE]/30 focus:bg-background focus:ring-2 focus:ring-[#8A05BE]/10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-[#9CA3AF] transition-colors hover:bg-[#F3F4F6] hover:text-[#6B7280]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-on-surface-variant"
                   aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                   tabIndex={-1}
                 >
@@ -198,7 +198,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="h-12 w-full rounded-xl bg-[#8A05BE] text-[15px] font-semibold text-white shadow-md shadow-[#8A05BE]/20 transition-all hover:bg-[#7A04A8] hover:shadow-lg hover:shadow-[#8A05BE]/25 disabled:opacity-60"
+                className="h-12 w-full rounded-xl bg-gradient-to-r from-[#8A05BE] to-[#D585FA] text-[15px] font-semibold text-white shadow-md shadow-[#8A05BE]/20 transition-all hover:brightness-110 hover:shadow-lg hover:shadow-[#8A05BE]/25 disabled:opacity-60"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">
@@ -239,11 +239,12 @@ export default function LoginPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
-          className="mt-8 text-center text-[12px] font-medium text-[#9CA3AF]"
+          className="mt-8 text-center text-[12px] font-medium text-muted-foreground"
         >
           © 2026 Flydea. Todos os direitos reservados.
         </motion.p>
       </motion.div>
     </div>
+    </PageErrorBoundary>
   );
 }

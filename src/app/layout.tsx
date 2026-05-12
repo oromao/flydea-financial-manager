@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://flydea-financial-manager.vercel.app"),
   title: "Flydea - Seu assistente financeiro",
   description: "Assistente financeiro pessoal que ajuda voce a decidir melhor",
-  manifest: "/manifest",
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     title: "Flydea",

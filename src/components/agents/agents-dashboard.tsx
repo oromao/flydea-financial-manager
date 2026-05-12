@@ -225,7 +225,7 @@ export function AgentsDashboard() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-20 bg-accent/5 border border-dashed border-border rounded-[40px]"
+            className="text-center py-20 bg-accent/5 border border-dashed border-border rounded-4xl"
           >
             <p className="text-on-surface-variant font-bold uppercase tracking-widest text-xs">Nenhum agente ativo no momento</p>
             <Button
@@ -249,7 +249,7 @@ export function AgentsDashboard() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="p-5 rounded-[24px] bg-accent/5 border border-border/50 hover:bg-accent/5 transition-all group"
+                  className="p-5 rounded-2xl bg-accent/5 border border-border/50 hover:bg-accent/5 transition-all group"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">

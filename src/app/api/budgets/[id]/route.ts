@@ -3,8 +3,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { BudgetSchema } from "@/lib/validations";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const PUT = withRateLimit(async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -18,9 +19,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
   const budget = await prisma.budget.update({ where: { id }, data: parsed.data });
   return NextResponse.json(budget);
-}
+});
 
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const DELETE = withRateLimit(async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -41,4 +42,4 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   });
 
   return NextResponse.json({ success: true });
-}
+});

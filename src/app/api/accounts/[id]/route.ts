@@ -2,10 +2,11 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { withRateLimit } from "@/lib/rate-limit";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export const PUT = withRateLimit(async (request: NextRequest, { params }: RouteParams) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -41,9 +42,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   });
 
   return NextResponse.json(updated);
-}
+});
 
-export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+export const DELETE = withRateLimit(async (_request: NextRequest, { params }: RouteParams) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -67,4 +68,4 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   });
 
   return NextResponse.json({ ok: true });
-}
+});

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Bell, CalendarRange, ChartColumn, ShieldAlert, Target, ArrowRight, Camera, ShieldCheck } from "lucide-react";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 const shortcuts = [
   { title: "Fechamento", desc: "Resumo mensal com exportação CSV e PDF.", href: "/fechamento", icon: CalendarRange, color: "bg-secondary/10 text-secondary" },
@@ -17,6 +18,7 @@ const shortcuts = [
 
 export default function MaisPage() {
   return (
+    <PageErrorBoundary>
     <div className="space-y-8 max-w-6xl mx-auto pb-20 md:pb-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2 px-4 md:px-0">
         <h1 className="text-3xl font-bold tracking-tight text-on-background">Mais opções</h1>
@@ -50,5 +52,6 @@ export default function MaisPage() {
         })}
       </div>
     </div>
+    </PageErrorBoundary>
   );
 }

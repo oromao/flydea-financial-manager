@@ -250,7 +250,7 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
               <textarea
                 value={formData.observations}
                 onChange={e => setFormData({ ...formData, observations: e.target.value })}
-                className="w-full rounded-[24px] bg-surface-variant/20 border border-outline/10 p-4 font-medium text-sm focus:bg-surface focus:border-outline/20 outline-none transition-all"
+                className="w-full rounded-2xl bg-surface-variant/20 border border-outline/10 p-4 font-medium text-sm focus:bg-surface focus:border-outline/20 outline-none transition-all"
                 rows={3}
                 placeholder="Notas sobre o serviço ou cliente..."
               />

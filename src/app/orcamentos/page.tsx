@@ -16,6 +16,7 @@ import { useConfirm } from "@/components/ui/confirm-dialog";
 import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 interface Budget {
   id: string;
@@ -62,8 +63,9 @@ export default function Orcamentos() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
+      const periodParam = selectedPeriod ? `?period=${selectedPeriod}` : "";
       const [budgetsRes, catsRes] = await Promise.all([
-        fetch("/api/budgets"),
+        fetch(`/api/budgets${periodParam}`),
         fetch("/api/categories")
       ]);
       const [budgetsData, catsData] = await Promise.all([budgetsRes.json(), catsRes.json()]);
@@ -72,7 +74,7 @@ export default function Orcamentos() {
       setCategories(expenseCats);
       if (expenseCats.length > 0) setCategoryId(expenseCats[0].id);
     } catch { } finally { setLoading(false); }
-  }, []);
+  }, [selectedPeriod]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -139,6 +141,7 @@ export default function Orcamentos() {
   };
 
   return (
+    <PageErrorBoundary>
     <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0 relative">
       {/* Header */}
       <motion.div
@@ -388,5 +391,6 @@ export default function Orcamentos() {
         </DialogContent>
       </Dialog>
     </div>
+    </PageErrorBoundary>
   );
 }

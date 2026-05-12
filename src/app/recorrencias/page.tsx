@@ -20,6 +20,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import { MoneyInput } from "@/components/ui/money-input";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 interface Recurrence {
   id: string;
@@ -170,6 +171,7 @@ export default function Recorrências() {
   };
 
   return (
+    <PageErrorBoundary>
     <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4 md:px-0">
       {/* Header */}
       <motion.div 
@@ -191,7 +193,7 @@ export default function Recorrências() {
           <DialogTrigger render={<Button className="apple-button-primary h-11 px-8 rounded-xl shadow-lg shadow-secondary/20" />}>
             <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA RECORRENCIA
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-[32px] bg-card sm:shadow-2xl">
+          <DialogContent className="sm:max-w-[600px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-3xl bg-card sm:shadow-2xl">
             <div className="p-8 border-b border-border/10 bg-card">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-black tracking-tight text-foreground">
@@ -350,5 +352,6 @@ export default function Recorrências() {
         </div>
       )}
     </div>
+    </PageErrorBoundary>
   );
 }

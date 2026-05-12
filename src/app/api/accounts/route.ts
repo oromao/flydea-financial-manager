@@ -3,8 +3,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { AccountSchema } from "@/lib/validations";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function GET() {
+export const GET = withRateLimit(async () => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -36,9 +37,9 @@ export async function GET() {
   );
 
   return NextResponse.json(accountsWithBalance);
-}
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -66,4 +67,4 @@ export async function POST(request: NextRequest) {
   });
 
   return NextResponse.json(account);
-}
+});

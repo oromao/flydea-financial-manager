@@ -17,6 +17,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 const COLORS = ["#09090b", "#18181b", "#27272a", "#3f3f46", "#52525b", "#71717a", "#a1a1aa", "#d4d4d8"];
 
@@ -114,6 +115,7 @@ export default function Relatorios() {
   const chartHeight = isMobile ? 250 : 350;
 
   return (
+    <PageErrorBoundary>
     <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0 relative no-print">
       {/* Header */}
       <motion.header
@@ -447,5 +449,6 @@ export default function Relatorios() {
       </>
       )}
     </div>
+    </PageErrorBoundary>
   );
 }

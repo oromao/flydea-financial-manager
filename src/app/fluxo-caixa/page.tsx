@@ -20,6 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MoneyInput } from "@/components/ui/money-input";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -94,11 +95,20 @@ interface InvoiceFormData {
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
-const fmtDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+const fmtDate = (iso: string) => {
+  try {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+  } catch { return iso; }
+};
 
-const fmtFullMonth = (d: Date) =>
-  d.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+const fmtFullMonth = (d: Date) => {
+  try {
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+  } catch { return ""; }
+};
 
 // ---------------------------------------------------------------------------
 // Page Component
@@ -249,15 +259,18 @@ export default function CashflowPage() {
   // ---- Auth loading ----
   if (sessionStatus === "loading") {
     return (
+      <PageErrorBoundary>
       <div className="flex items-center justify-center min-h-[60vh]">
         <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
       </div>
+      </PageErrorBoundary>
     );
   }
 
   if (sessionStatus === "unauthenticated") return null;
 
   return (
+    <PageErrorBoundary>
     <div className="space-y-8 max-w-6xl mx-auto pb-24 md:pb-8 px-4 md:px-6">
       {/* ================================================================ */}
       {/* HEADER                                                          */}
@@ -327,7 +340,7 @@ export default function CashflowPage() {
               <CardContent className="p-4 sm:p-5 space-y-2">
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-emerald-500/10">
-                    <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
+                    <TrendingUp className="w-3.5 h-3.5 text-success" />
                   </div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
                     Faturado
@@ -345,7 +358,7 @@ export default function CashflowPage() {
               <CardContent className="p-4 sm:p-5 space-y-2">
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-amber-500/10">
-                    <Wallet className="w-3.5 h-3.5 text-amber-600" />
+                    <Wallet className="w-3.5 h-3.5 text-warning" />
                   </div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">
                     A Receber
@@ -442,10 +455,10 @@ className={cn(
                       {/* Entradas */}
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground flex items-center gap-1.5">
-                          <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+                          <TrendingUp className="w-3.5 h-3.5 text-success/80" />
                           Entradas
                         </span>
-                        <span className="text-sm font-semibold text-emerald-600">
+                        <span className="text-sm font-semibold text-success">
                           +{formatCurrency(week.totalIncome)}
                         </span>
                       </div>
@@ -518,7 +531,7 @@ className={cn(
                   <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                     Total Receitas
                   </p>
-                  <p className="text-xl font-bold text-emerald-600">
+                  <p className="text-xl font-bold text-success">
                     {formatCurrency(metrics?.totalIncome ?? 0)}
                   </p>
                 </div>
@@ -870,5 +883,6 @@ className={cn(
         </div>
       )}
     </div>
+    </PageErrorBoundary>
   );
 }

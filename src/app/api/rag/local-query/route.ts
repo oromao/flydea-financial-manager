@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { picoClaw } from "@/lib/ai/pico-claw";
 import { knowledgeService } from "@/lib/ai/knowledge-base/service";
 import { logger } from "@/lib/logger";
+import { withRateLimit } from "@/lib/rate-limit";
 
 /**
  * Endpoint for local financial queries (Intelligent Copilot)
@@ -11,7 +12,7 @@ import { logger } from "@/lib/logger";
  * This implements the missing RAG-like behavior requested by the UI.
  * It combines real user data from PicoClaw with a local knowledge base.
  */
-export async function POST(req: NextRequest) {
+export const POST = withRateLimit(async (req: NextRequest) => {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
@@ -54,4 +55,4 @@ export async function POST(req: NextRequest) {
     logger.error("RAG Query Error", { error });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
-}
+});

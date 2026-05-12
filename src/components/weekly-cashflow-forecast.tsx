@@ -195,9 +195,9 @@ export function WeeklyCashflowForecast() {
                     Semana {week.week}
                   </h3>
                   {week.canSpend ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <CheckCircle2 className="w-4 h-4 text-success" />
                   ) : (
-                    <AlertCircle className="w-4 h-4 text-red-600" />
+                    <AlertCircle className="w-4 h-4 text-destructive" />
                   )}
                 </div>
 

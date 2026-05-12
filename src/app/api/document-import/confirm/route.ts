@@ -158,7 +158,7 @@ export const POST = withRateLimit(
   })
 );
 
-export async function DELETE(request: NextRequest) {
+export const DELETE = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -185,4 +185,4 @@ export async function DELETE(request: NextRequest) {
   });
 
   return NextResponse.json({ success: true });
-}
+});

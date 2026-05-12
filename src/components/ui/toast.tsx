@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, createContext, useContext, useCallback, useMemo, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { X, CheckCircle2, AlertCircle, Info, Trash2 } from "lucide-react";
 
 type ToastType = "success" | "error" | "info" | "undo";
@@ -114,17 +115,13 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
       exit={{ opacity: 0, y: 10, scale: 0.95 }}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
       role="status"
-      className="pointer-events-auto w-full rounded-2xl overflow-hidden border-2 shadow-lg"
-      style={{
-        backgroundColor: toast.type === "success" ? "rgba(16, 185, 129, 0.95)" :
-                       toast.type === "error" ? "rgba(220, 38, 38, 0.95)" :
-                       toast.type === "undo" ? "rgba(217, 119, 6, 0.95)" :
-                       "rgba(3, 102, 214, 0.95)",
-        borderColor: toast.type === "success" ? "rgba(5, 150, 105, 0.5)" :
-                    toast.type === "error" ? "rgba(153, 27, 27, 0.5)" :
-                    toast.type === "undo" ? "rgba(146, 64, 14, 0.5)" :
-                    "rgba(12, 74, 110, 0.5)",
-      }}
+      className={cn(
+        "pointer-events-auto w-full rounded-2xl overflow-hidden border-2 shadow-lg",
+        toast.type === "success" && "bg-success border-success/50",
+        toast.type === "error" && "bg-destructive border-destructive/50",
+        toast.type === "undo" && "bg-warning border-warning/50",
+        toast.type === "info" && "bg-secondary border-secondary/50",
+      )}
     >
       <div className="flex items-center gap-3 px-4 py-3">
         {icons[toast.type]}

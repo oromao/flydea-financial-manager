@@ -5,8 +5,9 @@ import { authOptions } from "@/lib/auth";
 import { logger } from "@/lib/logger";
 import fs from "fs";
 import path from "path";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function POST(request: Request): Promise<NextResponse> {
+export const POST = withRateLimit(async (request: Request): Promise<NextResponse> => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -129,4 +130,4 @@ export async function POST(request: Request): Promise<NextResponse> {
       { status: 500 }
     );
   }
-}
+});

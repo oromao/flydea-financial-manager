@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 interface TransactionSummary {
   id: string;
@@ -84,6 +85,7 @@ export default function Fechamento() {
   };
 
   return (
+    <PageErrorBoundary>
     <div className="space-y-8 max-w-7xl mx-auto pb-20 md:pb-0 px-4 md:px-0">
       <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <PageHeader icon={CalendarRange} title="Fechamento Mensal" subtitle={periodLabel} iconClassName="bg-secondary text-on-secondary shadow-secondary/20" />
@@ -199,5 +201,6 @@ export default function Fechamento() {
         </div>
       )}
     </div>
+    </PageErrorBoundary>
   );
 }

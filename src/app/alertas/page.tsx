@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { safeFormatDate } from "@/lib/date-utils";
 
 export default function Alertas() {
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -109,7 +110,7 @@ export default function Alertas() {
                   <div className="min-w-0">
                     <div className="font-semibold text-on-background">{n.title}</div>
                     <div className="text-sm text-on-surface-variant mt-1">{n.message}</div>
-                    <div className="text-[10px] uppercase tracking-widest text-on-surface-variant/60 mt-2">{n.createdAt ? new Date(n.createdAt).toLocaleString("pt-BR") : "—"}</div>
+                    <div className="text-[10px] uppercase tracking-widest text-on-surface-variant/60 mt-2">{n.createdAt ? safeFormatDate(n.createdAt, "dd/MM/yyyy") : "—"}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">

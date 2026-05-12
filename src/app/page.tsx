@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { WeeklyCashflowForecast } from "@/components/weekly-cashflow-forecast";
 import { EmptyDashboard } from "@/components/ui/empty-states";
 import { DashboardHero } from "@/components/dashboard/dashboard-hero";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 interface ChartDataPoint {
   day: string;
@@ -140,6 +141,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
+      <PageErrorBoundary>
       <motion.div
         initial="hidden"
         animate="visible"
@@ -148,7 +150,7 @@ export default function Dashboard() {
       >
         {/* Hero Skeleton */}
         <motion.section variants={itemVariants}>
-          <div className="bg-primary overflow-hidden rounded-[32px] md:rounded-[40px] p-6 md:p-10 shadow-2xl text-white relative">
+          <div className="bg-primary overflow-hidden rounded-3xl md:rounded-4xl p-6 md:p-10 shadow-2xl text-white relative">
             <div className="space-y-8">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -180,18 +182,22 @@ export default function Dashboard() {
           </div>
         </div>
       </motion.div>
+    </PageErrorBoundary>
     );
   }
 
   if (!loading && metrics.balance === 0 && metrics.income === 0 && metrics.expenses === 0) {
     return (
+      <PageErrorBoundary>
       <motion.div initial="hidden" animate="visible" variants={containerVariants} className="max-w-7xl mx-auto">
         <EmptyDashboard />
       </motion.div>
+    </PageErrorBoundary>
     );
   }
 
   return (
+    <PageErrorBoundary>
     <motion.div
       initial="hidden"
       animate="visible"
@@ -390,5 +396,6 @@ export default function Dashboard() {
         </div>
       </div>
     </motion.div>
+    </PageErrorBoundary>
   );
 }

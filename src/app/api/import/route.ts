@@ -2,10 +2,11 @@ import { NextResponse, NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { withRateLimit } from "@/lib/rate-limit";
 
 const prisma = new PrismaClient();
 
-export async function POST(request: NextRequest) {
+export const POST = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -47,4 +48,4 @@ export async function POST(request: NextRequest) {
   });
 
   return NextResponse.json({ success: true, count: results.length });
-}
+});

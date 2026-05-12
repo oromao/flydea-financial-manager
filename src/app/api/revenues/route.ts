@@ -2,8 +2,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function GET(request: Request) {
+export const GET = withRateLimit(async (request: Request) => {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
@@ -47,9 +48,9 @@ export async function GET(request: Request) {
       }
     );
   }
-}
+});
 
-export async function POST(request: Request) {
+export const POST = withRateLimit(async (request: Request) => {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
@@ -173,4 +174,4 @@ export async function POST(request: Request) {
       }
     );
   }
-}
+});

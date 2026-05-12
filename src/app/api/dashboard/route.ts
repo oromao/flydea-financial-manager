@@ -159,8 +159,8 @@ export const GET = withRateLimit(async (request: NextRequest) => {
   }, 0);
 
   return NextResponse.json({
-    balance: summary.allTimeBalance, // Realized (paid only)
-    projectedBalance, // Projected (all transactions)
+    balance: projectedBalance, // All transactions (committed)
+    realizedBalance: summary.allTimeBalance, // Paid only
     income: summary.monthIncome,
     expenses: summary.monthExpenses,
     pendingExpenses: globalPending,

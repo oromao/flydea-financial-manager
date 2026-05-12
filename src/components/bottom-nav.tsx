@@ -145,7 +145,7 @@ export function BottomNav() {
         <SheetContent
           side="bottom"
           showCloseButton={false}
-          className="bg-surface rounded-t-[32px]"
+          className="bg-surface rounded-t-3xl"
           style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
         >
           <SheetHeader className="flex-row items-center justify-between p-6 border-b border-outline/10">

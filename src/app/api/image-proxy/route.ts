@@ -1,8 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function GET(request: NextRequest) {
+export const GET = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -53,4 +54,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

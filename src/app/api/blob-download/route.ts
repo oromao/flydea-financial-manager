@@ -3,12 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { withRateLimit } from "@/lib/rate-limit";
 
 /**
  * Proxy endpoint for downloading files from Vercel Blob
  * Handles authentication and token injection for protected blobs
  */
-export async function GET(request: NextRequest) {
+export const GET = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -76,4 +77,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

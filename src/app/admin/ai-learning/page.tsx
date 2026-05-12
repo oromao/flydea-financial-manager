@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { ExternalLearningEngine, LearningStats } from "@/lib/ai/learning/external/external-learning-engine"
 
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
+
 const engine = new ExternalLearningEngine()
 
 export default function AILearningDashboard() {
@@ -52,13 +54,16 @@ export default function AILearningDashboard() {
 
   if (status === "loading" || !session) {
     return (
+      <PageErrorBoundary>
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-muted-foreground">Carregando...</div>
       </div>
+    </PageErrorBoundary>
     )
   }
 
   return (
+    <PageErrorBoundary>
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -81,15 +86,11 @@ export default function AILearningDashboard() {
             <div className="text-sm text-muted-foreground">Total</div>
           </div>
           <div className="rounded-lg border bg-card p-4">
-            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
-            <div className="text-sm text-muted-foreground">Pendentes</div>
-          </div>
-          <div className="rounded-lg border bg-card p-4">
-            <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
-            <div className="text-sm text-muted-foreground">Aprovados</div>
-          </div>
-          <div className="rounded-lg border bg-card p-4">
-            <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
+            <div className="text-2xl font-bold text-warning">{stats.pending}</div>
+
+            <div className="text-2xl font-bold text-success">{stats.approved}</div>
+
+            <div className="text-2xl font-bold text-destructive">{stats.rejected}</div>
             <div className="text-sm text-muted-foreground">Rejeitados</div>
           </div>
           <div className="rounded-lg border bg-card p-4">
@@ -159,5 +160,6 @@ export default function AILearningDashboard() {
         )}
       </div>
     </div>
+    </PageErrorBoundary>
   )
 }

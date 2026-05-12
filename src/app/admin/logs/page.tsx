@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 const LOGS_PER_PAGE = 25;
 
@@ -78,12 +79,14 @@ export default function AuditLogs() {
 
   if (status === "authenticated" && session?.user?.role !== "ADMIN") {
     return (
+      <PageErrorBoundary>
       <div className="max-w-3xl mx-auto py-20">
         <Card className="premium-card p-8">
           <h1 className="text-2xl font-bold text-on-background">Acesso restrito</h1>
           <p className="text-on-surface-variant mt-2">Esta área é reservada para usuários administradores.</p>
         </Card>
       </div>
+    </PageErrorBoundary>
     );
   }
 
@@ -98,6 +101,7 @@ export default function AuditLogs() {
   };
 
   return (
+    <PageErrorBoundary>
     <div className="space-y-8 max-w-6xl">
       <div className="flex items-center gap-4">
         <div className="p-3 rounded-2xl bg-secondary/10 text-secondary">
@@ -109,7 +113,7 @@ export default function AuditLogs() {
         </div>
       </div>
 
-      <Card className="premium-card bg-surface rounded-[32px] border-outline-variant shadow-sm">
+      <Card className="premium-card bg-surface rounded-3xl border-outline-variant shadow-sm">
         <CardContent className="p-5 grid gap-4 md:grid-cols-[1.6fr_0.8fr_0.8fr_1fr]">
           <label className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />
@@ -163,7 +167,7 @@ export default function AuditLogs() {
         </CardContent>
       </Card>
 
-      <Card className="premium-card bg-surface rounded-[32px] border-outline-variant overflow-hidden shadow-sm">
+      <Card className="premium-card bg-surface rounded-3xl border-outline-variant overflow-hidden shadow-sm">
         {logs.length === 0 && !loading ? (
           <div className="p-8">
             <EmptyState icon={ShieldCheck} title="Nenhum log encontrado" description="Ajuste os filtros para ver os registros de auditoria." />
@@ -240,5 +244,6 @@ export default function AuditLogs() {
         </div>
       )}
     </div>
+    </PageErrorBoundary>
   );
 }

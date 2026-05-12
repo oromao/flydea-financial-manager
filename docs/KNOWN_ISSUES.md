@@ -8,12 +8,12 @@
 
 | ID | Módulo | Problema | Impacto | Severidade |
 |----|--------|----------|---------|------------|
-| QA-01 | Movimentações | `RangeError: Invalid time value` — página 100% quebrada | Usuário não consegue ver/editar/deletar transações | 🔴 Crítico |
-| QA-02 | Transações | Dropdown de categoria mostra UUID em vez de nome | UX confusa, usuário não sabe qual categoria selecionou | 🔴 Crítico |
-| QA-03 | PWA | `manifest.webmanifest` ausente — retorna HTML | PWA não funcional, erros de console | 🟡 Alto |
+| QA-01 | Movimentações | ~~`RangeError: Invalid time value`~~ | ✅ Date validation adicionada: API transactions, contas-a-pagar safeDate helpers, fluxo-caixa fmtDate/fmtFullMonth safe, alertas safeFormatDate | 🔴 Crítico ✅ |
+| QA-02 | Transações | ~~Dropdown de categoria mostra UUID em vez de nome~~ | ✅ API retorna category.name, frontend usa c.name | 🔴 Crítico ✅ |
+| QA-03 | PWA | ~~manifest.webmanifest ausente~~ | ✅ Manifest existe, icons SVG criados, path corrigido no layout | 🟡 Alto ✅ |
 | QA-04 | Contas e Cartões | Botão "Fechar" do modal de edição interceptado por header sticky | Usuário não consegue fechar modal (Escape funciona) | 🟡 Alto |
 | QA-05 | Produção | Dados seed visíveis ("Conta QA Edit") | Dados de teste em produção | 🟡 Alto |
-| QA-06 | Dashboard | Inconsistência de saldo geral (-R$ 16.578 vs transações) | Usuário desconfia da precisão dos números | 🟡 Alto |
+| QA-06 | Dashboard | ~~Inconsistência de saldo geral~~ | ✅ Dashboard `balance` agora = projectedBalance (transações committed, não só PAID), `realizedBalance` disponível separadamente | 🟡 Alto ✅ |
 | QA-07 | Sidebar | Nomes sem acento (Movimentacoes, Recorrencias, Analises) | Inconsistência linguística | 🟢 Médio |
 | QA-08 | Transações | Campo de data em formato ISO (YYYY-MM-DD) em vez de pt-BR | Inconsistência com padrão brasileiro | 🟢 Médio |
 | QA-09 | Console | 20+ erros de console acumulados durante sessão | Indica problemas subjacentes | 🟢 Médio |
@@ -26,16 +26,16 @@
 | ID | Módulo | Problema | Impacto | Severidade |
 |----|--------|----------|---------|------------|
 | AN1-T1 | CSS | 5 tokens ausentes (popover, ring, input, border, destructive) | Dialog sem fundo, select sem ring | 🔴 Crítico |
-| AN1-T2 | CSS | glass-card quebra em dark mode | Card branco sobre fundo escuro | 🔴 Crítico |
-| AN1-T3 | CSS | apple-button-primary não definida | Botões podem estar sem estilo | 🔴 Crítico |
+| AN1-T2 | CSS | ~~glass-card quebra em dark mode~~ | ✅ Classe glass-card removida, premium-card usa tokens | 🔴 Crítico ✅ |
+| AN1-T3 | CSS | ~~apple-button-primary não definida~~ | ✅ Classe existe em globals.css:344 | 🔴 Crítico ✅ |
 | AN1-T4 | Agents | confirm() nativo em agents-dashboard.tsx:133 | Quebra design system | 🟡 Alto |
-| AN1-T5 | Global | 5 window.location.reload() no código | Perda de estado | 🟡 Alto |
+| AN1-T5 | Global | window.location.reload() / window.location.href no código | Perda de estado | 🟡 Alto (reduzido de 5 para 1 — relatorios download) |
 | AN1-T6 | UI | Link quebrado para /import em empty-states.tsx | 404 ao clicar | 🟡 Alto |
-| AN2-T1 | API | 34/44 APIs sem validação Zod | Payloads maliciosos alcançam DB | 🔴 Crítico |
-| AN2-T2 | API | 43/44 APIs sem rate limiting | Sem proteção contra brute force | 🔴 Crítico |
+| AN2-T1 | API | Validação Zod | 10 APIs com Zod + 1 nova (approvals) = 11/44 | 🔴 Crítico (progresso: 25%) |
+| AN2-T2 | API | ~~Rate limiting~~ | ✅ 44/44 APIs com withRateLimit (100%) | 🔴 Crítico ✅ |
 | AN3-T1 | TS | 104+ `any` types no código | Type safety perdido | 🟡 Alto |
-| AN3-T2 | CSS | 77+ cores Tailwind hardcoded | Não adaptam dark mode | 🟡 Alto |
-| AN3-T3 | Global | 18 páginas sem error boundary | Erro de fetch sem feedback | 🟡 Alto |
+| AN3-T2 | CSS | Cores Tailwind hardcoded | Não adaptam dark mode | 🟡 Alto (reduzido de 77+ para ~40 — login, fluxo-caixa, ai-learning corrigidos) |
+| AN3-T3 | Global | ~~18 páginas sem error boundary~~ | ✅ 14 páginas agora com PageErrorBoundary (só insights/agents sem, pois só redirect) | 🟡 Alto ✅ |
 | AN4-T6 | A11y | 15/21 componentes sem ARIA | Inacessível para leitores de tela | 🟡 Alto |
 | AN5-T4 | Mobile | Touch targets < 44px | Dificuldade de toque | 🟡 Alto |
 | AN6-T1 | Testes | Sem coverage config no Vitest | Cobertura não verificável | 🟡 Alto |

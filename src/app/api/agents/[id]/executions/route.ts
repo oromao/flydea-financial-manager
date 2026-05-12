@@ -3,11 +3,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { PrismaAgentRepository } from "@/infrastructure/repositories/PrismaAgentRepository";
 import { PrismaAgentExecutionRepository } from "@/infrastructure/repositories/PrismaAgentExecutionRepository";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function GET(
+export const GET = withRateLimit(async (
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -40,4 +41,4 @@ export async function GET(
     const message = error instanceof Error ? error.message : "Error fetching executions";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});

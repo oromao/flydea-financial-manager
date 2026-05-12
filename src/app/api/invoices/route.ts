@@ -4,8 +4,9 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { InvoiceSchema } from "@/lib/validations";
 import { logger } from "@/lib/logger";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function GET(request: NextRequest) {
+export const GET = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -26,9 +27,9 @@ export async function GET(request: NextRequest) {
   });
 
   return NextResponse.json({ data: invoices });
-}
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -108,4 +109,4 @@ export async function POST(request: NextRequest) {
     }
     return NextResponse.json({ error: "Erro ao criar nota" }, { status: 500 });
   }
-}
+});

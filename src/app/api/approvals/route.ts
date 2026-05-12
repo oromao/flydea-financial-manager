@@ -6,7 +6,7 @@ import { z } from "zod";
 import { withValidation } from "@/lib/api-helpers";
 import { withRateLimit } from "@/lib/rate-limit";
 
-export async function GET() {
+export const GET = withRateLimit(async () => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   if (session.user.role !== "ADMIN") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -20,7 +20,7 @@ export async function GET() {
   });
 
   return NextResponse.json(approvals);
-}
+});
 
 const postSchema = z.object({
   action: z.string(),

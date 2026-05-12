@@ -4,10 +4,18 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TransactionSchema } from "@/lib/validations";
 import { BehavioralIntelligenceService } from "@/infrastructure/services/BehavioralIntelligenceService";
+import { withRateLimit } from "@/lib/rate-limit";
+
+function parseDateOrUndefined(value: string | null): Date | undefined {
+  if (!value) return undefined;
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return undefined;
+  return d;
+}
 
 const PAGE_SIZE = 20;
 
-export async function GET(request: NextRequest) {
+export const GET = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -38,8 +46,8 @@ export async function GET(request: NextRequest) {
     } : {}),
     ...(startDate || endDate ? {
       date: {
-        ...(startDate ? { gte: new Date(startDate) } : {}),
-        ...(endDate ? { lte: new Date(endDate) } : {})
+        ...(parseDateOrUndefined(startDate) ? { gte: parseDateOrUndefined(startDate) } : {}),
+        ...(parseDateOrUndefined(endDate) ? { lte: parseDateOrUndefined(endDate) } : {})
       }
     } : {})
   };
@@ -71,9 +79,9 @@ export async function GET(request: NextRequest) {
     page,
     totalPages: Math.ceil(total / PAGE_SIZE)
   });
-}
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -141,4 +149,4 @@ export async function POST(request: NextRequest) {
   })();
 
   return NextResponse.json(transaction);
-}
+});

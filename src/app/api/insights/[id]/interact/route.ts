@@ -1,10 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
 import { BehavioralIntelligenceService } from "@/infrastructure/services/BehavioralIntelligenceService";
+import { withRateLimit } from "@/lib/rate-limit";
 
-export async function POST(
+export const POST = withRateLimit(async (
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   const { id } = await params;
   
   try {
@@ -23,4 +24,4 @@ export async function POST(
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});

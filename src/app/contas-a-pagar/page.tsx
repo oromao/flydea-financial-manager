@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
+import { safeFormatDate } from "@/lib/date-utils";
 
 export default function ContasAPagar() {
   const toast = useToast();
@@ -72,15 +73,31 @@ export default function ContasAPagar() {
   const now = new Date();
   const dueSoon = addDays(now, 7);
 
+  function isBeforeDueDate(dueDate: string | null | undefined, ref: Date): boolean {
+    if (!dueDate) return false;
+    try {
+      const d = new Date(dueDate);
+      return !isNaN(d.getTime()) && isBefore(d, ref);
+    } catch { return false; }
+  }
+
+  function isAfterDueDate(dueDate: string | null | undefined, ref: Date): boolean {
+    if (!dueDate) return false;
+    try {
+      const d = new Date(dueDate);
+      return !isNaN(d.getTime()) && isAfter(d, ref);
+    } catch { return false; }
+  }
+
   const filteredData = useMemo(() => {
     let base = transactions.filter(t => 
       t.description.toLowerCase().includes(query.toLowerCase())
     );
 
     if (filter === "overdue") {
-      base = base.filter(t => t.dueDate && isBefore(new Date(t.dueDate), now));
+      base = base.filter(t => isBeforeDueDate(t.dueDate, now));
     } else if (filter === "upcoming") {
-      base = base.filter(t => t.dueDate && !isBefore(new Date(t.dueDate), now) && !isAfter(new Date(t.dueDate), dueSoon));
+      base = base.filter(t => t.dueDate && !isBeforeDueDate(t.dueDate, now) && !isAfterDueDate(t.dueDate, dueSoon));
     } else if (filter === "nodate") {
       base = base.filter(t => !t.dueDate);
     }
@@ -90,8 +107,8 @@ export default function ContasAPagar() {
 
   const totals = useMemo(() => {
     const total = transactions.reduce((s, t) => s + t.amount, 0);
-    const overdue = transactions.filter(t => t.dueDate && isBefore(new Date(t.dueDate), now)).reduce((s, t) => s + t.amount, 0);
-    const upcoming = transactions.filter(t => t.dueDate && !isBefore(new Date(t.dueDate), now) && !isAfter(new Date(t.dueDate), dueSoon)).reduce((s, t) => s + t.amount, 0);
+    const overdue = transactions.filter(t => isBeforeDueDate(t.dueDate, now)).reduce((s, t) => s + t.amount, 0);
+    const upcoming = transactions.filter(t => t.dueDate && !isBeforeDueDate(t.dueDate, now) && !isAfterDueDate(t.dueDate, dueSoon)).reduce((s, t) => s + t.amount, 0);
     return { total, overdue, upcoming };
   }, [transactions, dueSoon, now]);
 
@@ -149,7 +166,7 @@ export default function ContasAPagar() {
              value={query} 
              onChange={e => setQuery(e.target.value)} 
              placeholder="Filtrar por nome..." 
-             className="h-14 pl-12 rounded-[24px] bg-muted/30 border-transparent font-bold text-lg focus:bg-card focus:border-border/20"
+             className="h-14 pl-12 rounded-2xl bg-muted/30 border-transparent font-bold text-lg focus:bg-card focus:border-border/20"
            />
         </div>
 
@@ -174,15 +191,15 @@ export default function ContasAPagar() {
                 <Card className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-none shadow-md p-6">
                    <div className="flex items-center gap-5">
                       <div className={cn(
-                        "w-14 h-14 rounded-[20px] flex items-center justify-center shadow-inner",
-                        t.dueDate && isBefore(new Date(t.dueDate), now) ? "bg-destructive/10 text-destructive" : "bg-muted/50 text-muted-foreground/40"
-                      )}>
-                        {t.dueDate && isBefore(new Date(t.dueDate), now) ? <AlertTriangle className="w-7 h-7" /> : <CalendarDays className="w-7 h-7" />}
+                        "w-14 h-14 rounded-xl flex items-center justify-center shadow-inner",
+                        isBeforeDueDate(t.dueDate, now) ? "bg-destructive/10 text-destructive" : "bg-muted/50 text-muted-foreground/40"
+                      }>
+                        {isBeforeDueDate(t.dueDate, now) ? <AlertTriangle className="w-7 h-7" /> : <CalendarDays className="w-7 h-7" />}
                       </div>
                       <div className="min-w-0">
                         <h3 className="text-xl font-black text-foreground tracking-tight leading-none truncate">{t.description}</h3>
                         <p className="text-xs font-bold text-muted-foreground/50 uppercase tracking-widest mt-2">
-                           {t.dueDate ? `Vencimento: ${format(new Date(t.dueDate), "dd 'de' MMM", { locale: ptBR })}` : "Sem vencimento"}
+                           {t.dueDate ? `Vencimento: ${safeFormatDate(t.dueDate, "dd/MM")}` : "Sem vencimento"}
                         </p>
                       </div>
                    </div>

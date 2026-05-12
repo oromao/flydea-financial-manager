@@ -83,13 +83,13 @@ export function getHealthLabel(balance: number, expenses: number, income: number
   color: string;
 } {
   if (balance < 0) {
-    return { label: "Negativo", color: "text-red-600" };
+    return { label: "Negativo", color: "text-destructive" };
   }
   if (income > 0 && expenses / income > 0.9) {
-    return { label: "Atenção", color: "text-amber-600" };
+    return { label: "Atenção", color: "text-warning" };
   }
   if (income > 0 && expenses / income <= 0.7) {
-    return { label: "Saudável", color: "text-emerald-600" };
+    return { label: "Saudável", color: "text-success" };
   }
-  return { label: "Estável", color: "text-blue-600" };
+  return { label: "Estável", color: "text-primary" };
 }

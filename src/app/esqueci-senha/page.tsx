@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -44,6 +45,7 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
+      <PageErrorBoundary>
       <div className="min-h-screen flex items-center justify-center p-4 bg-surface">
         <Card className="max-w-md w-full p-8 text-center space-y-6">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
@@ -58,10 +60,12 @@ export default function ForgotPasswordPage() {
           </Link>
         </Card>
       </div>
+    </PageErrorBoundary>
     );
   }
 
   return (
+    <PageErrorBoundary>
     <div className="min-h-screen flex items-center justify-center p-4 bg-surface">
       <Card className="max-w-md w-full p-8 space-y-6">
         <Link 
@@ -118,5 +122,6 @@ export default function ForgotPasswordPage() {
         </form>
       </Card>
     </div>
+    </PageErrorBoundary>
   );
 }

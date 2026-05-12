@@ -224,7 +224,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
           </Button>
         }
       />
-      <DialogContent className="w-[95vw] md:max-w-2xl bg-surface border-none rounded-[40px] p-0 shadow-xl overflow-hidden border border-border max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] md:max-w-2xl bg-surface border-none rounded-4xl p-0 shadow-xl overflow-hidden border border-border max-h-[90vh] overflow-y-auto">
           <div className="bg-accent/5 p-8 md:p-12 border-b border-border">
           <DialogHeader>
             <DialogTitle className="text-3xl font-black text-on-background tracking-tighter uppercase italic">
@@ -238,7 +238,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
 
         <div className="p-8 md:p-10 space-y-8">
           {!file && !preview && (
-            <div className="border-4 border-dashed border-border rounded-[32px] p-16 text-center hover:border-primary/50 hover:bg-primary/5 transition-colors duration-500 cursor-pointer relative group">
+            <div className="border-4 border-dashed border-border rounded-3xl p-16 text-center hover:border-primary/50 hover:bg-primary/5 transition-colors duration-500 cursor-pointer relative group">
               <input
                 ref={fileInputRef}
                 type="file"

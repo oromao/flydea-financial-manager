@@ -40,7 +40,7 @@ export function DashboardHero({ balance, projectedBalance, loading, income, expe
   return (
     <section className="relative">
       {/* Hero Card - Minimal */}
-      <div className="bg-primary overflow-hidden rounded-[28px] p-6 md:p-8 text-white relative">
+      <div className="bg-primary overflow-hidden rounded-3xl p-6 md:p-8 text-white relative">
         <div className="relative z-10 space-y-8">
           {/* Top row: Label */}
           <div className="flex items-center justify-between">
