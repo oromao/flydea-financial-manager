@@ -254,6 +254,7 @@ O que você gostaria de saber?`,
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
+                  aria-label="Fechar copiloto"
                   className="p-1 hover:bg-destructive/10 rounded transition-colors"
                 >
                   <X className="w-4 h-4 text-on-surface-variant" />

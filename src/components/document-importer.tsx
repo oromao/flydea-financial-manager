@@ -375,7 +375,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold text-on-background">Editando dados</span>
-                <Button variant="ghost" size="icon" onClick={() => setEditMode(false)}>
+                <Button variant="ghost" size="icon" aria-label="Fechar edição" onClick={() => setEditMode(false)}>
                   <X className="w-4 h-4" />
                 </Button>
               </div>

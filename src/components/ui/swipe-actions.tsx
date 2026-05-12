@@ -87,6 +87,7 @@ export function SwipeActions({
               size="icon-sm"
               variant={action.variant === "destructive" ? "destructive" : "secondary"}
               onClick={() => handleActionClick(action)}
+              aria-label={action.label}
               className="h-10 w-10"
             >
               {action.icon}

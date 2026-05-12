@@ -15,31 +15,30 @@ export const POST = withRateLimit(async (request: NextRequest) => {
     where: { email: email.toLowerCase() }
   });
 
-  if (!user) {
-    return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
-  }
-
   const resetToken = crypto.randomUUID();
   const expires = new Date(Date.now() + 3600000); // 1 hour
 
-  await prisma.user.update({
-    where: { id: user.id },
-    data: {
-      resetToken,
-      resetTokenExpires: expires,
-    }
-  });
-
-  try {
-    await sendPasswordResetEmail({
-      to: user.email!,
-      name: user.name || "Usuário",
-      token: resetToken,
+  if (user) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetToken,
+        resetTokenExpires: expires,
+      }
     });
-  } catch (e) {
-    console.error("Failed to send reset email:", e);
+
+    try {
+      await sendPasswordResetEmail({
+        to: user.email!,
+        name: user.name || "Usuário",
+        token: resetToken,
+      });
+    } catch (e) {
+      console.error("Failed to send reset email:", e);
+    }
   }
 
+  // Always return same message to prevent user enumeration
   return NextResponse.json({ 
     message: "Se o email existir, você receberá um link de recuperação." 
   });

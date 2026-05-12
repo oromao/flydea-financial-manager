@@ -96,12 +96,15 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
     <TooltipProvider>
       <div className="min-h-screen bg-background flex flex-col md:flex-row font-sans overflow-x-hidden">
         {/* Mobile Drawer Overlay */}
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div
           className={cn(
             "fixed inset-0 z-[60] bg-background/80 transition-opacity duration-500 md:hidden",
             drawerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           )}
           onClick={() => setDrawerOpen(false)}
+          onKeyDown={(e) => { if (e.key === "Escape") setDrawerOpen(false); }}
+          role="presentation"
           aria-hidden={!drawerOpen}
         />
 

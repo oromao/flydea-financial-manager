@@ -145,6 +145,7 @@ export function CopilotSidebar() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsMinimized(!isMinimized)}
+                  aria-label={isMinimized ? "Expandir" : "Minimizar"}
                   className="p-1 hover:bg-surface-variant rounded transition-colors"
                 >
                   {isMinimized ? (
@@ -155,6 +156,7 @@ export function CopilotSidebar() {
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
+                  aria-label="Fechar copiloto"
                   className="p-1 hover:bg-surface-variant rounded transition-colors"
                 >
                   <X className="w-4 h-4 text-on-surface-variant" />

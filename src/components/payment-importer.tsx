@@ -231,6 +231,9 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
                     : "border-outline/30 hover:border-outline/50"
                 )}
                 onClick={() => fileInputRef.current?.click()}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click(); }}
+                role="button"
+                tabIndex={0}
               >
                 <input
                   ref={fileInputRef}

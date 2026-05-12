@@ -80,6 +80,7 @@ export function InAppNotifications({ notifications = [] }: InAppNotificationsPro
               </div>
               <button
                 onClick={() => dismiss(n.id)}
+                aria-label="Dispensar notificação"
                 className="shrink-0 p-1 rounded hover:bg-muted/5"
               >
                 <X className="w-4 h-4 text-on-surface-variant" />

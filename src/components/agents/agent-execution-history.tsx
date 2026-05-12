@@ -112,6 +112,7 @@ export function AgentExecutionHistory({
           </h2>
           <button
             onClick={onClose}
+            aria-label="Fechar histórico"
             className="p-1 hover:bg-surface-variant/50 rounded-lg transition-colors"
           >
             <X className="w-5 h-5 text-on-surface-variant" />
