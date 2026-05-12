@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     const accuracy = intel?.predictionAccuracyScore || 50;
     const impact = intel?.impactScore || 50;
 
-    const [monthTransactions, allTransactions, recurrences] = await Promise.all([
+    const [monthTransactions, allTransactions, recurrences, budgets] = await Promise.all([
       prisma.transaction.findMany({
         where: { userId: session.user.id, date: { gte: startDate, lte: endDate } },
         include: { category: true },
@@ -51,6 +51,10 @@ export async function GET(request: NextRequest) {
       }),
       prisma.recurrence.findMany({
         where: { userId: session.user.id, isActive: true },
+        include: { category: true },
+      }),
+      prisma.budget.findMany({
+        where: { userId: session.user.id },
         include: { category: true },
       }),
     ]);
@@ -74,6 +78,14 @@ export async function GET(request: NextRequest) {
 
     const summary = computeMonthlySummary(mappedMonthTx, startDate, endDate, allTransactions);
 
+    const budgetAlerts = budgets.map((budget: any) => {
+      const monthExpenses = mappedMonthTx
+        .filter((t: any) => t.type === "EXPENSE" && t.categoryId === budget.categoryId)
+        .reduce((sum: number, t: any) => sum + t.amount, 0);
+      const percentage = budget.amount > 0 ? (monthExpenses / budget.amount) * 100 : 0;
+      return { ...budget, spent: monthExpenses, percentage, isAlert: percentage >= (budget.alertAt || 80) };
+    });
+
     const chartData = Object.entries(summary.transactionsByDay)
       .map(([day, data]) => ({ day: Number(day), ...data }))
       .sort((a, b) => a.day - b.day);
@@ -94,10 +106,14 @@ export async function GET(request: NextRequest) {
       realizedBalance: summary.allTimeBalance,
       income: summary.monthIncome,
       expenses: summary.monthExpenses,
+      monthIncome: summary.monthIncome,
+      monthExpenses: summary.monthExpenses,
+      pendingExpenses: summary.monthPending,
       chartData,
       topCategories: summary.topCategories,
       projectedExpenses,
       projectedIncome,
+      budgetAlerts: budgetAlerts.filter((b: any) => b.isAlert),
       savingsRate: summary.monthIncome > 0
         ? ((summary.monthIncome - summary.monthExpenses) / summary.monthIncome) * 100
         : 0,
