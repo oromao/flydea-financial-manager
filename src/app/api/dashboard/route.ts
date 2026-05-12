@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
   const accuracy = intel?.predictionAccuracyScore || 50;
   const impact = intel?.impactScore || 50;
 
-  const [monthTransactions, allTransactions, recurrences, budgets] =
+  const [monthTransactions, allTransactions, recurrences] =
     await Promise.all([
       prisma.transaction.findMany({
         where: {
@@ -50,47 +50,28 @@ export async function GET(request: NextRequest) {
       prisma.transaction.findMany({
         where: { userId: session.user.id },
         select: {
-          id: true,
-          type: true,
-          description: true,
-          amount: true,
-          date: true,
-          dueDate: true,
-          paidAt: true,
-          amountPaid: true,
-          paymentStatus: true,
-          categoryId: true,
-          recurrenceId: true,
-          accountId: true,
-          createdAt: true,
+          id: true, type: true, description: true, amount: true,
+          date: true, dueDate: true, paidAt: true, amountPaid: true,
+          paymentStatus: true, categoryId: true, recurrenceId: true,
+          accountId: true, createdAt: true,
         },
       }),
       prisma.recurrence.findMany({
         where: { userId: session.user.id, isActive: true },
         include: { category: true },
       }),
-      prisma.budget.findMany({
-        where: { userId: session.user.id },
-        include: { category: true },
-      }),
     ]);
 
-  const mappedMonthTx = monthTransactions.map((t): {
-    id: string; type: "INCOME" | "EXPENSE"; description: string; amount: number;
-    date: Date; dueDate: Date | null; paidAt: Date | null; amountPaid: number | null;
-    paymentStatus: "PAID" | "PENDING"; categoryId: string | null;
-    categoryName: string | undefined; recurrenceId: string | null;
-    accountId: string | null; createdAt: Date;
-  } => ({
+  const mappedMonthTx = monthTransactions.map((t: any) => ({
     id: t.id,
-    type: t.type as "INCOME" | "EXPENSE",
+    type: t.type,
     description: t.description,
     amount: t.amount,
     date: t.date,
     dueDate: t.dueDate,
     paidAt: t.paidAt,
     amountPaid: t.amountPaid,
-    paymentStatus: t.paymentStatus as "PAID" | "PENDING",
+    paymentStatus: t.paymentStatus,
     categoryId: t.categoryId,
     categoryName: t.category?.name,
     recurrenceId: t.recurrenceId,
@@ -99,32 +80,10 @@ export async function GET(request: NextRequest) {
   }));
 
   const summary = computeMonthlySummary(
-    mappedMonthTx as any,
+    mappedMonthTx,
     startDate,
     endDate,
     allTransactions
-  );
-
-  const budgetAlerts = await Promise.all(
-    budgets.map(async (budget) => {
-      const spent = await prisma.transaction.aggregate({
-        where: {
-          userId: session.user.id,
-          categoryId: budget.categoryId,
-          type: "EXPENSE",
-          date: { gte: startDate, lte: endDate },
-        },
-        _sum: { amount: true },
-      });
-      const spentAmount = spent._sum.amount || 0;
-      const percentage = budget.amount > 0 ? (spentAmount / budget.amount) * 100 : 0;
-      return {
-        ...budget,
-        spent: spentAmount,
-        percentage,
-        isAlert: percentage >= (budget.alertAt || 80),
-      };
-    })
   );
 
   const chartData = Object.entries(summary.transactionsByDay)
@@ -176,15 +135,15 @@ export async function GET(request: NextRequest) {
     projectedExpenses,
     projectedIncome,
     nextMonths,
-    budgetAlerts: budgetAlerts.filter(b => b.isAlert),
+    budgetAlerts: [],
     savingsRate: summary.monthIncome > 0 ? ((summary.monthIncome - summary.monthExpenses) / summary.monthIncome) * 100 : 0,
     copilot: {
       proactiveMessage: proactiveMessage || "Acompanhe suas finanças por aqui.",
-      insights: (aiInsights || []).map((i, idx) => ({
+      insights: (aiInsights || []).filter((i: any) => i?.title).map((i: any, idx: number) => ({
         id: `pico-${idx}`,
         type: i.priority === "HIGH" ? "URGENTE" : (i.priority === "MEDIUM" ? "IMPACTO" : "INFORMAÇÃO"),
         title: i.title,
-        message: i.message,
+        message: i.message || "",
         actionLabel: i.actionLabel,
         actionUrl: i.actionUrl,
       })),
