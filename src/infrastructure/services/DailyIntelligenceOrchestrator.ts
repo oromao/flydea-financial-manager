@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { AgentQueue } from "@/infrastructure/services/AgentQueue";
 import { BehavioralIntelligenceService } from "./BehavioralIntelligenceService";
+import type { Prisma } from "@prisma/client";
 import { startOfMonth, endOfMonth, subMonths, addDays } from "date-fns";
 
 export class DailyIntelligenceOrchestrator {
@@ -96,7 +97,7 @@ export class DailyIntelligenceOrchestrator {
   /**
    * Recalculates user behavioral features (Feature Evolution Engine)
    */
-  private async recalculateUserIntelligence(userId: string, currentIntel: any) {
+  private async recalculateUserIntelligence(userId: string, currentIntel: Prisma.UserIntelligenceGetPayload<{}> | null) {
     const today = new Date();
     const monthStart = startOfMonth(today);
     const lastMonthStart = startOfMonth(subMonths(today, 1));
@@ -170,7 +171,7 @@ export class DailyIntelligenceOrchestrator {
   /**
    * Auto-correct predictions with improved windows and accuracy tracking
    */
-  private async autoCorrectPredictions(userId: string, intel: any) {
+  private async autoCorrectPredictions(userId: string, intel: Prisma.UserIntelligenceGetPayload<{}> | null) {
     const today = new Date();
     const pendingPredictions = await prisma.prediction.findMany({
       where: { userId, status: "PENDING", predictedDate: { lte: today } },
@@ -198,7 +199,7 @@ export class DailyIntelligenceOrchestrator {
         },
       });
 
-      const newAccuracy = (intel.predictionAccuracyScore || 50) * 0.8 + (100 - error) * 0.2;
+      const newAccuracy = (intel?.predictionAccuracyScore || 50) * 0.8 + (100 - error) * 0.2;
       await prisma.userIntelligence.update({
         where: { userId },
         data: { predictionAccuracyScore: newAccuracy }
@@ -209,7 +210,7 @@ export class DailyIntelligenceOrchestrator {
   /**
    * Advanced Insight Generation with Smart Ranking and Recurrence Awareness
    */
-  private async generateDailyInsights(userId: string, intel: any) {
+  private async generateDailyInsights(userId: string, intel: Prisma.UserIntelligenceGetPayload<{}> | null) {
     const generated = [];
     const today = new Date();
     
@@ -231,27 +232,27 @@ export class DailyIntelligenceOrchestrator {
     const currentBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
 
     const projectedRisk = currentBalance < pendingBillsTotal;
-    const actionRate = (intel.impactScore || 50);
+    const actionRate = (intel?.impactScore || 50);
 
     // 3. Potential Insights
     const candidates = [
       { 
         type: "CASHFLOW_RISK", 
-        baseScore: projectedRisk ? 100 : intel.riskScore, 
-        trigger: projectedRisk || intel.riskScore > 70,
+        baseScore: projectedRisk ? 100 : (intel?.riskScore || 50), 
+        trigger: projectedRisk || (intel?.riskScore || 0) > 70,
         content: projectedRisk 
           ? `Suas contas fixas nos próximos 7 dias (R$ ${pendingBillsTotal.toFixed(2)}) superam seu saldo atual.`
           : undefined
       },
       { 
         type: "EXPENSE_WARNING", 
-        baseScore: intel.behaviorChangeScore, 
-        trigger: intel.behaviorChangeScore > 30 
+        baseScore: intel?.behaviorChangeScore || 0, 
+        trigger: (intel?.behaviorChangeScore || 0) > 30 
       },
       { 
         type: "SAVINGS_OPP", 
-        baseScore: intel.savingsRate, 
-        trigger: intel.savingsRate > 20 && !projectedRisk
+        baseScore: intel?.savingsRate || 0, 
+        trigger: (intel?.savingsRate || 0) > 20 && !projectedRisk
       },
     ];
 
@@ -263,7 +264,7 @@ export class DailyIntelligenceOrchestrator {
       const finalScore = this.behavioralService.calculateFinalScore(
         candidate.baseScore,
         template.performanceScore,
-        intel.riskScore,
+        intel?.riskScore || 50,
         actionRate
       );
 

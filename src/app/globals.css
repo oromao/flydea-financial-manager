@@ -319,6 +319,8 @@
   body {
     @apply bg-background text-on-background font-sans min-h-full flex flex-col;
     font-size: 14px;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   @media (min-width: 768px) {

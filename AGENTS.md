@@ -169,6 +169,33 @@ Sempre iniciar lendo o arquivo de bootstrap do Harness:
 
 ---
 
+## 🔄 Harness Bus/Queue — Protocolo de Comunicação entre Agentes
+
+O harness possui um sistema de barramento de eventos e filas de trabalho para coordenar os agentes do time (PO, Backend, QA, Security, etc.).
+
+### Event Bus (`.ai/bus/`)
+- Agentes publicam eventos imutáveis em `.ai/bus/events/`
+- Matriz de subscriptions define quem escuta o quê (`.ai/bus/subscriptions.md`)
+- Eventos: `TASK_ASSIGNED`, `TASK_STARTED`, `TASK_COMPLETED`, `REVIEW_REQUESTED`, `REVIEW_APPROVED`, `REVIEW_REJECTED`, `HANDOFF_REQUESTED`, etc.
+
+### Queues (`.ai/queues/`)
+- `inbox/` — PO deposita tarefas não atribuídas
+- `agents/<role>/` — Fila individual de cada agente (pending → active)
+- `handoff/` — Tarefas em transição entre agentes
+
+### Workflows (`.ai/workflows/`)
+- `standard.md` — Fluxo padrão de desenvolvimento
+- `bugfix.md` — Fluxo acelerado para bugs P0/P1
+- `feature.md` — Fluxo completo com security review
+- `code-review.md` — Fluxo para tech debt/refatoração
+
+### State (`.ai/state/`)
+- `current.md` — Snapshot atual do harness
+- `agents.md` — Status de cada agente (idle/busy/blocked)
+- `metrics.md` — Métricas de performance do time
+
+---
+
 ## 📋 Padrões de Comportamento
 
 ### Para qualquer modelo (GPT, Claude, Gemini, Qwen, DeepSeek, etc)
@@ -211,6 +238,11 @@ Sempre iniciar lendo o arquivo de bootstrap do Harness:
 ```
 /                           # Root
 ├── AGENTS.md              # ESTE ARQUIVO — constituição operacional
+├── .ai/                   # Harness de Agentes AI
+│   ├── bus/               #   Event Bus (events/, subscriptions.md)
+│   ├── queues/            #   Filas (inbox/, agents/<role>/, handoff/)
+│   ├── workflows/         #   Workflows (standard, bugfix, feature, code-review)
+│   └── state/             #   Runtime (current, agents, metrics)
 ├── docs/
 │   ├── PROJECT_OVERVIEW.md
 │   ├── PRODUCT_VISION.md

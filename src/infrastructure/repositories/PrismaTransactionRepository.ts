@@ -6,6 +6,7 @@ import { PaymentStatus } from '../../domain/transaction/value-objects/PaymentSta
 import { Money } from '../../domain/shared/value-objects/Money';
 import { prisma } from '../../lib/prisma';
 import { NotFoundError } from '../../domain/shared/errors/DomainError';
+import type { Prisma } from '@prisma/client';
 
 export class PrismaTransactionRepository implements ITransactionRepository {
   async findById(id: string): Promise<Transaction | null> {
@@ -96,7 +97,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     await this.delete(id);
   }
 
-  private toDomain(record: any): Transaction {
+  private toDomain(record: Prisma.TransactionGetPayload<{}>): Transaction {
     return Transaction.restore(
       record.id,
       UserId.create(record.userId),
@@ -108,11 +109,11 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       PaymentStatus.create(record.paymentStatus),
       Money.create(record.amountPaid),
       record.createdAt,
-      record.updatedAt,
-      record.dueDate,
-      record.paidAt,
-      record.accountId,
-      record.attachmentUrl
+      record.createdAt,
+      record.dueDate ?? undefined,
+      record.paidAt ?? undefined,
+      record.accountId ?? undefined,
+      record.attachmentUrl ?? undefined
     );
   }
 }

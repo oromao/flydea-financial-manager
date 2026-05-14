@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { PageTransition } from "@/components/ui/page-transition";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 export default function ForgotPasswordPage() {
@@ -46,7 +47,7 @@ export default function ForgotPasswordPage() {
   if (sent) {
     return (
       <PageErrorBoundary>
-      <div className="min-h-screen flex items-center justify-center p-4 bg-surface">
+      <PageTransition className="min-h-screen flex items-center justify-center p-4 bg-surface">
         <Card className="max-w-md w-full p-8 text-center space-y-6">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
             <CheckCircle className="w-8 h-8 text-success" />
@@ -59,14 +60,14 @@ export default function ForgotPasswordPage() {
             <Button className="w-full">Voltar para Login</Button>
           </Link>
         </Card>
-      </div>
+      </PageTransition>
     </PageErrorBoundary>
     );
   }
 
   return (
     <PageErrorBoundary>
-    <div className="min-h-screen flex items-center justify-center p-4 bg-surface">
+    <PageTransition className="min-h-screen flex items-center justify-center p-4 bg-surface">
       <Card className="max-w-md w-full p-8 space-y-6">
         <Link 
           href="/login" 
@@ -121,7 +122,7 @@ export default function ForgotPasswordPage() {
           </Button>
         </form>
       </Card>
-    </div>
+    </PageTransition>
     </PageErrorBoundary>
   );
 }

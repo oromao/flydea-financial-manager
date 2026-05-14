@@ -204,13 +204,13 @@ export class WebCrawler {
         title: "",
         fetchedAt: new Date()
       };
-    } catch (error: any) {
-      if (retries < this.maxRetries && error.name === "AbortError") {
+    } catch (error: unknown) {
+      if (retries < this.maxRetries && error instanceof Error && error.name === "AbortError") {
         logger.info("WebCrawler: Retrying", { url, retries: retries + 1 });
         return this.fetchContent(url, retries + 1);
       }
 
-      logger.error("WebCrawler: Fetch error", { url, error: error.message });
+      logger.error("WebCrawler: Fetch error", { url, error: error instanceof Error ? error.message : String(error) });
       return null;
     }
   }

@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { z } from "zod";
 import { picoClaw } from "@/lib/ai/pico-claw";
 import { knowledgeService } from "@/lib/ai/knowledge-base/service";
 import { logger } from "@/lib/logger";
 import { withRateLimit } from "@/lib/rate-limit";
+
+const RagQuerySchema = z.object({
+  query: z.string().min(1, "Query é obrigatória"),
+});
 
 /**
  * Endpoint for local financial queries (Intelligent Copilot)
@@ -19,10 +24,16 @@ export const POST = withRateLimit(async (req: NextRequest) => {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { query } = await req.json();
-    if (!query) {
-      return NextResponse.json({ error: "Query is required" }, { status: 400 });
+    const body = await req.json();
+    const parsed = RagQuerySchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Dados inválidos", fields: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
     }
+
+    const { query } = parsed.data;
 
     const userId = session.user.id;
     

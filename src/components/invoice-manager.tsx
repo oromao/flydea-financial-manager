@@ -10,6 +10,7 @@ import { Card, CardContent } from "./ui/card";
 import { useToast } from "./ui/toast";
 import { MoneyInput } from "./ui/money-input";
 import { cn } from "@/lib/utils";
+import { formatDateToISO } from "@/lib/date-utils";
 
 interface Installment {
   installmentNumber: number;
@@ -75,7 +76,7 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
     setFormData({ ...formData, installments: newInstallments });
   };
 
-  const handleInstallmentChange = (index: number, field: string, value: any) => {
+  const handleInstallmentChange = (index: number, field: string, value: string | number | boolean) => {
     const newInstallments = [...formData.installments];
     newInstallments[index] = { ...newInstallments[index], [field]: value };
     setFormData({ ...formData, installments: newInstallments });
@@ -192,7 +193,7 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                <div className="space-y-2">
                  <Label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 ml-1">Data Emissão*</Label>
-                 <Input type="date" required value={formData.emissionDate} onChange={e => setFormData({...formData, emissionDate: e.target.value})} className="h-12 rounded-2xl font-bold bg-surface-variant/20 border-outline/10" />
+                 <Input type="date" required value={formatDateToISO(formData.emissionDate)} onChange={e => setFormData({...formData, emissionDate: e.target.value})} className="h-12 rounded-2xl font-bold bg-surface-variant/20 border-outline/10" />
                </div>
                <div className="space-y-2">
                  <Label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 ml-1">Parcelamento*</Label>
@@ -221,7 +222,7 @@ export function InvoiceManager({ onSuccess, onError }: InvoiceManagerProps) {
                     </div>
                     <div className="flex-1 w-full sm:w-auto">
                       <Label className="text-[8px] font-black uppercase tracking-widest opacity-40 ml-1">Vencimento</Label>
-                      <Input type="date" value={inst.dueDate} onChange={e => handleInstallmentChange(idx, "dueDate", e.target.value)} className="h-12 bg-surface-container-high border-transparent rounded-xl font-bold text-xs" />
+                      <Input type="date" value={formatDateToISO(inst.dueDate)} onChange={e => handleInstallmentChange(idx, "dueDate", e.target.value)} className="h-12 bg-surface-container-high border-transparent rounded-xl font-bold text-xs" />
                     </div>
                     <div className="w-full sm:w-32">
                        <Label className="text-[8px] font-black uppercase tracking-widest opacity-40 ml-1">Valor</Label>

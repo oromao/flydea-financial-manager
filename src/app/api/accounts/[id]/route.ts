@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { apiError } from "@/lib/api-helpers";
 import { prisma } from "@/lib/prisma";
 import { AccountSchema } from "@/lib/validations";
 import { withRateLimit } from "@/lib/rate-limit";
@@ -15,7 +16,7 @@ export const PUT = withRateLimit(async (request: NextRequest, { params }: RouteP
   const body = await request.json();
   const parsed = AccountSchema.partial().safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
+    return apiError("Dados inválidos", 400, "VALIDATION_ERROR", parsed.error.flatten().fieldErrors);
   }
 
   const account = await prisma.account.findUnique({ where: { id } });

@@ -220,7 +220,7 @@ class PicoClawOrchestrator {
   }: {
     intentResult: { intent: UserIntent; confidence: number };
     insights: PicoClawInsight[];
-    knowledge: any[];
+    knowledge: { title: string }[];
     financialScore: FinancialScore;
     behavior?: BehaviorInsight | null;
     data: UserFinancialData;

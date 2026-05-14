@@ -1,4 +1,4 @@
-import cronParser from "cron-parser";
+import CronExpressionParser from "cron-parser";
 import { PrismaAgentRepository } from "@/infrastructure/repositories/PrismaAgentRepository";
 import { PrismaAgentExecutionRepository } from "@/infrastructure/repositories/PrismaAgentExecutionRepository";
 import { ExecuteAgentUseCase } from "@/application/agent/use-cases/ExecuteAgentUseCase";
@@ -60,7 +60,7 @@ export class AgentScheduler {
 
   private shouldRunAgent(cronExpression: string, timezone: string): boolean {
     try {
-      const interval = (cronParser as any).parseExpression(cronExpression, {
+      const interval = CronExpressionParser.parse(cronExpression, {
         tz: timezone,
       });
 

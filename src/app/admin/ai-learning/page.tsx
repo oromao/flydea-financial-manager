@@ -7,6 +7,7 @@ import type { Prisma } from "@prisma/client"
 
 
 import { PageHeaderSkeleton, CardsGridSkeleton } from "@/components/ui/page-skeleton";
+import { PageTransition } from "@/components/ui/page-transition";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 const engine = new ExternalLearningEngine()
@@ -83,7 +84,7 @@ export default function AILearningDashboard() {
 
   return (
     <PageErrorBoundary>
-    <div className="space-y-6">
+    <PageTransition className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">IA Learning</h1>
@@ -182,7 +183,7 @@ export default function AILearningDashboard() {
           </div>
         )}
       </div>
-    </div>
+    </PageTransition>
     </PageErrorBoundary>
   )
 }

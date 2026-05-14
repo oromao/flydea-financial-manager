@@ -1,0 +1,47 @@
+<h2>Sprint 4 — Revisão Consolidada</h2>
+<p class="subtitle">4 agentes revisaram. Resultados abaixo.</p>
+
+<div class="section" style="background: rgba(239,68,68,0.08); padding: 16px; border-radius: 12px; border-left: 4px solid var(--color-error);">
+  <h3 style="color: var(--color-error);">🔴 Bloqueadores (P0)</h3>
+  <ul>
+    <li><strong>E16-T8 → P0</strong>: Zod validation é gap de segurança (57% sem validação)</li>
+    <li><strong>E16-T11 (NOVO)</strong>: Middleware bloqueia cron routes — recorrências e agentes param</li>
+    <li><strong>E16-T4 → P0</strong>: Console errors mascaram bugs reais</li>
+  </ul>
+</div>
+
+<div class="section" style="background: rgba(245,158,11,0.08); padding: 16px; border-radius: 12px; border-left: 4px solid #F59E0B; margin-top: 16px;">
+  <h3 style="color: #F59E0B;">🟡 Duplicatas Removidas</h3>
+  <ul>
+    <li><strong>E16-T5 ✕</strong>: confirm→useConfirm já foi feito no E2-T1</li>
+    <li><strong>E18-T4 ✕</strong>: Toast system já foi feito no E7-T5</li>
+  </ul>
+</div>
+
+<div class="section" style="background: rgba(59,130,246,0.08); padding: 16px; border-radius: 12px; border-left: 4px solid var(--color-primary); margin-top: 16px;">
+  <h3 style="color: var(--color-primary);">📋 Tasks Novas</h3>
+  <ul>
+    <li><strong>E16-T11</strong>: Fix cron routes blocked by middleware (P0 🆕)</li>
+    <li><strong>E16-T12</strong>: SSRF protection no image-proxy (P1 🆕)</li>
+    <li><strong>E16-T13</strong>: Padronizar erro das APIs (P1 🆕)</li>
+    <li><strong>E17-T8</strong>: Border-radius audit (P2 🆕)</li>
+    <li><strong>E17-T9</strong>: Spacing audit (P2 🆕)</li>
+    <li><strong>E18-T9</strong>: prefers-reduced-motion support (P1 🆕)</li>
+    <li><strong>E18-T10</strong>: Keyboard navigation audit (P1 🆕)</li>
+    <li><strong>E19-T11</strong>: Virtualized lists (P1 🆕)</li>
+    <li><strong>E19-T12</strong>: Touch feedback ripple (P2 🆕)</li>
+    <li><strong>E19-T13</strong>: Landscape orientation (P2 🆕)</li>
+  </ul>
+</div>
+
+<div class="section" style="background: rgba(16,185,129,0.08); padding: 16px; border-radius: 12px; border-left: 4px solid #10B981; margin-top: 16px;">
+  <h3 style="color: #10B981;">🔧 Handoff Chain Corrigida</h3>
+  <p style="font-size: 13px;">
+    PO → Backend (E16-T7,T8,T11) → <strong>[Sync Gate: Backend+Frontend]</strong> → Frontend (E16-T1-T6,T9 + E17 + E18 + E19) → QA (E16-T10, E19-T9) → <strong>Security</strong> (E16-T8 Zod + CSP) → Perf (E19-T10) → Docs → PO
+  </p>
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <p><strong>Resumo final:</strong> 2 removidas · 10 novas · 3 P0s · ~43 tasks · 3-4 semanas</p>
+  <p class="subtitle">Clique nos itens para expandir. Depois me diga: aprova o plano ou quer ajustar algo?</p>
+</div>

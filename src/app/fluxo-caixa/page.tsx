@@ -20,6 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MoneyInput } from "@/components/ui/money-input";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+import { PageTransition } from "@/components/ui/page-transition";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 import { formatDateToISO } from "@/lib/date-utils";
 
@@ -272,7 +273,7 @@ export default function CashflowPage() {
 
   return (
     <PageErrorBoundary>
-    <div className="space-y-8 max-w-6xl mx-auto pb-24 md:pb-8">
+    <PageTransition className="space-y-8 max-w-6xl mx-auto pb-24 md:pb-8">
       {/* ================================================================ */}
       {/* HEADER                                                          */}
       {/* ================================================================ */}
@@ -883,7 +884,7 @@ className={cn(
           </Card>
         </div>
       )}
-    </div>
+    </PageTransition>
     </PageErrorBoundary>
   );
 }

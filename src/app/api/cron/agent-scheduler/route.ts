@@ -1,4 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
+import { apiError } from "@/lib/api-helpers";
 import { DailyIntelligenceOrchestrator } from "@/infrastructure/services/DailyIntelligenceOrchestrator";
 
 const CRON_SECRET = process.env.CRON_SECRET || "development";
@@ -25,18 +26,9 @@ export async function GET(request: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("[AgentScheduler] Critical error in DailyOrchestrator:", message);
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: message,
-        timestamp: new Date().toISOString(),
-      },
-      { status: 500 }
-    );
+  } catch {
+    console.error("[AgentScheduler] Critical error in DailyOrchestrator");
+    return apiError("Erro interno no processamento diário", 500, "INTERNAL_ERROR");
   }
 }
 
@@ -60,8 +52,7 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
       results: result,
     });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return apiError("Erro interno no processamento diário", 500, "INTERNAL_ERROR");
   }
 }

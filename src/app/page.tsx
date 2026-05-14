@@ -210,6 +210,8 @@ export default function Dashboard() {
       animate="visible"
       variants={containerVariants}
       className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-24 md:pb-8"
+      aria-live="polite"
+      aria-atomic="true"
     >
       {/* Hero: Saldo Geral + Mini Cards */}
       <motion.section variants={itemVariants}>

@@ -89,7 +89,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
 
   if (pathname === "/login") return <>{children}</>;
 
-  const isAdmin = (session?.user as any)?.role === "ADMIN";
+  const isAdmin = session?.user?.role === "ADMIN";
   const userInitials = getInitials(session?.user?.name);
   const userImage = session?.user?.image as string | undefined;
 

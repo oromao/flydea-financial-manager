@@ -1,9 +1,19 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
 import { withRateLimit } from "@/lib/rate-limit";
+
+const UsageEventSchema = z.object({
+  event: z.enum([
+    "import_file", "import_success", "import_review",
+    "quick_add", "category_correct", "budget_create",
+    "close_month", "view_insight", "use_copilot", "export_data",
+  ]),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+});
 
 export const POST = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
@@ -12,24 +22,15 @@ export const POST = withRateLimit(async (request: NextRequest) => {
   }
 
   const body = await request.json();
-  const { event, metadata } = body;
-
-  const validEvents = [
-    "import_file",
-    "import_success",
-    "import_review",
-    "quick_add",
-    "category_correct",
-    "budget_create",
-    "close_month",
-    "view_insight",
-    "use_copilot",
-    "export_data",
-  ];
-
-  if (!validEvents.includes(event)) {
-    return NextResponse.json({ error: "Invalid event" }, { status: 400 });
+  const parsed = UsageEventSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Dados inválidos", fields: parsed.error.flatten().fieldErrors },
+      { status: 400 }
+    );
   }
+
+  const { event, metadata } = parsed.data;
 
   try {
     await prisma.auditLog.create({

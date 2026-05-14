@@ -35,6 +35,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { z } from "zod";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { PageHeaderSkeleton, TableSkeleton } from "@/components/ui/page-skeleton";
+import { PageTransition } from "@/components/ui/page-transition";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 const transactionSchema = z.object({
@@ -446,7 +447,7 @@ function MovimentaçõesContent() {
 
   return (
     <PageErrorBoundary>
-    <div className="mx-auto max-w-7xl space-y-4 pb-24 md:space-y-6 md:pb-8">
+    <PageTransition className="mx-auto max-w-7xl space-y-4 pb-24 md:space-y-6 md:pb-8" aria-live="polite">
       {/* ─── TOP BAR ─── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
@@ -1374,7 +1375,7 @@ function MovimentaçõesContent() {
           <Plus className="h-7 w-7" strokeWidth={3} />
         </button>
       </div>
-    </div>
+    </PageTransition>
     </PageErrorBoundary>
   );
 }

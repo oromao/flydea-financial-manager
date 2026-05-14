@@ -5,6 +5,8 @@ export enum ExecutionStatus {
   FAILED = "FAILED",
 }
 
+type Mutable<T> = { -readonly [K in keyof T]: T[K] };
+
 export class AgentExecution {
   readonly id: string;
   readonly agentId: string;
@@ -60,21 +62,25 @@ export class AgentExecution {
     );
   }
 
+  private asMutable(): Mutable<AgentExecution> {
+    return this as unknown as Mutable<AgentExecution>;
+  }
+
   markRunning(): void {
-    (this as any).status = ExecutionStatus.RUNNING;
-    (this as any).startedAt = new Date();
+    this.asMutable().status = ExecutionStatus.RUNNING;
+    this.asMutable().startedAt = new Date();
   }
 
   markSuccess(output: Record<string, unknown>, actionResults: Record<string, unknown>): void {
-    (this as any).status = ExecutionStatus.SUCCESS;
-    (this as any).output = output;
-    (this as any).actionResults = actionResults;
-    (this as any).completedAt = new Date();
+    this.asMutable().status = ExecutionStatus.SUCCESS;
+    this.asMutable().output = output;
+    this.asMutable().actionResults = actionResults;
+    this.asMutable().completedAt = new Date();
   }
 
   markFailed(error: string): void {
-    (this as any).status = ExecutionStatus.FAILED;
-    (this as any).error = error;
-    (this as any).completedAt = new Date();
+    this.asMutable().status = ExecutionStatus.FAILED;
+    this.asMutable().error = error;
+    this.asMutable().completedAt = new Date();
   }
 }

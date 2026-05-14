@@ -28,13 +28,15 @@ export async function GET() {
 const postSchema = z.object({
   url: z.string().url(),
   events: z.array(z.string()),
+  name: z.string(),
+  secret: z.string().optional(),
 });
 
 export const POST = withValidation(postSchema, async (body, request) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { url, events, name, secret } = body as any;
+  const { url, events, name, secret } = body;
 
   if (!url || !Array.isArray(events) || events.length === 0 || !name) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });

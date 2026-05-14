@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
+import { formatDateToISO } from "@/lib/date-utils";
 
 interface PaymentImporterProps {
   onImportSuccess: () => void;
@@ -57,10 +58,10 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
       const res = await fetch("/api/categories");
       const data = await res.json();
       setCategories(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error("Error fetching categories:", e);
+    } catch {
+      toast.error("Erro ao carregar categorias");
     }
-  }, []);
+  }, [toast]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -193,6 +194,7 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
           variant === "icon" ? (
             <Button
               size="icon"
+              aria-label="Importar comprovante"
               className="h-10 w-10 rounded-lg bg-secondary/10 hover:bg-secondary/20 text-secondary"
               title="Importar comprovante"
             >
@@ -332,7 +334,7 @@ export function PaymentImporter({ onImportSuccess, variant = "button" }: Payment
                   </Label>
                   <Input
                     type="date"
-                    value={editData.date || ""}
+                    value={formatDateToISO(editData.date)}
                     onChange={(e) =>
                       setEditData({
                         ...editData,

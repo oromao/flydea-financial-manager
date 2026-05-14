@@ -65,14 +65,14 @@ export class PrismaAgentExecutionRepository implements IAgentExecutionRepository
     return this.toDomain(updated);
   }
 
-  private toDomain(raw: any): AgentExecution {
+  private toDomain(raw: Prisma.AgentExecutionGetPayload<{}>): AgentExecution {
     return new AgentExecution(
       raw.id,
       raw.agentId,
       raw.status as ExecutionStatus,
-      raw.output,
-      raw.actionResults,
-      raw.error,
+      raw.output as Record<string, unknown> | null,
+      raw.actionResults as Record<string, unknown> | null,
+      raw.error as string | null,
       raw.scheduledAt,
       raw.startedAt,
       raw.completedAt,

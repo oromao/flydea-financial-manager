@@ -3,7 +3,9 @@
  * Only sends when RESEND_API_KEY is configured.
  */
 
-let resendClient: any = null;
+import type { Resend } from "resend";
+
+let resendClient: Resend | null = null;
 
 async function getResend() {
   if (resendClient) return resendClient;

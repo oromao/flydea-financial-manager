@@ -372,4 +372,145 @@ Este arquivo deve ser atualizado sempre que:
 - **M5 (sem cadastro)**: Limitação conhecida do produto (usuários criados administrativamente).
 - **Contas e Cartões**: O Base UI error #51 pode ser relacionado ao E14-T4 (modal Fechar interceptado).
 
-*Última atualização: 2026-05-12 — Versão 3.0 (browser-use Audit Sprint 3)*
+---
+
+## ÉPICO 16: PROBLEMAS (BUGS & DÍVIDA TÉCNICA) — 🔶 SPRINT 4 (82%)
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E16-T1 | Bug 🔴 | UI | UUID visível em dropdowns — verificar em produção | P0 | Baixa | ✅ completed |
+| E16-T2 | Bug 🔴 | Contas | Botão "Fechar" interceptado por header sticky | P0 | Baixa | ✅ completed |
+| E16-T3 | UX 🟡 | Transações | Data ISO → pt-BR nos formulários | P1 | Baixa | ✅ completed |
+| E16-T4 | Bug 🔴 | Console | Erros de console remanescentes | P0 | Média | ✅ completed |
+| E16-T6 | Bug 🟡 | UI | Link quebrado /import em empty-states | P1 | Baixa | ✅ completed |
+| E16-T7 | Débito 🟡 | Global | 31 any types → 0 | P1 | Média | ✅ completed |
+| E16-T8 | Débito 🔴 | APIs | Zod validation 27/48 → 44/44 (56.2%) | P0 | Alta | 🔶 in_progress |
+| E16-T9 | Débito 🟡 | A11y | ARIA labels em 6 componentes | P1 | Média | ✅ completed |
+| E16-T10 | QA 🟡 | Global | Auditoria final + checklist regressão 10 fluxos | P1 | Média | pending |
+| E16-T11 | Bug 🔴 | Auth | Fix middleware bloqueia cron routes | P0 | Baixa | ✅ completed |
+| E16-T12 | Segurança 🟡 | API | SSRF protection no image-proxy | P1 | Baixa | ✅ completed |
+| E16-T13 | Débito 🟡 | API | Padronizar formato de erro das APIs | P1 | Média | ✅ completed |
+
+## ÉPICO 17: DESIGN SYSTEM PREMIUM — 🔶 SPRINT 4 (0%)
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E17-T1 | Débito 🟡 | Global | ~40 cores hardcoded → tokens do design system | P1 | Alta | pending |
+| E17-T2 | Design 🟡 | Global | Dark mode consistency audit | P1 | Média | pending |
+| E17-T3 | Design 🟡 | Global | Tipografia consistente: headings, body, caption | P1 | Média | pending |
+| E17-T4 | Design 🟡 | UI | Cards premium: elevation, hover, selected, active | P1 | Média | pending |
+| E17-T5 | Design 🔵 | UI | Shadow system audit (todas sombras via tokens) | P3 | Baixa | pending |
+| E17-T6 | Design 🟢 | UI | Gradientes e superfícies premium consistentes | P2 | Baixa | pending |
+| E17-T7 | Design 🟢 | UI | Ícones consistentes: audit lucide-react | P2 | Média | pending |
+| E17-T8 | Débito 🟢 | UI | Border-radius audit (4 níveis) | P2 | Baixa | pending |
+| E17-T9 | Débito 🟢 | UI | Spacing audit (múltiplos de 4px) | P2 | Baixa | pending |
+
+## ÉPICO 18: UX & MICRO-INTERAÇÕES — 🔶 SPRINT 4 (0%)
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E18-T1 | UX 🟡 | Global | Skeleton loading em todas as páginas | P1 | Alta | pending |
+| E18-T2 | UX 🟡 | Global | Page transitions consistentes (framer-motion) | P1 | Média | pending |
+| E18-T3 | UX 🟢 | UI | Stagger animation em listas + corrigir AnimatedList key bug | P2 | Média | pending |
+| E18-T5 | UX 🟡 | UI | Empty states premium + consolidar empty-state/empty-states | P1 | Média | pending |
+| E18-T6 | UX 🟢 | UI | Loading states em botões (LoadingButton audit) | P2 | Baixa | pending |
+| E18-T7 | UX 🟡 | Global | Error boundaries com fallback amigável | P1 | Média | pending |
+| E18-T8 | UX 🟢 | UI | Feedback visual: checkmark save, shake erro, pulse badge | P2 | Média | pending |
+| E18-T9 | A11y 🟡 | Global | prefers-reduced-motion support | P1 | Baixa | pending |
+| E18-T10 | A11y 🟡 | Global | Keyboard navigation audit (tab order, focus visible, modal trapping) | P1 | Média | pending |
+| E18-T11 | A11y 🟢 | Global | Live region announcements (aria-live) | P2 | Média | pending |
+
+## ÉPICO 19: RESPONSIVIDADE & MOBILE — 🔶 SPRINT 4 (0%)
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Status |
+|----|------|--------|-------|------------|--------------|--------|
+| E19-T1 | UX 🔴 | Mobile | Últimos touch targets < 44px | P0 | Baixa | pending |
+| E19-T2 | UX 🟡 | Mobile | Keyboard-aware forms em todas as páginas | P1 | Alta | pending |
+| E19-T3 | UX 🟡 | Mobile | Pull-to-refresh em todas as listas | P1 | Média | pending |
+| E19-T4 | UX 🟡 | Mobile | Safe area insets consistentes em toda UI | P1 | Média | pending |
+| E19-T5 | UX 🟡 | Mobile | FormWizard completo | P1 | Alta | pending |
+| E19-T6 | UX 🟢 | Mobile | Bottom sheet para ações mobile consistentes | P2 | Média | pending |
+| E19-T7 | UX 🟢 | Mobile | Swipe actions consistentes (editar, excluir) | P2 | Média | pending |
+| E19-T8 | UX 🟡 | Mobile | Responsive tables em todas as páginas | P1 | Alta | pending |
+| E19-T9 | QA 🟡 | Mobile | Auditoria iPhone 16 + iPhone SE + iPad | P1 | Média | pending |
+| E19-T10 | Perf 🟡 | Global | Lighthouse Mobile > 90, Desktop > 95 | P1 | Alta | pending |
+| E19-T11 | Perf 🟡 | Mobile | Virtualized lists para grandes datasets | P1 | Média | pending |
+| E19-T12 | UX 🟢 | Mobile | Touch feedback (ripple/highlight) ao tap | P2 | Baixa | pending |
+| E19-T13 | UX 🟢 | Mobile | Landscape orientation check | P2 | Baixa | pending |
+
+---
+
+## 🆕 MATURITY EPICS — Sprint 5+
+
+### ÉPICO M1: ONBOARDING & RETENÇÃO — PENDENTE
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Sprint |
+|----|------|--------|-------|------------|--------------|--------|
+| M1-T1 | UX 🔴 | Onboarding | Tour guiado para novos usuários (primeiro login) | P0 | Alta | Sprint 5 |
+| M1-T2 | UX 🟡 | Global | Empty states explicativos em todas as páginas | P1 | Média | Sprint 5 |
+| M1-T3 | UX 🟡 | Dashboard | CTA "Primeiros passos" no dashboard vazio | P1 | Baixa | Sprint 5 |
+| M1-T4 | UX 🟡 | Seed | Seed data para demonstração (nova conta = dados de exemplo) | P1 | Média | Sprint 5 |
+| M1-T5 | UX 🟢 | Mobile | PWA install prompt (convidar usuário a instalar) | P1 | Baixa | Sprint 5 |
+
+### ÉPICO M2: ANALYTICS & OBSERVABILIDADE — PENDENTE
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Sprint |
+|----|------|--------|-------|------------|--------------|--------|
+| M2-T1 | Infra 🔴 | Global | Eventos de navegação (página vista, tempo, ações) | P0 | Média | Sprint 6 |
+| M2-T2 | Infra 🔴 | Global | Eventos de engajamento (features usadas, frequência) | P0 | Média | Sprint 6 |
+| M2-T3 | UX 🟡 | Dashboard | Dashboard de produto (DAU, MAU, retention, funil) | P1 | Alta | Sprint 6 |
+| M2-T4 | UX 🟡 | Global | Identificar drop-off points no funil | P1 | Média | Sprint 6 |
+
+### ÉPICO M3: QUALIDADE & INFRAESTRUTURA — PENDENTE
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Sprint |
+|----|------|--------|-------|------------|--------------|--------|
+| M3-T1 | Infra 🔴 | Global | Feature flag system (flags em tempo real, rollout gradual) | P0 | Alta | Sprint 7 |
+| M3-T2 | QA 🔴 | Global | E2E tests — 5 fluxos críticos (Playwright) | P0 | Alta | Sprint 7 |
+| M3-T3 | QA 🟡 | Global | Test coverage 90% | P1 | Alta | Sprint 7 |
+| M3-T4 | Perf 🟡 | Global | PWA service worker para cache offline | P1 | Alta | Sprint 7 |
+| M3-T5 | Perf 🟡 | Global | Lighthouse CI no pipeline | P1 | Média | Sprint 7 |
+
+### ÉPICO M4: LGPD & COMPLIANCE — PENDENTE
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Sprint |
+|----|------|--------|-------|------------|--------------|--------|
+| M4-T1 | Legal 🔴 | API | Data-export endpoint (todos os dados do usuário em JSON/CSV) | P0 | Média | Sprint 8 |
+| M4-T2 | Legal 🔴 | API | Delete-account endpoint + GDPR-style cleanup | P0 | Média | Sprint 8 |
+| M4-T3 | Segurança 🟡 | Auth | Session timeout (NextAuth maxAge + idle detection) | P1 | Média | Sprint 8 |
+| M4-T4 | A11y 🟡 | Global | Auditoria acessibilidade WCAG 2.2 completa | P1 | Alta | Sprint 8 |
+
+### ÉPICO M5: MONETIZAÇÃO — PENDENTE
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Sprint |
+|----|------|--------|-------|------------|--------------|--------|
+| M5-T1 | Business 🔴 | Global | Definir modelo de precificação (freemium + premium) | P0 | Alta | Sprint 9 |
+| M5-T2 | Feature 🔴 | Auth | Plano Free (limitações: 1 conta, 50 transações/mês) | P0 | Alta | Sprint 9 |
+| M5-T3 | Feature 🔴 | Auth | Plano Premium (ilimitado + agentes IA + OCR + relatórios) | P0 | Alta | Sprint 9 |
+| M5-T4 | Feature 🟡 | Pagamento | Integração Stripe/Asaas para assinaturas | P1 | Alta | Sprint 9 |
+
+### ÉPICO M6: FUTURO (Roadmap) — PENDENTE
+
+| ID | Tipo | Módulo | Título | Prioridade | Complexidade | Sprint |
+|----|------|--------|-------|------------|--------------|--------|
+| FLY-011 | Feature | Global | Offline-first (localStorage + sync engine) | P1 | Alta | Sprint 10+ |
+| FLY-013 | Feature | Bancos | Integração bancária via Open Finance | P1 | Alta | Sprint 11+ |
+| FLY-014 | Feature | Multi-user | Multi-tenancy para famílias | P2 | Alta | Q3 |
+| FLY-015 | Feature | Global | i18n / Internacionalização (EN, ES) | P2 | Média | Q3 |
+| — | Feature | IA | Spend Decision Engine v2 (ML-based predictions) | P2 | Alta | Q3 |
+| — | Feature | Pagamento | Apple Pay / Google Pay integration | P2 | Média | Q3 |
+
+---
+
+## Resumo Completo por Prioridade
+
+| Prioridade | Qtd Items | Sprint |
+|------------|-----------|--------|
+| P0 | 32 | Sprints 1-8 |
+| P1 | 56 | Sprints 1-9 |
+| P2 | 40 | Sprints 1-11 |
+| P3 | 4 | — |
+
+---
+
+*Última atualização: 2026-05-14 — Sprint 4 + Maturity Epics M1-M6 adicionados via Brainstorming Estratégico (9 agentes, event bus e011-e020)*

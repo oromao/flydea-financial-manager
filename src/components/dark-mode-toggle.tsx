@@ -13,7 +13,7 @@ export function DarkModeToggle() {
       size="icon"
       onClick={toggleTheme}
       className="rounded-full"
-      aria-label="Toggle theme"
+      aria-label="Alternar tema"
       title={`Trocar para ${theme === "light" ? "dark" : "light"} mode`}
     >
       {theme === "light" ? (

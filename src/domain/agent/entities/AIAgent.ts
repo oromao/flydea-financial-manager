@@ -2,6 +2,8 @@ import { AgentType } from "../value-objects/AgentType";
 import { AgentAction } from "./AgentAction";
 import { AgentExecution } from "./AgentExecution";
 
+type Mutable<T> = { -readonly [K in keyof T]: T[K] };
+
 export class AIAgent {
   readonly id: string;
   readonly userId: string;
@@ -108,17 +110,21 @@ export class AIAgent {
     );
   }
 
+  private asMutable(): Mutable<AIAgent> {
+    return this as unknown as Mutable<AIAgent>;
+  }
+
   activate(): void {
-    (this as any).isActive = true;
+    this.asMutable().isActive = true;
   }
 
   deactivate(): void {
-    (this as any).isActive = false;
+    this.asMutable().isActive = false;
   }
 
   updateConfig(config: Record<string, unknown>): void {
-    (this as any).config = config;
-    (this as any).updatedAt = new Date();
+    this.asMutable().config = config;
+    this.asMutable().updatedAt = new Date();
   }
 
   addAction(action: AgentAction): void {

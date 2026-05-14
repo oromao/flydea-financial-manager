@@ -1,7 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { apiError } from "@/lib/api-helpers";
 import { withRateLimit } from "@/lib/rate-limit";
+import { isAllowedImageUrl } from "@/lib/url-validation";
 
 export const GET = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
@@ -15,6 +17,11 @@ export const GET = withRateLimit(async (request: NextRequest) => {
 
   if (!url) {
     return NextResponse.json({ error: "URL is required" }, { status: 400 });
+  }
+
+  const validation = isAllowedImageUrl(url);
+  if (!validation.allowed) {
+    return apiError("URL não permitida", 422, "VALIDATION_ERROR");
   }
 
   try {

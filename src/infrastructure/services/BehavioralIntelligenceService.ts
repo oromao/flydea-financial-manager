@@ -1,11 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { startOfMonth, subDays, subMonths } from "date-fns";
+import type { Prisma } from "@prisma/client";
 
 export class BehavioralIntelligenceService {
   /**
    * Tracks an interaction with an insight and triggers incremental learning
    */
-  async trackInteraction(insightId: string, interactionType: "VIEWED" | "CLICKED" | "DISMISSED" | "ACTED", metadata?: any) {
+  async trackInteraction(insightId: string, interactionType: "VIEWED" | "CLICKED" | "DISMISSED" | "ACTED", metadata?: Record<string, unknown>) {
     const insight = await prisma.insight.findUnique({
       where: { id: insightId },
       include: { template: true },
@@ -18,7 +19,7 @@ export class BehavioralIntelligenceService {
       data: {
         insightId,
         interactionType,
-        metadata,
+        metadata: metadata as unknown as Prisma.InputJsonValue,
       },
     });
 

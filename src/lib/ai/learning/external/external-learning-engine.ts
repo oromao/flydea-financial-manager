@@ -3,6 +3,7 @@ import { contentCleaner, CleanedContent } from "./content-cleaner";
 import { knowledgeExtractor, ExtractedKnowledge } from "./knowledge-extractor";
 import { deduplicator } from "./deduplicator";
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 import { logger } from "@/lib/logger";
 
 const DAILY_LIMIT = 20;
@@ -178,7 +179,7 @@ export class ExternalLearningEngine {
             domain: candidate.domain,
             title: candidate.title,
             category: candidate.category,
-            insights: candidate.insights as any,
+            insights: candidate.insights as unknown as Prisma.InputJsonValue,
             tags: candidate.tags,
             confidence: candidate.confidence,
             content: candidate.content,
@@ -203,7 +204,7 @@ export class ExternalLearningEngine {
   /**
    * Get pending candidates
    */
-  async getCandidates(status = "PENDING"): Promise<any[]> {
+  async getCandidates(status = "PENDING"): Promise<Prisma.KnowledgeCandidateGetPayload<{}>[]> {
     return prisma.knowledgeCandidate.findMany({
       where: { status },
       orderBy: { confidence: "desc" },

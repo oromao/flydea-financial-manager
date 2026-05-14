@@ -86,9 +86,9 @@ export class PrismaAgentRepository implements IAgentRepository {
     await prisma.aIAgent.delete({ where: { id } });
   }
 
-  private toDomain(raw: any): AIAgent {
+  private toDomain(raw: Prisma.AIAgentGetPayload<{ include: { actions: true } }>): AIAgent {
     const actions = (raw.actions || []).map(
-      (action: any) =>
+      (action: Prisma.AgentActionGetPayload<{}>) =>
         new AgentAction(
           action.id,
           action.agentId,

@@ -232,6 +232,7 @@ export function CopilotSidebar() {
                     <Button
                       type="submit"
                       size="icon"
+                      aria-label="Enviar mensagem"
                       disabled={loading || !input.trim()}
                       className="flex-shrink-0"
                     >

@@ -1,8 +1,7 @@
-import { withAuth } from "next-auth/middleware";
+import { withAuth, type NextRequestWithAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-export default function middleware(req: NextRequest) {
+export default function middleware(req: NextRequestWithAuth) {
   const path = req.nextUrl.pathname;
   
   if (path === "/api/setup") {
@@ -15,11 +14,11 @@ export default function middleware(req: NextRequest) {
     },
   });
 
-  return authMiddleware(req as any, {} as any);
+  return authMiddleware(req, {} as never);
 }
 
 export const config = {
   matcher: [
-    "/((?!api/auth|login|public|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/auth|api/cron|login|public|_next/static|_next/image|favicon.ico).*)",
   ],
 };

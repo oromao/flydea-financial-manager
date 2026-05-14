@@ -7,7 +7,7 @@ let globalWorker: Worker | null = null;
 export interface OCRResult {
   text: string;
   confidence: number;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 export interface StructuredFinanceData {
@@ -80,8 +80,8 @@ export class PaddleOCRService {
   private async executePDFParse(buffer: Buffer): Promise<string> {
     try {
       // Dynamic import to handle CommonJS/ESM interop in Next.js build
-      const pdfParseModule = await import("pdf-parse") as any;
-      const pdfParse = pdfParseModule.default || pdfParseModule;
+      const pdfParseModule = await import("pdf-parse") as unknown as { default?: (buffer: Buffer) => Promise<{ text: string }> };
+      const pdfParse = pdfParseModule.default || pdfParseModule as unknown as (buffer: Buffer) => Promise<{ text: string }>;
       const data = await pdfParse(buffer);
       return data.text;
     } catch (error) {

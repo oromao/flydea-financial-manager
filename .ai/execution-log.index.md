@@ -30,6 +30,15 @@
   - Fluxo de integração com Frontend, QA e PO mapeado
   - Agente promovido para WORKING (FLY-017)
 
+## 2026-05-14 — E16-T3 QA-08 Date ISO → pt-BR (Frontend)
+
+- **Frontend Agent**: Criou `formatDateToBR` e `formatDateToISO` em `src/lib/date-utils.ts`
+  - Aplicado a 6 arquivos com `<input type="date">`:
+    - `recorrencias/page.tsx`, `payment-importer.tsx`, `document-importer.tsx`, `invoice-manager.tsx`, `fluxo-caixa/page.tsx`
+  - `formatDateToBR` já usado em 4 arquivos para display em pt-BR (`movimentacoes`, `alertas`, `contas-a-pagar`, `transaction-card`)
+  - `formatDateToISO` normaliza valores para `<input type="date">` em todos os formulários
+  - QA-08 movido de bugs confirmados para corrigidos
+
 ## 2026-05-11 — Design System Audit Complete
 
 - **21:40 BRT**: Auditoria do design system concluída (FLY-017 ✅)
@@ -191,6 +200,14 @@
   - `__tests__/smoke.test.ts` — consolidado (timeout fix)
   - `vitest.config.ts` — thresholds atualizados
 - **Próximos passos:** Implementar testes E2E no Playwright seguindo o plano
+
+## 2026-05-14 — E16-T6: Link quebrado /import em empty-states
+
+- **Frontend**: Verificou que o link `/import` em `empty-states.tsx:51` já foi corrigido no commit 6b4731b
+  - O `EmptyDashboard` component foi alterado de `<Link href="/import">` para `<Link href="/movimentacoes">`
+  - O caminho `/movimentacoes` contém o `PaymentImporter` (linha 943), que é a funcionalidade real de importação
+  - Nenhuma alteração de código foi necessária
+- **Docs**: Atualizados `KNOWN_ISSUES.md`, `BACKLOG_DETAILED/SPRINT4.md`, `EXECUTION_LOG.md`, `.ai/backlog.index.md`, `.ai/current-task.md`, `.ai/execution-log.index.md`
 
 ## Next Actions
 - FLY-004: Backlog do produto 20+ itens (PO)

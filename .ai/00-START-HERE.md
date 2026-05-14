@@ -29,6 +29,10 @@ Never scan the entire repository by default.
 - `.ai/backlog.index.md`
 - `.ai/risks.index.md`
 - `.ai/business-context.index.md`
+- `.ai/bus/` — Harness Event Bus (eventos, subscriptions)
+- `.ai/queues/` — Harness Queues (inbox, agents, handoff)
+- `.ai/workflows/` — Harness Workflow Engine
+- `.ai/state/` — Harness Runtime State
 - `.ai/platform-strategy.index.md` — only if the task involves architecture, SRE, security, compliance, cost, scalability or product
 - `.ai/personas.index.md` — only if the task involves prioritization, product, UX, support, or user impact
 - `.ai/market-risks.index.md` — only if the task involves security, LGPD, sensitive data, audit, competition, roadmap or strategic decisions

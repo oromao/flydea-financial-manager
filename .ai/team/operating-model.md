@@ -52,8 +52,33 @@
 6. PO marca como DONE e atualiza board
 7. Knowledge Steward atualiza memória
 
-## Communication
+## Communication (Harness Bus/Queue)
+
+### Event Bus
+- Eventos imutáveis em `.ai/bus/events/`
+- Matriz de subscriptions em `.ai/bus/subscriptions.md`
+- Agentes publicam e consomem eventos assincronamente
+
+### Queues
+- PO deposita tasks em `.ai/queues/inbox/`
+- Cada agente tem fila própria em `.ai/queues/agents/<role>/`
+- Handoff entre agentes via `.ai/queues/handoff/`
+- Formato padronizado com frontmatter YAML
+
+### Workflows
+- Workflows multi-etapa em `.ai/workflows/`
+- `standard.md` — fluxo padrão de dev
+- `bugfix.md` — fluxo acelerado para bugs
+- `feature.md` — fluxo completo com security review
+- `code-review.md` — fluxo de revisão técnica
+
+### State
+- Runtime state em `.ai/state/`
+- `current.md` — snapshot atual do harness
+- `agents.md` — status de cada agente
+- `metrics.md` — métricas de performance
+
+### Files
 - Status updates via `.ai/current-task.md`
 - Execution log via `.ai/execution-log.index.md`
 - Checkpoints via `.ai/checkpoints/`
-- Queues via `.ai/queues/`

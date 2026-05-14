@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { apiError } from "@/lib/api-helpers";
 import { prisma } from "@/lib/prisma";
 import { TransactionSchema } from "@/lib/validations";
 import { withRateLimit } from "@/lib/rate-limit";
@@ -15,7 +16,7 @@ export const PUT = withRateLimit(async (request: NextRequest, { params }: { para
 
   const body = await request.json();
   const parsed = TransactionSchema.partial().safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
+  if (!parsed.success) return apiError("Dados inválidos", 400, "VALIDATION_ERROR", parsed.error.flatten().fieldErrors);
 
   const { tagIds, ...rest } = parsed.data;
   const nextAmountPaid = typeof rest.amountPaid === "number" ? rest.amountPaid : undefined;
@@ -107,8 +108,7 @@ export const DELETE = withRateLimit(async (request: NextRequest, { params }: { p
     })();
     
     return NextResponse.json({ success: true });
-  } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : "Erro ao excluir";
-    return NextResponse.json({ error: msg }, { status: 500 });
+  } catch {
+    return apiError("Erro ao excluir transação", 500, "INTERNAL_ERROR");
   }
 });

@@ -73,7 +73,7 @@ export const GET = withRateLimit(async (request: NextRequest) => {
       { "Descrição": "Despesas Pendentes", "Valor (R$)": -summary.totalPending, "Observações": formatExportValue(summary.totalPending) },
     ];
 
-    rows.push(...summaryRows as any);
+    rows.push(...summaryRows as typeof rows);
 
     const worksheet = xlsx.utils.json_to_sheet(rows);
     const workbook = xlsx.utils.book_new();

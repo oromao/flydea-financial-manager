@@ -25,6 +25,8 @@ export class CopilotMessage {
   }
 }
 
+type Mutable<T> = { -readonly [K in keyof T]: T[K] };
+
 export class CopilotConversation {
   readonly id: string;
   readonly userId: string;
@@ -89,9 +91,13 @@ export class CopilotConversation {
     );
   }
 
+  private asMutable(): Mutable<CopilotConversation> {
+    return this as unknown as Mutable<CopilotConversation>;
+  }
+
   addMessage(message: CopilotMessage): void {
     this.messages.push(message);
-    (this as any).updatedAt = new Date();
+    this.asMutable().updatedAt = new Date();
   }
 
   getLastMessage(): CopilotMessage | null {
@@ -99,7 +105,7 @@ export class CopilotConversation {
   }
 
   updatePageContext(context: Record<string, unknown>): void {
-    (this as any).pageContext = context;
-    (this as any).updatedAt = new Date();
+    this.asMutable().pageContext = context;
+    this.asMutable().updatedAt = new Date();
   }
 }

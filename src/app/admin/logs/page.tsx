@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeaderSkeleton, TableSkeleton } from "@/components/ui/page-skeleton";
+import { PageTransition } from "@/components/ui/page-transition";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 const LOGS_PER_PAGE = 25;
@@ -124,7 +125,7 @@ export default function AuditLogs() {
 
   return (
     <PageErrorBoundary>
-    <div className="space-y-8 max-w-6xl">
+    <PageTransition className="space-y-8 max-w-6xl">
       <div className="flex items-center gap-4">
         <div className="p-3 rounded-2xl bg-secondary/10 text-secondary">
           <ShieldCheck className="w-8 h-8" />
@@ -294,7 +295,7 @@ export default function AuditLogs() {
           </div>
         </div>
       )}
-    </div>
+    </PageTransition>
     </PageErrorBoundary>
   );
 }

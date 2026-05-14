@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { withValidation } from "@/lib/api-helpers";
 import { withRateLimit } from "@/lib/rate-limit";
+import type { Prisma } from "@prisma/client";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -43,7 +44,7 @@ export const POST = withRateLimit(
         type: body.type || "info",
         relatedId: body.relatedId ?? null,
         relatedType: body.relatedType ?? null,
-        metadata: (body.metadata ?? undefined) as any,
+        metadata: (body.metadata ?? undefined) as Prisma.InputJsonValue,
         expiresAt: body.expiresAt ? new Date(body.expiresAt) : null,
       }
     });

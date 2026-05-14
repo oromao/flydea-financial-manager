@@ -1,8 +1,15 @@
 import { PicoClawInsight, UserFinancialData } from "./pico-claw";
 
+export interface IntelData {
+  riskScore?: number;
+  behaviorChangeScore?: number;
+  recentPatternShift?: boolean;
+  [key: string]: unknown;
+}
+
 export interface KnowledgeRule {
   id: string;
-  condition: (data: UserFinancialData, intel?: any) => boolean;
+  condition: (data: UserFinancialData, intel?: IntelData) => boolean;
   generate: (data: UserFinancialData) => PicoClawInsight;
   baseWeight: number; // 0-100
 }
@@ -69,7 +76,7 @@ export class ReasoningEngine {
     {
       id: "BEHAVIOR_SHIFT",
       baseWeight: 80,
-      condition: (_data, intel) => intel?.recentPatternShift && intel?.behaviorChangeScore > 40,
+      condition: (_data, intel) => !!intel?.recentPatternShift && (intel?.behaviorChangeScore ?? 0) > 40,
       generate: () => ({
         title: "Mudança de Comportamento",
         message: "Notei um aumento recente na frequência e volume dos seus gastos. Cuidado com compras impulsivas.",
@@ -83,7 +90,7 @@ export class ReasoningEngine {
   /**
    * Evaluates rules and ranks results based on weighted scoring.
    */
-  async evaluate(data: UserFinancialData, intel?: any, recentInsightTypes: string[] = []): Promise<PicoClawInsight[]> {
+  async evaluate(data: UserFinancialData, intel?: IntelData | null, recentInsightTypes: string[] = []): Promise<PicoClawInsight[]> {
     const results: Array<{ insight: PicoClawInsight; score: number }> = [];
 
     for (const rule of this.rules) {
@@ -92,7 +99,7 @@ export class ReasoningEngine {
         continue;
       }
 
-      if (rule.condition(data, intel)) {
+      if (rule.condition(data, intel ?? undefined)) {
         const insight = rule.generate(data);
         
         // Dynamic Scoring
@@ -100,8 +107,8 @@ export class ReasoningEngine {
         
         // Personalization: Increase weight if user has high risk or behavioral shifts
         if (intel) {
-          if (rule.id === "CASHFLOW_RISK" && intel.riskScore > 70) score += 10;
-          if (rule.id === "BUDGET_OVERRUN" && intel.behaviorChangeScore > 50) score += 15;
+          if (rule.id === "CASHFLOW_RISK" && (intel?.riskScore ?? 0) > 70) score += 10;
+          if (rule.id === "BUDGET_OVERRUN" && (intel?.behaviorChangeScore ?? 0) > 50) score += 15;
         }
 
         results.push({ insight, score });

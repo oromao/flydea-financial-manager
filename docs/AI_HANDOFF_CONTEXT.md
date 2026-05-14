@@ -1,6 +1,6 @@
 # FlyDea Financial Manager — Contexto de Handoff para IA
 
-**Data:** 2026-05-12 | **Sprint:** 3 — UX/UI Audit Bugfix (ACTIVE 🔶)
+**Data:** 2026-05-14 | **Sprint:** 4 — Polimento Premium 🔶 + Brainstorming Estratégico ✅
 
 ---
 
@@ -11,51 +11,58 @@
 - **Live:** https://flydea-financial-manager.vercel.app ✅
 - **Local:** `npm run dev` → http://localhost:3010 (⚠️ Turbopack crash — usar build produção)
 - **Stack:** Next.js 16, React 19, TypeScript, Tailwind CSS 4, shadcn/ui, Framer Motion, Prisma, Neon, Vercel Blob
-- **Testes:** 576 passing, 60 files
+- **Testes:** 576 passing, 60 files, 37.62% coverage
 
 ---
 
-## Última Auditoria (browser-use — 2026-05-12)
+## Sprint 4 — Polimento Premium (🔶 Em Andamento)
 
-Auditoria completa com navegador real (Chromium headed) na produção Vercel.
+| Épico | Progresso | Tasks | Próximo Passo |
+|-------|-----------|-------|---------------|
+| **E16 — Problemas** | 82% (9/11) | Zod 56% + QA audit pendentes | Backend: Zod 100%. QA: E16-T10 |
+| **E17 — Design System** | 0% (0/9) | 40 cores hardcoded, dark mode, tipografia | Frontend começar E17-T1 |
+| **E18 — UX** | 0% (0/10) | Skeletons, transitions, empty states, a11y | Frontend após E17 |
+| **E19 — Mobile** | 0% (0/13) | Touch targets P0, safe areas, keyboard-aware | Prioridade: E19-T1 (P0 touch targets) |
 
-| Páginas auditadas | Modais testados | Problemas encontrados |
-|-------------------|----------------|----------------------|
-| 12 | 5 | 17 |
-
-**Relatório completo:** `docs/AUDITORIA_UX_UI_2026-05-12.md`
-
----
-
-## Sprint 3 — 10 items (3 P0 🔴, 6 P1 🟡, 1 P2 🟢)
-
-| ID | Título | Prioridade | Status |
-|----|--------|------------|--------|
-| E15-T1 | Base UI error #51 — página /contas quebrada | P0 🔴 | pending |
-| E15-T2 | UUID visível em categoria no modal "Novo Orçamento" | P0 🔴 | pending |
-| E15-T3 | UUID visível em conta no modal "Editar Lançamento" | P0 🔴 | pending |
-| E15-T4 | Typo "Alertas Criticos" → "Críticos" | P1 🟡 | pending |
-| E15-T5 | Typos "Automacao" → "Automação", "RECORRENCIA" → "RECORRÊNCIA" | P1 🟡 | pending |
-| E15-T6 | Typo "Novo Lancamento" → "Novo Lançamento" | P1 🟡 | pending |
-| E15-T7 | Sidebar perde texto ao scroll | P1 🟡 | pending |
-| E15-T8 | /insights duplica Dashboard | P1 🟡 | pending |
-| E15-T9 | Dropdown de categoria inconsistente entre modais | P1 🟡 | pending |
-| E15-T10 | Adicionar link "Relatórios" na sidebar | P2 🟢 | pending |
-
-### Notas Importantes
-- **C3 (Turbopack crash)**: IGNORADO por decisão do usuário. Build de produção funciona.
-- **QA-02 reaberto**: UUID em dropdowns foi parcialmente fixado — orçamentos e edição ainda mostram UUID.
-- **Contas e Cartões**: O Base UI error #51 pode ser relacionado ao E14-T4 (modal Fechar interceptado).
+### Tasks Concluídas no Sprint 4
+- Backend: E16-T11 (cron), E16-T8 (Zod parcial), E16-T4 (console), E16-T12 (SSRF), E16-T7 (any types 0), E16-T13 (error format)
+- Frontend: E16-T1 (UUID), E16-T2 (modal Fechar), E16-T3 (date ISO), E16-T6 (link /import), E16-T9 (ARIA)
 
 ---
 
-## Prioridade de Execução Recomendada
+## Brainstorming Estratégico (2026-05-14) ✅
+
+**9 agentes convocados via Event Bus (e011-e020).** Resultado documentado em:
+
+- `docs/superpowers/specs/2026-05-14-product-maturity-strategy.md` — Plano estratégico completo
+- `docs/BACKLOG_MASTER.md` — Épicos M1-M6 adicionados ao backlog
+
+### Gaps Estratégicos Descobertos
+1. **Onboarding = ZERO** — Novo usuário sem orientação (P0 retenção)
+2. **Analytics = ZERO** — Sem dados de uso do produto
+3. **E2E Tests = 0 implementados** — Risco de regressão
+4. **Feature Flags = ZERO** — Deploy inseguro
+5. **LGPD incompleto** — data-export e delete-account ausentes
+6. **Monetização = NÃO DEFINIDA** — SaaS sem pricing
+
+### Novas Sprints Planejadas
+| Sprint | Foco | Quando |
+|--------|------|--------|
+| **Sprint 5** | Onboarding + Retenção | Pós Sprint 4 |
+| **Sprint 6** | Analytics + Observabilidade | |
+| **Sprint 7** | Qualidade + Infraestrutura (E2E, feature flags, coverage 90%) | |
+| **Sprint 8** | LGPD + Compliance + Acessibilidade | |
+| **Sprint 9+** | Monetização + Offline-first + Integração Bancária | |
+
+---
+
+## Prioridade de Execução Imediata
 
 ```
-1. E15-T1 → E15-T2 → E15-T3  (P0 — bugs críticos)
-2. E15-T4 → E15-T5 → E15-T6  (P1 — typos rápidos)
-3. E15-T7 → E15-T8 → E15-T9  (P1 — UX)
-4. E15-T10                    (P2 — melhoria)
+1. Frontend: E19-T1 (touch targets P0) → E17-T1 (tokens) → E18-T1 (skeletons)
+2. Backend: Zod 56% → 100% + data-export + delete-account (LGPD)
+3. QA: E16-T10 (auditoria regressão) + começar E2E tests
+4. Security: Zod audit + LGPD endpoints
 ```
 
 ---
@@ -64,11 +71,11 @@ Auditoria completa com navegador real (Chromium headed) na produção Vercel.
 
 | Documento | Conteúdo |
 |-----------|----------|
-| `docs/AUDITORIA_UX_UI_2026-05-12.md` | Relatório completo da auditoria |
-| `docs/KNOWN_ISSUES.md` | Bugs conhecidos (atualizado) |
-| `docs/BACKLOG_MASTER.md` | Backlog mestre (Épico 15 adicionado) |
-| `.ai/current-task.md` | Tarefa corrente |
-| `.ai/backlog.index.md` | Índice do backlog |
+| `docs/superpowers/specs/2026-05-14-product-maturity-strategy.md` | Plano estratégico completo |
+| `docs/BACKLOG_MASTER.md` | Backlog mestre (Sprint 4 + M1-M6) |
+| `docs/KNOWN_ISSUES.md` | Bugs conhecidos |
+| `.ai/bus/events/e011-e020` | Eventos do brainstorming estratégico |
+| `.ai/queues/agents/*/README.md` | Filas de cada agente |
 
 ## Comandos Essenciais
 
@@ -82,15 +89,4 @@ npm run test:coverage# vitest com cobertura
 
 ---
 
-## Próximos Passos para a Próxima IA
-
-1. **E15-T1**: Debug Base UI error #51 em `/contas` — investigar componente quebrado
-2. **E15-T2/T3**: Corrigir UUID em dropdowns de categoria (orçamentos) e conta (edição)
-3. **E15-T4/T5/T6**: Corrigir typos de acentuação pt-BR
-4. **E15-T7**: Debug sidebar perdendo texto ao scroll
-5. **E15-T8**: Diferenciar página /insights do Dashboard
-6. Documentar cada fix em `docs/EXECUTION_LOG.md`
-
----
-
-*Handoff gerado em: 2026-05-12 15:00 BRT — Sprint 3 UX/UI Audit Bugfix*
+*Handoff gerado em: 2026-05-14 09:30 BRT — Sprint 4 + Brainstorming Estratégico concluído*

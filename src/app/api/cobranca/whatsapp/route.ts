@@ -1,23 +1,31 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
 import { withRateLimit } from "@/lib/rate-limit";
+
+const WhatsAppSchema = z.object({
+  installmentId: z.string().min(1, "installmentId obrigatório"),
+  phoneNumber: z.string().min(1, "phoneNumber obrigatório"),
+  message: z.string().optional(),
+});
 
 export const POST = withRateLimit(async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
-  const { installmentId, message, phoneNumber } = body;
-
-  if (!installmentId || !phoneNumber) {
+  const parsed = WhatsAppSchema.safeParse(body);
+  if (!parsed.success) {
     return NextResponse.json(
-      { error: "installmentId e phoneNumber são obrigatórios" },
+      { error: "Dados inválidos", fields: parsed.error.flatten().fieldErrors },
       { status: 400 }
     );
   }
+
+  const { installmentId, message, phoneNumber } = parsed.data;
 
   try {
     const installment = await prisma.invoiceInstallment.findUnique({

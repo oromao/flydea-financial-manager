@@ -1,3 +1,5 @@
+import { apiError } from "@/lib/api-helpers";
+
 /**
  * Rate limiting with Upstash Redis.
  * Falls back to a no-op in development or when env vars are missing.
@@ -39,7 +41,7 @@ export async function checkRateLimit(identifier: string): Promise<{ success: boo
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function withRateLimit(handler: Function, opts?: { limit?: number; window?: string }) {
-  return async (req: Request, ...args: any[]) => {
+  return async (req: Request, ...args: unknown[]) => {
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
     const identifier = `${ip}:${req.url}`;
     const limiter = await getRateLimiter();
@@ -47,9 +49,9 @@ export function withRateLimit(handler: Function, opts?: { limit?: number; window
 
     const result = await limiter.limit(identifier);
     if (!result.success) {
-      return new Response(JSON.stringify({ error: "Muitas requisições. Tente novamente em alguns segundos." }), {
-        status: 429,
-        headers: { "Content-Type": "application/json", "Retry-After": "60", "X-RateLimit-Remaining": String(result.remaining) },
+      return apiError("Muitas requisições. Tente novamente em alguns segundos.", 429, "RATE_LIMIT", undefined, {
+        "Retry-After": "60",
+        "X-RateLimit-Remaining": String(result.remaining),
       });
     }
 

@@ -4,8 +4,14 @@ import { useEffect, useState } from "react";
 import { X, Share } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+  prompt(): Promise<void>;
+}
+
 export function InstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [hasDeclined, setHasDeclined] = useState(false);
   const [isIOS] = useState(() => {
@@ -19,27 +25,28 @@ export function InstallPrompt() {
     // Detect if is iOS
     const userAgent = window.navigator.userAgent.toLowerCase();
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
-    const isStandalone = window.matchMedia("(display-mode: standalone)").matches || (window.navigator as any).standalone;
+    const isStandalone = window.matchMedia("(display-mode: standalone)").matches || (window.navigator as Navigator & { standalone?: boolean }).standalone;
     
     if (isStandalone) {
       return;
     }
 
     // For Android/Chrome
-    const handler = (e: any) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
+    const handler = (e: Event) => {
+      const promptEvent = e as BeforeInstallPromptEvent;
+      promptEvent.preventDefault();
+      setDeferredPrompt(promptEvent);
       setTimeout(() => setShowPrompt(true), 3000);
     };
 
-    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("beforeinstallprompt", handler as EventListener);
 
     // If iOS, show prompt manually after delay
     if (isIosDevice && !isStandalone) {
       setTimeout(() => setShowPrompt(true), 3000);
     }
 
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler as EventListener);
   }, [hasDeclined]);
 
   const handleInstallClick = async () => {

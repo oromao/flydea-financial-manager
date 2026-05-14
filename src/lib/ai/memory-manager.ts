@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 
 export interface ChatInteraction {
   role: "user" | "assistant";
@@ -54,23 +55,25 @@ export class MemoryManager {
     };
   }
 
-  private deriveFavoriteCategories(interactions: any[]): string[] {
+  private deriveFavoriteCategories(interactions: Prisma.InsightInteractionGetPayload<{}>[]): string[] {
     const counts: Record<string, number> = {};
     interactions
       .filter(i => i.interactionType === "ACTED" || i.interactionType === "CLICKED")
       .forEach(i => {
-        const cat = i.metadata?.category;
+        const meta = i.metadata as Record<string, unknown> | null;
+        const cat = meta?.category as string | undefined;
         if (cat) counts[cat] = (counts[cat] || 0) + 1;
       });
     return Object.entries(counts).sort((a, b) => b[1] - a[1]).map(e => e[0]);
   }
 
-  private deriveIgnoredTypes(interactions: any[]): string[] {
+  private deriveIgnoredTypes(interactions: Prisma.InsightInteractionGetPayload<{}>[]): string[] {
     const counts: Record<string, number> = {};
     interactions
       .filter(i => i.interactionType === "DISMISSED")
       .forEach(i => {
-        const type = i.metadata?.type;
+        const meta = i.metadata as Record<string, unknown> | null;
+        const type = meta?.type as string | undefined;
         if (type) counts[type] = (counts[type] || 0) + 1;
       });
     return Object.entries(counts).filter(e => e[1] > 3).map(e => e[0]);

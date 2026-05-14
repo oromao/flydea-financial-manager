@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 
   let generatedCount = 0;
 
-  const recurrencePromises: Promise<any>[] = [];
+  const recurrencePromises: Promise<void>[] = [];
 
   for (const rec of recurrences) {
     let nextDate = rec.nextDate ? new Date(rec.nextDate) : new Date(rec.startDate);
@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
     await Promise.allSettled(recurrencePromises);
   }
 
-  const dueSoonPromises: Promise<any>[] = [];
+  const dueSoonPromises: Promise<void>[] = [];
   for (const tx of dueSoonTransactions) {
     if (tx.user?.email) {
       const notificationExists = await prisma.notification.findFirst({

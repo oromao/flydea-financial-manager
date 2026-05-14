@@ -5,6 +5,7 @@ import { IAgentExecutionRepository } from "@/domain/agent/repositories/IAgentExe
 import { picoClaw } from "@/lib/ai/pico-claw";
 import { EmailService } from "@/infrastructure/services/EmailService";
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 
 export interface ExecuteAgentOutput {
   executionId: string;
@@ -91,7 +92,7 @@ export class ExecuteAgentUseCase {
                 type: topInsight.priority === "HIGH" ? "ALERT" : "INFO",
                 relatedId: agentId,
                 relatedType: "AGENT_EXECUTION",
-                metadata: output as any,
+                metadata: output as unknown as Prisma.InputJsonValue,
               }
             });
             actionResults[action.id] = {

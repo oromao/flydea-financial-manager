@@ -146,7 +146,7 @@ O que você gostaria de saber?`,
         type: "assistant",
         content: data.answer || data.response || "Sem resposta.",
         timestamp: new Date(),
-        sources: data.context?.insights?.slice(0, 2).map((s: any) => ({
+        sources: data.context?.insights?.slice(0, 2).map((s: { title: string; type?: string; category?: string }) => ({
           title: s.title,
           category: s.type || s.category,
         })),

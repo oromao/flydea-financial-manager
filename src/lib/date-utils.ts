@@ -42,6 +42,27 @@ export function toUtcMidnight(dateInput: string): Date {
 }
 
 /**
+ * Safely formats a date string/Date to pt-BR (DD/MM/AAAA) for display.
+ * Alias for safeFormatDate with default "dd/MM/yyyy".
+ */
+export function formatDateToBR(
+  dateInput: string | Date | null | undefined,
+  fallback: string = "—"
+): string {
+  return safeFormatDate(dateInput, "dd/MM/yyyy", fallback);
+}
+
+/**
+ * Safely converts any date input to YYYY-MM-DD (ISO) format.
+ * Alias for toLocalDateInput — suitable for <input type="date" /> values and storage.
+ */
+export function formatDateToISO(
+  isoDate: string | Date | null | undefined
+): string {
+  return toLocalDateInput(isoDate);
+}
+
+/**
  * Safely formats a date string/Date to dd/MM/yyyy (pt-BR full year).
  * Returns fallback on any invalid input — never throws.
  */
