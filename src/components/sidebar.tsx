@@ -22,9 +22,9 @@ import { Badge } from "@/components/ui/badge";
 const DarkModeToggleClient = dynamic(() => import("./dark-mode-toggle").then(mod => ({ default: mod.DarkModeToggle })), { ssr: false });
 
 const navItems = [
-  { name: "Painel Geral", href: "/", icon: LayoutDashboard },
+  { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Movimentações", href: "/movimentacoes", icon: ReceiptText },
-  { name: "Contas e Cartões", href: "/contas", icon: CreditCard },
+  { name: "Contas", href: "/contas", icon: CreditCard },
   { name: "Fluxo de Caixa", href: "/fluxo-caixa", icon: TrendingUp },
   { name: "Contas a Pagar", href: "/contas-a-pagar", icon: BadgeDollarSign },
   { name: "Planejamento", href: "/orcamentos", icon: Target },

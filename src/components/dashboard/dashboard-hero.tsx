@@ -28,12 +28,14 @@ export function DashboardHero({ balance, projectedBalance, loading, income, expe
 
   useEffect(() => {
     if (lastUpdated && !isNaN(lastUpdated.getTime())) {
-      setTimeAgo(
-        new Intl.RelativeTimeFormat("pt-BR", { numeric: "auto" }).format(
-          -Math.round((Date.now() - lastUpdated.getTime()) / 60000),
-          "minute"
-        )
-      );
+      const mins = Math.floor((Date.now() - lastUpdated.getTime()) / 60000);
+      if (mins < 1) {
+        setTimeAgo("agora");
+      } else if (mins < 60) {
+        setTimeAgo(`há ${mins} min`);
+      } else {
+        setTimeAgo(`há ${Math.floor(mins / 60)}h`);
+      }
     }
   }, [lastUpdated]);
 
@@ -77,21 +79,21 @@ export function DashboardHero({ balance, projectedBalance, loading, income, expe
 
           {/* Mini cards: Entradas / Saídas / Saldo do Mês */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-white/5 rounded-xl p-4" aria-label={`Entradas: ${formatCurrency(income)}`}>
+            <div className="bg-white/5 rounded-xl p-5" aria-label={`Entradas: ${formatCurrency(income)}`}>
               <p className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Entradas</p>
               <p className="text-lg font-bold" aria-hidden="true">
                 {loading ? <span className="inline-block h-5 w-20 bg-white/10 animate-pulse rounded" /> : formatCurrency(income)}
               </p>
             </div>
 
-            <div className="bg-white/5 rounded-xl p-4" aria-label={`Saídas: ${formatCurrency(expenses)}`}>
+            <div className="bg-white/5 rounded-xl p-5" aria-label={`Saídas: ${formatCurrency(expenses)}`}>
               <p className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Saídas</p>
               <p className="text-lg font-bold" aria-hidden="true">
                 {loading ? <span className="inline-block h-5 w-20 bg-white/10 animate-pulse rounded" /> : formatCurrency(expenses)}
               </p>
             </div>
 
-            <div className={cn("rounded-xl p-4", netMonth >= 0 ? "bg-white/5" : "bg-white/5")} aria-label={`Saldo do mês: ${formatCurrency(netMonth)}`}>
+            <div className={cn("rounded-xl p-5", netMonth >= 0 ? "bg-white/5" : "bg-white/5")} aria-label={`Saldo do mês: ${formatCurrency(netMonth)}`}>
               <p className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Saldo</p>
               <p className="text-lg font-bold" aria-hidden="true">
                 {loading ? <span className="inline-block h-5 w-20 bg-white/10 animate-pulse rounded" /> : formatCurrency(netMonth)}
@@ -104,9 +106,9 @@ export function DashboardHero({ balance, projectedBalance, loading, income, expe
             <QuickAdd categories={categories} onSuccess={() => router.refresh()} />
             <Link
               href="/movimentacoes"
-              className="h-11 md:h-12 px-5 md:px-8 rounded-2xl bg-accent/10 hover:bg-accent/20 transition-all text-sm md:text-base font-semibold text-white flex items-center gap-2 border border-border shadow-lg active:scale-95"
+              className="h-11 px-5 rounded-2xl bg-accent/10 hover:bg-accent/20 transition-all text-sm font-semibold text-white flex items-center gap-2 border border-border shadow-lg active:scale-95"
             >
-              <History className="w-4 h-4 md:w-5 md:h-5" />
+              <History className="w-4 h-4" />
               Extrato
             </Link>
           </div>

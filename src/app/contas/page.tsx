@@ -281,7 +281,7 @@ export default function ContasPage() {
             <Wallet className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Minhas Contas</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Minhas Contas</h1>
             <p className="text-muted-foreground font-medium text-sm mt-1">Organize seus bancos e carteiras</p>
           </div>
         </div>
@@ -315,15 +315,15 @@ export default function ContasPage() {
             <Separator />
 
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
-              <div className="space-y-2">
-                <Label required className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Nome da Conta</Label>
+              <div className="space-y-1.5">
+                  <Label required className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Nome da Conta</Label>
                 <Input required value={name} onChange={e => setName(e.target.value)}
                   className="h-12 font-bold text-lg rounded-2xl bg-muted/20 border-border/10"
                   placeholder="Ex: Nubank, Itaú, Carteira..." />
               </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Tipo</Label>
                   <Select value={type} onValueChange={(val: string | null) => setType(val || "CHECKING")}>
                     <SelectTrigger className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10">
@@ -337,7 +337,7 @@ export default function ContasPage() {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <div className="flex items-center justify-between ml-1">
                     <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Saldo Inicial</Label>
                     <span className="text-[8px] font-black uppercase tracking-widest text-secondary bg-secondary/5 px-2 py-0.5 rounded-full">Ajuste</span>

@@ -148,7 +148,7 @@ export default function LoginPage() {
                   required
                   autoComplete="email"
                   spellCheck={false}
-                  className="h-12 rounded-xl border-border bg-surface-container pl-11 pr-4 text-[15px] text-on-background placeholder:text-muted-foreground transition-all focus:border-primary/30 focus:bg-background focus:ring-2 focus:ring-primary/10"
+                  className="h-12 rounded-xl border-border bg-surface-container pl-11 pr-4 text-[15px] text-on-background placeholder:text-muted-foreground transition-all focus:border-primary/30 focus:bg-background focus:ring-2 focus:ring-primary/10 [&:-webkit-autofill]:[transition:background-color_999999s_ease_0s]"
                 />
               </div>
             </div>
@@ -171,7 +171,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
-                  className="h-12 rounded-xl border-border bg-surface-container pl-11 pr-11 text-[15px] text-on-background placeholder:text-muted-foreground transition-all focus:border-primary/30 focus:bg-background focus:ring-2 focus:ring-primary/10"
+                  className="h-12 rounded-xl border-border bg-surface-container pl-11 pr-11 text-[15px] text-on-background placeholder:text-muted-foreground transition-all focus:border-primary/30 focus:bg-background focus:ring-2 focus:ring-primary/10 [&:-webkit-autofill]:[transition:background-color_999999s_ease_0s]"
                 />
                 <button
                   type="button"
@@ -193,7 +193,7 @@ export default function LoginPage() {
             <div className="flex justify-end">
               <Link
                 href="/esqueci-senha"
-                className="text-[13px] font-medium text-primary transition-colors hover:text-primary/80"
+                className="text-sm text-primary/80 hover:text-primary font-medium transition-colors"
               >
                 Esqueci minha senha
               </Link>

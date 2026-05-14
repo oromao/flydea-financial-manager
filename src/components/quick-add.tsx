@@ -139,7 +139,7 @@ export function QuickAdd({
       {controlledOpen === undefined && (
         <Button
           onClick={() => setOpen(true)}
-          className="hidden md:flex items-center gap-2 h-12 px-6 rounded-full bg-primary shadow-lg hover:bg-primary/90"
+          className="hidden md:flex items-center gap-2 h-11 px-5 rounded-full bg-primary shadow-lg hover:bg-primary/90"
         >
           <Plus className="w-5 h-5" />
           <span className="font-bold">Novo Lançamento</span>

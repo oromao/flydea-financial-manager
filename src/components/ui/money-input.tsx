@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "./input";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 interface MoneyInputProps {
@@ -50,18 +51,21 @@ export function MoneyInput({ value, onChange, className, placeholder, required, 
   };
 
   return (
-    <Input
-      type="text"
-      id={id}
-      name={name}
-      value={localValue}
-      onChange={handleChange}
-      className={className}
-      placeholder={placeholder || "R$ 0,00"}
-      required={required}
-      inputMode="numeric"
-      aria-label={ariaLabel}
-      aria-describedby={ariaDescribedby}
-    />
+    <div className="relative">
+      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-sm font-medium pointer-events-none">R$</span>
+      <Input
+        type="text"
+        id={id}
+        name={name}
+        value={localValue}
+        onChange={handleChange}
+        className={cn("pl-10", className)}
+        placeholder={placeholder || "R$ 0,00"}
+        required={required}
+        inputMode="numeric"
+        aria-label={ariaLabel}
+        aria-describedby={ariaDescribedby}
+      />
+    </div>
   );
 }

@@ -210,7 +210,7 @@ export default function Dashboard() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-24 md:pb-8"
+      className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4"
       aria-live="polite"
       aria-atomic="true"
     >
@@ -338,8 +338,8 @@ export default function Dashboard() {
                   </AreaChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-full w-full flex items-center justify-center">
-                  <p className="text-sm text-muted-foreground">Sem dados para exibir</p>
+                <div className="h-48 flex items-center justify-center text-sm text-on-surface-variant/50">
+                  Registre transações para ver o gráfico de fluxo mensal
                 </div>
               )}
             </Card>

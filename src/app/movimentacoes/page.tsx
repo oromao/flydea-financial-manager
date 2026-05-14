@@ -456,7 +456,7 @@ function MovimentaçõesContent() {
             <LayoutList className="h-5 w-5 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Movimentações
             </h1>
             <p className="text-xs text-muted-foreground">
@@ -564,11 +564,15 @@ function MovimentaçõesContent() {
                       name="description"
                       required
                       value={description}
-                      onChange={(e) => setDescription(e.target.value)}
+                      onChange={(e) => setDescription(e.target.value.slice(0, 200))}
+                      maxLength={200}
                       className="h-12 rounded-xl bg-muted/50 border-border focus:bg-background transition-colors font-semibold"
-                      placeholder="O que você pagou ou recebeu?"
+                      placeholder="Ex: Almoço, Transporte..."
                       aria-describedby="description-error"
                     />
+                    <div className="flex justify-end">
+                      <span className="text-[10px] text-on-surface-variant/40">{description.length}/200</span>
+                    </div>
                     {errors.description && (
                       <p id="description-error" className="text-xs text-destructive mt-1">
                         {errors.description}

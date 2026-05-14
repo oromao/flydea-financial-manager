@@ -172,7 +172,7 @@ export default function Orcamentos() {
             <Target className="w-7 h-7 md:w-8 md:h-8" />
           </motion.div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Orçamentos</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Orçamentos</h1>
             <p className="text-muted-foreground font-medium text-sm mt-1">Planejamento e controle de limites</p>
           </div>
         </div>
