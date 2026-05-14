@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
+import { SeedDataPrompt } from "./seed-data-prompt";
 
 const STORAGE_KEY = "flydea_onboarding_complete";
 
@@ -82,6 +83,7 @@ const slideVariants = {
 export function OnboardingTour() {
   const { status } = useSession();
   const [visible, setVisible] = useState(false);
+  const [showSeedPrompt, setShowSeedPrompt] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -95,7 +97,7 @@ export function OnboardingTour() {
       .then((res) => res.json())
       .then((data) => {
         if (data.total === 0) {
-          setVisible(true);
+          setShowSeedPrompt(true);
         }
       })
       .catch(() => {});
@@ -104,6 +106,17 @@ export function OnboardingTour() {
   const dismiss = useCallback(() => {
     localStorage.setItem(STORAGE_KEY, "true");
     setVisible(false);
+    setShowSeedPrompt(false);
+  }, []);
+
+  const handleSeedComplete = useCallback(() => {
+    localStorage.setItem(STORAGE_KEY, "true");
+    setShowSeedPrompt(false);
+  }, []);
+
+  const handleSeedSkip = useCallback(() => {
+    setShowSeedPrompt(false);
+    setVisible(true);
   }, []);
 
   const handleNext = useCallback(() => {
@@ -116,7 +129,7 @@ export function OnboardingTour() {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   }, []);
 
-  if (!visible) return null;
+  if (!visible && !showSeedPrompt) return null;
 
   const step = tourSteps[currentStep];
   const isFirst = currentStep === 0;
@@ -130,6 +143,10 @@ export function OnboardingTour() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
+      {showSeedPrompt ? (
+        <SeedDataPrompt onComplete={handleSeedComplete} onSkip={handleSeedSkip} />
+      ) : (
+        <>
       <button
         onClick={dismiss}
         className="absolute top-4 right-4 text-sm text-white/70 hover:text-white transition-colors"
@@ -200,6 +217,8 @@ export function OnboardingTour() {
           )}
         </div>
       </div>
+      </>
+      )}
     </motion.div>
   );
 }
