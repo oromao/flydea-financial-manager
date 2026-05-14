@@ -21,6 +21,7 @@ import { MoneyInput } from "@/components/ui/money-input";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
+import { formatDateToISO } from "@/lib/date-utils";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -336,13 +337,13 @@ export default function CashflowPage() {
           {/* ---------------------------------------------------------- */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {/* Faturado */}
-            <Card className="rounded-2xl border-border bg-emerald-500/5">
+            <Card className="rounded-2xl border-border bg-success/5">
               <CardContent className="p-4 sm:p-5 space-y-2">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-emerald-500/10">
+                  <div className="p-1.5 rounded-lg bg-success/10">
                     <TrendingUp className="w-3.5 h-3.5 text-success" />
                   </div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-success">
                     Faturado
                   </p>
                 </div>
@@ -354,13 +355,13 @@ export default function CashflowPage() {
             </Card>
 
             {/* A Receber */}
-            <Card className="rounded-2xl border-border bg-amber-500/5">
+            <Card className="rounded-2xl border-border bg-warning/5">
               <CardContent className="p-4 sm:p-5 space-y-2">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-amber-500/10">
+                  <div className="p-1.5 rounded-lg bg-warning/10">
                     <Wallet className="w-3.5 h-3.5 text-warning" />
                   </div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-warning">
                     A Receber
                   </p>
                 </div>
@@ -736,7 +737,7 @@ className={cn(
                         <Input
                           type="date"
                           required
-                          value={formData.emissionDate}
+                          value={formatDateToISO(formData.emissionDate)}
                           onChange={(e) =>
                             setFormData((p) => ({ ...p, emissionDate: e.target.value }))
                           }
@@ -781,7 +782,7 @@ className={cn(
                               <Label className="text-[10px] text-muted-foreground ml-1">Vencimento</Label>
                               <Input
                                 type="date"
-                                value={inst.dueDate}
+                                value={formatDateToISO(inst.dueDate)}
                                 onChange={(e) => {
                                   const next = [...formData.installments];
                                   next[idx] = { ...next[idx], dueDate: e.target.value };

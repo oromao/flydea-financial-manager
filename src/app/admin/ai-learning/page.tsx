@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { ExternalLearningEngine, LearningStats } from "@/lib/ai/learning/external/external-learning-engine"
+import type { Prisma } from "@prisma/client"
+
 
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
@@ -11,7 +13,7 @@ const engine = new ExternalLearningEngine()
 export default function AILearningDashboard() {
   const { data: session, status } = useSession()
   const [stats, setStats] = useState<LearningStats | null>(null)
-  const [candidates, setCandidates] = useState<any[]>([])
+  const [candidates, setCandidates] = useState<Prisma.KnowledgeCandidateGetPayload<{}>[]>([])
   const [loading, setLoading] = useState(false)
   const [running, setRunning] = useState(false)
 
@@ -129,7 +131,7 @@ export default function AILearningDashboard() {
                     </div>
                     <div className="mt-1 text-sm">
                       {Array.isArray(candidate.insights) && candidate.insights.length > 0 ? (
-                        candidate.insights.map((i: any, idx: number) => (
+                        (candidate.insights as Array<{ insight: string }>).map((i, idx) => (
                           <span key={idx} className="inline-block bg-muted rounded px-2 py-1 mr-1 mb-1 text-xs">
                             {i.insight}
                           </span>
@@ -146,13 +148,13 @@ export default function AILearningDashboard() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleApprove(candidate.id)}
-                      className="rounded-lg bg-green-600 px-3 py-1.5 text-sm text-white hover:bg-green-700"
+                      className="rounded-lg bg-success px-3 py-1.5 text-sm text-white hover:bg-success/90"
                     >
                       Aprovar
                     </button>
                     <button
                       onClick={() => handleReject(candidate.id)}
-                      className="rounded-lg bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700"
+                      className="rounded-lg bg-destructive px-3 py-1.5 text-sm text-white hover:bg-destructive/90"
                     >
                       Rejeitar
                     </button>
