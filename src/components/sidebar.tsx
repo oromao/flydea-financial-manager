@@ -204,10 +204,10 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
             <Tooltip>
               <TooltipTrigger
                 onClick={() => setDrawerOpen(true)}
-                className="w-10 h-10 rounded-full overflow-hidden bg-surface-container-low border-2 border-surface-container-high flex items-center justify-center transition-all hover:border-primary/30"
+                className="w-10 h-10 max-md:!min-h-[44px] max-md:!min-w-[44px] rounded-full overflow-hidden bg-surface-container-low border-2 border-surface-container-high flex items-center justify-center transition-all hover:border-primary/30"
                 aria-label="Abrir menu do usuário"
               >
-                <Avatar size="lg" className="w-10 h-10">
+                <Avatar size="lg" className="w-10 h-10 max-md:!min-h-[44px] max-md:!min-w-[44px]">
                   <AvatarImage src={userImage} alt="Perfil" />
                   <AvatarFallback>{userInitials}</AvatarFallback>
                 </Avatar>
