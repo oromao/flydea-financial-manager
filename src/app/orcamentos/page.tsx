@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Trash2, Target, AlertTriangle, CheckCircle2, Loader2, Calendar } from "lucide-react";
+import { Plus, Trash2, Target, PiggyBank, AlertTriangle, CheckCircle2, Loader2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -230,9 +230,9 @@ export default function Orcamentos() {
       {budgets.length === 0 ? (
         <div className="py-16">
           <EmptyState
-            icon={Target}
-            title="Nenhum orçamento definido"
-            description="Crie metas para ter um controle financeiro preciso"
+            icon={PiggyBank}
+            title="Nenhum orçamento"
+            description="Crie orçamentos para acompanhar gastos por categoria"
             ctaLabel="Novo Orçamento"
             onCta={() => setIsOpen(true)}
           />

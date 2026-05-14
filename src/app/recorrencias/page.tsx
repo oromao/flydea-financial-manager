@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
-  RotateCcw, Plus, Trash2, Calendar,
+  RotateCcw, Repeat, Plus, Trash2, Calendar,
   AlertCircle, CheckCircle2, Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -277,9 +277,9 @@ export default function Recorrências() {
       {recurrences.length === 0 ? (
         <div className="py-16">
           <EmptyState
-            icon={RotateCcw}
-            title="Nenhuma recorrência ativa"
-            description="Agende suas despesas fixas para maior praticidade"
+            icon={Repeat}
+            title="Nenhuma recorrência"
+            description="Configure transações que se repetem automaticamente"
             ctaLabel="Nova Recorrência"
             onCta={() => setIsDialogOpen(true)}
           />

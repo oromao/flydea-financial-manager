@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Bell, CheckCheck, Trash2, MailWarning, Info, AlertTriangle } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 import { motion } from "framer-motion";
@@ -126,7 +127,9 @@ export default function Alertas() {
 
       <Card className="premium-card p-4 sm:p-6">
         {filteredNotifications.length === 0 ? (
-          <div role="status" className="py-10 text-center text-on-surface-variant/40">Sem alertas.</div>
+          <div role="status" className="py-16">
+            <EmptyState icon={Bell} title="Nenhum alerta" description="Seus alertas de orçamento aparecerão aqui" />
+          </div>
         ) : (
           <div className="space-y-3">
             {filteredNotifications.map((n) => (

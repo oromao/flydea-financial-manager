@@ -371,13 +371,13 @@ export default function ContasPage() {
 
       {accounts.length === 0 ? (
         <div className="py-16">
-          <EmptyState
-            icon={Wallet}
-            title="Nenhuma conta cadastrada"
-            description="Adicione seus bancos para começar a gestão"
-            ctaLabel="Nova Conta"
-            onCta={() => setOpen(true)}
-          />
+            <EmptyState
+              icon={Wallet}
+              title="Nenhuma conta"
+              description="Crie sua primeira conta para começar a controlar suas finanças"
+              ctaLabel="Nova Conta"
+              onCta={() => setOpen(true)}
+            />
         </div>
       ) : (
         <div className="space-y-12">

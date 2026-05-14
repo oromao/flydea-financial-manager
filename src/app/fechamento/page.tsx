@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
 import { PageHeaderSkeleton, TableSkeleton } from "@/components/ui/page-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 interface TransactionSummary {
@@ -125,6 +126,12 @@ export default function Fechamento() {
         </div>
       </motion.header>
 
+      {transactions.length === 0 ? (
+        <div role="status" className="py-16">
+          <EmptyState icon={FileText} title="Nenhum fechamento" description="Os fechamentos mensais aparecerão aqui" />
+        </div>
+      ) : (
+      <>
       {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
         <Card>
@@ -206,6 +213,8 @@ export default function Fechamento() {
         </Card>
       </div>
 
+      </>
+      )}
 
     </div>
     </PageErrorBoundary>
