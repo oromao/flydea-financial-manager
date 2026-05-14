@@ -55,45 +55,47 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed inset-0 z-50 flex flex-col bg-background sm:bg-transparent sm:items-center sm:justify-center outline-none",
+          "fixed inset-0 z-50 outline-none overflow-y-auto",
           className
         )}
         {...props}
       >
-        <div className={cn(
-          "flex flex-col flex-1 bg-background overflow-hidden",
-          "sm:flex-none sm:w-auto sm:min-w-[400px] sm:max-w-lg sm:max-h-[85vh] sm:rounded-2xl sm:shadow-2xl sm:ring-1 sm:ring-border/10",
-          "sm:self-center sm:mx-auto",
-          "animate-in fade-in duration-200",
-          "data-closed:animate-out data-closed:fade-out-0",
-          "sm:data-open:animate-in sm:data-open:fade-in-0 sm:data-open:zoom-in-95 sm:data-open:slide-in-from-bottom-4",
-          "sm:data-closed:animate-out sm:data-closed:fade-out-0 sm:data-closed:zoom-out-95",
-          "data-closed:slide-out-to-bottom-8"
-        )}>
-          {/* Header with drag handle + close */}
-          <div className="relative flex items-center justify-center border-b border-border/10 min-h-[52px] shrink-0 bg-background">
-            <div className="absolute left-0 top-0 bottom-0 flex items-center sm:hidden pl-4">
-              <div className="w-8 h-1 rounded-full bg-border/40" />
+        {/* Desktop: centering wrapper */}
+        <div className="min-h-full flex items-center justify-center sm:p-6">
+          {/* Card */}
+          <div className={cn(
+            "relative flex flex-col w-full bg-background shadow-xl",
+            "min-h-full sm:min-h-0 sm:max-w-lg sm:rounded-2xl sm:shadow-2xl sm:ring-1 sm:ring-border/10 sm:max-h-[90vh]",
+            "animate-in fade-in duration-200 data-closed:animate-out data-closed:fade-out-0",
+            "sm:data-open:animate-in sm:data-open:fade-in-0 sm:data-open:zoom-in-95 sm:data-open:slide-in-from-bottom-4",
+            "sm:data-closed:animate-out sm:data-closed:fade-out-0 sm:data-closed:zoom-out-95"
+          )}>
+            {/* Header */}
+            <div className="flex items-center justify-between min-h-[52px] px-5 border-b border-border/10 shrink-0 bg-background sticky top-0 z-10">
+              <div className="flex items-center gap-2 sm:hidden">
+                <div className="w-8 h-1 rounded-full bg-border/40" />
+              </div>
+              <div className="flex-1" />
+              {showCloseButton && (
+                <DialogPrimitive.Close
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-full min-h-10 min-w-10 h-8 w-8 text-muted-foreground hover:bg-muted/60 hover:text-foreground shrink-0"
+                    />
+                  }
+                >
+                  <XIcon className="w-4 h-4" />
+                  <span className="sr-only">Fechar</span>
+                </DialogPrimitive.Close>
+              )}
             </div>
-            {showCloseButton && (
-              <DialogPrimitive.Close
-                render={
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full max-md:min-h-[44px] max-md:min-w-[44px] min-h-10 min-w-10 h-8 w-8 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-                  />
-                }
-              >
-                <XIcon className="w-4 h-4" />
-                <span className="sr-only">Fechar</span>
-              </DialogPrimitive.Close>
-            )}
-          </div>
 
-          {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto overscroll-contain">
-            {children}
+            {/* Scrollable content */}
+            <div className="flex-1 overflow-y-auto overscroll-contain">
+              {children}
+            </div>
           </div>
         </div>
       </DialogPrimitive.Popup>
@@ -105,7 +107,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-1.5 px-5 pt-5 sm:pt-0 sm:px-0 pb-3", className)}
+      className={cn("flex flex-col gap-1.5 px-5 pt-5 pb-3", className)}
       {...props}
     />
   )
@@ -115,7 +117,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-footer"
-      className={cn("flex flex-col-reverse gap-2 px-5 pb-5 sm:flex-row sm:justify-end sm:px-0 sm:pb-0 pt-3 border-t border-border/5 shrink-0", className)}
+      className={cn("flex flex-col-reverse gap-2 px-5 pb-5 sm:flex-row sm:justify-end pt-3 border-t border-border/5 shrink-0", className)}
       {...props}
     />
   )
@@ -135,7 +137,7 @@ function DialogDescription({ className, ...props }: DialogPrimitive.Description.
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-sm text-on-surface-variant", className)}
       {...props}
     />
   )
