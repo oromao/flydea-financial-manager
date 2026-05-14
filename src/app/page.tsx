@@ -17,6 +17,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { WeeklyCashflowForecast } from "@/components/weekly-cashflow-forecast";
 import { EmptyDashboard } from "@/components/ui/empty-states";
 import { DashboardHero } from "@/components/dashboard/dashboard-hero";
+import { FirstStepsCard } from "@/components/dashboard/first-steps-card";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 interface ChartDataPoint {
@@ -225,6 +226,11 @@ export default function Dashboard() {
           categories={categories}
         />
       </motion.section>
+
+      {/* First Steps CTA for new users */}
+      <motion.div variants={itemVariants}>
+        <FirstStepsCard />
+      </motion.div>
 
       {/* Main Content: Charts + Sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
