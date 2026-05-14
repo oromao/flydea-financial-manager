@@ -316,7 +316,7 @@ export default function ContasPage() {
 
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Nome da Conta</Label>
+                <Label required className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Nome da Conta</Label>
                 <Input required value={name} onChange={e => setName(e.target.value)}
                   className="h-12 font-bold text-lg rounded-2xl bg-muted/20 border-border/10"
                   placeholder="Ex: Nubank, Itaú, Carteira..." />

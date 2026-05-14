@@ -354,7 +354,7 @@ export default function Orcamentos() {
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-5 mt-2">
             <div className="space-y-1.5">
-              <Label htmlFor="category">Categoria</Label>
+              <Label htmlFor="category" required>Categoria</Label>
               <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
                 <SelectTrigger id="category" className="min-h-[44px] rounded-xl">
                   <SelectValue placeholder="Selecione uma categoria">{categoryId ? categories.find(c => c.id === categoryId)?.name || "Selecione uma categoria" : "Selecione uma categoria"}</SelectValue>
@@ -369,7 +369,7 @@ export default function Orcamentos() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="amount">Valor (R$)</Label>
+              <Label htmlFor="amount" required>Valor (R$)</Label>
               <Input id="amount" type="number" step="0.01" min="0.01" placeholder="0,00" value={amount} onChange={(e) => setAmount(e.target.value)} className="min-h-[44px] rounded-xl" />
             </div>
             <div className="space-y-1.5">

@@ -221,7 +221,7 @@ export default function Recorrências() {
             
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Descrição</Label>
+                <Label required className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Descrição</Label>
                 <Input value={description} onChange={e => setDescription(e.target.value)} 
                   className="h-12 font-bold text-lg rounded-2xl bg-muted/20 border-border/10" 
                   placeholder="Ex: Aluguel, Netflix, Salarios..." />
@@ -229,7 +229,7 @@ export default function Recorrências() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Valor Mensal (BRL)</Label>
+                  <Label required className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Valor Mensal (BRL)</Label>
                   <MoneyInput value={amount} onChange={setAmount} className="h-12 font-black text-2xl rounded-2xl bg-muted/20 border-border/10" required />
                 </div>
                 <div className="space-y-2">
@@ -250,12 +250,12 @@ export default function Recorrências() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Data Inicial</Label>
+                  <Label required className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Data Inicial</Label>
                   <Input type="date" value={formatDateToISO(startDate)} onChange={e => setStartDate(e.target.value)}
                     className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Categoria</Label>
+                  <Label required className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Categoria</Label>
                   <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
                     <SelectTrigger className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10">
                       {categories.find(c => c.id === categoryId)?.name || <span className="text-muted-foreground/50">Selecione...</span>}

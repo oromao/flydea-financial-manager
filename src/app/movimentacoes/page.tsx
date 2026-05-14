@@ -556,7 +556,7 @@ function MovimentaçõesContent() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="description" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">
+                    <Label htmlFor="description" required className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">
                       Descrição
                     </Label>
                     <Input
@@ -577,7 +577,7 @@ function MovimentaçõesContent() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="amount" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">
+                    <Label htmlFor="amount" required className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">
                       Valor (BRL)
                     </Label>
                     <MoneyInput
@@ -605,8 +605,8 @@ function MovimentaçõesContent() {
                   </h3>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="categoryId" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">
-                      Categoria <span className="text-destructive">*</span>
+                    <Label htmlFor="categoryId" required className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">
+                      Categoria
                     </Label>
                     <Select
                       value={categoryId}
@@ -637,8 +637,8 @@ function MovimentaçõesContent() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="accountId" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">
-                      Conta <span className="text-destructive">*</span>
+                    <Label htmlFor="accountId" required className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">
+                      Conta
                     </Label>
                     <Select
                       value={accountId}
@@ -699,7 +699,7 @@ function MovimentaçõesContent() {
                   </h3>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="date" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">
+                    <Label htmlFor="date" required className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">
                       Data
                     </Label>
                     <Input
@@ -707,6 +707,7 @@ function MovimentaçõesContent() {
                       name="date"
                       required
                       type="date"
+                      placeholder="DD/MM/AAAA"
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
                       className="h-12 rounded-xl bg-muted/50 border-border focus:bg-background transition-colors font-semibold"
