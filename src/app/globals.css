@@ -54,6 +54,7 @@
   --color-background: #ffffff;
   --color-on-background: #111827;
   --color-muted: #F3F4F6;
+  --color-muted-foreground: #6B7280;
   --color-error: #EF4444;
   --color-on-error: #ffffff;
 
@@ -219,6 +220,7 @@
     --color-background: #0A0A0B;
     --color-on-background: #E7E1E9;
     --color-muted: #2A2A2E;
+    --color-muted-foreground: #A1A1AA;
     --color-error: #FF8080;
     --color-on-error: #4E0000;
 
@@ -272,6 +274,7 @@
   --color-background: #0A0A0B;
   --color-on-background: #E7E1E9;
   --color-muted: #2A2A2E;
+  --color-muted-foreground: #A1A1AA;
   --color-error: #FF8080;
   --color-on-error: #4E0000;
 

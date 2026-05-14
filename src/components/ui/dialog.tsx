@@ -62,7 +62,8 @@ function DialogContent({
       >
         <div className={cn(
           "flex flex-col flex-1 bg-background overflow-hidden",
-          "sm:flex-none sm:w-full sm:max-w-lg sm:max-h-[85vh] sm:rounded-2xl sm:shadow-2xl sm:ring-1 sm:ring-border/10",
+          "sm:flex-none sm:w-auto sm:min-w-[400px] sm:max-w-lg sm:max-h-[85vh] sm:rounded-2xl sm:shadow-2xl sm:ring-1 sm:ring-border/10",
+          "sm:self-center sm:mx-auto",
           "animate-in fade-in duration-200",
           "data-closed:animate-out data-closed:fade-out-0",
           "sm:data-open:animate-in sm:data-open:fade-in-0 sm:data-open:zoom-in-95 sm:data-open:slide-in-from-bottom-4",
@@ -80,7 +81,7 @@ function DialogContent({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full max-md:min-h-[44px] max-md:min-w-[44px] h-8 w-8 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full max-md:min-h-[44px] max-md:min-w-[44px] min-h-10 min-w-10 h-8 w-8 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
                   />
                 }
               >

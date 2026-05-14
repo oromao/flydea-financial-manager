@@ -70,9 +70,19 @@ export const POST = withRateLimit(async (request: NextRequest) => {
       logger.info("DocumentImport: plain text bypass used", { requestId, userId, length: rawText.length });
     } else {
       logger.info("DocumentImport: calling OCR/PDF parser", { requestId, userId, mimeType });
-      const ocrResult = await paddleOCR.process(buffer, mimeType);
-      rawText = ocrResult.raw.text;
-      structured = ocrResult.structured;
+      try {
+        const ocrResult = await paddleOCR.process(buffer, mimeType);
+        rawText = ocrResult.raw.text;
+        structured = ocrResult.structured;
+      } catch (ocrError) {
+        const ocrMsg = ocrError instanceof Error ? ocrError.message : "Erro desconhecido no OCR";
+        logger.error("DocumentImport: OCR failed", { requestId, userId, error: ocrMsg });
+        return NextResponse.json({
+          error: "Não foi possível extrair texto do documento.",
+          detail: "O reconhecimento óptico de caracteres (OCR) falhou ao processar este arquivo. Verifique se o arquivo não está corrompido e tente novamente.",
+          tip: "Você também pode tentar enviar o arquivo em formato texto ou digitar os dados manualmente.",
+        }, { status: 422 });
+      }
       logger.info("DocumentImport: Extraction finished", { 
         requestId, 
         userId, 
