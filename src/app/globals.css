@@ -50,6 +50,8 @@
   --color-surface-container-highest: #D1D5DB;
 
   --color-foreground: #111827;        /* text-foreground */
+  --color-card: #ffffff;              /* bg-card */
+  --color-card-foreground: #111827;   /* text-card-foreground */
   --color-background: #ffffff;        /* bg-background */
   --color-on-background: #111827;
   --color-outline: #9CA3AF;
@@ -219,6 +221,8 @@
     --color-outline: #4A4A4E;
     --color-outline-variant: #5A5A5E;
     --color-background: #0A0A0B;
+    --color-card: #1A1A1D;
+    --color-card-foreground: #E7E1E9;
     --color-foreground: #E7E1E9;
     --color-on-background: #E7E1E9;
     --color-muted: #2A2A2E;
