@@ -45,57 +45,41 @@ function DialogContent({
   showCloseButton?: boolean
   onClose?: () => void
 }) {
-  const handleClose = () => {
-    externalOnClose?.()
-  }
-
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
-        className={cn(
-          "fixed inset-0 z-50 outline-none overflow-y-auto",
-          className
-        )}
+        className="fixed inset-0 z-50 outline-none overflow-y-auto flex items-start sm:items-center justify-center"
         {...props}
       >
-        {/* Desktop: centering wrapper */}
-        <div className="min-h-full flex items-center justify-center sm:p-6">
-          {/* Card */}
-          <div className={cn(
+        <div
+          className={cn(
             "relative flex flex-col w-full bg-background shadow-xl",
-            "min-h-full sm:min-h-0 sm:max-w-lg sm:rounded-2xl sm:shadow-2xl sm:ring-1 sm:ring-border/10 sm:max-h-[90vh]",
+            "min-h-full sm:min-h-0 sm:max-w-lg sm:m-6 sm:rounded-2xl sm:shadow-2xl sm:ring-1 sm:ring-border/10 sm:max-h-[85vh]",
             "animate-in fade-in duration-200 data-closed:animate-out data-closed:fade-out-0",
             "sm:data-open:animate-in sm:data-open:fade-in-0 sm:data-open:zoom-in-95 sm:data-open:slide-in-from-bottom-4",
-            "sm:data-closed:animate-out sm:data-closed:fade-out-0 sm:data-closed:zoom-out-95"
-          )}>
-            {/* Header */}
-            <div className="flex items-center justify-between min-h-[52px] px-5 border-b border-border/10 shrink-0 bg-background sticky top-0 z-10">
-              <div className="flex items-center gap-2 sm:hidden">
-                <div className="w-8 h-1 rounded-full bg-border/40" />
-              </div>
-              <div className="flex-1" />
-              {showCloseButton && (
-                <DialogPrimitive.Close
-                  render={
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="rounded-full min-h-10 min-w-10 h-8 w-8 text-muted-foreground hover:bg-muted/60 hover:text-foreground shrink-0"
-                    />
-                  }
-                >
-                  <XIcon className="w-4 h-4" />
-                  <span className="sr-only">Fechar</span>
-                </DialogPrimitive.Close>
-              )}
-            </div>
+            "sm:data-closed:animate-out sm:data-closed:fade-out-0 sm:data-closed:zoom-out-95",
+            className
+          )}
+        >
+          {showCloseButton && (
+            <DialogPrimitive.Close
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-3 top-3 z-10 rounded-full min-h-10 min-w-10 h-8 w-8 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                />
+              }
+            >
+              <XIcon className="w-4 h-4" />
+              <span className="sr-only">Fechar</span>
+            </DialogPrimitive.Close>
+          )}
 
-            {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto overscroll-contain">
-              {children}
-            </div>
+          <div className="flex-1 overflow-y-auto overscroll-contain">
+            {children}
           </div>
         </div>
       </DialogPrimitive.Popup>
