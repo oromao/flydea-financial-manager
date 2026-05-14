@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -22,10 +24,27 @@ interface AnalyticsData {
 }
 
 export default function AdminAnalyticsPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.role !== "ADMIN") {
+      router.push("/");
+    }
+  }, [status, session, router]);
+
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState(30);
   const [error, setError] = useState("");
+
+  if (status === "loading" || status === "unauthenticated") {
+    return null;
+  }
+
+  if (session?.user?.role !== "ADMIN") {
+    return null;
+  }
 
   useEffect(() => {
     setLoading(true);

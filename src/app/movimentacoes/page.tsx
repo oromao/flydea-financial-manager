@@ -336,10 +336,12 @@ function MovimentaçõesContent() {
     }
   };
 
-  const deleteTransaction = async (id: string) => {
+  const deleteTransaction = async (id: string, description?: string) => {
     const ok = await confirm({
       title: "Excluir transação",
-      message: "Tem certeza que deseja remover este lançamento?",
+      message: description
+        ? `Tem certeza que deseja excluir "${description}"? Esta ação não pode ser desfeita.`
+        : "Tem certeza que deseja remover este lançamento? Esta ação não pode ser desfeita.",
       confirmLabel: "Excluir",
       variant: "danger",
     });
@@ -1154,7 +1156,7 @@ function MovimentaçõesContent() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => deleteTransaction(t.id)}
+                            onClick={() => deleteTransaction(t.id, t.description)}
                             aria-label="Excluir transação"
                             className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive"
                           >
@@ -1293,7 +1295,7 @@ function MovimentaçõesContent() {
                             Editar
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => deleteTransaction(t.id)}
+                            onClick={() => deleteTransaction(t.id, t.description)}
                             variant="destructive"
                             className="rounded-lg text-sm font-semibold"
                           >
