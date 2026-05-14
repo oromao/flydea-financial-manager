@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { CalendarRange, CheckCircle2, AlertTriangle, Wallet, FileSpreadsheet, FileText } from "lucide-react";
+import { CalendarRange, CheckCircle2, AlertTriangle, Wallet, FileSpreadsheet, FileText, Calendar } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -127,9 +127,13 @@ export default function Fechamento() {
       </motion.header>
 
       {transactions.length === 0 ? (
-        <div role="status" className="py-16">
-          <EmptyState icon={FileText} title="Nenhum fechamento" description="Os fechamentos mensais aparecerão aqui" />
-        </div>
+        <EmptyState
+          icon={Calendar}
+          title="Nenhum dado neste mês"
+          description="Não há transações registradas para este período. Selecione outro mês ou registre novas transações."
+          ctaLabel="Voltar para mês atual"
+          onCta={() => setPeriod("0")}
+        />
       ) : (
       <>
       {/* Summary cards */}

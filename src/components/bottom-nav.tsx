@@ -55,7 +55,7 @@ export function BottomNav() {
           paddingBottom: "max(0px, env(safe-area-inset-bottom))",
         }}
       >
-        <div className="flex items-stretch justify-around h-16 max-w-lg mx-auto px-2">
+        <div className="flex items-stretch justify-around h-16 max-w-lg mx-auto px-1 gap-0.5">
           {mainNavItems.map((item) => {
             const isActive = item.href !== "#" && (pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)));
             const Icon = item.icon;

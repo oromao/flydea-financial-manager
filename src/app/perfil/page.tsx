@@ -19,6 +19,7 @@ export default function PerfilPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const toast = useToast();
 
   useEffect(() => {
@@ -134,6 +135,17 @@ export default function PerfilPage() {
             </div>
           </div>
 
+            {previewUrl && (
+            <div className="relative rounded-xl overflow-hidden border border-outline/20">
+              <img src={previewUrl} alt="Preview" className="w-full h-32 object-cover" />
+              <button
+                onClick={() => { setPreviewUrl(null); }}
+                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/80 flex items-center justify-center text-xs font-bold"
+              >
+                X
+              </button>
+            </div>
+          )}
           <label className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-outline/30 bg-surface-variant/30 px-4 py-3 cursor-pointer hover:bg-surface-variant/50 transition-colors">
             <Camera className="w-4 h-4" />
             <span className="text-sm font-medium">Trocar foto</span>
@@ -143,7 +155,11 @@ export default function PerfilPage() {
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (file) uploadAvatar(file);
+                if (file) {
+                  const url = URL.createObjectURL(file);
+                  setPreviewUrl(url);
+                  uploadAvatar(file);
+                }
               }}
             />
           </label>

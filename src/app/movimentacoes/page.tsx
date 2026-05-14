@@ -5,8 +5,8 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { safeFormatDate, safeDateSortKey, toLocalDateInput } from "@/lib/date-utils";
 import {
   Plus, Trash2, Search, ArrowUp, ArrowDown, Filter, LayoutList,
-  FileSpreadsheet, Pencil, X, MoreVertical, Wallet, Loader2, FileUp,
-  CheckCircle2, ArrowUpRight, ArrowDownRight, CalendarDays,
+  FileSpreadsheet, Pencil, X, Wallet, Loader2, FileUp,
+  ArrowUpRight, ArrowDownRight, CalendarDays,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,12 +19,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { cn } from "@/lib/utils";
 import { PaymentImporter } from "@/components/payment-importer";
 import { motion, AnimatePresence } from "framer-motion";
@@ -844,7 +839,7 @@ function MovimentaçõesContent() {
                     type="submit"
                     disabled={saving}
                     variant="default"
-                    className="w-full h-14 text-base font-bold rounded-xl shadow-xl shadow-primary/20"
+                    className="w-full h-14 text-base font-bold rounded-xl shadow-xl shadow-primary/20 scroll-mt-24"
                   >
                     {saving ? (
                       <Loader2 className="h-5 w-5 animate-spin" />
@@ -940,7 +935,13 @@ function MovimentaçõesContent() {
                 className="pl-9 h-11 rounded-xl bg-muted/50 border-border text-sm"
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
+              <div className="relative flex items-center justify-center w-11 h-11 rounded-xl bg-muted/50">
+                <Filter className={`w-5 h-5 ${hasActiveFilters ? 'text-primary' : 'text-muted-foreground/50'}`} />
+                {hasActiveFilters && (
+                  <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-primary rounded-full ring-2 ring-background" />
+                )}
+              </div>
               <Select
                 value={filterCategory}
                 onValueChange={(v) => setFilterCategory(v || "Todos")}
@@ -1174,7 +1175,7 @@ function MovimentaçõesContent() {
       </div>
 
       {/* ─── TRANSACTION LIST — MOBILE ─── */}
-      <div className="md:hidden space-y-2">
+      <div className="md:hidden space-y-2 mx-4">
         {loading ? (
           <div className="py-20 text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
@@ -1258,52 +1259,22 @@ function MovimentaçõesContent() {
                         </p>
                       </div>
 
-                      <DropdownMenu>
-                        <DropdownMenuTrigger
-                          render={
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-11 w-11 rounded-lg flex-shrink-0"
-                              aria-label="Ações"
-                            >
-                              <MoreVertical className="h-4 w-4 text-muted-foreground" />
-                            </Button>
-                          }
-                        />
-                        <DropdownMenuContent
-                          align="end"
-                          className="w-40 rounded-xl"
+                      <div className="flex items-center gap-0.5 flex-shrink-0">
+                        <button
+                          onClick={() => handleEdit(t)}
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-surface-variant/50 transition-colors"
                         >
-                          {t.type === "EXPENSE" &&
-                            t.paymentStatus === "PENDING" && (
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  updatePaymentStatus(t.id, "PAID");
-                                }}
-                                className="rounded-lg text-sm font-semibold"
-                              >
-                                <CheckCircle2 className="h-4 w-4 mr-2 text-success" />
-                                Marcar Pago
-                              </DropdownMenuItem>
-                            )}
-                          <DropdownMenuItem
-                            onClick={() => handleEdit(t)}
-                            className="rounded-lg text-sm font-semibold"
-                          >
-                            <Pencil className="h-4 w-4 mr-2" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => deleteTransaction(t.id, t.description)}
-                            variant="destructive"
-                            className="rounded-lg text-sm font-semibold"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Excluir
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                          <Pencil className="w-4 h-4" />
+                          <span className="md:hidden">Editar</span>
+                        </button>
+                        <button
+                          onClick={() => deleteTransaction(t.id, t.description)}
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          <span className="md:hidden">Excluir</span>
+                        </button>
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -1367,7 +1338,7 @@ function MovimentaçõesContent() {
       <div
         className="md:hidden fixed z-50"
         style={{
-          bottom: "calc(6rem + env(safe-area-inset-bottom))",
+          bottom: "calc(5rem+env(safe-area-inset-bottom))",
           right: "max(1.5rem, env(safe-area-inset-right))",
         }}
       >

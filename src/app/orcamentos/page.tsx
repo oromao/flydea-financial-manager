@@ -306,7 +306,7 @@ export default function Orcamentos() {
                     </div>
                   </div>
 
-                  <div className="space-y-3">
+                    <div className="space-y-3">
                     <Progress value={pct}>
                       <ProgressTrack className="h-1.5 rounded-full bg-muted">
                         <ProgressIndicator className={cn("h-full rounded-full", barFillClass)} />
@@ -322,6 +322,10 @@ export default function Orcamentos() {
                       <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">
                         Alerta em {budget.alertAt}%
                       </span>
+                    </div>
+                    <div className="flex justify-between text-xs text-on-surface-variant/70">
+                      <span>{(budget.percentage || 0).toFixed(1)}% usado</span>
+                      <span>{formatCurrency(budget.spent || 0)} / {formatCurrency(budget.amount)}</span>
                     </div>
                   </div>
                 </Card>
