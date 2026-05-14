@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeaderSkeleton, CardsGridSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 interface Budget {
   id: string;
@@ -53,6 +54,7 @@ export default function Orcamentos() {
   const [isOpen, setIsOpen] = useState(false);
   const toast = useToast();
   const confirm = useConfirm();
+  const { trackAction } = useAnalytics();
 
   // Form
   const [categoryId, setCategoryId] = useState("");
@@ -108,6 +110,7 @@ export default function Orcamentos() {
       });
       if (res.ok) {
         toast.success("Orçamento criado!");
+        trackAction("create_budget");
         setIsOpen(false);
         resetForm();
         fetchData();

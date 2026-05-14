@@ -6,6 +6,7 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { OnboardingTour } from "@/components/onboarding/onboarding-tour";
 import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
+import { AnalyticsTracker } from "@/components/analytics/analytics-tracker";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -58,6 +59,7 @@ export default async function RootLayout({
               <Sidebar>{children}</Sidebar>
               <OnboardingTour />
               <PwaInstallPrompt />
+              <AnalyticsTracker />
             </Providers>
           </TooltipProvider>
         </ErrorBoundary>

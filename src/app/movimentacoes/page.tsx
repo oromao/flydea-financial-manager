@@ -37,6 +37,7 @@ import { useZodForm } from "@/hooks/use-zod-form";
 import { PageHeaderSkeleton, TableSkeleton } from "@/components/ui/page-skeleton";
 import { PageTransition } from "@/components/ui/page-transition";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 const transactionSchema = z.object({
   description: z.string().min(1, "Descrição é obrigatória"),
@@ -80,6 +81,7 @@ function MovimentaçõesContent() {
   const searchParams = useSearchParams();
   const toast = useToast();
   const confirm = useConfirm();
+  const { trackAction } = useAnalytics();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -315,6 +317,7 @@ function MovimentaçõesContent() {
 
       if (res.ok) {
         toast.success(editingId ? "Atualizado com sucesso!" : "Lançamento confirmado!");
+        trackAction(editingId ? "edit_transaction" : "create_transaction");
         // Pequeno delay para garantir que o toast apareça antes do modal fechar
         setTimeout(() => {
           setOpen(false);
@@ -346,6 +349,7 @@ function MovimentaçõesContent() {
       const res = await fetch(`/api/transactions/${id}`, { method: "DELETE" });
       if (res.ok) {
         toast.success("Excluído com sucesso!");
+        trackAction("delete_transaction");
         fetchTransactions();
         fetchStats();
       } else {

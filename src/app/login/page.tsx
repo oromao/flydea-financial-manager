@@ -10,6 +10,7 @@ import { Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -18,6 +19,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { trackAction, trackError } = useAnalytics();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,10 +37,13 @@ export default function LoginPage() {
         CredentialsSignin: "E-mail ou senha incorretos.",
         default: "Erro ao autenticar. Tente novamente.",
       };
-      setError(errorMessages[res.error] || errorMessages.default);
+      const errorMsg = errorMessages[res.error] || errorMessages.default;
+      setError(errorMsg);
+      trackError(errorMsg, "login_error");
       setLoading(false);
     } else {
       setLoading(false);
+      trackAction("login");
       router.push("/");
     }
   };

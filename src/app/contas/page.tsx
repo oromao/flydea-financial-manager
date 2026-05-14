@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeaderSkeleton, CardsGridSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 interface Account {
   id: string;
@@ -55,6 +56,7 @@ export default function ContasPage() {
 
   const toast = useToast();
   const confirm = useConfirm();
+  const { trackAction } = useAnalytics();
 
   const fetchAccounts = useCallback(async () => {
     setLoading(true);
@@ -93,6 +95,7 @@ export default function ContasPage() {
 
       if (res.ok) {
         toast.success(editingId ? "Conta atualizada" : "Conta criada com sucesso!");
+        trackAction(editingId ? "edit_account" : "create_account");
         setOpen(false);
         resetForm();
         fetchAccounts();
@@ -123,6 +126,7 @@ export default function ContasPage() {
       const res = await fetch(`/api/accounts/${id}/archive`, { method: "PATCH" });
       if (res.ok) {
         toast.success("Conta arquivada!");
+        trackAction("archive_account");
         fetchAccounts();
       } else {
         const err = await res.json();

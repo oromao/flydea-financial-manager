@@ -18,6 +18,7 @@ import { PageHeaderSkeleton, TableSkeleton } from "@/components/ui/page-skeleton
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 import { safeFormatDate } from "@/lib/date-utils";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 interface BillTransaction {
   id: string;
@@ -30,6 +31,7 @@ interface BillTransaction {
 export default function ContasAPagar() {
   const toast = useToast();
   const confirm = useConfirm();
+  const { trackAction } = useAnalytics();
   const [transactions, setTransactions] = useState<BillTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
@@ -73,6 +75,7 @@ export default function ContasAPagar() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ paymentStatus: nextStatus }),
       });
+      if (nextStatus === "PAID") trackAction("mark_as_paid");
       toast.success(nextStatus === "PAID" ? "Conta liquidada!" : "Lancamento pendente.");
       fetchTransactions();
     } catch (e) {

@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
+import { useAnalytics } from "@/hooks/use-analytics";
 import { MoneyInput } from "@/components/ui/money-input";
 import { PageHeaderSkeleton, TableSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
@@ -48,6 +49,7 @@ export default function Recorrências() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const toast = useToast();
   const confirm = useConfirm();
+  const { trackAction } = useAnalytics();
 
   // Form states
   const [description, setDescription] = useState("");
@@ -146,6 +148,7 @@ export default function Recorrências() {
       });
       if (res.ok) {
         toast.success("Recorrência agendada!");
+        trackAction("create_recurrence");
         setIsDialogOpen(false);
         resetForm();
         fetchRecurrences();
