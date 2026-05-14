@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Wallet, CreditCard, PiggyBank, Banknote, Edit2, TrendingUp, Loader2, Archive, RotateCcw, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, Wallet, CreditCard, PiggyBank, Banknote, Edit2, TrendingUp, Loader2, Archive, RotateCcw, ChevronDown, ChevronRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import { MoneyInput } from "@/components/ui/money-input";
@@ -274,7 +274,20 @@ export default function ContasPage() {
           <DialogTrigger render={<Button className="apple-button-primary h-11 px-8 rounded-xl shadow-lg shadow-secondary/20" />}>
             <Plus className="w-5 h-5 mr-2" strokeWidth={2.5} /> NOVA CONTA
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-3xl bg-card sm:shadow-2xl">
+          <DialogContent showCloseButton={false} className="sm:max-w-[500px] p-0 overflow-x-hidden overflow-y-auto border-none sm:rounded-3xl bg-card sm:shadow-2xl">
+            <DialogClose
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-4 right-4 z-30 rounded-full"
+                />
+              }
+            >
+              <X className="w-5 h-5" />
+              <span className="sr-only">Fechar</span>
+            </DialogClose>
+
             <div className="p-8 bg-card sticky top-0 z-10 pointer-events-none">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-black tracking-tight text-foreground">
@@ -380,7 +393,7 @@ export default function ContasPage() {
             <div>
               <button
                 onClick={() => setArchivedOpen(!archivedOpen)}
-                className="flex items-center gap-3 w-full group cursor-pointer"
+                className="flex items-center gap-3 w-full group cursor-pointer max-md:min-h-[44px]"
               >
                 <div className="flex items-center gap-2">
                   {archivedOpen ? (

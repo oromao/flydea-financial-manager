@@ -92,7 +92,7 @@ export function BottomNav() {
                 <button
                   key={item.name}
                   onClick={() => setSheetOpen(true)}
-                  aria-label="Explorar mais modulos"
+                  aria-label="Explorar mais módulos"
                   className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
                 >
                   <div className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-2xl transition-all duration-200 group-active:bg-surface-container">
@@ -154,7 +154,7 @@ export function BottomNav() {
             <SheetTitle className="text-xl font-black text-on-background">
               Explorar
             </SheetTitle>
-            <SheetClose className="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center [&_svg]:!size-5">
+            <SheetClose className="max-md:min-h-[44px] max-md:min-w-[44px] w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center [&_svg]:!size-5">
               <X className="text-on-surface-variant" />
               <span className="sr-only">Fechar</span>
             </SheetClose>

@@ -17,10 +17,18 @@ import { cn } from "@/lib/utils";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 import { safeFormatDate } from "@/lib/date-utils";
 
+interface BillTransaction {
+  id: string;
+  description: string;
+  amount: number;
+  dueDate: string | null;
+  paymentStatus: string;
+}
+
 export default function ContasAPagar() {
   const toast = useToast();
   const confirm = useConfirm();
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<BillTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "overdue" | "upcoming" | "nodate">("all");
@@ -131,9 +139,9 @@ export default function ContasAPagar() {
 
         <Tabs value={filter} onValueChange={(value) => setFilter(value as typeof filter)} className="self-start md:self-center">
           <TabsList aria-label="Filtrar por vencimento" className="h-11 rounded-2xl p-1 overflow-x-auto">
-            <TabsTrigger value="all" className="rounded-xl text-xs font-black uppercase tracking-widest h-10 px-4 whitespace-nowrap">Todas</TabsTrigger>
-            <TabsTrigger value="overdue" className="rounded-xl text-xs font-black uppercase tracking-widest h-10 px-4 whitespace-nowrap">Atrasadas</TabsTrigger>
-            <TabsTrigger value="upcoming" className="rounded-xl text-xs font-black uppercase tracking-widest h-10 px-4 whitespace-nowrap">Proximos 7d</TabsTrigger>
+            <TabsTrigger value="all" className="rounded-xl text-xs font-black uppercase tracking-widest max-md:min-h-[44px] h-10 px-4 whitespace-nowrap">Todas</TabsTrigger>
+            <TabsTrigger value="overdue" className="rounded-xl text-xs font-black uppercase tracking-widest max-md:min-h-[44px] h-10 px-4 whitespace-nowrap">Atrasadas</TabsTrigger>
+            <TabsTrigger value="upcoming" className="rounded-xl text-xs font-black uppercase tracking-widest max-md:min-h-[44px] h-10 px-4 whitespace-nowrap">Proximos 7d</TabsTrigger>
           </TabsList>
         </Tabs>
       </motion.header>

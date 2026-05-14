@@ -206,8 +206,10 @@ function MovimentaçõesContent() {
         )
         .reduce((acc: number, t: Transaction) => acc + t.amount, 0);
       setStats({ balance, income, expenses, pending });
-    } catch (e) {}
-  }, []);
+    } catch {
+      toast.error("Erro ao carregar estatísticas");
+    }
+  }, [toast]);
 
   const [categories, setCategories] = useState<Category[]>([]);
   const fetchCategories = useCallback(async () => {
@@ -215,8 +217,10 @@ function MovimentaçõesContent() {
       const res = await fetch("/api/categories");
       const data = await res.json();
       setCategories(Array.isArray(data) ? data : []);
-    } catch (e) {}
-  }, []);
+    } catch {
+      toast.error("Erro ao carregar categorias");
+    }
+  }, [toast]);
 
   useEffect(() => {
     fetchCategories();
@@ -254,8 +258,10 @@ function MovimentaçõesContent() {
       const res = await fetch("/api/accounts");
       const data = await res.json();
       setAccounts(Array.isArray(data) ? data : []);
-    } catch (e) {}
-  }, []);
+    } catch {
+      toast.error("Erro ao carregar contas");
+    }
+  }, [toast]);
 
   useEffect(() => {
     fetchAccounts();
@@ -476,7 +482,7 @@ function MovimentaçõesContent() {
               }
             />
 
-              <DialogContent className="sm:max-w-[550px] p-0 overflow-y-auto border-border sm:rounded-2xl bg-card sm:shadow-2xl max-h-[85vh]">
+              <DialogContent showCloseButton={false} className="sm:max-w-[550px] p-0 overflow-y-auto border-border sm:rounded-2xl bg-card sm:shadow-2xl max-h-[85vh]">
                 {/* Close button - positioned above sticky header */}
                 <DialogClose
                   render={
@@ -512,7 +518,7 @@ function MovimentaçõesContent() {
                     <button
                       type="button"
                       className={cn(
-                        "flex-1 h-10 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer",
+                        "flex-1 max-md:min-h-[44px] h-10 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer",
                         type === "INCOME"
                           ? "bg-success text-white shadow-md shadow-success/20"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
@@ -524,7 +530,7 @@ function MovimentaçõesContent() {
                     <button
                       type="button"
                       className={cn(
-                        "flex-1 h-10 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer",
+                        "flex-1 max-md:min-h-[44px] h-10 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer",
                         type === "EXPENSE"
                           ? "bg-destructive text-white shadow-md shadow-destructive/20"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
@@ -964,13 +970,13 @@ function MovimentaçõesContent() {
               className="flex-shrink-0"
             >
               <TabsList aria-label="Filtrar por tipo" className="h-11 rounded-lg bg-muted border-border p-0.5">
-                <TabsTrigger value="ALL" className="px-3 h-9 text-xs font-medium rounded-md">
+                <TabsTrigger value="ALL" className="px-3 max-md:min-h-[44px] h-9 text-xs font-medium rounded-md">
                   Todos
                 </TabsTrigger>
-                <TabsTrigger value="INCOME" className="px-3 h-9 text-xs font-medium rounded-md">
+                <TabsTrigger value="INCOME" className="px-3 max-md:min-h-[44px] h-9 text-xs font-medium rounded-md">
                   +
                 </TabsTrigger>
-                <TabsTrigger value="EXPENSE" className="px-3 h-9 text-xs font-medium rounded-md">
+                <TabsTrigger value="EXPENSE" className="px-3 max-md:min-h-[44px] h-9 text-xs font-medium rounded-md">
                   -
                 </TabsTrigger>
               </TabsList>
@@ -982,13 +988,13 @@ function MovimentaçõesContent() {
               className="flex-shrink-0"
             >
               <TabsList aria-label="Filtrar por status" className="h-11 rounded-lg bg-muted border-border p-0.5">
-                <TabsTrigger value="ALL" className="px-3 h-9 text-xs font-medium rounded-md">
+                <TabsTrigger value="ALL" className="px-3 max-md:min-h-[44px] h-9 text-xs font-medium rounded-md">
                   Status
                 </TabsTrigger>
-                <TabsTrigger value="PAID" className="px-3 h-9 text-xs font-medium rounded-md">
+                <TabsTrigger value="PAID" className="px-3 max-md:min-h-[44px] h-9 text-xs font-medium rounded-md">
                   Pago
                 </TabsTrigger>
-                <TabsTrigger value="PENDING" className="px-3 h-9 text-xs font-medium rounded-md">
+                <TabsTrigger value="PENDING" className="px-3 max-md:min-h-[44px] h-9 text-xs font-medium rounded-md">
                   Pend
                 </TabsTrigger>
               </TabsList>

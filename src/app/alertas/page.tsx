@@ -11,8 +11,17 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { safeFormatDate } from "@/lib/date-utils";
 
+interface AlertNotification {
+  id: string;
+  read: boolean;
+  title: string;
+  message: string;
+  type: string;
+  createdAt: string;
+}
+
 export default function Alertas() {
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<AlertNotification[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "unread" | "read">("all");
@@ -97,9 +106,9 @@ export default function Alertas() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={markAllRead} variant="outline" className="h-10 rounded-xl">Marcar todas lidas</Button>
-          <Button onClick={clearRead} variant="outline" className="h-10 rounded-xl">Limpar lidas</Button>
-          <Button onClick={load} variant="outline" className="h-10 rounded-xl">Atualizar</Button>
+          <Button onClick={markAllRead} variant="outline" className="max-md:min-h-[44px] h-10 rounded-xl">Marcar todas lidas</Button>
+          <Button onClick={clearRead} variant="outline" className="max-md:min-h-[44px] h-10 rounded-xl">Limpar lidas</Button>
+          <Button onClick={load} variant="outline" className="max-md:min-h-[44px] h-10 rounded-xl">Atualizar</Button>
         </div>
       </motion.header>
 
