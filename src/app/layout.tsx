@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/sidebar";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { OnboardingTour } from "@/components/onboarding/onboarding-tour";
+import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -56,6 +57,7 @@ export default async function RootLayout({
             <Providers session={session}>
               <Sidebar>{children}</Sidebar>
               <OnboardingTour />
+              <PwaInstallPrompt />
             </Providers>
           </TooltipProvider>
         </ErrorBoundary>
