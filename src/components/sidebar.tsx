@@ -7,7 +7,7 @@ import {
   LayoutDashboard, ReceiptText, BarChart3, LogOut, Wallet,
   RotateCcw, History, Target, CreditCard,
   BadgeDollarSign, CalendarRange, ShieldCheck,
-  TrendingUp, Menu, X, ChevronRight
+  TrendingUp, Menu, X, ChevronRight, Activity
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -36,6 +36,7 @@ const navItems = [
 const adminItems = [
   { name: "Logs de Sistema", href: "/admin/logs", icon: History },
   { name: "Aprovações", href: "/admin/aprovacoes", icon: ShieldCheck },
+  { name: "Analytics", href: "/admin/analytics", icon: Activity },
 ];
 
 function getInitials(name?: string | null): string {
