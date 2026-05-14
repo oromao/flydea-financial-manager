@@ -7,7 +7,7 @@ import {
   AreaChart, Area,
 } from "recharts";
 import {
-  Users, Activity, Eye, TrendingUp,
+  Users, Activity, Eye, TrendingUp, AlertTriangle,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PageHeaderSkeleton } from "@/components/ui/page-skeleton";
@@ -147,6 +147,60 @@ export default function AdminAnalyticsPage() {
             </div>
           ))}
         </div>
+      </Card>
+
+      <Card className="p-6">
+        <h2 className="font-bold text-on-background mb-4 flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-warning" />
+          Pontos de Abandono (Drop-off)
+        </h2>
+
+        {data?.pageViews && data.pageViews.length > 0 ? (
+          <div className="space-y-4">
+            <p className="text-sm text-on-surface-variant/70">
+              Páginas com maior taxa de abandono. Uma página com bounce alto significa que
+              usuários saíram do app sem interagir após visitá-la.
+            </p>
+
+            {data.pageViews
+              .sort((a, b) => a.count - b.count)
+              .slice(0, 3)
+              .map((pv, i) => (
+                <div key={pv.path} className="p-4 rounded-2xl bg-destructive/5 border border-destructive/10">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-bold text-on-background flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-destructive/10 flex items-center justify-center text-xs font-bold text-destructive">
+                        {i + 1}
+                      </span>
+                      {pv.path}
+                    </span>
+                    <span className="text-sm font-bold text-destructive">
+                      {pv.count} visits
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 h-2 bg-destructive/10 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-destructive rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(100, (pv.count / Math.max(...data.pageViews.map(p => p.count))) * 100)}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-on-surface-variant/50">
+                      {Math.round((pv.count / Math.max(...data.pageViews.map(p => p.count))) * 100)}%
+                    </span>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        ) : (
+          <div className="py-8 text-center">
+            <p className="text-sm text-on-surface-variant/50">
+              Dados insuficientes para análise de abandono. Continue usando o app para gerar mais dados.
+            </p>
+          </div>
+        )}
       </Card>
     </motion.div>
   );
