@@ -112,7 +112,7 @@ export default function AprovacoesPage() {
     <PageErrorBoundary>
     <div className="space-y-10 max-w-6xl mx-auto pb-24 md:pb-8">
       <div className="flex items-center gap-5">
-        <div className="p-3.5 rounded-2xl bg-primary text-on-primary shadow-xl shadow-primary/20">
+        <div className="p-4 rounded-2xl bg-primary text-on-primary shadow-xl shadow-primary/20">
           <ShieldCheck className="w-8 h-8" />
         </div>
         <div>

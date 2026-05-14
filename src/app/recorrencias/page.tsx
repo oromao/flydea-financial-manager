@@ -21,6 +21,7 @@ import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import { MoneyInput } from "@/components/ui/money-input";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
+import { formatDateToISO } from "@/lib/date-utils";
 
 interface Recurrence {
   id: string;
@@ -111,9 +112,10 @@ export default function Recorrências() {
       const data = await res.json();
       setCategories(Array.isArray(data) ? data : []);
       if (data.length > 0) setCategoryId(data[0].id);
-    } catch (e) {
+    } catch {
+      toast.error("Erro ao carregar categorias");
     }
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     fetchRecurrences();
@@ -179,7 +181,7 @@ export default function Recorrências() {
         className="flex flex-col md:flex-row md:items-center justify-between gap-8"
       >
         <div className="flex items-center gap-5">
-          <div className="p-3.5 rounded-2xl bg-secondary text-on-secondary shadow-lg shadow-secondary/20">
+          <div className="p-4 rounded-2xl bg-secondary text-on-secondary shadow-lg shadow-secondary/20">
             <RotateCcw className="w-8 h-8" />
           </div>
           <div>
@@ -234,7 +236,7 @@ export default function Recorrências() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Data Inicial</Label>
-                  <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
+                  <Input type="date" value={formatDateToISO(startDate)} onChange={e => setStartDate(e.target.value)}
                     className="h-12 font-bold rounded-2xl bg-muted/20 border-border/10" />
                 </div>
                 <div className="space-y-2">
@@ -326,6 +328,7 @@ export default function Recorrências() {
                         variant="ghost"
                         size="icon"
                         onClick={() => toggleRecurrence(rec.id, rec.isActive)}
+                        aria-label={rec.isActive ? "Pausar recorrência" : "Retomar recorrência"}
                         className={cn(
                           "w-11 h-11 rounded-xl transition-all",
                           rec.isActive

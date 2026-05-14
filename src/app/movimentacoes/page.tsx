@@ -5,7 +5,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { safeFormatDate, safeDateSortKey, toLocalDateInput } from "@/lib/date-utils";
 import {
   Plus, Trash2, Search, ArrowUp, ArrowDown, Filter, LayoutList,
-  FileSpreadsheet, Edit2, X, MoreVertical, Wallet, Loader2, FileUp,
+  FileSpreadsheet, Pencil, X, MoreVertical, Wallet, Loader2, FileUp,
   CheckCircle2, ArrowUpRight, ArrowDownRight, CalendarDays,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -1132,7 +1132,7 @@ function MovimentaçõesContent() {
                             aria-label="Editar transação"
                             className="h-11 w-11 rounded-lg text-muted-foreground hover:text-foreground"
                           >
-                            <Edit2 className="h-4 w-4" />
+                            <Pencil className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
@@ -1272,7 +1272,7 @@ function MovimentaçõesContent() {
                             onClick={() => handleEdit(t)}
                             className="rounded-lg text-sm font-semibold"
                           >
-                            <Edit2 className="h-4 w-4 mr-2" />
+                            <Pencil className="h-4 w-4 mr-2" />
                             Editar
                           </DropdownMenuItem>
                           <DropdownMenuItem

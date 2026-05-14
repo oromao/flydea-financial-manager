@@ -165,7 +165,7 @@ export function AgentsDashboard() {
         className="flex items-center justify-between"
       >
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-2xl bg-primary/10 text-primary shadow-lg shadow-primary/10 flex-shrink-0">
+          <div className="p-3 rounded-2xl bg-primary/10 text-primary shadow-lg shadow-primary/10 flex-shrink-0">
             <Brain className="w-6 h-6" />
           </div>
           <div>

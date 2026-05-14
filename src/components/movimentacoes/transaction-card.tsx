@@ -2,15 +2,27 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight, ArrowDownRight, CheckCircle2, Edit2, Trash2, MoreHorizontal } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, CheckCircle2, Pencil, Trash2, MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
 import { safeFormatDate } from "@/lib/date-utils";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
+import type { TransactionType, PaymentStatus } from "@/lib/financial-engine";
+
+interface TransactionCardData {
+  id: string;
+  type: TransactionType;
+  description: string;
+  amount: number;
+  date: string | Date;
+  paymentStatus: PaymentStatus | string;
+  category?: { name: string } | null;
+}
+
 interface TransactionCardProps {
-  transaction: any;
-  onEdit: (t: any) => void;
+  transaction: TransactionCardData;
+  onEdit: (t: TransactionCardData) => void;
   onDelete: (id: string) => void;
   onUpdateStatus: (id: string, status: string) => void;
   formatCurrency: (val: number) => string;
@@ -91,7 +103,7 @@ export function TransactionCard({
         <button
           onClick={(e) => { e.stopPropagation(); setShowActions(!showActions); }}
           className="p-1 rounded-lg hover:bg-surface-container-high transition-colors shrink-0"
-          aria-label="Acoes"
+          aria-label="Ações"
         >
           <MoreHorizontal className="w-4 h-4 text-on-surface-variant/40" />
         </button>
@@ -124,7 +136,7 @@ export function TransactionCard({
             className="text-[11px] text-on-surface-variant"
             aria-label="Editar"
           >
-            <Edit2 className="w-3.5 h-3.5 mr-1" />
+            <Pencil className="w-3.5 h-3.5 mr-1" />
             Editar
           </Button>
           <Button 

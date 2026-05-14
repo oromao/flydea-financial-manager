@@ -83,7 +83,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-[28px] font-bold tracking-tight text-on-background"
+            className="text-3xl font-bold tracking-tight text-on-background"
           >
             Flydea
           </motion.h1>
@@ -92,7 +92,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="mt-2 text-[15px] font-medium text-on-surface-variant"
+            className="mt-2 text-body-md font-medium text-on-surface-variant"
           >
             Seu assistente financeiro pessoal
           </motion.p>
@@ -115,7 +115,7 @@ export default function LoginPage() {
                 transition={{ duration: 0.25 }}
                 className="overflow-hidden"
               >
-                <div className="flex items-center gap-2.5 rounded-xl bg-destructive/10 px-4 py-3 text-[13px] font-medium text-destructive ring-1 ring-destructive/20" role="alert" aria-live="polite">
+                <div className="flex items-center gap-2.5 rounded-xl bg-destructive/10 px-4 py-3 text-body-sm font-medium text-destructive ring-1 ring-destructive/20" role="alert" aria-live="polite">
                   <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-destructive" />
                   {error}
                 </div>
@@ -128,7 +128,7 @@ export default function LoginPage() {
             <div className="space-y-1.5">
               <Label
                 htmlFor="email"
-                className="ml-0.5 text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant"
+                className="ml-0.5 text-overline font-semibold uppercase tracking-wider text-on-surface-variant"
               >
                 E-mail
               </Label>
@@ -152,7 +152,7 @@ export default function LoginPage() {
             <div className="space-y-1.5">
               <Label
                 htmlFor="password"
-                className="ml-0.5 text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant"
+                className="ml-0.5 text-overline font-semibold uppercase tracking-wider text-on-surface-variant"
               >
                 Senha
               </Label>
@@ -241,7 +241,7 @@ export default function LoginPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
-          className="mt-8 text-center text-[12px] font-medium text-muted-foreground"
+          className="mt-8 text-center text-caption font-medium text-muted-foreground"
         >
           © 2026 Flydea. Todos os direitos reservados.
         </motion.p>

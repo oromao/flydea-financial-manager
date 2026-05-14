@@ -142,7 +142,7 @@ export default function Relatorios() {
         <div className="flex flex-row items-center gap-5">
           <motion.div
             whileHover={{ scale: 1.02 }}
-            className="p-3.5 rounded-2xl bg-secondary text-on-secondary shadow-sm"
+            className="p-4 rounded-2xl bg-secondary text-on-secondary shadow-sm"
           >
             <Presentation className="w-7 h-7 md:w-8 md:h-8" />
           </motion.div>
@@ -153,7 +153,7 @@ export default function Relatorios() {
         </div>
 
         {/* Period Selector */}
-        <div className="flex items-center gap-4 bg-muted/30 p-1.5 rounded-2xl border border-border/5">
+        <div className="flex items-center gap-4 bg-muted/30 p-1 rounded-2xl border border-border/5">
           <div className="flex items-center gap-2 pl-3">
             <Calendar className="w-4 h-4 text-muted-foreground/70" />
             <span className="text-xs sm:text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 hidden md:block">Periodo:</span>
@@ -224,7 +224,7 @@ export default function Relatorios() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-4">
-              <div className="p-2.5 rounded-xl bg-muted text-muted-foreground border border-border/5">
+              <div className="p-3 rounded-xl bg-muted text-muted-foreground border border-border/5">
                 <PieChart className="w-5 h-5 opacity-70" />
               </div>
               <div>
@@ -263,7 +263,7 @@ export default function Relatorios() {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: any) => formatCurrency(Number(value || 0))}
+                    formatter={(value: unknown) => formatCurrency(Number((value as number) || 0))}
                     contentStyle={{ backgroundColor: "var(--color-background)", border: "none", borderRadius: "16px", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
                     itemStyle={{ color: "var(--color-on-background)", fontSize: "12px", fontWeight: "bold" }}
                   />
@@ -300,7 +300,7 @@ export default function Relatorios() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-4">
-              <div className="p-2.5 rounded-xl bg-muted text-muted-foreground border border-border/5">
+              <div className="p-3 rounded-xl bg-muted text-muted-foreground border border-border/5">
                 <BarChart3 className="w-5 h-5 opacity-70" />
               </div>
               <div>
@@ -320,7 +320,7 @@ export default function Relatorios() {
                 <YAxis stroke="var(--color-on-surface-variant)" fontSize={isMobile ? 8 : 9} fontWeight="bold" tickLine={false} axisLine={false}
                   tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                 <Tooltip
-                  formatter={(value: any) => formatCurrency(Number(value || 0))}
+                  formatter={(value: unknown) => formatCurrency(Number((value as number) || 0))}
                   contentStyle={{ backgroundColor: "var(--color-background)", border: "none", borderRadius: "16px", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
                   itemStyle={{ color: "var(--color-on-background)", fontSize: "12px", fontWeight: "bold" }}
                 />
@@ -344,7 +344,7 @@ export default function Relatorios() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-4 pb-6 border-b border-border/5">
-              <div className="p-2.5 rounded-xl bg-muted text-muted-foreground border border-border/5">
+              <div className="p-3 rounded-xl bg-muted text-muted-foreground border border-border/5">
                 <Filter className="w-5 h-5 opacity-70" />
               </div>
               <CardTitle className="text-base sm:text-xl text-foreground uppercase tracking-wider">Distribuicao Detalhada</CardTitle>

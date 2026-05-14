@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Upload, FileText, Check, AlertCircle, X, Loader2, Eye, Edit2, ArrowUp, ArrowDown } from "lucide-react";
+import { Upload, FileText, Check, AlertCircle, X, Loader2, Eye, Pencil, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
+import { formatDateToISO } from "@/lib/date-utils";
 
 interface DocumentImporterProps {
   onImportSuccess: () => void;
@@ -70,10 +71,10 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
       const res = await fetch("/api/categories");
       const data = await res.json();
       setCategories(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error("DocumentImporter: failed to fetch categories", e);
+    } catch {
+      toast.error("Erro ao carregar categorias");
     }
-  }, []);
+  }, [toast]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -361,7 +362,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
 
               <div className="flex gap-3">
                 <Button onClick={startEdit} variant="outline" className="flex-1 h-12">
-                  <Edit2 className="w-4 h-4 mr-2" /> Editar
+                  <Pencil className="w-4 h-4 mr-2" /> Editar
                 </Button>
                 <Button onClick={confirmImport} disabled={saving} className="flex-1 h-12 apple-button-primary">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
@@ -423,7 +424,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                   <Label className="text-xs font-semibold text-on-surface-variant ml-1">Data</Label>
                   <Input
                     type="date"
-                    value={editedData.date}
+                    value={formatDateToISO(editedData.date)}
                     onChange={(e) => setEditedData({ ...editedData, date: e.target.value })}
                     className="h-11"
                   />
@@ -469,7 +470,7 @@ export function DocumentImporter({ onImportSuccess }: DocumentImporterProps) {
                 <Label className="text-xs font-semibold text-on-surface-variant ml-1">Vencimento</Label>
                 <Input
                   type="date"
-                  value={editedData.dueDate}
+                  value={formatDateToISO(editedData.dueDate)}
                   onChange={(e) => setEditedData({ ...editedData, dueDate: e.target.value })}
                   className="h-11"
                 />

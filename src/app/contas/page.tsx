@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Wallet, CreditCard, PiggyBank, Banknote, Edit2, TrendingUp, Loader2, Archive, RotateCcw, ChevronDown, ChevronRight, X } from "lucide-react";
+import { Plus, Wallet, CreditCard, PiggyBank, Banknote, Pencil, TrendingUp, Loader2, Archive, RotateCcw, ChevronDown, ChevronRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -219,7 +219,7 @@ export default function ContasPage() {
                         <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                           {!archived && (
                             <Button variant="ghost" size="icon" onClick={() => handleEdit(acc)} aria-label="Editar conta" className="h-11 w-11 rounded-xl bg-muted text-muted-foreground hover:bg-secondary hover:text-white transition-all">
-                              <Edit2 className="w-4 h-4" />
+                              <Pencil className="w-4 h-4" />
                             </Button>
                           )}
                           {archived ? (

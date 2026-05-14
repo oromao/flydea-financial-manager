@@ -143,7 +143,7 @@ export default function Dashboard() {
           <div className="bg-primary overflow-hidden rounded-3xl md:rounded-4xl p-6 md:p-10 shadow-2xl text-white relative">
             <div className="space-y-8">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-3">
                   <div className="h-3.5 w-3.5 rounded-full bg-white/[0.07]" />
                   <div className="h-3 w-24 rounded-full bg-white/[0.07]" />
                 </div>
@@ -307,7 +307,7 @@ export default function Dashboard() {
                         padding: "10px 14px",
                         fontSize: "13px",
                       }}
-                      formatter={(v: any) => formatCurrency(Number(v))}
+                      formatter={(value: unknown) => formatCurrency(Number(value as number))}
                     />
                     <Area
                       type="monotone"
