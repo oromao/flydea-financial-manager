@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
+import { PageHeaderSkeleton, TableSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 import { safeFormatDate } from "@/lib/date-utils";
 
@@ -123,6 +124,17 @@ export default function ContasAPagar() {
   const formatCurrency = (val: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
 
+  if (loading) {
+    return (
+      <PageErrorBoundary>
+        <div className="space-y-6 p-6">
+          <PageHeaderSkeleton />
+          <TableSkeleton rows={5} />
+        </div>
+      </PageErrorBoundary>
+    );
+  }
+
   return (
     <PageErrorBoundary>
     <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8">
@@ -181,9 +193,7 @@ export default function ContasAPagar() {
 
           <div className="grid gap-3">
           <AnimatePresence mode="popLayout">
-            {loading ? (
-              <div role="status" className="py-24 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-secondary/20" /><span className="sr-only">Carregando...</span></div>
-            ) : filteredData.length === 0 ? (
+            {filteredData.length === 0 ? (
               <Card role="status" className="flex flex-col items-center gap-4 opacity-30 border-dashed p-20">
                  <CheckCircle2 className="w-16 h-16" />
                  <p className="font-black uppercase tracking-widest text-xs">Tudo liquidado!</p>

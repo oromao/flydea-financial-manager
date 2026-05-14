@@ -34,6 +34,7 @@ import { MoneyInput } from "@/components/ui/money-input";
 import { EmptyState } from "@/components/ui/empty-state";
 import { z } from "zod";
 import { useZodForm } from "@/hooks/use-zod-form";
+import { PageHeaderSkeleton, TableSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 const transactionSchema = z.object({
@@ -431,6 +432,17 @@ function MovimentaçõesContent() {
     filterPaymentStatus !== "ALL" ||
     startDateFilter ||
     endDateFilter;
+
+  if (loading && transactions.length === 0) {
+    return (
+      <PageErrorBoundary>
+        <div className="space-y-6 p-6">
+          <PageHeaderSkeleton />
+          <TableSkeleton rows={5} />
+        </div>
+      </PageErrorBoundary>
+    );
+  }
 
   return (
     <PageErrorBoundary>

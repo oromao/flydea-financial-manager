@@ -6,6 +6,7 @@ import { ExternalLearningEngine, LearningStats } from "@/lib/ai/learning/externa
 import type { Prisma } from "@prisma/client"
 
 
+import { PageHeaderSkeleton, CardsGridSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 const engine = new ExternalLearningEngine()
@@ -14,7 +15,7 @@ export default function AILearningDashboard() {
   const { data: session, status } = useSession()
   const [stats, setStats] = useState<LearningStats | null>(null)
   const [candidates, setCandidates] = useState<Prisma.KnowledgeCandidateGetPayload<{}>[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [running, setRunning] = useState(false)
 
   useEffect(() => {
@@ -24,12 +25,17 @@ export default function AILearningDashboard() {
   }, [session])
 
   async function loadData() {
-    const [statsData, candidatesData] = await Promise.all([
-      engine.getStats(),
-      engine.getCandidates("PENDING")
-    ])
-    setStats(statsData)
-    setCandidates(candidatesData)
+    setLoading(true)
+    try {
+      const [statsData, candidatesData] = await Promise.all([
+        engine.getStats(),
+        engine.getCandidates("PENDING")
+      ])
+      setStats(statsData)
+      setCandidates(candidatesData)
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function runLearningCycle() {
@@ -62,6 +68,17 @@ export default function AILearningDashboard() {
       </div>
     </PageErrorBoundary>
     )
+  }
+
+  if (loading) {
+    return (
+      <PageErrorBoundary>
+        <div className="space-y-6 p-6">
+          <PageHeaderSkeleton />
+          <CardsGridSkeleton count={3} />
+        </div>
+      </PageErrorBoundary>
+    );
   }
 
   return (

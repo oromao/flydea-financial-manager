@@ -20,6 +20,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import { MoneyInput } from "@/components/ui/money-input";
+import { PageHeaderSkeleton, TableSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 import { formatDateToISO } from "@/lib/date-utils";
 
@@ -171,6 +172,17 @@ export default function Recorrências() {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
   };
 
+  if (loading) {
+    return (
+      <PageErrorBoundary>
+        <div className="space-y-6 p-6">
+          <PageHeaderSkeleton />
+          <TableSkeleton rows={5} />
+        </div>
+      </PageErrorBoundary>
+    );
+  }
+
   return (
     <PageErrorBoundary>
     <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8">
@@ -262,12 +274,7 @@ export default function Recorrências() {
         </Dialog>
       </motion.div>
 
-      {loading ? (
-        <div className="py-32 text-center">
-           <Loader2 className="w-10 h-10 animate-spin mx-auto text-secondary/30" />
-           <p className="mt-4 text-muted-foreground/40 font-black text-xs uppercase tracking-widest">Sincronizando automações...</p>
-        </div>
-      ) : recurrences.length === 0 ? (
+      {recurrences.length === 0 ? (
         <div className="py-16">
           <EmptyState
             icon={RotateCcw}

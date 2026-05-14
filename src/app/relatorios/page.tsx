@@ -17,6 +17,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeaderSkeleton, StatCardsSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 const COLORS = ["var(--color-secondary)", "var(--color-on-surface-variant)", "var(--color-primary)", "var(--color-primary)", "var(--color-success)", "var(--color-destructive)", "var(--color-warning)", "var(--color-tertiary)"];
@@ -130,6 +131,17 @@ export default function Relatorios() {
   const periodLabel = format(refDate, "MMMM yyyy", { locale: ptBR });
   const chartHeight = isMobile ? 250 : 350;
 
+  if (loading) {
+    return (
+      <PageErrorBoundary>
+        <div className="space-y-6 p-6">
+          <PageHeaderSkeleton />
+          <StatCardsSkeleton count={4} />
+        </div>
+      </PageErrorBoundary>
+    );
+  }
+
   return (
     <PageErrorBoundary>
     <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 md:pb-0 relative no-print">
@@ -174,12 +186,7 @@ export default function Relatorios() {
       </motion.header>
 
       {/* Content */}
-      {loading ? (
-        <div role="status" className="py-32 text-center">
-          <div className="w-10 h-10 animate-spin mx-auto border-2 border-secondary/20 border-t-secondary rounded-full" />
-          <p className="mt-4 text-muted-foreground/40 font-black text-xs uppercase tracking-widest">Carregando relatorios...</p>
-        </div>
-      ) : transactions.length === 0 ? (
+      {transactions.length === 0 ? (
         <div className="py-16">
           <EmptyState
             icon={BarChart3}
@@ -235,9 +242,7 @@ export default function Relatorios() {
           </CardHeader>
           <CardContent className="p-4 sm:p-8 pt-0">
 
-          {loading ? (
-            <div className="h-72 flex items-center justify-center text-muted-foreground/20 font-bold text-xs uppercase tracking-[0.2em] italic">Analisando dados...</div>
-          ) : pieData.length === 0 ? (
+          {pieData.length === 0 ? (
             <div className="h-72 flex flex-col items-center justify-center gap-3">
               <TrendingDown className="w-10 h-10 text-muted-foreground/30" />
               <p className="font-semibold text-sm text-muted-foreground/60">Sem dados disponiveis</p>
@@ -310,9 +315,7 @@ export default function Relatorios() {
             </div>
           </CardHeader>
           <CardContent className="p-4 sm:p-8 pt-0">
-          {loading ? (
-            <div className="h-72 flex items-center justify-center text-muted-foreground/20 font-bold text-xs uppercase tracking-[0.2em] italic">Processando...</div>
-          ) : (
+          {(
             <ResponsiveContainer width="100%" height={chartHeight}>
               <BarChart data={barData} barCategoryGap="30%" margin={isMobile ? { left: 0, right: 4 } : {}}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-outline)" strokeOpacity={0.3} />
@@ -351,9 +354,7 @@ export default function Relatorios() {
             </div>
           </CardHeader>
           <CardContent className="p-4 sm:p-8 pt-0">
-          {loading ? (
-            <div className="py-20 text-center font-bold text-muted-foreground/20 text-xs sm:text-[10px] tracking-[0.3em] italic uppercase">Consultando banco de dados...</div>
-          ) : (
+          {(
             <div className="space-y-4">
               {Object.entries(expensesByCategory).length === 0 ? (
                 <div className="py-16 flex flex-col items-center gap-3">

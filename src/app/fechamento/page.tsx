@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
+import { PageHeaderSkeleton, TableSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 interface TransactionSummary {
@@ -83,6 +84,17 @@ export default function Fechamento() {
       toast.error("Erro ao exportar. Tente novamente.");
     }
   };
+
+  if (loading) {
+    return (
+      <PageErrorBoundary>
+        <div className="space-y-6 p-6">
+          <PageHeaderSkeleton />
+          <TableSkeleton rows={5} />
+        </div>
+      </PageErrorBoundary>
+    );
+  }
 
   return (
     <PageErrorBoundary>
@@ -194,12 +206,7 @@ export default function Fechamento() {
         </Card>
       </div>
 
-      {loading && (
-        <div className="py-10 text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-secondary mb-3" />
-          <p className="text-muted-foreground/40 text-sm">Carregando fechamento...</p>
-        </div>
-      )}
+
     </div>
     </PageErrorBoundary>
   );

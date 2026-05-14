@@ -8,10 +8,12 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { PageHeaderSkeleton, CardsGridSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 export default function PerfilPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [name, setName] = useState("");
@@ -21,11 +23,16 @@ export default function PerfilPage() {
 
   useEffect(() => {
     const load = async () => {
-      const res = await fetch("/api/profile");
-      const data = await res.json();
-      setName(data.user?.name || "");
-      setEmail(data.user?.email || "");
-      setAvatarUrl(data.user?.avatarUrl || "");
+      setLoading(true);
+      try {
+        const res = await fetch("/api/profile");
+        const data = await res.json();
+        setName(data.user?.name || "");
+        setEmail(data.user?.email || "");
+        setAvatarUrl(data.user?.avatarUrl || "");
+      } finally {
+        setLoading(false);
+      }
     };
     load();
   }, []);
@@ -82,6 +89,17 @@ export default function PerfilPage() {
       setUploading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <PageErrorBoundary>
+        <div className="space-y-6 p-6">
+          <PageHeaderSkeleton />
+          <CardsGridSkeleton count={2} />
+        </div>
+      </PageErrorBoundary>
+    );
+  }
 
   return (
     <PageErrorBoundary>

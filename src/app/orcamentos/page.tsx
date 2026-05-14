@@ -16,6 +16,7 @@ import { useConfirm } from "@/components/ui/confirm-dialog";
 import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeaderSkeleton, CardsGridSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 interface Budget {
@@ -140,6 +141,17 @@ export default function Orcamentos() {
     return "success";
   };
 
+  if (loading) {
+    return (
+      <PageErrorBoundary>
+        <div className="space-y-6 p-6">
+          <PageHeaderSkeleton />
+          <CardsGridSkeleton count={3} />
+        </div>
+      </PageErrorBoundary>
+    );
+  }
+
   return (
     <PageErrorBoundary>
     <div className="space-y-10 md:space-y-16 max-w-7xl mx-auto pb-20 md:pb-0 relative">
@@ -215,11 +227,7 @@ export default function Orcamentos() {
       </motion.div>
 
       {/* Budget List */}
-      {loading ? (
-        <div className="py-24 text-center text-muted-foreground/30 font-semibold text-xs italic">
-          Analisando orçamentos...
-        </div>
-      ) : budgets.length === 0 ? (
+      {budgets.length === 0 ? (
         <div className="py-16">
           <EmptyState
             icon={Target}

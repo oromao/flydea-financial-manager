@@ -19,6 +19,7 @@ import { useConfirm } from "@/components/ui/confirm-dialog";
 import { MoneyInput } from "@/components/ui/money-input";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeaderSkeleton, CardsGridSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 interface Account {
@@ -256,6 +257,17 @@ export default function ContasPage() {
     );
   };
 
+  if (loading) {
+    return (
+      <PageErrorBoundary>
+        <div className="space-y-6 p-6">
+          <PageHeaderSkeleton />
+          <CardsGridSkeleton count={3} />
+        </div>
+      </PageErrorBoundary>
+    );
+  }
+
   return (
     <PageErrorBoundary>
     <div className="space-y-10 max-w-7xl mx-auto pb-24 md:pb-8">
@@ -357,11 +369,7 @@ export default function ContasPage() {
         </Dialog>
       </div>
 
-      {loading ? (
-        <div className="py-32 text-center">
-           <Loader2 className="w-10 h-10 animate-spin mx-auto text-secondary/30" />
-        </div>
-      ) : accounts.length === 0 ? (
+      {accounts.length === 0 ? (
         <div className="py-16">
           <EmptyState
             icon={Wallet}

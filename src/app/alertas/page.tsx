@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { PageHeaderSkeleton, TableSkeleton } from "@/components/ui/page-skeleton";
 import { safeFormatDate } from "@/lib/date-utils";
 
 interface AlertNotification {
@@ -86,6 +87,17 @@ export default function Alertas() {
   const unreadCount = notifications.filter((n) => !n.read).length;
   const readCount = notifications.filter((n) => n.read).length;
 
+  if (loading) {
+    return (
+      <PageErrorBoundary>
+        <div className="space-y-6 p-6">
+          <PageHeaderSkeleton />
+          <TableSkeleton rows={5} />
+        </div>
+      </PageErrorBoundary>
+    );
+  }
+
   return (
     <PageErrorBoundary>
     <div className="space-y-8 max-w-5xl mx-auto pb-20 md:pb-0">
@@ -113,9 +125,7 @@ export default function Alertas() {
       </motion.header>
 
       <Card className="premium-card p-4 sm:p-6">
-        {loading ? (
-          <div role="status" className="py-10 text-center text-on-surface-variant/40"><span className="sr-only">Carregando...</span>Carregando...</div>
-        ) : filteredNotifications.length === 0 ? (
+        {filteredNotifications.length === 0 ? (
           <div role="status" className="py-10 text-center text-on-surface-variant/40">Sem alertas.</div>
         ) : (
           <div className="space-y-3">

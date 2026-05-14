@@ -13,6 +13,7 @@ import { useConfirm } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { PageHeaderSkeleton, TableSkeleton } from "@/components/ui/page-skeleton";
 import { PageErrorBoundary } from "@/components/ui/page-error-boundary";
 
 type Approval = {
@@ -108,6 +109,17 @@ export default function AprovacoesPage() {
     );
   }
 
+  if (loading && items.length === 0) {
+    return (
+      <PageErrorBoundary>
+        <div className="space-y-6 p-6">
+          <PageHeaderSkeleton />
+          <TableSkeleton rows={5} />
+        </div>
+      </PageErrorBoundary>
+    );
+  }
+
   return (
     <PageErrorBoundary>
     <div className="space-y-10 max-w-6xl mx-auto pb-24 md:pb-8">
@@ -121,12 +133,7 @@ export default function AprovacoesPage() {
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-32 gap-4">
-          <Loader2 className="w-10 h-10 animate-spin text-secondary/20" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">Sincronizando fila...</span>
-        </div>
-      ) : items.length === 0 ? (
+      {items.length === 0 ? (
         <EmptyState
           icon={ShieldCheck}
           title="Fila limpa!"
