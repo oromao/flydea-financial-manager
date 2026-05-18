@@ -8,7 +8,6 @@ import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { QuickAdd } from "@/components/quick-add";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const mainNavItems = [
@@ -49,41 +48,32 @@ export function BottomNav() {
     <>
       <nav
         aria-label="Navegação principal"
-        className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-outline/10"
+        className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background/80 backdrop-blur-xl border-t border-border"
         style={{
           height: "calc(4rem + max(0px, env(safe-area-inset-bottom)))",
           paddingBottom: "max(0px, env(safe-area-inset-bottom))",
         }}
       >
-        <div className="flex items-stretch justify-around h-16 max-w-lg mx-auto px-1 gap-0.5">
+        <div className="flex items-stretch justify-around h-14 max-w-lg mx-auto px-2">
           {mainNavItems.map((item) => {
             const isActive = item.href !== "#" && (pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)));
             const Icon = item.icon;
 
             if (item.isAction) {
               return (
-                <Tooltip key={item.name}>
-                  <TooltipTrigger
-                    render={
-                      <button
-                        onClick={() => setNewOpen(true)}
-                        aria-label="Adicionar transação"
-                        className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
-                      >
-                        <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 group-active:scale-95 transition-all">
-                          <Icon className="w-6 h-6 text-primary-foreground stroke-[2.5px]" />
-                        </div>
-                        <span className="text-[10px] font-bold tracking-wide text-primary">
-                          {item.name}
-                        </span>
-                      </button>
-                    }
-                  >
-                    <TooltipContent>
-                      <p>Adicionar transação</p>
-                    </TooltipContent>
-                  </TooltipTrigger>
-                </Tooltip>
+                <button
+                  key={item.name}
+                  onClick={() => setNewOpen(true)}
+                  aria-label="Adicionar transação"
+                  className="flex flex-col items-center justify-center gap-0.5 flex-1 relative"
+                >
+                  <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-primary shadow-sm active:scale-95 transition-all">
+                    <Icon className="w-5 h-5 text-on-primary" />
+                  </div>
+                  <span className="text-[9px] font-semibold text-primary tracking-wide">
+                    {item.name}
+                  </span>
+                </button>
               );
             }
 
@@ -93,12 +83,12 @@ export function BottomNav() {
                   key={item.name}
                   onClick={() => setSheetOpen(true)}
                   aria-label="Explorar mais módulos"
-                  className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
+                  className="flex flex-col items-center justify-center gap-0.5 flex-1 relative"
                 >
-                  <div className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-2xl transition-all duration-200 group-active:bg-surface-container">
-                    <Icon className="w-5 h-5 text-on-surface-variant/80 stroke-[1.5px]" />
+                  <div className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-xl">
+                    <Icon className="w-5 h-5 text-muted-foreground" />
                   </div>
-                  <span className="text-[10px] font-bold tracking-wide transition-all duration-200 text-on-surface-variant/80">
+                  <span className="text-[9px] font-semibold text-muted-foreground tracking-wide">
                     {item.name}
                   </span>
                 </button>
@@ -110,23 +100,23 @@ export function BottomNav() {
                 key={item.href}
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
-                className="flex flex-col items-center justify-center gap-1 flex-1 relative group"
+                className="flex flex-col items-center justify-center gap-0.5 flex-1 relative"
               >
                 {isActive && (
-                  <span className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-primary" />
+                  <span className="absolute top-1 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-primary" />
                 )}
                 <div className={cn(
-                  "flex items-center justify-center min-w-[44px] min-h-[44px] rounded-2xl transition-all duration-200",
-                  isActive ? "bg-primary/10" : "group-active:bg-surface-container"
+                  "flex items-center justify-center min-w-[44px] min-h-[44px] rounded-xl",
+                  isActive && "bg-primary/10"
                 )}>
                   <Icon className={cn(
-                    "transition-all duration-200",
-                    isActive ? "w-5 h-5 text-primary stroke-[2.5px]" : "w-5 h-5 text-on-surface-variant/80 stroke-[1.5px]"
+                    "w-5 h-5",
+                    isActive ? "text-primary" : "text-muted-foreground"
                   )} />
                 </div>
                 <span className={cn(
-                  "text-[10px] font-bold tracking-wide transition-all duration-200",
-                  isActive ? "text-primary" : "text-on-surface-variant/80"
+                  "text-[9px] font-semibold tracking-wide",
+                  isActive ? "text-primary" : "text-muted-foreground"
                 )}>
                   {item.name}
                 </span>
@@ -147,19 +137,19 @@ export function BottomNav() {
         <SheetContent
           side="bottom"
           showCloseButton={false}
-          className="bg-surface rounded-t-3xl"
+          className="bg-card rounded-t-2xl shadow-xl border-t border-border"
           style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
         >
-          <SheetHeader className="flex-row items-center justify-between p-6 border-b border-outline/10">
-            <SheetTitle className="text-xl font-black text-on-background">
+          <SheetHeader className="flex-row items-center justify-between p-5 border-b border-border">
+            <SheetTitle className="text-base font-bold text-foreground">
               Explorar
             </SheetTitle>
-            <SheetClose className="max-md:min-h-[44px] max-md:min-w-[44px] w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center [&_svg]:!size-5">
-              <X className="text-on-surface-variant" />
+            <SheetClose className="max-md:min-h-[44px] max-md:min-w-[44px] w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center">
+              <X className="w-4 h-4 text-muted-foreground" />
               <span className="sr-only">Fechar</span>
             </SheetClose>
           </SheetHeader>
-          <div className="p-4 grid grid-cols-4 gap-3">
+          <div className="p-4 grid grid-cols-4 gap-2">
             {modules.map((module) => {
               const Icon = module.icon;
               const isActive = pathname === module.href;
@@ -170,17 +160,17 @@ export function BottomNav() {
                   onClick={() => setSheetOpen(false)}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "flex flex-col items-center gap-2 p-3 rounded-2xl transition-all",
-                    isActive ? "bg-primary/10 text-primary" : "hover:bg-surface-variant/50 text-on-surface-variant"
+                    "flex flex-col items-center gap-1.5 p-3 rounded-xl transition-all",
+                    isActive ? "bg-primary/10 text-primary" : "hover:bg-surface-container text-on-surface-variant"
                   )}
                 >
                   <div className={cn(
-                    "w-12 h-12 rounded-2xl flex items-center justify-center",
-                    isActive ? "bg-primary/20" : "bg-surface-variant/50"
+                    "w-10 h-10 rounded-xl flex items-center justify-center",
+                    isActive ? "bg-primary/15" : "bg-surface-container"
                   )}>
-                    <Icon className="w-6 h-6" />
+                    <Icon className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] font-bold text-center leading-tight">{module.name}</span>
+                  <span className="text-[9px] font-semibold text-center leading-tight">{module.name}</span>
                 </Link>
               );
             })}

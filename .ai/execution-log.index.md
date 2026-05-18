@@ -209,8 +209,36 @@
   - Nenhuma alteração de código foi necessária
 - **Docs**: Atualizados `KNOWN_ISSUES.md`, `BACKLOG_DETAILED/SPRINT4.md`, `EXECUTION_LOG.md`, `.ai/backlog.index.md`, `.ai/current-task.md`, `.ai/execution-log.index.md`
 
+## 2026-05-18 — E17 Redesign Claro & Clean
+
+- **17:45 BRT**: Redesign completo do design system (E17 - Design System Premium)
+  - `globals.css`: Paleta renovada para Claro & Clean (teal #0891B2 primary, neutros suaves estilo Linear/Notion)
+  - `layout.tsx`: Fonte DM Sans para headings (substitui Manrope)
+  - `sidebar.tsx`: Refatorada — mais clean, sem gradientes pesados, 64% da largura anterior (320→256px)
+  - `bottom-nav.tsx`: Refatorada — backdrop-blur, indicadores sutis, botão FAB redondo
+  - `card.tsx`: Card mais clean com borda sutil e sombra leve
+  - `button.tsx`: Variantes simplificadas, sem bordas internas complexas, active scale sutil
+  - `input.tsx`: Input mais clean com focus ring teal, bg surface-container
+  - `dashboard-hero.tsx`: Hero simplificado, gradiente teal suave, menos padding pesado
+  - `login/page.tsx`: shadow-premium removido (token não existe mais)
+  - Dark mode: mesma identidade teal, consistente com light mode
+
+## 2026-05-18 — E18 UX + E19 Responsividade
+
+- **18:15 BRT**: UX & Micro-interações + Responsividade mobile
+  - `animated-list.tsx`: Fix key bug, stagger com CSS custom property ao invés de delay-[...] dinâmico
+  - `empty-state.tsx`: Consolidado com versão premium (remove shadow-2xl, icon w-16, bg surface-container)
+  - `empty-states.tsx`: Atualizado para usar EmptyState compartilhado + EmptyDashboard/EmptyCategories premium
+  - `globals.css`: `@utility ripple` adicionada para touch feedback em todos os botões e nav-links
+  - `button.tsx`: `ripple` utility aplicada em todas as variantes de botão
+  - `globals.css`: `.nav-link` e `.nav-link-active` com ripple
+  - `table.tsx`: Headers mais legíveis (uppercase tracking, font-semibold), cells com padding maior (p-3)
+  - `dialog.tsx`: Close button com touch target 44px mobile
+  - `hooks/use-keyboard-aware.ts`: Hook para scroll automático em foco de input
+
 ## Next Actions
-- FLY-004: Backlog do produto 20+ itens (PO)
-- Deploy Sprint 2 para produção
-- Implementar E2E tests (Playwright)
-- Sessão de QA review antes do deploy
+- E18-T10: Keyboard navigation audit (tab order, focus visible)
+- E19-T2: Aplicar useKeyboardAware nas páginas
+- E19-T9: Auditoria iPhone 16
+- Verificar visual das páginas restantes
+- Sessão de QA review

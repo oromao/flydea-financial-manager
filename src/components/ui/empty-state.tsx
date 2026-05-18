@@ -7,26 +7,33 @@ interface EmptyStateProps {
   description: string;
   ctaLabel?: string;
   onCta?: () => void;
+  secondaryCta?: { label: string; onClick: () => void };
 }
 
-export function EmptyState({ icon: Icon, title, description, ctaLabel, onCta }: EmptyStateProps) {
+export function EmptyState({ icon: Icon, title, description, ctaLabel, onCta, secondaryCta }: EmptyStateProps) {
   return (
-    <div className="premium-card rounded-xl p-12 text-center border-none shadow-2xl flex flex-col items-center">
-      <div className="w-20 h-20 rounded-3xl bg-surface-variant flex items-center justify-center mb-6">
-        <Icon className="w-10 h-10 text-on-surface-variant/40" aria-hidden="true" />
+    <div className="flex flex-col items-center py-16 px-4 text-center">
+      <div className="w-16 h-16 rounded-2xl bg-surface-container flex items-center justify-center mb-5">
+        <Icon className="w-8 h-8 text-muted-foreground/40" aria-hidden="true" />
       </div>
-      <h2 className="text-xl font-bold text-on-background mb-2">{title}</h2>
-      <p className="text-on-surface-variant/60 max-w-sm mx-auto text-sm leading-relaxed mb-6">
+      <h3 className="text-lg font-bold text-foreground mb-1.5">{title}</h3>
+      <p className="text-sm text-muted-foreground max-w-xs mx-auto mb-6 leading-relaxed">
         {description}
       </p>
-      {ctaLabel && onCta && (
-        <Button
-          onClick={onCta}
-          className="apple-button-primary px-8 h-12 border-none"
-        >
-          {ctaLabel}
-        </Button>
-      )}
+      {(ctaLabel && onCta) || secondaryCta ? (
+        <div className="flex gap-3">
+          {secondaryCta && (
+            <Button variant="outline" onClick={secondaryCta.onClick} className="h-11">
+              {secondaryCta.label}
+            </Button>
+          )}
+          {ctaLabel && onCta && (
+            <Button onClick={onCta} className="h-11 px-6">
+              {ctaLabel}
+            </Button>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }

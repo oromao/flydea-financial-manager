@@ -210,7 +210,7 @@ export default function Dashboard() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-24 md:pb-8 px-4"
+      className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-24 md:pb-8"
       aria-live="polite"
       aria-atomic="true"
     >

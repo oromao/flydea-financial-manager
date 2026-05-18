@@ -78,7 +78,7 @@ export default function LoginPage() {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.5, ease: "backOut" }}
-            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg shadow-premium"
+            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg"
             style={{ background: "var(--gradient-primary)" }}
           >
             <Sparkles className="h-7 w-7 text-white" />

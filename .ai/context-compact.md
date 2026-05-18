@@ -27,10 +27,10 @@
 
 ## Sprint 4 — Polimento Premium (IN PROGRESS 🔶)
 - **E16**: 9/11 ✅ — Backend completo, Frontend E16 completo
-- **E17**: 0/9 — Design System não iniciado
-- **E18**: 0/10 — UX não iniciado
-- **E19**: 0/13 — Mobile não iniciado
-- **Gargalo**: Frontend tem 31 tasks pendentes
+- **E17**: 1/9 ✅ — Redesign Claro & Clean aplicado (globals.css, layout, sidebar, bottom-nav, card, button, input, dashboard-hero)
+- **E18**: 3/10 ✅ — AnimatedList fix, empty states premium, ripple touch feedback
+- **E19**: 4/13 ✅ — Touch feedback, responsive tables, keyboard-aware hook, dialog touch targets
+- **Gargalo**: Frontend tem 23 tasks pendentes
 
 ## Sprint 5-8 Planejados (após Sprint 4)
 - **Sprint 5**: Onboarding & Retenção

@@ -34,7 +34,7 @@ const navItems = [
 ];
 
 const adminItems = [
-  { name: "Logs de Sistema", href: "/admin/logs", icon: History },
+  { name: "Logs", href: "/admin/logs", icon: History },
   { name: "Aprovações", href: "/admin/aprovacoes", icon: ShieldCheck },
   { name: "Analytics", href: "/admin/analytics", icon: Activity },
 ];
@@ -53,7 +53,7 @@ function NavLinks({ pathname, isAdmin, onItemClick }: { pathname: string; isAdmi
   const allItems = isAdmin ? [...navItems, ...adminItems] : navItems;
 
   return (
-    <nav aria-label="Navegação principal" className="space-y-1">
+    <nav aria-label="Navegação principal" className="space-y-0.5">
       {allItems.map((item) => {
         const isActive = pathname === item.href;
         const Icon = item.icon;
@@ -65,17 +65,14 @@ function NavLinks({ pathname, isAdmin, onItemClick }: { pathname: string; isAdmi
             onClick={onItemClick}
             aria-current={isActive ? "page" : undefined}
             className={cn(
-              "flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group relative text-sm font-medium",
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium",
               isActive
-                ? "bg-surface-container-lowest shadow-sm text-primary"
-                : "text-on-surface-variant hover:bg-surface-container hover:text-primary"
+                ? "bg-primary-container text-primary font-semibold"
+                : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
             )}
           >
-            <div className="flex items-center gap-3">
-              <Icon className={cn("w-5 h-5 shrink-0", isActive ? "text-primary" : "text-outline group-hover:text-primary transition-colors")} />
-              <span className="font-sans tracking-tight whitespace-nowrap">{item.name}</span>
-            </div>
-            {isActive && <div className="w-1 h-4 rounded-full bg-primary" />}
+            <Icon className={cn("w-5 h-5 shrink-0", isActive ? "text-primary" : "text-outline")} />
+            <span>{item.name}</span>
           </Link>
         );
       })}
@@ -98,14 +95,12 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
     <TooltipProvider>
       <div className="min-h-screen bg-background flex flex-col md:flex-row font-sans overflow-x-hidden">
         {/* Mobile Drawer Overlay */}
-        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div
           className={cn(
-            "fixed inset-0 z-[60] bg-background/80 transition-opacity duration-500 md:hidden",
+            "fixed inset-0 z-[60] bg-background/60 backdrop-blur-sm transition-all duration-300 md:hidden",
             drawerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           )}
           onClick={() => setDrawerOpen(false)}
-          onKeyDown={(e) => { if (e.key === "Escape") setDrawerOpen(false); }}
           role="presentation"
           aria-hidden={!drawerOpen}
         />
@@ -114,181 +109,150 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
         <nav
           aria-label="Menu de navegação"
           className={cn(
-            "fixed inset-y-0 left-0 z-[70] w-80 bg-surface flex flex-col p-6 transform transition-transform duration-500 ease-in-out md:hidden border-none shadow-2xl",
+            "fixed inset-y-0 left-0 z-[70] w-72 bg-surface-container-lowest flex flex-col p-6 transform transition-all duration-300 ease-out md:hidden border-r border-border",
             drawerOpen ? "translate-x-0" : "-translate-x-full"
           )}
           aria-hidden={!drawerOpen}
         >
           {/* Drawer Header */}
-          <div className="flex items-center justify-between mb-10 px-2">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary shadow-lg shadow-primary/20">
-                <Wallet className="w-6 h-6" />
+          <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
+                <Wallet className="w-5 h-5" />
               </div>
               <div>
-                <h1 className="text-xl font-display font-bold tracking-tight text-on-background leading-none">FlyDea</h1>
-                <Badge variant="secondary" className="mt-1.5 text-[10px] uppercase tracking-[0.3em] font-bold bg-transparent text-primary/60 border-0 p-0">
-                  Premium
-                </Badge>
+                <h1 className="text-lg font-display font-bold tracking-tight text-foreground">FlyDea</h1>
+                <p className="text-[10px] font-medium text-muted-foreground">Premium</p>
               </div>
             </div>
-            <Tooltip>
-              <TooltipTrigger
-                onClick={() => setDrawerOpen(false)}
-                aria-label="Fechar menu"
-                className="w-11 h-11 flex items-center justify-center rounded-xl bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all"
-              >
-                <X className="w-5 h-5" />
-              </TooltipTrigger>
-              <TooltipContent>Fechar menu</TooltipContent>
-            </Tooltip>
+            <button
+              onClick={() => setDrawerOpen(false)}
+              aria-label="Fechar menu"
+              className="w-10 h-10 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-surface-container transition-all"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 -mx-3 px-3">
             <NavLinks pathname={pathname} isAdmin={isAdmin} onItemClick={() => setDrawerOpen(false)} />
           </ScrollArea>
 
-          <div className="mt-8 pt-8 space-y-6">
-            <Separator />
-            <div className="p-4 rounded-2xl bg-surface-container flex items-center gap-4 transition-all hover:bg-surface-container-high">
-              <Avatar size="lg" className="w-11 h-11 border-2 border-surface-container-lowest shadow-sm">
+          <Separator className="my-6" />
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 px-1">
+              <Avatar className="w-9 h-9 border border-border">
                 <AvatarImage src={userImage} alt="Foto do perfil" />
-                <AvatarFallback>{userInitials}</AvatarFallback>
+                <AvatarFallback className="text-xs font-semibold bg-surface-container text-on-surface-variant">{userInitials}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-on-background truncate">
+                <p className="text-sm font-semibold text-foreground truncate">
                   {session?.user?.name || "Usuário"}
                 </p>
-                <Link href="/perfil" className="text-xs font-semibold text-primary hover:underline flex items-center gap-1 mt-0.5">
-                  Ver perfil <ChevronRight className="w-3 h-3" />
+                <Link href="/perfil" className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                  Ver perfil
                 </Link>
               </div>
             </div>
 
-            <Tooltip>
-              <TooltipTrigger
+            <div className="flex items-center gap-2">
+              <button
                 onClick={() => {
                   setDrawerOpen(false);
                   signOut({ callbackUrl: "/login" });
                 }}
-                className="flex items-center justify-center gap-2 px-4 py-4 w-full rounded-2xl text-sm font-bold text-on-surface-variant bg-surface-container-low hover:bg-error/5 hover:text-error transition-all"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all"
               >
                 <LogOut className="w-4 h-4" />
-                Encerrar Sessão
-              </TooltipTrigger>
-              <TooltipContent>Encerrar sessão</TooltipContent>
-            </Tooltip>
+                Sair
+              </button>
+              <DarkModeToggleClient />
+            </div>
           </div>
         </nav>
 
         {/* Mobile Top Header */}
-        <header aria-label="Cabeçalho" className="h-20 flex items-center justify-between px-6 bg-background md:hidden sticky top-0 z-50 shrink-0 border-none">
-          <Tooltip>
-            <TooltipTrigger
-              onClick={() => setDrawerOpen(true)}
-              aria-label="Abrir menu"
-              className="w-12 h-12 flex items-center justify-center rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all"
-            >
-              <Menu className="w-6 h-6 text-on-surface-variant" />
-            </TooltipTrigger>
-            <TooltipContent>Abrir menu</TooltipContent>
-          </Tooltip>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary shadow-md">
-              <Wallet className="w-5 h-5" />
-            </div>
-            <span className="text-lg font-display font-bold text-on-background tracking-tight">FlyDea</span>
-          </div>
+        <header aria-label="Cabeçalho" className="h-14 flex items-center justify-between px-5 bg-background/80 backdrop-blur-md md:hidden sticky top-0 z-50 shrink-0 border-b border-border">
+          <button
+            onClick={() => setDrawerOpen(true)}
+            aria-label="Abrir menu"
+            className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container transition-all"
+          >
+            <Menu className="w-5 h-5 text-foreground" />
+          </button>
           <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary">
+              <Wallet className="w-4 h-4" />
+            </div>
+            <span className="text-base font-display font-bold text-foreground">FlyDea</span>
+          </div>
+          <div className="flex items-center gap-1">
             <DarkModeToggleClient />
-            <Tooltip>
-              <TooltipTrigger
-                onClick={() => setDrawerOpen(true)}
-                className="w-10 h-10 max-md:!min-h-[44px] max-md:!min-w-[44px] rounded-full overflow-hidden bg-surface-container-low border-2 border-surface-container-high flex items-center justify-center transition-all hover:border-primary/30"
-                aria-label="Abrir menu do usuário"
-              >
-                <Avatar size="lg" className="w-10 h-10 max-md:!min-h-[44px] max-md:!min-w-[44px]">
-                  <AvatarImage src={userImage} alt="Perfil" />
-                  <AvatarFallback>{userInitials}</AvatarFallback>
-                </Avatar>
-              </TooltipTrigger>
-              <TooltipContent>Abrir menu do usuário</TooltipContent>
-            </Tooltip>
+            <button
+              onClick={() => setDrawerOpen(true)}
+              className="w-9 h-9 rounded-full overflow-hidden border border-border flex items-center justify-center"
+              aria-label="Abrir menu do usuário"
+            >
+              <Avatar className="w-9 h-9">
+                <AvatarImage src={userImage} alt="Perfil" />
+                <AvatarFallback className="text-xs font-semibold bg-surface-container text-on-surface-variant">{userInitials}</AvatarFallback>
+              </Avatar>
+            </button>
           </div>
         </header>
 
         {/* Sidebar - Desktop Only */}
-        <aside aria-label="Menu lateral" className="w-[320px] bg-surface hidden md:flex flex-col fixed inset-y-0 z-50 p-8 border-none shadow-[1px_0_20px_rgba(0,0,0,0.02)]">
-          <div className="h-20 flex items-center px-2 mb-12">
-            <div className="flex items-center gap-4 w-full">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary shrink-0 shadow-xl shadow-primary/10">
-                <Wallet className="w-7 h-7" />
-              </div>
-              <div className="min-w-0">
-                <h1 className="text-2xl font-display font-bold tracking-tight text-on-background leading-none">
-                  FlyDea
-                </h1>
-                <Badge variant="secondary" className="mt-2 text-[10px] uppercase tracking-[0.4em] font-bold bg-transparent text-primary/60 border-0 p-0">
-                  Premium
-                </Badge>
-              </div>
+        <aside aria-label="Menu lateral" className="w-64 bg-surface-container-lowest hidden md:flex flex-col fixed inset-y-0 z-50 border-r border-border py-8 px-4">
+          {/* Logo */}
+          <div className="flex items-center gap-3 px-3 mb-10">
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm">
+              <Wallet className="w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="text-lg font-display font-bold tracking-tight text-foreground leading-none">FlyDea</h1>
+              <p className="text-[10px] font-medium text-muted-foreground mt-0.5">Premium</p>
             </div>
           </div>
 
-          <ScrollArea className="flex-1 pr-2">
-            <div className="space-y-1">
-              <NavLinks pathname={pathname} isAdmin={isAdmin} />
-            </div>
+          <ScrollArea className="flex-1 -mx-3 px-3">
+            <NavLinks pathname={pathname} isAdmin={isAdmin} />
           </ScrollArea>
 
-          <div className="mt-12 space-y-6">
-            <div className="p-4 flex items-center gap-4 rounded-3xl bg-surface-container transition-all hover:bg-surface-container-high group">
-              <Avatar size="lg" className="w-12 h-12 border-2 border-surface-container-lowest shadow-sm">
+          {/* User Section */}
+          <div className="mt-6 pt-6 border-t border-border space-y-4 -mx-3 px-3">
+            <div className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-surface-container transition-all group">
+              <Avatar className="w-9 h-9 border border-border">
                 <AvatarImage src={userImage} alt="Foto do perfil" />
-                <AvatarFallback>{userInitials}</AvatarFallback>
+                <AvatarFallback className="text-xs font-semibold bg-surface-container text-on-surface-variant">{userInitials}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-on-background truncate">
+                <p className="text-sm font-semibold text-foreground truncate">
                   {session?.user?.name || "Usuário"}
                 </p>
-                <p className="text-[10px] text-on-surface-variant truncate">{session?.user?.email}</p>
+                <p className="text-xs text-muted-foreground truncate">{session?.user?.email}</p>
               </div>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Link href="/perfil" aria-label="Ver perfil" className="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent>Ver perfil</TooltipContent>
-              </Tooltip>
+              <Link href="/perfil" aria-label="Ver perfil" className="opacity-0 group-hover:opacity-100 w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-on-primary transition-all shrink-0">
+                <ChevronRight className="w-4 h-4" />
+              </Link>
             </div>
 
-            <div className="flex items-center gap-3">
-              <Tooltip>
-                <TooltipTrigger
-                  onClick={() => signOut({ callbackUrl: "/login" })}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-xs font-bold text-on-surface-variant hover:bg-error/5 hover:text-error transition-all"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Sair
-                </TooltipTrigger>
-                <TooltipContent>Encerrar sessão</TooltipContent>
-              </Tooltip>
-              <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all">
-                <Tooltip>
-                  <TooltipTrigger>
-                    <DarkModeToggleClient />
-                  </TooltipTrigger>
-                  <TooltipContent>Alternar tema</TooltipContent>
-                </Tooltip>
-              </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => signOut({ callbackUrl: "/login" })}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all"
+              >
+                <LogOut className="w-4 h-4" />
+                Sair
+              </button>
+              <DarkModeToggleClient />
             </div>
           </div>
         </aside>
 
         {/* Main Content Area */}
-        <main id="main-content" aria-label="Conteúdo principal" tabIndex={-1} className="flex-1 md:ml-[320px] min-h-screen pb-24 md:pb-0 bg-background scroll-mt-20">
-          <div className="w-full max-w-7xl mx-auto p-6 md:p-12 lg:p-16 animate-in fade-in slide-in-from-bottom-4 duration-1000 ease-out">
+        <main id="main-content" aria-label="Conteúdo principal" tabIndex={-1} className="flex-1 md:ml-64 min-h-screen pb-20 md:pb-0 bg-background scroll-mt-14">
+          <div className="w-full max-w-7xl mx-auto p-5 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
             {children}
           </div>
         </main>

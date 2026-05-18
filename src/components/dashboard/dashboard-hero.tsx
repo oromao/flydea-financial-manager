@@ -40,63 +40,60 @@ export function DashboardHero({ balance, projectedBalance, loading, income, expe
   }, [lastUpdated]);
 
   return (
-    <section aria-label="Resumo financeiro" className="relative">
-      {/* Hero Card - Minimal */}
-      <div className="bg-primary overflow-hidden rounded-3xl p-6 md:p-8 text-white relative">
-        <div className="relative z-10 space-y-8">
-          {/* Top row: Label */}
+    <section aria-label="Resumo financeiro">
+      <div className="bg-gradient-to-br from-primary to-cyan-600 overflow-hidden rounded-2xl p-6 md:p-8 text-white relative">
+        <div className="relative z-10 space-y-6">
+          {/* Top row */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-white/60">
+            <div className="flex items-center gap-2 text-white/70">
               <Wallet className="w-4 h-4" aria-hidden="true" />
-              <span className="text-xs font-bold uppercase tracking-wider">Saldo Total</span>
+              <span className="text-xs font-semibold">Saldo Total</span>
               {!loading && timeAgo && (
                 <>
-                  <div className="w-1 h-1 rounded-full bg-white/20" />
-                  <span className="text-xs text-white/40">{timeAgo}</span>
+                  <span className="text-white/30">·</span>
+                  <span className="text-xs text-white/50">{timeAgo}</span>
                 </>
               )}
             </div>
           </div>
 
-            {/* Balance */}
-            <div aria-live="polite" aria-atomic="true">
-              <motion.p
-                key={balance}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="text-4xl md:text-5xl font-black tracking-tight leading-none"
-              >
-                {loading ? (
-                  <span aria-hidden="true" className="inline-block h-12 w-48 bg-white/10 animate-pulse rounded-lg" />
-                ) : balance != null && !isNaN(balance) ? (
-                  formatCurrency(balance)
-                ) : (
-                  <span className="text-white/40">—</span>
-                )}
-              </motion.p>
-            </div>
+          {/* Balance */}
+          <div aria-live="polite" aria-atomic="true">
+            <motion.p
+              key={balance}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="text-4xl md:text-5xl font-bold tracking-tight font-display"
+            >
+              {loading ? (
+                <span aria-hidden="true" className="inline-block h-10 w-48 bg-white/20 animate-pulse rounded-lg" />
+              ) : balance != null && !isNaN(balance) ? (
+                formatCurrency(balance)
+              ) : (
+                <span className="text-white/40">—</span>
+              )}
+            </motion.p>
+          </div>
 
-          {/* Mini cards: Entradas / Saídas / Saldo do Mês */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="bg-white/5 rounded-xl p-5" aria-label={`Entradas: ${formatCurrency(income)}`}>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Entradas</p>
-              <p className="text-lg font-bold" aria-hidden="true">
-                {loading ? <span className="inline-block h-5 w-20 bg-white/10 animate-pulse rounded" /> : formatCurrency(income)}
+          {/* Mini cards */}
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white/10 rounded-xl p-4" aria-label={`Entradas: ${formatCurrency(income)}`}>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-white/60 mb-1">Entradas</p>
+              <p className="text-base font-bold" aria-hidden="true">
+                {loading ? <span className="inline-block h-4 w-16 bg-white/20 animate-pulse rounded" /> : formatCurrency(income)}
               </p>
             </div>
-
-            <div className="bg-white/5 rounded-xl p-5" aria-label={`Saídas: ${formatCurrency(expenses)}`}>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Saídas</p>
-              <p className="text-lg font-bold" aria-hidden="true">
-                {loading ? <span className="inline-block h-5 w-20 bg-white/10 animate-pulse rounded" /> : formatCurrency(expenses)}
+            <div className="bg-white/10 rounded-xl p-4" aria-label={`Saídas: ${formatCurrency(expenses)}`}>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-white/60 mb-1">Saídas</p>
+              <p className="text-base font-bold" aria-hidden="true">
+                {loading ? <span className="inline-block h-4 w-16 bg-white/20 animate-pulse rounded" /> : formatCurrency(expenses)}
               </p>
             </div>
-
-            <div className={cn("rounded-xl p-5", netMonth >= 0 ? "bg-white/5" : "bg-white/5")} aria-label={`Saldo do mês: ${formatCurrency(netMonth)}`}>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Saldo</p>
-              <p className="text-lg font-bold" aria-hidden="true">
-                {loading ? <span className="inline-block h-5 w-20 bg-white/10 animate-pulse rounded" /> : formatCurrency(netMonth)}
+            <div className="bg-white/10 rounded-xl p-4" aria-label={`Saldo do mês: ${formatCurrency(netMonth)}`}>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-white/60 mb-1">Saldo</p>
+              <p className="text-base font-bold" aria-hidden="true">
+                {loading ? <span className="inline-block h-4 w-16 bg-white/20 animate-pulse rounded" /> : formatCurrency(netMonth)}
               </p>
             </div>
           </div>
@@ -106,7 +103,7 @@ export function DashboardHero({ balance, projectedBalance, loading, income, expe
             <QuickAdd categories={categories} onSuccess={() => router.refresh()} />
             <Link
               href="/movimentacoes"
-              className="h-11 px-5 rounded-2xl bg-accent/10 hover:bg-accent/20 transition-all text-sm font-semibold text-white flex items-center gap-2 border border-border shadow-lg active:scale-95"
+              className="h-10 px-4 rounded-xl bg-white/15 hover:bg-white/25 transition-all text-sm font-medium text-white flex items-center gap-2 active:scale-95"
             >
               <History className="w-4 h-4" />
               Extrato

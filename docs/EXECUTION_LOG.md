@@ -741,4 +741,5 @@ Este é o registro oficial de tudo que foi executado no projeto. Cada entrada de
 | E15-T10 Link Relatórios | ❌ | ✅ "Análises" → "Relatórios" (sidebar + bottom-nav) |
 | E16-T3 QA-08 Date ISO → pt-BR | ❌ | ✅ `formatDateToBR`/`formatDateToISO` helpers + applied to 6 files |
 | E16-T6 Link /import quebrado (AN1-T6) | ❌ | ✅ empty-states.tsx: href="/import" → href="/movimentacoes" |
+| E17-T1 Redesign Claro & Clean | ❌ | ✅ Design system refatorado: paleta teal, DM Sans, componentes core, sidebar, bottom-nav, dashboard-hero, login |
 

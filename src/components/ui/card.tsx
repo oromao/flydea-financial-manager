@@ -11,7 +11,7 @@ function Card({
       role="region"
       data-slot="card"
       className={cn(
-        "group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-surface p-4 sm:p-6 text-sm text-on-surface border border-outline/30 shadow-sm transition-all duration-200 hover:shadow-md",
+        "group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card p-4 sm:p-6 text-sm text-card-foreground border shadow-sm transition-all duration-200 hover:shadow-md",
         className
       )}
       {...props}
