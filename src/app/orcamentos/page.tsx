@@ -335,77 +335,143 @@ export default function Orcamentos() {
         </motion.div>
       )}
 
-      {/* FAB / CTA — Novo Orçamento */}
-      <Dialog open={isOpen} onOpenChange={(v) => { setIsOpen(v); if (!v) resetForm(); }}>
-        <DialogTrigger
-          render={
-            <Button
-              size="lg"
-              className="fixed z-30 md:relative md:mt-8 apple-button-primary rounded-2xl shadow-lg px-6 py-3.5 min-h-[44px]"
-              style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))", right: "max(1.5rem, env(safe-area-inset-right))" }}
-            />
-          }
-        >
-          <Plus className="w-5 h-5 mr-2" /> Novo Orçamento
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Novo Orçamento</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-5 mt-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="category" required>Categoria</Label>
-              <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
-                <SelectTrigger id="category" className="min-h-[44px] rounded-xl">
-                  <SelectValue placeholder="Selecione uma categoria">{categoryId ? categories.find(c => c.id === categoryId)?.name || "Selecione uma categoria" : "Selecione uma categoria"}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat: Category) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+      {/* Desktop CTA */}
+      <div className="hidden md:block">
+        <Dialog open={isOpen} onOpenChange={(v) => { setIsOpen(v); if (!v) resetForm(); }}>
+          <DialogTrigger render={<Button size="lg" className="apple-button-primary rounded-2xl shadow-lg px-6 py-3.5 min-h-[44px]" />}>
+            <Plus className="w-5 h-5 mr-2" /> Novo Orçamento
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md p-0 overflow-hidden rounded-2xl border-none shadow-xl">
+            <div className="p-6 border-b border-border bg-card">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold text-foreground">Novo Orçamento</DialogTitle>
+                <p className="text-sm text-muted-foreground mt-1">Defina um limite de gastos para uma categoria</p>
+              </DialogHeader>
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="amount" required>Valor (R$)</Label>
-              <Input id="amount" type="number" step="0.01" min="0.01" placeholder="0,00" value={amount} onChange={(e) => setAmount(e.target.value)} className="min-h-[44px] rounded-xl" />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Periodicidade</Label>
-              <div className="flex gap-2">
-                <Toggle
-                  pressed={period === "MONTHLY"}
-                  onPressedChange={() => setPeriod("MONTHLY")}
-                  variant="outline"
-                  size="lg"
-                  className="flex-1 min-h-[44px] rounded-xl"
-                >
-                  Mensal
-                </Toggle>
-                <Toggle
-                  pressed={period === "ANNUAL"}
-                  onPressedChange={() => setPeriod("ANNUAL")}
-                  variant="outline"
-                  size="lg"
-                  className="flex-1 min-h-[44px] rounded-xl"
-                >
-                  Anual
-                </Toggle>
+            <form onSubmit={handleSubmit} className="p-6 space-y-5">
+              <div className="space-y-1.5">
+                <Label htmlFor="category" required className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Categoria</Label>
+                <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
+                  <SelectTrigger id="category" className="h-12 min-h-[44px] rounded-xl bg-surface-container border-border">
+                    <SelectValue placeholder="Selecione uma categoria">{categoryId ? categories.find(c => c.id === categoryId)?.name || "Selecione uma categoria" : "Selecione uma categoria"}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-border">
+                    {categories.map((cat: Category) => (
+                      <SelectItem key={cat.id} value={cat.id} className="rounded-lg font-medium">
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="amount" required className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Valor (R$)</Label>
+                <Input id="amount" type="number" step="0.01" min="0.01" placeholder="0,00" value={amount} onChange={(e) => setAmount(e.target.value)} className="h-12 min-h-[44px] rounded-xl bg-surface-container border-border font-bold text-lg" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Periodicidade</Label>
+                <div className="flex gap-2">
+                  <Toggle
+                    pressed={period === "MONTHLY"}
+                    onPressedChange={() => setPeriod("MONTHLY")}
+                    variant="outline"
+                    size="lg"
+                    className="flex-1 h-12 min-h-[44px] rounded-xl"
+                  >
+                    Mensal
+                  </Toggle>
+                  <Toggle
+                    pressed={period === "ANNUAL"}
+                    onPressedChange={() => setPeriod("ANNUAL")}
+                    variant="outline"
+                    size="lg"
+                    className="flex-1 h-12 min-h-[44px] rounded-xl"
+                  >
+                    Anual
+                  </Toggle>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="alertAt" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Alerta em (%)</Label>
+                <Input id="alertAt" type="number" min="1" max="100" placeholder="80" value={alertAt} onChange={(e) => setAlertAt(e.target.value)} className="h-12 min-h-[44px] rounded-xl bg-surface-container border-border" />
+              </div>
+              <Button type="submit" size="lg" disabled={saving} className="w-full h-12 rounded-xl font-bold">
+                {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Plus className="w-5 h-5 mr-2" />}
+                Criar Orçamento
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Mobile FAB */}
+      <div className="md:hidden fixed z-30 bottom-24 right-5">
+        <Dialog open={isOpen} onOpenChange={(v) => { setIsOpen(v); if (!v) resetForm(); }}>
+          <DialogTrigger render={<Button size="lg" className="apple-button-primary rounded-2xl shadow-lg px-6 py-3.5 min-h-[44px] shadow-xl" />}>
+            <Plus className="w-5 h-5 mr-2" /> Novo Orçamento
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md p-0 overflow-hidden rounded-2xl border-none shadow-xl">
+            <div className="p-6 border-b border-border bg-card">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold text-foreground">Novo Orçamento</DialogTitle>
+                <p className="text-sm text-muted-foreground mt-1">Defina um limite de gastos para uma categoria</p>
+              </DialogHeader>
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="alertAt">Alerta em (%)</Label>
-              <Input id="alertAt" type="number" min="1" max="100" placeholder="80" value={alertAt} onChange={(e) => setAlertAt(e.target.value)} className="min-h-[44px] rounded-xl" />
-            </div>
-            <Button type="submit" size="lg" disabled={saving} className="w-full apple-button-primary min-h-[44px] rounded-xl">
-              {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Plus className="w-5 h-5 mr-2" />}
-              Criar Orcamento
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+            <form onSubmit={handleSubmit} className="p-6 space-y-5">
+              <div className="space-y-1.5">
+                <Label htmlFor="category-mobile" required className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Categoria</Label>
+                <Select value={categoryId} onValueChange={(v: string | null) => setCategoryId(v || "")}>
+                  <SelectTrigger id="category-mobile" className="h-12 min-h-[44px] rounded-xl bg-surface-container border-border">
+                    <SelectValue placeholder="Selecione uma categoria">{categoryId ? categories.find(c => c.id === categoryId)?.name || "Selecione uma categoria" : "Selecione uma categoria"}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-border">
+                    {categories.map((cat: Category) => (
+                      <SelectItem key={cat.id} value={cat.id} className="rounded-lg font-medium">
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="amount-mobile" required className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Valor (R$)</Label>
+                <Input id="amount-mobile" type="number" step="0.01" min="0.01" placeholder="0,00" value={amount} onChange={(e) => setAmount(e.target.value)} className="h-12 min-h-[44px] rounded-xl bg-surface-container border-border font-bold text-lg" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Periodicidade</Label>
+                <div className="flex gap-2">
+                  <Toggle
+                    pressed={period === "MONTHLY"}
+                    onPressedChange={() => setPeriod("MONTHLY")}
+                    variant="outline"
+                    size="lg"
+                    className="flex-1 h-12 min-h-[44px] rounded-xl"
+                  >
+                    Mensal
+                  </Toggle>
+                  <Toggle
+                    pressed={period === "ANNUAL"}
+                    onPressedChange={() => setPeriod("ANNUAL")}
+                    variant="outline"
+                    size="lg"
+                    className="flex-1 h-12 min-h-[44px] rounded-xl"
+                  >
+                    Anual
+                  </Toggle>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="alertAt-mobile" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Alerta em (%)</Label>
+                <Input id="alertAt-mobile" type="number" min="1" max="100" placeholder="80" value={alertAt} onChange={(e) => setAlertAt(e.target.value)} className="h-12 min-h-[44px] rounded-xl bg-surface-container border-border" />
+              </div>
+              <Button type="submit" size="lg" disabled={saving} className="w-full h-12 rounded-xl font-bold">
+                {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Plus className="w-5 h-5 mr-2" />}
+                Criar Orçamento
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
     </PageErrorBoundary>
   );
